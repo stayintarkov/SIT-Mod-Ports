@@ -516,7 +516,6 @@
     <None Include="Properties\NuGet.Config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="References\DissonanceVoip.dll" />
     <Content Include="SAIN.sln" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
