@@ -1,0 +1,53 @@
+# ReadMe
+## Info
+These are all ports of mods from **SPT AKI** to be compatible with **SIT 1.7.8611.22925 (AKI Server 3.6.1)** and **EFT 0.13.1.3-25206**. DO NOT TRY TO USE THESE ON ANY OTHER VERSION!
+I have tested and ran all of them without any problems.
+Use them at your own risk, I will not be providing ANY support. Make sure to follow the instructions thoroughly!
+
+If you do not have a basic understanding of how **SIT**, **BepInEx** and the server works then this is not for you.
+All clients should use the same mods for maximum compatibility.
+Host should edit the settings in SAIN (or any of the mods, really) and send them to the other clients before starting a raid.
+
+Customizing the settings in SAIN during a raid works but might have unknown effects, use at your own risk!
+The debug features of SAIN are disabled and should not be used.
+
+**BigBrain**, **Waypoints** and **NoBushESP** were taken from **SIT 3.7** and compiled into separate plugins.
+
+## Included Files
+ - BigBrain-SIT.dll (port of BigBrain)
+ - SAIN-SIT.dll (port of SAIN)
+ - NoBushESP-SIT.dll (port of NoBushESP)
+ - Waypoints-SIT.dll (port of SPT-Waypoints)
+ - Newtonsoft.Json.dll (Library used for mods)
+
+## Installation
+If the original mods have any extra steps, like Waypoints or SAIN, do them first.
+Waypoints need the "**custom**" and "**navmesh**" folder inside \BepInEx\Plugins\. SAIN needs the "**SAIN**" folder in \BepInEx\Plugins\ and also the server mod in \user\mods\.
+
+**NOTE**: If you are going to use SAIN and NoBushESP together, it's already baked into SAIN as an option so do not install the standalone mod. Use the option in SAIN instead.
+When all of the above is done, extract the contents of the .zip into \BepInEx\Plugins\
+
+## Verification
+Once you start the game open the "LogOutput.log" file in \BepInEx\ and make sure all the plugins have loaded without errors.
+
+## Compiling Source Code
+Put these files from your game folder inside the `References` folder:
+- Assembly-CSharp.dll (***needs*** to be deobfuscated from SIT)
+- bsg.console.core.dll
+- Comfort.dll
+- DissonanceVoip.dll
+- Mono.WebBrowser.dll
+- UnityEngine.dll
+
+Put the SIT.Core.dll from your BepInEx plugins in the `References` folder as well.
+The rest are NuGet packages for some of the mods. Should already be included in the .cs files.
+- BepInEx.Core
+- NewtonSoft.Json
+- UnityEngine.Modules
+
+## Bug Reporting
+If you have errors in your "LogOutput.log" and you are sure they are caused by the port, message me on Discord @Lacyway.
+I will not provide support for any user errors.
+
+## Credits
+All credits go to the original authors. These are just ports to make the mods work with SIT.
