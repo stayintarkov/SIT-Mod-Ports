@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4623CFD4-155E-40B9-A6FF-B07401F66CB9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>skwizzy.LootingBots</RootNamespace>
+    <AssemblyName>skwizzy.LootingBots</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+    <OutputPath>bin\x64\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony, Version=2.10.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HarmonyX.2.10.2\lib\net45\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\References\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>..\..\References\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="BigBrain-SIT">
+      <HintPath>..\..\References\BigBrain-SIT.dll</HintPath>
+      <Aliases>PortBrain</Aliases>
+    </Reference>
+    <Reference Include="Comfort">
+      <HintPath>..\..\References\Comfort.dll</HintPath>
+    </Reference>
+    <Reference Include="ItemComponent.Types">
+      <HintPath>..\..\References\ItemComponent.Types.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks, Version=0.11.4.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Mono.Cecil.0.11.4\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.RuntimeDetour, Version=22.3.23.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MonoMod.RuntimeDetour.22.3.23.4\lib\net452\MonoMod.RuntimeDetour.dll</HintPath>
+    </Reference>
+    <Reference Include="MonoMod.Utils, Version=22.3.23.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MonoMod.Utils.22.3.23.4\lib\net452\MonoMod.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIT.Core">
+      <HintPath>..\..\References\SIT.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\References\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AIModule">
+      <HintPath>..\..\References\UnityEngine.AIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\References\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>..\..\References\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="LootingBots.cs" />
+    <Compile Include="LootingLayer.cs" />
+    <Compile Include="ConfigurationManagerAttributes.cs" />
+    <Compile Include="utils\BotTypes.cs" />
+    <Compile Include="utils\EquipmentTypes.cs" />
+    <Compile Include="utils\Log.cs" />
+    <Compile Include="utils\LootCache.cs" />
+    <Compile Include="utils\LootUtils.cs" />
+    <Compile Include="patches\*.cs" />
+    <Compile Include="components\*.cs" />
+    <Compile Include="logics\*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

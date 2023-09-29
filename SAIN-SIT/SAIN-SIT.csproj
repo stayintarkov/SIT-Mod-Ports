@@ -43,6 +43,10 @@
     <Reference Include="BepInEx, Version=5.4.20.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BepInEx.BaseLib.5.4.20\lib\net35\BepInEx.dll</HintPath>
     </Reference>
+    <Reference Include="BigBrain-SIT">
+      <HintPath>..\References\BigBrain-SIT.dll</HintPath>
+      <Aliases>PortBrain</Aliases>
+    </Reference>
     <Reference Include="bsg.console.core, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\SIT Mod Ports\References\bsg.console.core.dll</HintPath>
@@ -82,7 +86,7 @@
     </Reference>
     <Reference Include="SIT.Core, Version=1.7.8611.22925, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\SIT Mod Ports\References\SIT.Core.dll</HintPath>
+      <HintPath>..\References\SIT.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

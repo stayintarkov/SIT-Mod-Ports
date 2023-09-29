@@ -1,5 +1,8 @@
-﻿using BepInEx.Logging;
-using DrakiaXYZ.BigBrain.Brains;
+﻿extern alias PortBrain;
+
+using BepInEx.Logging;
+
+using PortBrainZ = PortBrain::DrakiaXYZ.BigBrain.Brains;
 using EFT;
 using SAIN.Components;
 using SAIN.SAINComponent;
@@ -9,7 +12,7 @@ using System.Text;
 
 namespace SAIN.Layers
 {
-    public abstract class SAINAction : CustomLogic
+    public abstract class SAINAction : PortBrainZ.CustomLogic
     {
         public SAINAction(BotOwner botOwner, string name) : base(botOwner)
         {

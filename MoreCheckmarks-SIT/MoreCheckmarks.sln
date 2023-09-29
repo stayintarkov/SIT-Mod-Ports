@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30413.136
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreCheckmarks", "MoreCheckmarks.csproj", "{1C987E9F-C3DF-456E-A956-CE3A11E960A7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C987E9F-C3DF-456E-A956-CE3A11E960A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C987E9F-C3DF-456E-A956-CE3A11E960A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C987E9F-C3DF-456E-A956-CE3A11E960A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C987E9F-C3DF-456E-A956-CE3A11E960A7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E277BA25-59F8-4AA7-BCCB-6E47923522FB}
+	EndGlobalSection
+EndGlobal

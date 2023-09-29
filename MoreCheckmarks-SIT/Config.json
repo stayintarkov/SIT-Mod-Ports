@@ -1,0 +1,15 @@
+{
+	"fulfilledAnyCanBeUpgraded" : false,
+	"questPriority" : 1,
+	"hideoutPriority" : 2,
+	"wishlistPriority" : 3,
+	"barterPriority" : 0,
+	"showLockedModules" : true,
+	"showFutureModulesLevels" : false,
+	"showBarter" : true,
+	"needMoreColor" : [ 1,0.37255,0.37255 ], 
+	"fulfilledColor" : [ 0.30588,1,0.27843 ], 
+	"wishlistColor" : [ 0.23137,0.93725,1 ],
+	"barterColor" : [ 1,0,1 ],
+	"includeFutureQuests" : true
+}

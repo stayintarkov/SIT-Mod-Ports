@@ -11,13 +11,17 @@ Host should edit the settings in SAIN (or any of the mods, really) and send them
 Customizing the settings in SAIN during a raid works but might have unknown effects, use at your own risk!
 The debug features of SAIN are disabled and should not be used.
 
+I have not tested MoreCheckmarks as a client but technically there should be no problems running it.
+
 **BigBrain**, **Waypoints** and **NoBushESP** were taken from **SIT 3.7** and compiled into separate plugins.
 
 ## Included Files
  - BigBrain-SIT.dll (port of BigBrain)
- - SAIN-SIT.dll (port of SAIN)
+ - SAIN-SIT.dll (port of SAIN, requires additional files)
  - NoBushESP-SIT.dll (port of NoBushESP)
- - Waypoints-SIT.dll (port of SPT-Waypoints)
+ - Waypoints-SIT.dll (port of SPT-Waypoints, requires additional files)
+ - MoreCheckmarks.dll (port of MoreCheckmarks, requires original server mod and additional files. Requires Aki.Common.dll)
+ - skwizzy.LootingBots.dll (port of LootingBots, requires original server mod, not thoroughly tested)
  - Newtonsoft.Json.dll (Library used for mods)
 
 ## Installation
@@ -31,13 +35,8 @@ When all of the above is done, extract the contents of the .zip into \BepInEx\Pl
 Once you start the game open the "LogOutput.log" file in \BepInEx\ and make sure all the plugins have loaded without errors.
 
 ## Compiling Source Code
-Put these files from your game folder inside the `References` folder:
-- Assembly-CSharp.dll (***needs*** to be deobfuscated from SIT)
-- bsg.console.core.dll
-- Comfort.dll
-- DissonanceVoip.dll
-- Mono.WebBrowser.dll
-- UnityEngine.dll
+Copy all .dll files from `\EscapeFromTarkov_Data\Managed` to the `References` folder. Add required references to each project.
+Make sure your Assembly-CSharp.dll is deobfuscated.
 
 Put the SIT.Core.dll from your BepInEx plugins in the `References` folder as well.
 The rest are NuGet packages for some of the mods. Should already be included in the .cs files.
@@ -51,3 +50,4 @@ I will not provide support for any user errors.
 
 ## Credits
 All credits go to the original authors. These are just ports to make the mods work with SIT.
+If you don't want your mod here you can contact me and I'll remove it.

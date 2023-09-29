@@ -1,4 +1,6 @@
-﻿using DrakiaXYZ.BigBrain.Brains;
+﻿extern alias PortBrain;
+
+using PortBrainZ = PortBrain::DrakiaXYZ.BigBrain.Brains;
 using EFT;
 using SAIN.Layers;
 using SAIN.Layers.Combat.Solo;
@@ -14,7 +16,7 @@ namespace SAIN
         {
             if (bot?.Brain?.Agent != null)
             {
-                if (BrainManager.IsCustomLayerActive(bot))
+                if (PortBrainZ.BrainManager.IsCustomLayerActive(bot))
                 {
                     string layer = bot.Brain.ActiveLayerName();
                     if (SAINLayers.Contains(layer))
@@ -50,11 +52,11 @@ namespace SAIN
             //Logger.LogInfo(LayersToRemove.Count);
             //Logger.LogInfo(SAINLayers.Count);
 
-            BrainManager.AddCustomLayer(typeof(CombatSquadLayer), stringList, 24);
-            BrainManager.AddCustomLayer(typeof(ExtractLayer), stringList, 22);
-            BrainManager.AddCustomLayer(typeof(CombatSoloLayer), stringList, 20);
+            PortBrainZ.BrainManager.AddCustomLayer(typeof(CombatSquadLayer), stringList, 24);
+            PortBrainZ.BrainManager.AddCustomLayer(typeof(ExtractLayer), stringList, 22);
+            PortBrainZ.BrainManager.AddCustomLayer(typeof(CombatSoloLayer), stringList, 20);
 
-            BrainManager.RemoveLayers(LayersToRemove, stringList);
+            PortBrainZ.BrainManager.RemoveLayers(LayersToRemove, stringList);
         }
 
         public static readonly List<string> SAINLayers = new List<string>

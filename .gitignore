@@ -12,6 +12,7 @@
 
 # References folder
 Ref/
+References/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
