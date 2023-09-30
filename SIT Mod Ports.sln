@@ -16,9 +16,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreCheckmarks", "MoreCheckmarks-SIT\MoreCheckmarks.csproj", "{1C987E9F-C3DF-456E-A956-CE3A11E960A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreCheckmarks-SIT", "MoreCheckmarks-SIT\MoreCheckmarks-SIT.csproj", "{1C987E9F-C3DF-456E-A956-CE3A11E960A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "looting-bots", "LootingBots-SIT\LootingBots\looting-bots.csproj", "{4623CFD4-155E-40B9-A6FF-B07401F66CB9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LootingBots-SIT", "LootingBots-SIT\LootingBots\LootingBots-SIT.csproj", "{4623CFD4-155E-40B9-A6FF-B07401F66CB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PTT-Extracts-SIT", "PTT-Extracts-SIT\PTT-Extracts-SIT.csproj", "{2E211B13-B42D-46B8-9D76-EFC322339C91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HitMarkers-SIT", "HitMarkers-SIT\HitMarkers-SIT.csproj", "{52AF318B-025E-47F7-8DA3-2A0D9688BD69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmandsSense-SIT", "AmandsSense-SIT\AmandsSense-SIT.csproj", "{E858D916-AA75-4D8D-A03E-19B2E9B9D94F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,6 +82,30 @@ Global
 		{4623CFD4-155E-40B9-A6FF-B07401F66CB9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4623CFD4-155E-40B9-A6FF-B07401F66CB9}.Release|x64.ActiveCfg = Release|x64
 		{4623CFD4-155E-40B9-A6FF-B07401F66CB9}.Release|x64.Build.0 = Release|x64
+		{2E211B13-B42D-46B8-9D76-EFC322339C91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E211B13-B42D-46B8-9D76-EFC322339C91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E211B13-B42D-46B8-9D76-EFC322339C91}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2E211B13-B42D-46B8-9D76-EFC322339C91}.Debug|x64.Build.0 = Debug|Any CPU
+		{2E211B13-B42D-46B8-9D76-EFC322339C91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E211B13-B42D-46B8-9D76-EFC322339C91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E211B13-B42D-46B8-9D76-EFC322339C91}.Release|x64.ActiveCfg = Release|Any CPU
+		{2E211B13-B42D-46B8-9D76-EFC322339C91}.Release|x64.Build.0 = Release|Any CPU
+		{52AF318B-025E-47F7-8DA3-2A0D9688BD69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52AF318B-025E-47F7-8DA3-2A0D9688BD69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52AF318B-025E-47F7-8DA3-2A0D9688BD69}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{52AF318B-025E-47F7-8DA3-2A0D9688BD69}.Debug|x64.Build.0 = Debug|Any CPU
+		{52AF318B-025E-47F7-8DA3-2A0D9688BD69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52AF318B-025E-47F7-8DA3-2A0D9688BD69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52AF318B-025E-47F7-8DA3-2A0D9688BD69}.Release|x64.ActiveCfg = Release|Any CPU
+		{52AF318B-025E-47F7-8DA3-2A0D9688BD69}.Release|x64.Build.0 = Release|Any CPU
+		{E858D916-AA75-4D8D-A03E-19B2E9B9D94F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E858D916-AA75-4D8D-A03E-19B2E9B9D94F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E858D916-AA75-4D8D-A03E-19B2E9B9D94F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E858D916-AA75-4D8D-A03E-19B2E9B9D94F}.Debug|x64.Build.0 = Debug|Any CPU
+		{E858D916-AA75-4D8D-A03E-19B2E9B9D94F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E858D916-AA75-4D8D-A03E-19B2E9B9D94F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E858D916-AA75-4D8D-A03E-19B2E9B9D94F}.Release|x64.ActiveCfg = Release|Any CPU
+		{E858D916-AA75-4D8D-A03E-19B2E9B9D94F}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
