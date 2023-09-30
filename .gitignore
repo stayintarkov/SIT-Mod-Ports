@@ -366,3 +366,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /PTT-Extracts-SIT
+/CustomInteractions.Prepatch-SIT
+/CustomInteractions-SIT
