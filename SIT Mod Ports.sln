@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HitMarkers-SIT", "HitMarker
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmandsSense-SIT", "AmandsSense-SIT\AmandsSense-SIT.csproj", "{E858D916-AA75-4D8D-A03E-19B2E9B9D94F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AmandsGraphics-SIT", "AmandsGraphics-SIT\AmandsGraphics-SIT.csproj", "{A54329B1-C247-457A-B9E7-0E13C93DF40F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -106,6 +108,14 @@ Global
 		{E858D916-AA75-4D8D-A03E-19B2E9B9D94F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E858D916-AA75-4D8D-A03E-19B2E9B9D94F}.Release|x64.ActiveCfg = Release|Any CPU
 		{E858D916-AA75-4D8D-A03E-19B2E9B9D94F}.Release|x64.Build.0 = Release|Any CPU
+		{A54329B1-C247-457A-B9E7-0E13C93DF40F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A54329B1-C247-457A-B9E7-0E13C93DF40F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A54329B1-C247-457A-B9E7-0E13C93DF40F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A54329B1-C247-457A-B9E7-0E13C93DF40F}.Debug|x64.Build.0 = Debug|Any CPU
+		{A54329B1-C247-457A-B9E7-0E13C93DF40F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A54329B1-C247-457A-B9E7-0E13C93DF40F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A54329B1-C247-457A-B9E7-0E13C93DF40F}.Release|x64.ActiveCfg = Release|Any CPU
+		{A54329B1-C247-457A-B9E7-0E13C93DF40F}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
