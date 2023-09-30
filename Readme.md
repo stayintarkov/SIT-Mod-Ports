@@ -22,6 +22,8 @@ I have not tested MoreCheckmarks as a client but technically there should be no 
  - Waypoints-SIT.dll (port of SPT-Waypoints, requires additional files)
  - MoreCheckmarks.dll (port of MoreCheckmarks, requires original server mod and additional files. Requires Aki.Common.dll)
  - skwizzy.LootingBots.dll (port of LootingBots, requires original server mod, not thoroughly tested)
+ - HitMarkers-SIT (port of HitMarkers-SIT, requires additional files)
+ - AmandsSense-SIT (port of AmandsSense, requires additional files)
  - Newtonsoft.Json.dll (Library used for mods)
 
 ## Installation
