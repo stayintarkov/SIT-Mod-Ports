@@ -26,6 +26,8 @@ The debug features of SAIN are disabled and should not be used.
  - Newtonsoft.Json.dll (Library used for mods)
 
 ## Installation
+Download the latest [release](https://github.com/Lacyway/SIT-Mod-Ports/releases/latest).
+
 If the original mods have any extra steps, like Waypoints or SAIN, do them first.
 Waypoints need the "**custom**" and "**navmesh**" folder inside \BepInEx\Plugins\. SAIN needs the "**SAIN**" folder in \BepInEx\Plugins\ and also the server mod in \user\mods\.
 
