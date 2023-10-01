@@ -11,8 +11,6 @@ Host should edit the settings in SAIN (or any of the mods, really) and send them
 Customizing the settings in SAIN during a raid works but might have unknown effects, use at your own risk!
 The debug features of SAIN are disabled and should not be used.
 
-I have not tested MoreCheckmarks as a client but technically there should be no problems running it.
-
 **BigBrain**, **Waypoints** and **NoBushESP** were taken from **SIT 3.7** and compiled into separate plugins.
 
 ## Included Files
@@ -24,6 +22,7 @@ I have not tested MoreCheckmarks as a client but technically there should be no 
  - skwizzy.LootingBots.dll (port of LootingBots, requires original server mod, not thoroughly tested)
  - HitMarkers-SIT (port of HitMarkers-SIT, requires additional files)
  - AmandsSense-SIT (port of AmandsSense, requires additional files)
+ - AmandsGraphics-SIT (port of AmandsGraphics)
  - Newtonsoft.Json.dll (Library used for mods)
 
 ## Installation
@@ -31,7 +30,8 @@ If the original mods have any extra steps, like Waypoints or SAIN, do them first
 Waypoints need the "**custom**" and "**navmesh**" folder inside \BepInEx\Plugins\. SAIN needs the "**SAIN**" folder in \BepInEx\Plugins\ and also the server mod in \user\mods\.
 
 **NOTE**: If you are going to use SAIN and NoBushESP together, it's already baked into SAIN as an option so do not install the standalone mod. Use the option in SAIN instead.
-When all of the above is done, extract the contents of the .zip into \BepInEx\Plugins\
+
+When all of the above is done, extract the contents (or specific mods you want) of the .zip into \BepInEx\Plugins\. Remove the original mods .dll files after extracting the ports.
 
 ## Verification
 Once you start the game open the "LogOutput.log" file in \BepInEx\ and make sure all the plugins have loaded without errors.
