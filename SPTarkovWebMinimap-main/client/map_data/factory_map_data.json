@@ -1,0 +1,15 @@
+{
+    "MapName": "Factory",
+    "MapImageFile": "factory_loot_map.png",
+    "MapRotation": 0,
+    "XCoefficients": [
+      3562.6225441386364,
+      6.805260888915667
+    ],
+    "ZCoefficients": [
+      1493.926420016474,
+      -4.245237032551324
+    ],
+    "bounds": [ 0, 0, 7680, 4320 ],
+    "initialZoom": 3
+  }

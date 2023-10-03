@@ -1,0 +1,31 @@
+{
+  "MapName": "Laboratory Loot",
+  "MapImageFile": "laboratory_loot_map_modified.png",
+  "MapRotation": 0,
+  "XCoefficients": [
+    1625.3518606902544,
+    -15.25742566200499
+  ],
+  "ZCoefficients": [
+    -3634.0838765085923,
+    -16.69684966834031
+  ],
+  "Floor2XCoefficients": [
+    3958.1026747466453,
+    -20.825287173847645
+  ],
+  "Floor2ZCoefficients": [
+    -6148.09603885268,
+    -22.86684305773968
+  ],
+  "TechnicalLevelXCoefficients": [
+    -1876.990527970124,
+    -17.20918685422704
+  ],
+  "TechnicalLevelZCoefficients": [
+    -5057.205361523029,
+    -21.093014235848095
+  ],
+  "bounds": [ 0, 0, 9826, 4000 ],
+  "initialZoom": 3
+}

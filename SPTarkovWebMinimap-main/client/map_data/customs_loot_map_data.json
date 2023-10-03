@@ -1,0 +1,15 @@
+{
+  "MapName": "Customs Loot",
+  "MapImageFile": "customs_loot_map.png",
+  "MapRotation": 0,
+  "XCoefficients": [
+    2684.088998608434,
+    -3.9183506890614646
+  ],
+  "ZCoefficients": [
+    1032.9541626223818,
+    -4.00792349065734
+  ],
+  "bounds": [ 0, 0, 4097, 2142 ],
+  "initialZoom": 3
+}

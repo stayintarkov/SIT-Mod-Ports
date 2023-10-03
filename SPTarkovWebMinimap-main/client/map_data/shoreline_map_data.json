@@ -1,0 +1,15 @@
+{
+  "MapName": "Shoreline",
+  "MapImageFile": "shoreline_map.png",
+  "MapRotation": 0,
+  "XCoefficients": [
+    964.1517387793177,
+    -1.998430759148754
+  ],
+  "ZCoefficients": [
+    1196.2507404149235,
+    -1.9392033478804733
+  ],
+  "bounds": [ 0, 0, 3820, 1980 ],
+  "initialZoom": 3
+}

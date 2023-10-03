@@ -1,0 +1,31 @@
+{
+  "MapName": "Interchange",
+  "MapImageFile": "interchange_map_modified.png",
+  "MapRotation": 0,
+  "XCoefficients": [
+    2207.0466279693674,
+    -4.0354940505471735
+  ],
+  "ZCoefficients": [
+    1241.4215545544469,
+    -3.024349431071123
+  ],
+  "InteriorFloor2XCoefficients": [
+    3749.241922164323,
+    -4.8580938330422425
+  ],
+  "InteriorFloor2ZCoefficients": [
+    1243.8646222369562,
+    -3.640703282748387
+  ],
+  "ParkingGarageXCoefficients": [
+    359.9058928832488,
+    -2.9441812244156975
+  ],
+  "ParkingGarageZCoefficients": [
+    680.2782313420158,
+    -2.23713108324646
+  ],
+  "bounds": [ 0, 0, 4190, 2704 ],
+  "initialZoom": 3
+}
