@@ -368,3 +368,8 @@ FodyWeavers.xsd
 /PTT-Extracts-SIT
 /CustomInteractions.Prepatch-SIT
 /CustomInteractions-SIT
+/Realism-SIT/Realism-SIT.csproj
+/CombatStances-SIT/CombatStances-SIT.csproj
+/TraderModding/TraderModding-SIT.csproj
+/CombatStances-SIT
+/Realism-SIT
