@@ -15,17 +15,17 @@ using EFT.Quests;
 using System.Linq;
 using TMPro;
 using BepInEx;
-using Comfort.Common;
 using Aki.Common.Http;
+using Comfort.Common;
 
 
 // UPDATE: Find these GClasses
 // We want to get access to the list of availabe loot item actions when we look at loose loot so we can change color of "Take" action
-// GClass1829 has static method GetAvailableActions(GamePlayerOwner owner, [CanBeNull] GInterface85 interactive) to get list of actions available for the interactive
-// This calls GClass1829.smethod_3 if the interactive is a LootItem
-// This returns an instance of GClass2891 which has a list field "Actions" containing all available actions of type GClass2890
-// GClass2890.Name will be directly used as the string that will be displayed in the list, so we set it to a TMPro string with correct color and bold
-using InteractionController = GClass1829;
+// GClass1726 has static method GetAvailableActions(GamePlayerOwner owner, [CanBeNull] GInterface85 interactive) to get list of actions available for the interactive
+// This calls GClass1726.smethod_3 if the interactive is a LootItem
+// This returns an instance of GClass2805 which has a list field "Actions" containing all available actions of type GClass2804
+// GClass2804.Name will be directly used as the string that will be displayed in the list, so we set it to a TMPro string with correct color and bold
+using InteractionController = GClass1776;
 using InteractionInstance = Interaction0;
 using Action = SelectedAction;
 using EFT.Hideout;
@@ -46,7 +46,7 @@ namespace MoreCheckmarks
         // BepinEx
         public const string pluginGuid = "VIP.TommySoucy.MoreCheckmarks";
         public const string pluginName = "MoreCheckmarks";
-        public const string pluginVersion = "1.5.7";
+        public const string pluginVersion = "1.5.9";
 
         // Config settings
         public static bool fulfilledAnyCanBeUpgraded = false;
@@ -714,7 +714,7 @@ namespace MoreCheckmarks
                     // UPDATE: This is to know when a new profile is selected so we can load up to date data
                     // We want to do this when client makes request "/client/game/profile/select"
                     // Look for that string in dnspy, this creates a callback with a method_0, that is the method we want to postfix
-                    ProfileSelector = assemblies[i].GetType("BackendSession0").GetNestedType("Class1187", BindingFlags.NonPublic);
+                    ProfileSelector = assemblies[i].GetType("BackendSession0").GetNestedType("Class1243", BindingFlags.NonPublic);
                 }
             }
 
@@ -1328,7 +1328,7 @@ namespace MoreCheckmarks
                         {
                             if (questDataClass.Status == EQuestStatus.Started && questDataClass.Template != null)
                             {
-                                // UPDATE: Look for the type used in StatusData's Template var of type RawQuest0
+                                // UPDATE: Look for the type used in StatusData's Template var of type QuestTemplate
                                 // with QuestConditionsList, for the value
                                 foreach (KeyValuePair<EQuestStatus, Conditions> kvp in questDataClass.Template.Conditions)
                                 {
