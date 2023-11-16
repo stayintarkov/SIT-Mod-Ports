@@ -19,7 +19,7 @@ using SIT.Core;
 
 namespace RecoilStandalone
 {
-    [BepInPlugin(SIT.Core.PluginInfo.PLUGIN_GUID, SIT.Core.PluginInfo.PLUGIN_NAME, SIT.Core.PluginInfo.PLUGIN_VERSION)]
+    [BepInPlugin("com.sit.recoilstandalone", "Recoil Standalone", "1.0.0")]
     public class Plugin : BaseUnityPlugin
     {
         public static ConfigEntry<float> ResetTime { get; set; }
@@ -50,10 +50,12 @@ namespace RecoilStandalone
         public static ConfigEntry<bool> EnableHybridReset { get; set; }
         public static ConfigEntry<bool> HybridForAll { get; set; }
 
+        /*
         public static ConfigEntry<float> test1 { get; set; }
         public static ConfigEntry<float> test2 { get; set; }
         public static ConfigEntry<float> test3 { get; set; }
         public static ConfigEntry<float> test4 { get; set; }
+        */
 
         public static bool IsFiring = false;
         public static float FiringTimer = 0.0f;
@@ -107,16 +109,18 @@ namespace RecoilStandalone
 
         void Awake()
         {
-            string testing = "0. Testing";
+            //string testing = "0. Testing";
             string RecoilClimbSettings = "1. Recoil Climb Settings";
             string RecoilSettings = "2. Recoil Settings";
             string AdvancedRecoilSettings = "3. Advanced Recoil Settings";
             string WeaponSettings = "4. Weapon Settings";
 
+            /*
             test1 = Config.Bind<float>(testing, "test 1", 1f, new ConfigDescription("", new AcceptableValueRange<float>(-5000f, 5000f), new ConfigurationManagerAttributes { Order = 600, IsAdvanced = true }));
             test2 = Config.Bind<float>(testing, "test 2", 1f, new ConfigDescription("", new AcceptableValueRange<float>(-5000f, 5000f), new ConfigurationManagerAttributes { Order = 500, IsAdvanced = true }));
             test3 = Config.Bind<float>(testing, "test 3", 1f, new ConfigDescription("", new AcceptableValueRange<float>(-5000f, 5000f), new ConfigurationManagerAttributes { Order = 400, IsAdvanced = true }));
             test4 = Config.Bind<float>(testing, "test 4", 1f, new ConfigDescription("", new AcceptableValueRange<float>(-5000f, 5000f), new ConfigurationManagerAttributes { Order = 300, IsAdvanced = true }));
+            */
 
             EnableHybridRecoil = Config.Bind<bool>(RecoilClimbSettings, "Enable Hybrid Recoil System", true, new ConfigDescription("Combines Steady Recoil Climb With Auto-Compensation. If You Do Not Attempt To Control Recoil, Auto-Compensation Will Decrease Resulting In More Muzzle Flip. If You Control The Recoil, Auto-Comp Increases And Muzzle Flip Decreases.", null, new ConfigurationManagerAttributes { Order = 100 }));
             HybridForAll = Config.Bind<bool>(RecoilClimbSettings, "Enable Hybrid Recoil For All Weapons", false, new ConfigDescription("By Default This Hybrid System Is Only Enabled For Pistols And Stockless/Folded Stocked Weapons.", null, new ConfigurationManagerAttributes { Order = 90 }));
