@@ -221,7 +221,7 @@ namespace RecoilStandalone
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(Player).GetMethod("LateUpdate", BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(Player).GetMethod("LateUpdate", BindingFlags.Instance | BindingFlags.Public);
         }
 
     
@@ -503,7 +503,7 @@ namespace RecoilStandalone
 
         [PatchPrefix]
         private static bool PatchPrefix(BreathEffector __instance, float deltaTime, float ____breathIntensity, float ____shakeIntensity, float ____breathFrequency,
-        float ____cameraSensetivity, Vector2 ____baseHipRandomAmplitudes, Spring ____recoilRotationSpring, Spring ____handsRotationSpring, AnimationCurve ____lackOfOxygenStrength, GClass2088[] ____processors)
+        float ____cameraSensetivity, Vector2 ____baseHipRandomAmplitudes, Spring ____recoilRotationSpring, Spring ____handsRotationSpring, AnimationCurve ____lackOfOxygenStrength, GClass2089[] ____processors)
         {
             float amplGain = Mathf.Sqrt(__instance.AmplitudeGain.Value);
             __instance.HipXRandom.Amplitude = Mathf.Clamp(____baseHipRandomAmplitudes.x + amplGain, 0f, 3f);

@@ -19,7 +19,7 @@ using SIT.Core;
 
 namespace RecoilStandalone
 {
-    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInPlugin(SIT.Core.PluginInfo.PLUGIN_GUID, SIT.Core.PluginInfo.PLUGIN_NAME, SIT.Core.PluginInfo.PLUGIN_VERSION)]
     public class Plugin : BaseUnityPlugin
     {
         public static ConfigEntry<float> ResetTime { get; set; }

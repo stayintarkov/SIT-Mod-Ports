@@ -56,7 +56,7 @@ namespace RecoilStandalone
         }
 
 
-        public static void SafelyAddAttributeToList(ItemAttributeClass itemAttribute, Mod __instance)
+        public static void SafelyAddAttributeToList(ItemAttribute0 itemAttribute, Mod __instance)
         {
             if (itemAttribute.Base() != 0f)
             {
