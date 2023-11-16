@@ -1,5 +1,7 @@
 # ReadMe
 ## Info
+**NOTE**: The current release is for EFT 27050. To download mods for the old version, download the 1.4 release.
+
 These are all ports of mods from **SPT AKI** to be compatible with **SIT 1.7.8611.22925 (AKI Server 3.6.1)** and **EFT 0.13.1.3-25206**. DO NOT TRY TO USE THESE ON ANY OTHER VERSION!
 I have tested and ran all of them without any problems.
 Use them at your own risk, I will not be providing ANY support. Make sure to follow the instructions thoroughly!
