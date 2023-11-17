@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
 using EFT.UI;
+using SIT.Core.Coop;
 
 namespace AmandsHitmarker
 {
@@ -283,7 +284,8 @@ namespace AmandsHitmarker
             new AmandsArmorDamagePatch().Enable();
             new AmandsProceedArmorDamagePatch().Enable();
             new AmandsKillPatch().Enable();
-            new AmandsLocalPlayerPatch().Enable();
+            new AmandsCoopPlayerPatchHitmarker().Enable();
+            new AmandsLocalPlayerPatchHitmarker().Enable();
             new AmandsMenuUIPatch().Enable();
             new AmandsBattleUIScreenPatch().Enable();
             new AmandsSSAAPatch().Enable();
@@ -396,7 +398,39 @@ namespace AmandsHitmarker
             if (button) AmandsHitmarkerClass.ReloadUI();
         }
     }
-    public class AmandsLocalPlayerPatch : ModulePatch
+
+    public class AmandsCoopPlayerPatchHitmarker : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(CoopGame).GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
+        }
+
+        private static void WaitForCoopGame(Task<LocalPlayer> task)
+        {
+            task.Wait();
+
+            LocalPlayer localPlayer = task.Result;
+
+            if (localPlayer != null && localPlayer.IsYourPlayer)
+            {
+                AmandsHitmarkerClass.localPlayer = localPlayer;
+                AmandsHitmarkerClass.localPlayerNickname = localPlayer.Profile.Nickname;
+                AmandsHitmarkerClass.PlayerSuperior = localPlayer.gameObject;
+                AmandsHitmarkerClass.Kills = 0;
+                AmandsHitmarkerClass.ReloadFiles();
+                AmandsHitmarkerClass.CanDebugReloadFiles = true;
+            }
+        }
+
+        [PatchPostfix]
+        private static void PatchPostFix(Task<LocalPlayer> __result)
+        {
+            Task.Run(() => WaitForCoopGame(__result));
+        }
+    }
+
+    public class AmandsLocalPlayerPatchHitmarker : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {

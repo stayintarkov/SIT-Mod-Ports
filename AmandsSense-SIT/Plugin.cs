@@ -1,6 +1,6 @@
 
 using Aki.Common.Utils;
-using Aki.Reflection.Patching;
+using SIT.Tarkov.Core;
 using BepInEx;
 using BepInEx.Configuration;
 using System;
@@ -14,6 +14,7 @@ using EFT.InventoryLogic;
 using HarmonyLib;
 using EFT;
 using System.Threading.Tasks;
+using SIT.Core.Coop;
 
 namespace AmandsSense
 {
@@ -230,11 +231,43 @@ namespace AmandsSense
             MapsColor = Config.Bind("Colors", "MapsColor", new Color(0.84f, 0.88f, 0.95f, 0.8f), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 20 }));
             MoneyColor = Config.Bind("Colors", "MoneyColor", new Color(0.84f, 0.88f, 0.95f, 0.8f), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 10 }));
 
-            new AmandsLocalPlayerPatch().Enable();
+            new AmandsCoopPlayerPatchSense().Enable();
+            new AmandsLocalPlayerPatchSense().Enable();
             new AmandsSensePrismEffectsPatch().Enable();
         }
     }
-    public class AmandsLocalPlayerPatch : ModulePatch
+    public class AmandsCoopPlayerPatchSense : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(CoopGame).GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
+        }
+
+        private static void WaitForCoopGame(Task<LocalPlayer> task)
+        {
+            task.Wait();
+
+            LocalPlayer localPlayer = task.Result;
+
+            if (localPlayer != null && localPlayer.IsYourPlayer)
+            {
+                AmandsSenseClass.localPlayer = localPlayer;
+                AmandsSenseClass.ItemsSenses.Clear();
+                AmandsSenseClass.ItemsAlwaysOn.Clear();
+                AmandsSenseClass.ContainersAlwaysOn.Clear();
+                AmandsSenseClass.DeadbodyAlwaysOn.Clear();
+                AmandsSensePlugin.AmandsSenseClassComponent.DynamicAlwaysOnSense();
+            }
+        }
+
+        [PatchPostfix]
+        private static void PatchPostFix(Task<LocalPlayer> __result)
+        {
+            Task.Run(() => WaitForCoopGame(__result));
+        }
+    }
+
+    public class AmandsLocalPlayerPatchSense : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
@@ -255,6 +288,7 @@ namespace AmandsSense
             }
         }
     }
+
     public class AmandsSensePrismEffectsPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
@@ -267,6 +301,10 @@ namespace AmandsSense
             if (__instance.gameObject.name == "FPS Camera")
             {
                 AmandsSenseClass.prismEffects = __instance;
+            }
+            else
+            {
+                Debug.LogError("Sense: FPS Camera not found");
             }
         }
     }
