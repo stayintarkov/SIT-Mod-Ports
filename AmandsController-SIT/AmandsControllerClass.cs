@@ -4615,7 +4615,8 @@ namespace AmandsController
                     IsInteractionAvailableInvokeParameters[0] = EItemInfoButton.Equip;
                     if ((bool)IsInteractionAvailable.Invoke(NewContextInteractionsObject, IsInteractionAvailableInvokeParameters))
                     {
-                        ItemUiContext.QuickEquip(onPointerEnterItemView.Item).HandleExceptions();
+                        //ItemUiContext.QuickEquip(onPointerEnterItemView.Item).HandleExceptions(); what does this do?
+                        ItemUiContext.QuickEquip(onPointerEnterItemView.Item);
                         if (tooltip != null)
                         {
                             tooltip.Close();
@@ -4711,7 +4712,8 @@ namespace AmandsController
                     IsInteractionAvailableInvokeParameters[0] = EItemInfoButton.Discard;
                     if ((bool)IsInteractionAvailable.Invoke(NewContextInteractionsObject, IsInteractionAvailableInvokeParameters))
                     {
-                        ItemUiContext.ThrowItem(onPointerEnterItemView.Item).HandleExceptions();
+                        //ItemUiContext.ThrowItem(onPointerEnterItemView.Item).HandleExceptions(); what does this do?
+                        ItemUiContext.ThrowItem(onPointerEnterItemView.Item);
                         if (tooltip != null)
                         {
                             tooltip.Close();
