@@ -1,4 +1,4 @@
-﻿using SIT.Tarkov.Core;
+﻿using StayInTarkov;
 using BepInEx;
 using System.Reflection;
 using UnityEngine;
@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Sirenix.Utilities;
 using EFT.InputSystem;
 using UnityEngine.EventSystems;
+using StayInTarkov.Coop;
 
 namespace AmandsController
 {
@@ -126,7 +127,8 @@ namespace AmandsController
             PressFontSize = Config.Bind("UI Button Blocks", "PressFontSize", 20, new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 110, IsAdvanced = true }));
             HoldDoubleClickFontSize = Config.Bind("UI Button Blocks", "HoldDoubleClickFontSize", 12, new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 100, IsAdvanced = true }));
 
-            new AmandsLocalPlayerPatch().Enable();
+            new AmandsCoopPlayerPatchController().Enable();
+            new AmandsLocalPlayerPatchController().Enable();
             new AmandsTarkovApplicationPatch().Enable();
             new AmandsSSAAPatch().Enable();
             new AmandsInventoryScreenShowPatch().Enable();
@@ -168,7 +170,33 @@ namespace AmandsController
             LeftControl = new InputGetKeyDownLeftControlPatch();
         }
     }
-    public class AmandsLocalPlayerPatch : ModulePatch
+
+    public class AmandsCoopPlayerPatchController : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(CoopGame).GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
+        }
+
+        private static void WaitForCoopGame(Task<LocalPlayer> task)
+        {
+            task.Wait();
+
+            LocalPlayer localPlayer = task.Result;
+
+            if (localPlayer != null && localPlayer.IsYourPlayer)
+            {
+                AmandsControllerPlugin.AmandsControllerClassComponent.UpdateController(localPlayer);
+            }
+        }
+
+        [PatchPostfix]
+        private static void PatchPostFix(Task<LocalPlayer> __result)
+        {
+            Task.Run(() => WaitForCoopGame(__result));
+        }
+    }
+    public class AmandsLocalPlayerPatchController : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {

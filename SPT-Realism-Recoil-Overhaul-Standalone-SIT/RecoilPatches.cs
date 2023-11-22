@@ -6,15 +6,11 @@ using System.Reflection;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using System;
-using static EFT.Player;
-using EFT.Interactive;
-using System.Linq;
 using EFT.Animations;
-using System.Collections.Generic;
 using PlayerInterface = GInterface118;
 using AimingSettings = GClass1253.AimingConfiguration;
 using IWeapon = IActiveWeapon;
-using SIT.Tarkov.Core;
+using StayInTarkov;
 
 namespace RecoilStandalone
 {

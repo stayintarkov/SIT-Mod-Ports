@@ -1,6 +1,4 @@
-
-using Aki.Common.Utils;
-using SIT.Tarkov.Core;
+using StayInTarkov;
 using BepInEx;
 using BepInEx.Configuration;
 using System;
@@ -12,7 +10,6 @@ using UnityEngine.Rendering.PostProcessing;
 using EFT.CameraControl;
 using EFT.InventoryLogic;
 using HarmonyLib;
-using EFT.UI;
 using System.Collections.Generic;
 using EFT;
 using System.Threading.Tasks;
@@ -675,7 +672,7 @@ namespace AmandsGraphics
             TextWriter writer = null;
             try
             {
-                var contentsToWriteToFile = SIT.Tarkov.Core.Json.Serialize(objectToWrite);
+                var contentsToWriteToFile = Json.Serialize(objectToWrite);
                 writer = new StreamWriter(filePath, append);
                 writer.Write(contentsToWriteToFile);
             }
@@ -692,7 +689,7 @@ namespace AmandsGraphics
             {
                 reader = new StreamReader(filePath);
                 var fileContents = reader.ReadToEnd();
-                return SIT.Tarkov.Core.Json.Deserialize<T>(fileContents);
+                return Json.Deserialize<T>(fileContents);
             }
             finally
             {

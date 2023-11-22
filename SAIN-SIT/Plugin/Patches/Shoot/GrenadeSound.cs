@@ -1,4 +1,4 @@
-﻿using SIT.Tarkov.Core;
+﻿using StayInTarkov;
 using Comfort.Common;
 using EFT;
 using HarmonyLib;

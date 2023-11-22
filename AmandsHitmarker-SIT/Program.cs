@@ -3,15 +3,14 @@ using BepInEx.Configuration;
 using EFT;
 using EFT.InventoryLogic;
 using System.Reflection;
-using SIT.Tarkov.Core;
+using StayInTarkov;
 using UnityEngine;
 using TMPro;
 using HarmonyLib;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
-using EFT.UI;
-using SIT.Core.Coop;
+using StayInTarkov.Coop;
 
 namespace AmandsHitmarker
 {

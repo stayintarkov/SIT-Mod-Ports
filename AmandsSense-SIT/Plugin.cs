@@ -1,20 +1,11 @@
-
-using Aki.Common.Utils;
-using SIT.Tarkov.Core;
+using StayInTarkov;
 using BepInEx;
 using BepInEx.Configuration;
-using System;
-using System.IO;
 using System.Reflection;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering.PostProcessing;
-using EFT.CameraControl;
-using EFT.InventoryLogic;
-using HarmonyLib;
 using EFT;
 using System.Threading.Tasks;
-using SIT.Core.Coop;
+using StayInTarkov.Coop;
 
 namespace AmandsSense
 {

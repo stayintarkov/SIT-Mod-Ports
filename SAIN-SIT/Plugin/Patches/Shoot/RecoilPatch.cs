@@ -1,7 +1,6 @@
-﻿using SIT.Tarkov.Core;
+﻿using StayInTarkov;
 using EFT;
 using HarmonyLib;
-
 using System.Reflection;
 using UnityEngine;
 using System;
@@ -22,7 +21,7 @@ namespace SAIN.Patches.Shoot
         private static Type _aimingDataType;
         protected override MethodBase GetTargetMethod()
         {
-            _aimingDataType = PatchConstants.EftTypes.Single(x => x.GetProperty("LastSpreadCount") != null && x.GetProperty("LastAimTime") != null);
+            _aimingDataType = StayInTarkovHelperConstants.EftTypes.Single(x => x.GetProperty("LastSpreadCount") != null && x.GetProperty("LastAimTime") != null);
             return AccessTools.Method(_aimingDataType, "method_13");
         }
 

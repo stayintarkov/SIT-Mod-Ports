@@ -63,8 +63,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\Comfort.dll</HintPath>
     </Reference>
-    <Reference Include="SIT.Core">
-      <HintPath>..\References\SIT.Core.dll</HintPath>
+    <Reference Include="StayInTarkov">
+      <HintPath>..\References\StayInTarkov.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -102,8 +102,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>COPY "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Ref\plugins"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

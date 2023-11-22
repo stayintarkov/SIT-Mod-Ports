@@ -13,7 +13,7 @@ using EFTSoundPlayer = GClass567;
 using EFTStatModifiersClass = Modif;
 using EFTTime = GClass1237;
 using EFTSearchPoint = PlaceForCheck;
-using SIT.Tarkov.Core;
+using StayInTarkov;
 
 namespace SAIN.Helpers
 {

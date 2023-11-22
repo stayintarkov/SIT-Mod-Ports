@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using static System.Net.Mime.MediaTypeNames;
-using SIT.Core;
+using StayInTarkov;
 
 namespace RecoilStandalone
 {

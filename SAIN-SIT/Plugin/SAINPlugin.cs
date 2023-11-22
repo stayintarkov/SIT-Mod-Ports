@@ -12,7 +12,7 @@ using System;
 using UnityEngine;
 using static SAIN.AssemblyInfo;
 using static SAIN.Editor.SAINLayout;
-using SIT.Core;
+using StayInTarkov;
 
 namespace SAIN
 {

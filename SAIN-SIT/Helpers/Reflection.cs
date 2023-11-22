@@ -1,4 +1,4 @@
-﻿using SIT.Tarkov.Core;
+﻿using StayInTarkov;
 using HarmonyLib;
 using SAIN.Preset;
 using SAIN.Preset.BotSettings.SAINSettings;
@@ -11,7 +11,7 @@ namespace SAIN.Helpers
 {
     internal class Reflection
     {
-        public static Type AimingDataType = PatchConstants.EftTypes.Single(x => x.GetProperty("LastSpreadCount") != null && x.GetProperty("LastAimTime") != null);
+        public static Type AimingDataType = StayInTarkovHelperConstants.EftTypes.Single(x => x.GetProperty("LastSpreadCount") != null && x.GetProperty("LastAimTime") != null);
         public static PropertyInfo EFTFileSettings = AccessTools.Property(typeof(GClass504), "FileSettings");
         public static FieldInfo[] EFTSettingsCategories => GetFieldsInType(EFTFileSettings.PropertyType);
         public static FieldInfo[] SAINSettingsCategories => GetFieldsInType<SAINSettingsClass>();

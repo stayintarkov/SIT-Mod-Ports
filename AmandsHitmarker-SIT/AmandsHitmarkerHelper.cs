@@ -1,6 +1,6 @@
 using System;
 using System.Reflection;
-using SIT.Tarkov.Core;
+using StayInTarkov;
 using System.Linq;
 using EFT;
 
@@ -25,17 +25,17 @@ namespace AmandsHitmarker
 
         public static void Init()
         {
-            LocalizedType = PatchConstants.EftTypes.Single((Type x) => x.GetMethod("ParseLocalization", BindingFlags.Static | BindingFlags.Public) != null);
+            LocalizedType = StayInTarkovHelperConstants.EftTypes.Single((Type x) => x.GetMethod("ParseLocalization", BindingFlags.Static | BindingFlags.Public) != null);
             LocalizedMethod = LocalizedType.GetMethods().First((MethodInfo x) => x.Name == "Localized" && x.GetParameters().Length == 2 && x.GetParameters()[0].ParameterType == typeof(string) && x.GetParameters()[1].ParameterType == typeof(EStringCase));
 
             BindingFlags flags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public;
-            RoleType = PatchConstants.EftTypes.Single((Type x) => x.GetMethod("IsBoss", flags) != null && x.GetMethod("Init", flags) != null);
+            RoleType = StayInTarkovHelperConstants.EftTypes.Single((Type x) => x.GetMethod("IsBoss", flags) != null && x.GetMethod("Init", flags) != null);
             IsBossMethod = RoleType.GetMethod("IsBoss", flags);
             IsFollowerMethod = RoleType.GetMethod("IsFollower", flags);
             CountAsBossMethod = RoleType.GetMethod("CountAsBossForStatistics", flags);
             GetScavRoleKeyMethod = RoleType.GetMethod("GetScavRoleKey", flags);
 
-            TransliterateType = PatchConstants.EftTypes.Single(x => x.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Any(t => t.Name == "Transliterate"));
+            TransliterateType = StayInTarkovHelperConstants.EftTypes.Single(x => x.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Any(t => t.Name == "Transliterate"));
             TransliterateMethod = TransliterateType.GetMethods(BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance).Single(x => x.Name == "Transliterate" && x.GetParameters().Length == 1);
             UsesFSR2UpscalerMethod = typeof(SSAA).GetMethod("UsesFSR2Upscaler", BindingFlags.Public | BindingFlags.Instance);
             UsesFSR2UpscalerMethodFound = UsesFSR2UpscalerMethod != null;

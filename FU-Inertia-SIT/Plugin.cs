@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
-using SIT.Tarkov.Core;
+using StayInTarkov;
 using BepInEx;
 using BepInEx.Configuration;
 using Comfort.Common;

@@ -158,8 +158,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\EscapeFromTarkov_Data\Managed\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SIT.Core">
-      <HintPath>..\References\SIT.Core.dll</HintPath>
+    <Reference Include="StayInTarkov">
+      <HintPath>..\References\StayInTarkov.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -457,8 +457,7 @@
     <VisualStudio AllowExistingFolder="true" />
   </ProjectExtensions>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>COPY "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Ref\plugins"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

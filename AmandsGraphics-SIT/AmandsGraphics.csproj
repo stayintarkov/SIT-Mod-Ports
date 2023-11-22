@@ -52,8 +52,8 @@
     <Reference Include="DOTween">
       <HintPath>..\References\DOTween.dll</HintPath>
     </Reference>
-    <Reference Include="SIT.Core">
-      <HintPath>..\References\SIT.Core.dll</HintPath>
+    <Reference Include="StayInTarkov">
+      <HintPath>..\References\StayInTarkov.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -103,4 +103,7 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>COPY "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Ref\plugins"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

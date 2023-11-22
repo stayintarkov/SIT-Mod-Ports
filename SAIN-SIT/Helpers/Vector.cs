@@ -1,4 +1,4 @@
-﻿using SIT.Tarkov.Core;
+﻿using StayInTarkov;
 using EFT;
 using EFT.UI.Ragfair;
 using HarmonyLib;

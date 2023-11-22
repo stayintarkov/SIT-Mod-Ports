@@ -20,6 +20,7 @@ using System.IO;
 using Newtonsoft.Json;
 using UnityEngine.Networking;
 using TMPro;
+using UnityEngine.Events;
 using EFT.Interactive;
 using System.Net;
 using UnityEngine.Rendering;
@@ -4615,8 +4616,7 @@ namespace AmandsController
                     IsInteractionAvailableInvokeParameters[0] = EItemInfoButton.Equip;
                     if ((bool)IsInteractionAvailable.Invoke(NewContextInteractionsObject, IsInteractionAvailableInvokeParameters))
                     {
-                        //ItemUiContext.QuickEquip(onPointerEnterItemView.Item).HandleExceptions(); what does this do?
-                        ItemUiContext.QuickEquip(onPointerEnterItemView.Item);
+                        ItemUiContext.QuickEquip(onPointerEnterItemView.Item).HandleExceptions();
                         if (tooltip != null)
                         {
                             tooltip.Close();
@@ -4712,8 +4712,7 @@ namespace AmandsController
                     IsInteractionAvailableInvokeParameters[0] = EItemInfoButton.Discard;
                     if ((bool)IsInteractionAvailable.Invoke(NewContextInteractionsObject, IsInteractionAvailableInvokeParameters))
                     {
-                        //ItemUiContext.ThrowItem(onPointerEnterItemView.Item).HandleExceptions(); what does this do?
-                        ItemUiContext.ThrowItem(onPointerEnterItemView.Item);
+                        ItemUiContext.ThrowItem(onPointerEnterItemView.Item).HandleExceptions();
                         if (tooltip != null)
                         {
                             tooltip.Close();
