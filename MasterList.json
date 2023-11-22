@@ -2,7 +2,7 @@
   {
     "Name": "Amands's Controller",
     "Author": "Amands2Mello",
-    "SupportedVersion": "1.9.8713.31794",
+    "SupportedVersion": "1.9.8724.27765",
     "ModVersion": "0.2.9",
     "Description": "Controller support for Tarkov.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1550-amands-controller/",
@@ -15,7 +15,7 @@
   {
     "Name": "Amands's Graphics",
     "Author": "Amands2Mello",
-    "SupportedVersion": "1.9.8713.31794",
+    "SupportedVersion": "1.9.8724.27765",
     "ModVersion": "1.5.3",
     "Description": "Lighting and postprocessing overhaul",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/813-amands-s-graphics/",
@@ -28,7 +28,7 @@
   {
     "Name": "Amands's Hitmarker",
     "Author": "Amands2Mello",
-    "SupportedVersion": "1.9.8713.31794",
+    "SupportedVersion": "1.9.8724.27765",
     "ModVersion": "2.5.4",
     "Description": "Hitmarkers with different Shapes, Colors and Sounds",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/798-amands-s-hitmarker/",
@@ -41,7 +41,7 @@
   {
     "Name": "Amands's Sense",
     "Author": "Amands2Mello",
-    "SupportedVersion": "1.9.8713.31794",
+    "SupportedVersion": "1.9.8724.27765",
     "ModVersion": "1.1.0",
     "Description": "",
     "ModUrl": "https://github.com/Amands2Mello/AmandsSense",
@@ -54,7 +54,7 @@
   {
     "Name": "FU Inertia",
     "Author": "dvize",
-    "SupportedVersion": "1.9.8713.31794",
+    "SupportedVersion": "1.9.8724.27765",
     "ModVersion": "2.2.1",
     "Description": "Do you hate inertia? So do I. Here's a Bepinex mod to handle that. Laugh while all the online tarkov players are miserable.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/843-fu-inertia/",
@@ -67,7 +67,7 @@
   {
     "Name": "MoreCheckmarks",
     "Author": "VIPkiller17",
-    "SupportedVersion": "1.9.8713.31794",
+    "SupportedVersion": "1.9.8724.27765",
     "ModVersion": "1.5.9",
     "Description": "A mod that adds checkmarks and more detailed tooltips to items to indicate if it is needed for hideout upgrades, quests, or if it is on your wishlist",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1159-morecheckmarks/",
@@ -80,7 +80,7 @@
   {
     "Name": "SAIN",
     "Author": "Solarint & DrakiaXYZ",
-    "SupportedVersion": "1.9.8713.31794",
+    "SupportedVersion": "1.9.8724.27765",
     "ModVersion": "2.0",
     "Description": "Bots that don't suck. FULL AI COMBAT SYSTEM REPLACEMENT",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1062-sain-2-0-solarint-s-ai-modifications-full-ai-combat-system-replacement/",
@@ -93,7 +93,7 @@
   {
     "Name": "Recoil Overhaul",
     "Author": "Fontaine",
-    "SupportedVersion": "1.9.8713.31794",
+    "SupportedVersion": "1.9.8724.27765",
     "ModVersion": "2.2.0",
     "Description": "This is a substantial overhaul of how EFT's recoil system works. This recoil system works very similarly to Realism Mods. If you already use that mod then you're not missing out on anything, don't install both.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/953-fontaine-s-recoil-overhaul/",
@@ -106,7 +106,7 @@
   {
     "Name": "ConfigurationManager",
     "Author": "BepInEx",
-    "SupportedVersion": "1.9.8713.31794",
+    "SupportedVersion": "1.9.8724.27765",
     "ModVersion": "18.0.1",
     "Description": "An easy way to let user configure how a plugin behaves without the need to make your own GUI. The user can change any of the settings you expose, even keyboard shortcuts.\n\nThe configuration manager can be accessed in-game by pressing the hotkey (by default F1). Hover over the setting names to see their descriptions, if any.",
     "ModUrl": "https://github.com/BepInEx/BepInEx.ConfigurationManager",
