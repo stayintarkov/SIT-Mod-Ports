@@ -9,7 +9,7 @@ using StayInTarkov.Coop;
 
 namespace AmandsSense
 {
-    [BepInPlugin("com.Amanda.Sense", "Sense", "1.1.0")]
+    [BepInPlugin("com.Amands.Sense", "Sense", "1.1.0")]
     public class AmandsSensePlugin : BaseUnityPlugin
     {
         public static GameObject Hook;

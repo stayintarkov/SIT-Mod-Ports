@@ -53,7 +53,7 @@
   },
   {
     "Name": "FU Inertia",
-    "Author": "dvize",
+    "Author": "Props",
     "SupportedVersion": "1.9.8724.27765",
     "ModVersion": "2.2.1",
     "Description": "Do you hate inertia? So do I. Here's a Bepinex mod to handle that. Laugh while all the online tarkov players are miserable.",
@@ -117,5 +117,31 @@
     "ConfigFiles": [
         "com.bepis.bepinex.configurationmanager.cfg"
     ]
+  },
+  {
+    "Name": "No Bush ESP",
+    "Author": "Props",
+    "SupportedVersion": "1.9.8724.27765",
+    "ModVersion": "1.7.1",
+    "Description": "Tired of AI Looking at your bush and destroying you through it? Now they no longer can.\n\nThis mod checks to see if there is any foilage in the way when a bot looks at the player. If there is, it will make it so that the bot cannot see the player anymore. Its only called filbert, pine, tree.\n\nDo not use this mod with SAIN as it has its own version of no bush within it.",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/903-no-bush-esp/",
+    "RequiresFiles": false,
+    "PluginFiles": [
+      "dvize.BushNoESP.dll"
+    ],
+    "ConfigFiles": []
+  },
+  {
+    "Name": "FovFix",
+    "Author": "Fontaine",
+    "SupportedVersion": "1.9.8724.27765",
+    "ModVersion": "1.9.0",
+    "Description": "Makes it so FOV does not change when ADSing by default, and allows you to instead set the FOV change yourself.\nIncludes Variable Zoom optics and toggleable zoom (like ARMA).",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/942-fontaine-s-fov-fix-variable-optics/",
+    "RequiresFiles": true,
+    "PluginFiles": [
+      "FOVFix.dll"
+    ],
+    "ConfigFiles": []
   }
 ]
