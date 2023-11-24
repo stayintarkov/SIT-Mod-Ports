@@ -13,6 +13,7 @@ namespace FOVFix
         public static string Scope = "55818ae44bdc2dde698b456c";
         public static string IronSight = "55818ac54bdc2d5b648b456e";
         public static string SpecialScope = "55818aeb4bdc2ddc698b456a";
+        public static Player ClientPlayer;
 
         public static string[] scopeTypes = new string[] { "55818acf4bdc2dde698b456b", "55818ad54bdc2ddc698b4569", "55818add4bdc2d5b648b456f", "55818ae44bdc2dde698b456c", "55818ac54bdc2d5b648b456e", "55818aeb4bdc2ddc698b456a" };
 
@@ -21,11 +22,10 @@ namespace FOVFix
             GameWorld gameWorld = Singleton<GameWorld>.Instance;
             SessionResultPanel sessionResultPanel = Singleton<SessionResultPanel>.Instance;
 
-            Player player = gameWorld?.MainPlayer;
-            if (player != null && player?.HandsController != null)
+            if (ClientPlayer && ClientPlayer?.HandsController != null)
             {
-                Plugin.player = player;
-                if (player?.HandsController?.Item != null && player?.HandsController?.Item is Weapon)
+                Plugin.player = ClientPlayer;
+                if (ClientPlayer?.HandsController?.Item != null && ClientPlayer?.HandsController?.Item is Weapon)
                 {
                     Plugin.WeaponReady = true;
                 }

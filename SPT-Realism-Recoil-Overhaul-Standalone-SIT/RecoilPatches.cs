@@ -34,7 +34,7 @@ namespace RecoilStandalone
                 Utils.ClientPlayer = localPlayer.GetPlayer;
                 if (Utils.ClientPlayer != null)
                 {
-                    Logger.LogMessage("Found CoopPlayer");
+                    Logger.LogMessage("RecoilOverhaul: Found CoopPlayer");
                     Utils.WeaponReady = true;
                 }
             }
@@ -62,7 +62,7 @@ namespace RecoilStandalone
                 Utils.ClientPlayer = localPlayer.GetPlayer;
                 if (Utils.ClientPlayer != null)
                 {
-                    Logger.LogMessage("Found LocalPlayer");
+                    Logger.LogMessage("RecoilOverhaul: Found LocalPlayer");
                     Utils.WeaponReady = true;
                 }            
             }

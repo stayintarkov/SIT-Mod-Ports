@@ -15,10 +15,61 @@ using WeaponState = WeaponEffectsManager;
 using FCSubClass = EFT.Player.FirearmController.AbstractFirearmActioner;
 using ScopeStatesStruct = ScopeStates;
 using SightComptInterface = GInterface261;
+using StayInTarkov.Coop;
+using System.Threading.Tasks;
 
 namespace FOVFix
 {
+    public class FovFixCoopPlayerPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(CoopGame).GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
+        }
 
+        private static void WaitForCoopGame(Task<LocalPlayer> task)
+        {
+            task.Wait();
+
+            LocalPlayer localPlayer = task.Result;
+
+            if (localPlayer != null && localPlayer.IsYourPlayer)
+            {
+                Utils.ClientPlayer = localPlayer.GetPlayer;
+                if (Utils.ClientPlayer != null)
+                {
+                    Logger.LogMessage("FovFix: Found CoopPlayer");
+                }
+            }
+        }
+
+        [PatchPostfix]
+        private static void PatchPostFix(Task<LocalPlayer> __result)
+        {
+            Task.Run(() => WaitForCoopGame(__result));
+        }
+    }
+
+    public class FovFixLocalPlayerPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(LocalPlayer).GetMethod("Create", BindingFlags.Static | BindingFlags.Public);
+        }
+        [PatchPostfix]
+        private static void PatchPostFix(ref Task<LocalPlayer> __result)
+        {
+            LocalPlayer localPlayer = __result.Result;
+            if (localPlayer != null && localPlayer.IsYourPlayer)
+            {
+                Utils.ClientPlayer = localPlayer.GetPlayer;
+                if (Utils.ClientPlayer != null)
+                {
+                    Logger.LogMessage("FovFix: Found LocalPlayer");
+                }
+            }
+        }
+    }
 
     public class CalculateScaleValueByFovPatch : ModulePatch
     {
