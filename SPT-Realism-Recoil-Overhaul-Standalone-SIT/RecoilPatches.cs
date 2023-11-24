@@ -435,8 +435,9 @@ namespace RecoilStandalone
         public static bool Prefix(ref ShotEffector __instance, float str = 1f)
         {
             IWeapon iWeapon = (IWeapon)iWeaponField.GetValue(__instance);
-            if (iWeapon.Item.Owner.ID.StartsWith("pmc") || iWeapon.Item.Owner.ID.StartsWith("scav"))
+            if (iWeapon.Item.Owner.ID == Utils.ClientPlayer.ProfileId)
             {
+                Logger.LogMessage("There was a match");
                 Weapon weaponClass = (Weapon)weaponClassField.GetValue(__instance);
                 Vector3 separateIntensityFactors = (Vector3)intensityFactorsField.GetValue(__instance);
                 SkillManager.BuffInfo buffInfo = (SkillManager.BuffInfo)AccessTools.Field(typeof(ShotEffector), "_buffs").GetValue(__instance);
