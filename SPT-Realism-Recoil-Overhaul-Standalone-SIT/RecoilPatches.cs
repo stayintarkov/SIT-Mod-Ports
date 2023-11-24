@@ -437,7 +437,6 @@ namespace RecoilStandalone
             IWeapon iWeapon = (IWeapon)iWeaponField.GetValue(__instance);
             if (iWeapon.Item.Owner.ID == Utils.ClientPlayer.ProfileId)
             {
-                Logger.LogMessage("There was a match");
                 Weapon weaponClass = (Weapon)weaponClassField.GetValue(__instance);
                 Vector3 separateIntensityFactors = (Vector3)intensityFactorsField.GetValue(__instance);
                 SkillManager.BuffInfo buffInfo = (SkillManager.BuffInfo)AccessTools.Field(typeof(ShotEffector), "_buffs").GetValue(__instance);
