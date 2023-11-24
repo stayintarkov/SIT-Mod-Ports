@@ -11,9 +11,64 @@ using PlayerInterface = GInterface118;
 using AimingSettings = GClass1253.AimingConfiguration;
 using IWeapon = IActiveWeapon;
 using StayInTarkov;
+using StayInTarkov.Coop;
+using System.Threading.Tasks;
 
 namespace RecoilStandalone
 {
+    public class RecoilCoopPlayerPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(CoopGame).GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
+        }
+
+        private static void WaitForCoopGame(Task<LocalPlayer> task)
+        {
+            task.Wait();
+
+            LocalPlayer localPlayer = task.Result;
+
+            if (localPlayer != null && localPlayer.IsYourPlayer)
+            {
+                Utils.ClientPlayer = localPlayer.GetPlayer;
+                if (Utils.ClientPlayer != null)
+                {
+                    Logger.LogMessage("Found CoopPlayer");
+                    Utils.WeaponReady = true;
+                }
+            }
+        }
+
+        [PatchPostfix]
+        private static void PatchPostFix(Task<LocalPlayer> __result)
+        {
+            Task.Run(() => WaitForCoopGame(__result));
+        }
+    }
+
+    public class RecoilLocalPlayerPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(LocalPlayer).GetMethod("Create", BindingFlags.Static | BindingFlags.Public);
+        }
+        [PatchPostfix]
+        private static void PatchPostFix(ref Task<LocalPlayer> __result)
+        {
+            LocalPlayer localPlayer = __result.Result;
+            if (localPlayer != null && localPlayer.IsYourPlayer)
+            {
+                Utils.ClientPlayer = localPlayer.GetPlayer;
+                if (Utils.ClientPlayer != null)
+                {
+                    Logger.LogMessage("Found LocalPlayer");
+                    Utils.WeaponReady = true;
+                }            
+            }
+        }
+    }
+
     public class ApplyComplexRotationPatch : ModulePatch
     {
         private static FieldInfo weapRotationField;
@@ -327,7 +382,7 @@ namespace RecoilStandalone
             if (playerInterface != null && playerInterface.Weapon != null)
             {
                 Weapon weapon = playerInterface.Weapon;
-                Player player = Singleton<GameWorld>.Instance.GetAlivePlayerByProfileID(weapon.Owner.ID);
+                Player player = Utils.ClientPlayer;
                 if (player != null && player.MovementContext.CurrentState.Name != EPlayerState.Stationary && player.IsYourPlayer)
                 {
                     float swayStrn = (float)AccessTools.Field(typeof(EFT.Animations.ProceduralWeaponAnimation), "_swayStrength").GetValue(__instance);

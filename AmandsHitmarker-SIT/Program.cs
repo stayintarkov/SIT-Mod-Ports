@@ -450,6 +450,7 @@ namespace AmandsHitmarker
             }
         }
     }
+
     public class AmandsMenuUIPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()

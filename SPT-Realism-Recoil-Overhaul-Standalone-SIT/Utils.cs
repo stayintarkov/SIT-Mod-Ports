@@ -1,6 +1,8 @@
-﻿using Comfort.Common;
+﻿using BepInEx.Logging;
+using Comfort.Common;
 using EFT;
 using EFT.InventoryLogic;
+using System.Diagnostics;
 
 namespace RecoilStandalone
 {
@@ -31,11 +33,9 @@ namespace RecoilStandalone
             GameWorld gameWorld = Singleton<GameWorld>.Instance;
             SessionResultPanel sessionResultPanel = Singleton<SessionResultPanel>.Instance;
 
-            Player player = gameWorld?.MainPlayer;
-            if (player != null && player?.HandsController != null)
-            {
-                ClientPlayer = player;  
-                if (player?.HandsController?.Item != null && player?.HandsController?.Item is Weapon)
+            if (ClientPlayer != null && ClientPlayer?.HandsController != null)
+            {                
+                if (ClientPlayer?.HandsController?.Item != null && ClientPlayer?.HandsController?.Item is Weapon)
                 {
                     Utils.WeaponReady = true;
                 }
