@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net472</TargetFramework>
+		<Version>1.0.6</Version>
+		<Authors>TechHappy</Authors>
+		<AssemblyName>TechHappy.$(MSBuildProjectName)</AssemblyName>
+		<RootNamespace>TechHappy.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="BepInEx.Core" Version="5.4.21">
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="Assembly-CSharp">
+			<HintPath>..\References\Assembly-CSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="Comfort">
+			<HintPath>..\References\Comfort.dll</HintPath>
+		</Reference>
+		<Reference Include="NetCoreServer">
+			<HintPath>..\References\NetCoreServer.dll</HintPath>
+		</Reference>
+		<Reference Include="Newtonsoft.Json">
+			<HintPath>..\References\Newtonsoft.Json.dll</HintPath>
+		</Reference>
+		<Reference Include="StayInTarkov">
+			<HintPath>..\References\StayInTarkov.dll</HintPath>
+		</Reference>
+		<Reference Include="System.ValueTuple">
+			<HintPath>..\References\System.ValueTuple.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine">
+			<HintPath>..\References\UnityEngine.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
+			<HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="COPY &quot;$(TargetDir)$(TargetName)$(TargetExt)&quot; &quot;$(SolutionDir)Ref\plugins&quot;" />
+	</Target>
+
+</Project>
