@@ -13,7 +13,7 @@ using LootingBots.Brain;
 using DrakiaXYZ.BigBrain.Brains;
 using System.Collections.Generic;
 
-using HandbookClass = GClass2691;
+using HandbookClass = Handbook0;
 
 namespace LootingBots
 {
