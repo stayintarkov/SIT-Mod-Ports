@@ -174,7 +174,7 @@
     "Author": "Skwizzy",
     "SupportedVersion": "1.9.8724.27765",
     "ModVersion": "1.1.4",
-    "PortVersion": "1.0.0",
+    "PortVersion": "1.1.0",
     "Description": "This mod aims to add more life to the bots by enhancing some EFT looting behaviors letting bots loot items, containers, and corpses during patrols. More features to come!",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1096-looting-bots/",
     "RequiresFiles": true,
