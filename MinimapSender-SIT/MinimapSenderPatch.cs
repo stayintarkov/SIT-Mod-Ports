@@ -58,19 +58,19 @@ namespace TechHappy.MinimapSender
             LocalPlayer localPlayer = __result.Result;
 
             if (localPlayer != null && localPlayer.IsYourPlayer)
+        {
+            GameWorld gameWorld = Singleton<GameWorld>.Instance;
+
+            if (gameWorld == null)
             {
-                GameWorld gameWorld = Singleton<GameWorld>.Instance;
-
-                if (gameWorld == null)
-                {
-                    return;
-                }
-
-                MinimapSenderPlugin.raidCounter++;
-                MinimapSenderPlugin.airdrops.Clear();
-
-                gameWorld.gameObject.AddComponent<MinimapSenderController>();
+                return;
             }
+
+            MinimapSenderPlugin.raidCounter++;
+            MinimapSenderPlugin.airdrops.Clear();
+
+            gameWorld.gameObject.AddComponent<MinimapSenderController>();
         }
     }
+}
 }
