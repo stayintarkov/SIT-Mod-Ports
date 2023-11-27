@@ -154,6 +154,7 @@ namespace RecoilStandalone
 
             new RecoilLocalPlayerPatch().Enable();
             new RecoilCoopPlayerPatch().Enable();
+            new RecoilOverhaulHideoutInitPatch().Enable();
             new UpdateWeaponVariablesPatch().Enable();
             new UpdateSwayFactorsPatch().Enable();
             new GetAimingPatch().Enable();

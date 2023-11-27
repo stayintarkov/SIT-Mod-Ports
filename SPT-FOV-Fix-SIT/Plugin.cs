@@ -207,6 +207,7 @@ namespace FOVFix
 
             new FovFixCoopPlayerPatch().Enable();
             new FovFixLocalPlayerPatch().Enable();
+            new FovFixHideoutInitPatch().Enable();
             new PwaWeaponParamsPatch().Enable();
             new FreeLookPatch().Enable();
             new LerpCameraPatch().Enable();

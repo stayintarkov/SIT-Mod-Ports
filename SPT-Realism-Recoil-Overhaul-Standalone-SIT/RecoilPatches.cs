@@ -69,6 +69,28 @@ namespace RecoilStandalone
         }
     }
 
+    public class RecoilOverhaulHideoutInitPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(HideoutPlayerOwner).GetMethod("Init", BindingFlags.Instance | BindingFlags.Public);
+        }
+        [PatchPostfix]
+        private static void PatchPostFix(HideoutPlayerOwner __instance)
+        {
+            if (__instance != null)
+            {
+                Utils.ClientPlayer = __instance.HideoutPlayer.GetPlayer;
+                {
+                    if (Utils.ClientPlayer != null)
+                    {
+                        Logger.LogMessage("RecoilOverhaul: Found HideoutPlayer");
+                    }
+                }
+            }
+        }
+    }
+
     public class ApplyComplexRotationPatch : ModulePatch
     {
         private static FieldInfo weapRotationField;
