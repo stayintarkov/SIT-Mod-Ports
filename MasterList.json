@@ -182,5 +182,19 @@
       "skwizzy.LootingBots.dll"
     ],
     "ConfigFiles": []
+  },
+  {
+    "Name": "TechHappy's Web MiniMap",
+    "Author": "TechHappy",
+    "SupportedVersion": "1.9.8724.27765",
+    "ModVersion": "1.0.6",
+    "PortVersion": "1.0.0",
+    "Description": "A browser-based map that shows your real-time position. Able to be used on a mobile device or second monitor.",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1421-techhappy-s-web-minimap/",
+    "RequiresFiles": true,
+    "PluginFiles": [
+      "TechHappy.MinimapSender.dll"
+    ],
+    "ConfigFiles": []
   }
 ]
