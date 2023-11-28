@@ -14,6 +14,9 @@
 Ref/
 References/
 
+# Unfinished mods
+Donuts-SIT/
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -365,12 +368,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/PTT-Extracts-SIT
-/CustomInteractions.Prepatch-SIT
-/CustomInteractions-SIT
-/Realism-SIT/Realism-SIT.csproj
-/CombatStances-SIT/CombatStances-SIT.csproj
-/TraderModding/TraderModding-SIT.csproj
-/CombatStances-SIT
-/Realism-SIT
-/Donuts-SIT
