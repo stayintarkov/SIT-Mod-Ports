@@ -15,7 +15,7 @@ namespace SAIN.Patches.Generic
 {
     internal class BotGroupAddEnemyPatch : ModulePatch
     {
-        protected override MethodBase GetTargetMethod() => typeof(BotGroupClass).GetMethod("AddEnemy");
+        protected override MethodBase GetTargetMethod() => typeof(BotsGroup).GetMethod("AddEnemy");
         [PatchPrefix]
         public static bool PatchPrefix(IAIDetails person)
         {
@@ -47,11 +47,11 @@ namespace SAIN.Patches.Generic
     {
         protected override MethodBase GetTargetMethod()
         {
-            return AccessTools.Method(typeof(BotControllerClass), "method_4");
+            return AccessTools.Method(typeof(BotsController), "method_4");
         }
 
         [PatchPrefix]
-        public static bool PatchPrefix(BotControllerClass __instance, Grenade grenade, Vector3 position, Vector3 force, float mass)
+        public static bool PatchPrefix(BotsController __instance, Grenade grenade, Vector3 position, Vector3 force, float mass)
         {
             Vector3 danger = Vector.DangerPoint(position, force, mass);
             foreach (BotOwner bot in __instance.Bots.BotOwners)
@@ -70,7 +70,7 @@ namespace SAIN.Patches.Generic
     {
         protected override MethodBase GetTargetMethod()
         {
-            return AccessTools.Method(typeof(BotControllerClass), "method_3");
+            return AccessTools.Method(typeof(BotsController), "method_3");
         }
 
         [PatchPrefix]
@@ -84,11 +84,11 @@ namespace SAIN.Patches.Generic
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(BotControllerClass).GetMethod("Init", BindingFlags.Instance | BindingFlags.Public);
+            return typeof(BotsController).GetMethod("Init", BindingFlags.Instance | BindingFlags.Public);
         }
 
         [PatchPrefix]
-        public static void PatchPrefix(BotControllerClass __instance)
+        public static void PatchPrefix(BotsController __instance)
         {
             SAINPlugin.BotController.DefaultController = __instance;
         }

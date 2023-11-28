@@ -28,7 +28,7 @@ namespace SAIN.SAINComponent.BaseClasses
         public string Name => Player?.name;
         public bool IsAI => BotOwner != null;
         public bool IsSAINBot => SAIN != null;
-        public AiDataClass AiDataClass => IAIDetails?.AIData;
+        public AIData AiDataClass => IAIDetails?.AIData;
         public BotOwner BotOwner => AiDataClass?.BotOwner;
         public SAINComponentClass SAIN { get; private set; }
         public SAINBotInfoClass SAINBotInfo => SAIN?.Info;
