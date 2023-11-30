@@ -44,6 +44,9 @@
     <Reference Include="Comfort">
       <HintPath>References\Comfort.dll</HintPath>
     </Reference>
+    <Reference Include="StayInTarkov">
+      <HintPath>..\..\..\..\..\Battlestate Games\EFT - Copy\BepInEx\plugins\StayInTarkov.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEngine">
       <HintPath>References\UnityEngine.dll</HintPath>

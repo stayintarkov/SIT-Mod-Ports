@@ -1,5 +1,4 @@
-﻿using Aki.Reflection.Patching;
-using Aki.Reflection.Utils;
+﻿using StayInTarkov;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -11,7 +10,7 @@ namespace SamSWAT.FOV
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(GameSettings.Class1501).GetMethod("method_0", PatchConstants.PrivateFlags);
+            return typeof(GameSettings.Class1501).GetMethod("method_0", BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic);
         }
 
         [PatchPostfix]

@@ -1,4 +1,4 @@
-﻿using Aki.Reflection.Patching;
+﻿using StayInTarkov;
 using EFT.UI.Settings;
 using System;
 using System.Collections.ObjectModel;

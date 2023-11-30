@@ -1,4 +1,4 @@
-﻿using Aki.Reflection.Patching;
+﻿using StayInTarkov;
 using EFT.Animations;
 using System.Reflection;
 using UnityEngine;
