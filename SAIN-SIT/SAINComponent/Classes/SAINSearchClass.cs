@@ -199,6 +199,9 @@ namespace SAIN.SAINComponent.Classes
         private void MoveToPoint(bool shallSprint)
         {
             RecalcPathTimer = Time.time + 2;
+
+            SAIN.Mover.Sprint(shallSprint);
+
             if (shallSprint)
             {
                 BotOwner.BotRun.Run(ActiveDestination, false);
@@ -344,8 +347,8 @@ namespace SAIN.SAINComponent.Classes
 
         private bool CheckIfStuck()
         {
-            bool botIsStuck = 
-                (!SAIN.BotStuck.BotIsMoving && SAIN.BotStuck.TimeSpentNotMoving > 3f) 
+            bool botIsStuck =
+                (!SAIN.BotStuck.BotIsMoving && SAIN.BotStuck.TimeSpentNotMoving > 3f)
                 || SAIN.BotStuck.BotIsStuck;
 
             if (botIsStuck && UnstuckMoveTimer < Time.time)
