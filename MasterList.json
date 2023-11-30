@@ -196,5 +196,19 @@
       "TechHappy.MinimapSender.dll"
     ],
     "ConfigFiles": []
+  },
+  {
+    "Name": "SamSwat's INCREASED FOV",
+    "Author": "SamSWAT",
+    "SupportedVersion": "1.9.8724.27765",
+    "ModVersion": "1.0.1",
+    "PortVersion": "1.0.0",
+    "Description": "A plugin that increases the range of FOV selection in the settings menu and allows you to move the FP camera relative to your body.",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1474-samswat-s-increased-fov-reupload/?highlight=fov",
+    "RequiresFiles": false,
+    "PluginFiles": [
+      "SamSWAT.FOV.dll"
+    ],
+    "ConfigFiles": []
   }
 ]
