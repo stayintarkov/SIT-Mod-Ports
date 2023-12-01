@@ -210,5 +210,19 @@
       "SamSWAT.FOV.dll"
     ],
     "ConfigFiles": []
+  },
+    {
+    "Name": "No Grenade ESP",
+    "Author": "Props",
+    "SupportedVersion": "1.9.8724.27765",
+    "ModVersion": "1.6.1",
+    "PortVersion": "1.0.0",
+    "Description": "Tired of AI always outrunning grenades you throw? This forces them to be locked into place by chance percentage.",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1029-no-grenade-esp/",
+    "RequiresFiles": false,
+    "PluginFiles": [
+      "dvize.NoGrenadeESP.dll"
+    ],
+    "ConfigFiles": []
   }
 ]
