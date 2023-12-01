@@ -28,7 +28,7 @@ namespace LootingBots.Patch.Components
             if (LootingBots.UseMarketPrices.Value)
             {
                 // Initialize ragfair prices from the BE session
-                Singleton<ClientApplication<ISession>>.Instance
+                Singleton<ClientApplication<IBackEndSession>>.Instance
                     .GetClientBackEndSession()
                     .RagfairGetPrices(
                         new Callback<Dictionary<string, float>>(

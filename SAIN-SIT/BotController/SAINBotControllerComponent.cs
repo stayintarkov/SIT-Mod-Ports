@@ -23,7 +23,7 @@ namespace SAIN.Components
         public IBotGame BotGame => Singleton<IBotGame>.Instance;
         public Player MainPlayer => Singleton<GameWorld>.Instance?.MainPlayer;
 
-        public BotControllerClass DefaultController { get; set; }
+        public BotsController DefaultController { get; set; }
         public BotSpawner BotSpawner { get; set; }
         public CoverManager CoverManager { get; private set; } = new CoverManager();
         public LineOfSightManager LineOfSightManager { get; private set; } = new LineOfSightManager();
@@ -285,7 +285,7 @@ namespace SAIN.Components
                 float radius = smokeRadius * HelpersGClass.SMOKE_GRENADE_RADIUS_COEF;
                 foreach (var keyValuePair in DefaultController.Groups())
                 {
-                    foreach (BotGroupClass botGroupClass in keyValuePair.Value.GetGroups(true))
+                    foreach (BotsGroup botGroupClass in keyValuePair.Value.GetGroups(true))
                     {
                         botGroupClass.AddSmokePlace(explosionPosition, smokeLifeTime, radius, position);
                     }

@@ -145,7 +145,7 @@ namespace SAIN.Patches.Vision
         private static MethodInfo _UsingLight;
         protected override MethodBase GetTargetMethod()
         {
-            _UsingLight = AccessTools.PropertySetter(typeof(AiDataClass), "UsingLight");
+            _UsingLight = AccessTools.PropertySetter(typeof(AIData), "UsingLight");
 
             _tacticalModesField = AccessTools.Field(typeof(TacticalComboVisualController), "list_0");
 

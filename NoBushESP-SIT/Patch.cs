@@ -24,7 +24,7 @@ namespace NoBushESP
         private static readonly List<MaterialType> extraMaterialList = new List<MaterialType> { MaterialType.Glass, MaterialType.GlassVisor, MaterialType.GlassShattered };
         protected override MethodBase GetTargetMethod()
         {
-            return AccessTools.Method(typeof(BotGroupClass), "CalcGoalForBot");
+            return AccessTools.Method(typeof(BotsGroup), "CalcGoalForBot");
         }
 
         [PatchPostfix]

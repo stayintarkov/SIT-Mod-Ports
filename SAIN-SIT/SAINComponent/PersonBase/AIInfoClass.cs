@@ -12,7 +12,7 @@ namespace SAIN.SAINComponent.BaseClasses
         }
 
         public IAIDetails Person { get; private set; }
-        public AiDataClass AiDataClass => Person?.AIData;
+        public AIData AIData => Person?.AIData;
         public BotOwner BotOwner => Person?.AIData?.BotOwner;
         public SAINComponentClass SAIN { get; private set; }
         public SAINBotInfoClass SAINBotInfo => SAIN?.Info;

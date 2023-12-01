@@ -35,12 +35,12 @@ namespace SAIN.Patches.Hearing
 
         protected override MethodBase GetTargetMethod()
         {
-            AIFlareEnabled = AccessTools.Property(typeof(AiDataClass), "Boolean_0");
-            return AccessTools.Method(typeof(AiDataClass), "TryPlayShootSound");
+            AIFlareEnabled = AccessTools.Property(typeof(AIData), "Boolean_0");
+            return AccessTools.Method(typeof(AIData), "TryPlayShootSound");
         }
 
         [PatchPrefix]
-        public static bool PatchPrefix(AiDataClass __instance, Player getPlayer, AISoundType soundType, ref float ____nextShootTime)
+        public static bool PatchPrefix(AIData __instance, Player getPlayer, AISoundType soundType, ref float ____nextShootTime)
         {
             AIFlareEnabled.SetValue(__instance, true);
 

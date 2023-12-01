@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SAIN.SAINComponent.Classes
 {
-    public class ShootClass : GClass121
+    public class ShootClass : BaseNodeClass
     {
         public ShootClass(BotOwner owner) 
             : base(owner)
@@ -100,7 +100,7 @@ namespace SAIN.SAINComponent.Classes
         public SAINFriendlyFireClass FriendlyFire => SAIN.FriendlyFireClass;
     }
 
-    public class BotShoot : GClass121
+    public class BotShoot : BaseNodeClass
     {
         public BotShoot(BotOwner bot)
             : base(bot)
