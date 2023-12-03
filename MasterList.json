@@ -210,5 +210,19 @@
       "SamSWAT.FOV.dll"
     ],
     "ConfigFiles": []
-  }
+  },
+  {
+    "Name": "Dynamic External Resolution Patch",
+    "Author": "FlashMode",
+    "SupportedVersion": "1.9.8735.34855",
+    "ModVersion": "1.3.0",
+    "PortVersion": "1.0.0",
+    "Description": "Dynamically change the resolution of the external image rendering when we enter the optical sight, which gives us an increase in frame rate",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1259-dynamic-external-resolution-patch-derp/",
+    "RequiresFiles": false,
+    "PluginFiles": [
+      "DynamicExternalResolution.dll"
+    ],
+    "ConfigFiles": []
+  }  
 ]
