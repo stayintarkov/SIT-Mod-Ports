@@ -65,11 +65,11 @@ namespace SAIN
 
         private void Awake()
         {
-            if (!VersionChecker.CheckEftVersion(Logger, Info, Config))
-            {
-                Sounds.PlaySound(EFT.UI.EUISoundType.ErrorMessage);
-                throw new Exception("Invalid EFT Version");
-            }
+            //if (!VersionChecker.CheckEftVersion(Logger, Info, Config))
+            //{
+            //    Sounds.PlaySound(EFT.UI.EUISoundType.ErrorMessage);
+            //    throw new Exception("Invalid EFT Version");
+            //}
 
             //new DefaultBrainsClass();
 
