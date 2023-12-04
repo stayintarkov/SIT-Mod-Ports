@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0"
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProjectGuid>{30D38A81-B688-474D-A40A-47BFC63BFE69}</ProjectGuid>
+		<OutputType>Library</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>DrakiaXYZ.BotDebug</RootNamespace>
+		<AssemblyName>DrakiaXYZ-BotDebug</AssemblyName>
+		<TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+		<FileAlignment>512</FileAlignment>
+		<Deterministic>true</Deterministic>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>full</DebugType>
+		<Optimize>false</Optimize>
+		<OutputPath>bin\Debug\</OutputPath>
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>pdbonly</DebugType>
+		<Optimize>true</Optimize>
+		<OutputPath>bin\Release\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+		<PlatformTarget>x64</PlatformTarget>
+		<OutputPath>bin\x64\Debug\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+		<PlatformTarget>x64</PlatformTarget>
+		<OutputPath>bin\x64\Release\</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Standalone|AnyCPU'">
+		<OutputPath>bin\Standalone\</OutputPath>
+		<DefineConstants>TRACE;STANDALONE</DefineConstants>
+		<Optimize>true</Optimize>
+		<DebugType>pdbonly</DebugType>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<LangVersion>7.3</LangVersion>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Standalone|x64'">
+		<OutputPath>bin\x64\Standalone\</OutputPath>
+		<PlatformTarget>x64</PlatformTarget>
+		<LangVersion>7.3</LangVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="StayInTarkov">
+			<HintPath>..\References\StayInTarkov.dll</HintPath>
+		</Reference>
+		<Reference Include="0Harmony">
+			<HintPath>..\References\0Harmony.dll</HintPath>
+		</Reference>
+		<!--<Reference Include="Aki.Common">
+			<HintPath>..\References\Aki.Common.dll</HintPath>
+		</Reference>
+		<Reference Include="Aki.Reflection">
+			<HintPath>..\References\Aki.Reflection.dll</HintPath>
+		</Reference>
+		<Reference Include="aki_PrePatch">
+			<HintPath>..\References\aki_PrePatch.dll</HintPath>
+		</Reference>-->
+		<Reference Include="Assembly-CSharp">
+			<HintPath>..\References\Assembly-CSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx">
+			<HintPath>..\References\BepInEx.dll</HintPath>
+		</Reference>
+		<Reference Include="Comfort">
+			<HintPath>..\References\Comfort.dll</HintPath>
+		</Reference>
+		<Reference Include="Comfort.Unity">
+			<HintPath>..\References\Comfort.Unity.dll</HintPath>
+		</Reference>
+		<Reference Include="DissonanceVoip">
+			<HintPath>..\References\DissonanceVoip.dll</HintPath>
+		</Reference>
+		<!--<Reference Include="DrakiaXYZ-BigBrain">
+			<HintPath>..\References\DrakiaXYZ-BigBrain.dll</HintPath>
+		</Reference>-->
+		<Reference Include="Newtonsoft.Json">
+			<HintPath>..\References\Newtonsoft.Json.dll</HintPath>
+		</Reference>
+		<Reference Include="System" />
+		<Reference Include="Unity.Postprocessing.Runtime">
+			<HintPath>..\References\Unity.Postprocessing.Runtime.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine">
+			<HintPath>..\References\UnityEngine.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.AudioModule">
+			<HintPath>..\References\UnityEngine.AudioModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
+			<HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.IMGUIModule">
+			<HintPath>..\References\UnityEngine.IMGUIModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.InputLegacyModule">
+			<HintPath>..\References\UnityEngine.InputLegacyModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.Physics2DModule">
+			<HintPath>..\References\UnityEngine.Physics2DModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.PhysicsModule">
+			<HintPath>..\References\UnityEngine.PhysicsModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.TextRenderingModule">
+			<HintPath>..\References\UnityEngine.TextRenderingModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.UnityWebRequestAudioModule">
+			<HintPath>..\References\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.UnityWebRequestModule">
+			<HintPath>..\References\UnityEngine.UnityWebRequestModule.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="BotDebugPlugin.cs" />
+		<Compile Include="BotInfo.cs" />
+		<Compile Include="Components\BotDebugComponent.cs" />
+		<Compile Include="Helpers\EnumExtension.cs" />
+		<Compile Include="Helpers\Settings.cs" />
+		<Compile Include="Properties\AssemblyInfo.cs" />
+		<Compile Include="VersionChecker\TarkovVersion.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="VersionChecker\setbuild.ps1" />
+	</ItemGroup>
+	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+	<PropertyGroup>
+		<PostBuildEvent>COPY "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Ref\plugins"</PostBuildEvent>
+	</PropertyGroup>
+</Project>
