@@ -172,7 +172,7 @@ namespace LootingBots.Patch.Components
                     | BindingFlags.Public
                     | BindingFlags.Instance
             );
-            InventoryControllerClass corpseInventoryController = (InventoryControllerClass)
+            InventoryController corpseInventoryController = (InventoryControllerClass)
                 corpseInventory.GetValue(corpsePlayer);
 
             // Get items to loot from the corpse in a priority order based off the slots

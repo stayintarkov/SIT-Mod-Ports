@@ -82,7 +82,7 @@ namespace LootingBots.Patch.Components
         private readonly BotLog _log;
         private readonly TransactionController _transactionController;
         private readonly BotOwner _botOwner;
-        private readonly InventoryControllerClass _botInventoryController;
+        private readonly InventoryController _botInventoryController;
         private readonly LootingBrain _lootingBrain;
         private readonly ItemAppraiser _itemAppraiser;
 
@@ -117,7 +117,7 @@ namespace LootingBots.Patch.Components
                 );
 
                 _botOwner = botOwner;
-                _botInventoryController = (InventoryControllerClass)
+                _botInventoryController = (InventoryController)
                     botInventory.GetValue(botOwner.GetPlayer);
                 _transactionController = new TransactionController(
                     _botOwner,
@@ -898,7 +898,7 @@ namespace LootingBots.Patch.Components
         */
         public EquipmentSlot[] GetPrioritySlots()
         {
-            InventoryControllerClass botInventoryController = _botInventoryController;
+            InventoryController botInventoryController = _botInventoryController;
             bool hasBackpack =
                 botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.Backpack)
