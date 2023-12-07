@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace InventoryOrganizingFeatures
 {
-    [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
+    [BepInPlugin("sit.com.iof", "Inventory Organizing Features", "1.1.0")]
     public class Plugin : BaseUnityPlugin
     {
         public static bool EnableLogs = false;
@@ -14,7 +14,7 @@ namespace InventoryOrganizingFeatures
         {
             GlobalLogger = Logger;
             // Plugin startup logic
-            Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+            Logger.LogInfo($"Plugin sit.com.iof is loaded!");
             // Assign Logger
             OrganizedContainer.Logger = Logger;
             // Pull handbook from the init method.
