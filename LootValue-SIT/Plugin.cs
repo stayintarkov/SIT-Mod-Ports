@@ -179,7 +179,11 @@ The third is marked as the ultimate color. Anything over 10000 rubles would be w
 					foreach (TraderClass trader in Session.Traders)
 					{
                         if (!trader.Info.Available || trader.Info.Disabled || !trader.Info.Unlocked)
-							continue;						
+							continue;
+
+                        //Skip COOP Traders
+                        if ((trader.Id.Contains("usecTrader") || trader.Id.Contains("bearTrader") || trader.Id.Contains("coopTrader")))
+                            continue;
 
                         if (GetTraderOffer(mod, trader) is TraderOffer offer)
 						{
@@ -215,7 +219,11 @@ The third is marked as the ultimate color. Anything over 10000 rubles would be w
 					if (!trader.Info.Available || trader.Info.Disabled || !trader.Info.Unlocked)
 						continue;
 
-					if (GetTraderOffer(item, trader) is TraderOffer offer)
+                    //Skip COOP Traders
+                    if ((trader.Id.Contains("usecTrader") || trader.Id.Contains("bearTrader") || trader.Id.Contains("coopTrader")))
+                        continue;
+
+                    if (GetTraderOffer(item, trader) is TraderOffer offer)
 						if (highestOffer == null || offer.Price > highestOffer.Price)
 							highestOffer = offer;
 				}
@@ -450,8 +458,8 @@ The third is marked as the ultimate color. Anything over 10000 rubles would be w
 			{
 				itemSells.Remove(item.Id);
 
-				logger.LogInfo($"Something fucked up: {ex.Message}");
-				logger.LogInfo($"{ex.InnerException.Message}");
+				logger.LogDebug($"Something fucked up: {ex.Message}");
+				logger.LogDebug($"{ex.InnerException.Message}");
 			}
 		}
 
