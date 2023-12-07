@@ -252,5 +252,19 @@
       "LootValue.dll"
     ],
     "ConfigFiles": []
-  }  
+  },
+  {
+    "Name": "Inventory Organizing Features",
+    "Author": "Nightingale",
+    "SupportedVersion": "1.9.8735.34855",
+    "ModVersion": "1.1.0",
+    "PortVersion": "1.0.0",
+    "Description": "Adds several inventory organizing features which rely on item tags, such as sort locking, move locking and container organizing.",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1152-inventory-organizing-features/",
+    "RequiresFiles": false,
+    "PluginFiles": [
+      "InventoryOrganizingFeatures.dll"
+    ],
+    "ConfigFiles": []
+  }
 ]
