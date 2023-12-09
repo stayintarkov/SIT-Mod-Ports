@@ -26,8 +26,10 @@ using Comfort.Common;
 // This returns an instance of GClass2805 which has a list field "Actions" containing all available actions of type GClass2804
 // GClass2804.Name will be directly used as the string that will be displayed in the list, so we set it to a TMPro string with correct color and bold
 using InteractionController = GClass1776;
-using InteractionInstance = Interaction0;
-using Action = SelectedAction;
+using InteractionInstance = Interaction;
+using Action = Action2;
+using Quest0 = Quest;
+using QuestTemplate = Template2;
 using EFT.Hideout;
 
 namespace MoreCheckmarks
