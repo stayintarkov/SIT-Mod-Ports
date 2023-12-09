@@ -60,7 +60,7 @@
     "Author": "Props",
     "SupportedVersion": "1.9.8742.42820",
     "ModVersion": "2.2.1",
-    "PortVersion": "1.1.0",
+    "PortVersion": "1.2.0",
     "Description": "Do you hate inertia? So do I. Here's a Bepinex mod to handle that. Laugh while all the online tarkov players are miserable.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/843-fu-inertia/",
     "RequiresFiles": false,
@@ -256,7 +256,7 @@
   {
     "Name": "Inventory Organizing Features",
     "Author": "Nightingale",
-    "SupportedVersion": "1.9.8742.42820",
+    "SupportedVersion": "1.9.8735.34855",
     "ModVersion": "1.1.0",
     "PortVersion": "1.1.0",
     "Description": "Adds several inventory organizing features which rely on item tags, such as sort locking, move locking and container organizing.",
