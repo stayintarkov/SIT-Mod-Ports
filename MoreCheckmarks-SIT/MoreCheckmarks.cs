@@ -713,19 +713,13 @@ namespace MoreCheckmarks
             {
                 if (assemblies[i].GetName().Name.Equals("Assembly-CSharp"))
                 {
-                    LogInfo($"Found Assembly-CSharp: {assemblies[i].GetName().Name}");
-                    Type test = assemblies[i].GetType("Session4");
-                    LogInfo($"Found Session4: {test is null}");
-                    //LogInfo($"All nested types: {string.Join(", ", assemblies[i].GetTypes().Select(t => t.FullName))}");
                     // UPDATE: This is to know when a new profile is selected so we can load up to date data
                     // We want to do this when client makes request "/client/game/profile/select"
                     // Look for that string in dnspy, this creates a callback with a method_0, that is the method we want to postfix
-                    ProfileSelector = assemblies[i].GetType("Session4+Class1243"); //.GetNestedType("Class1243", BindingFlags.NonPublic);
-                    LogInfo($"Found ProfileSelector: {ProfileSelector is null}");
+                    ProfileSelector = assemblies[i].GetType("Session4+Class1243");
                 }
             }
 
-            LogInfo($"Found ProfileSelector: {ProfileSelector is null}");
             var harmony = new HarmonyLib.Harmony("VIP.TommySoucy.MoreCheckmarks");
 
             // Auto patch
@@ -733,10 +727,7 @@ namespace MoreCheckmarks
 
             // Manual patch
             MethodInfo profileSelectorOriginal = ProfileSelector.GetMethod("method_0", BindingFlags.NonPublic | BindingFlags.Instance);
-            LogInfo(profileSelectorOriginal.ToString());
             MethodInfo profileSelectorPostfix = typeof(ProfileSelectionPatch).GetMethod("Postfix", BindingFlags.NonPublic | BindingFlags.Static);
-
-            LogInfo(profileSelectorPostfix.ToString());
 
             harmony.Patch(profileSelectorOriginal, null, new HarmonyMethod(profileSelectorPostfix));
         }
