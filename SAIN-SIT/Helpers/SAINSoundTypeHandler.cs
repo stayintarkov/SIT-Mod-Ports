@@ -48,7 +48,7 @@ namespace SAIN.Components.Helpers
                         soundDist = 15f;
                     }
                 }
-                else if (Item is Meds0)
+                else if (Item is Meds)
                 {
                     if (sound == "CapRemove" || sound == "Inject")
                     {

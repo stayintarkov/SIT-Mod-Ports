@@ -313,7 +313,7 @@ namespace SAIN.Components.BotController
             }
         }
 
-        public float EscapeTimeSeconds(GameTimer timer)
+        public float EscapeTimeSeconds(Timer2 timer)
         {
             DateTime? escapeDateTime = timer.EscapeDateTime;
             return (float)((escapeDateTime != null) ? (escapeDateTime.Value - HelpersGClass.UtcNow) : TimeSpan.MaxValue).TotalSeconds;
