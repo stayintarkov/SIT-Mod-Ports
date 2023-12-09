@@ -69,6 +69,10 @@ namespace SAIN.Components
 
         public void Init(BotOwner botOwner, SAINComponentClass sain = null)
         {
+            if (NoBushMask == 0)
+            {
+                NoBushMask = LayerMaskClass.HighPolyWithTerrainMaskAI | (1 << LayerMask.NameToLayer(PropertyNames.PlayerSpirit));
+            }
             BotOwner = botOwner;
             SAIN = sain;
         }
@@ -212,7 +216,7 @@ namespace SAIN.Components
             }
         }
 
-        private static readonly LayerMask NoBushMask;
+        private static LayerMask NoBushMask = 0;
         private static readonly List<string> ExclusionList = new List<string> 
         { "filbert", "fibert", "tree", "pine", "plant", "birch", "collider", "timber", "spruce", "bush", "metal", "wood", "grass" };
     }

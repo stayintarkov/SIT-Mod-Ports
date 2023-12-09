@@ -13,7 +13,7 @@ using LootingBots.Brain;
 using DrakiaXYZ.BigBrain.Brains;
 using System.Collections.Generic;
 
-using HandbookClass = Handbook0;
+using HandbookClass = Handbook;
 
 namespace LootingBots
 {
@@ -365,7 +365,7 @@ namespace LootingBots
 
             // Initialize the itemAppraiser when the BE instance comes online
             if (
-                Singleton<ClientApplication<IBackEndSession>>.Instance != null
+                Singleton<ClientApplication<ISession>>.Instance != null
                 && Singleton<HandbookClass>.Instance != null
                 && shoultInitAppraiser
             )

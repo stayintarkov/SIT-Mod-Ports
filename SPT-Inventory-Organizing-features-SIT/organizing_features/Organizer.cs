@@ -22,7 +22,7 @@ namespace InventoryOrganizingFeatures
         public const char OrganizeTagEnd = ';';
         public static Regex OrganizeRegex = new(OrganizeTag + " (.*?)" + OrganizeTagEnd);
 
-        public static Handbook Handbook { get; set; } = null;
+        public static IOFHandbook Handbook { get; set; } = null;
         
         public static void Organize(CompoundItem topLevelItem, InventoryController controller)
         {

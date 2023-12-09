@@ -5,7 +5,7 @@ using EFT.InventoryLogic;
 using StayInTarkov;
 using System.Reflection;
 
-using TraderClass = Trader0;
+using TraderClass = Trader;
 
 namespace LootValue
 {
@@ -29,7 +29,7 @@ namespace LootValue
 	internal static class TraderClassExtensions
 	{
         //private static ISession Session => ClientAppUtils.GetMainApp().GetClientBackEndSession();
-        private static IBackEndSession Session => StayInTarkovHelperConstants.GetMainApp().GetClientBackEndSession();
+        private static ISession Session => StayInTarkovHelperConstants.GetMainApp().GetClientBackEndSession();
 
         private static readonly FieldInfo SupplyDataField =
 			typeof(TraderClass).GetField("supplyData_0", BindingFlags.NonPublic | BindingFlags.Instance);
