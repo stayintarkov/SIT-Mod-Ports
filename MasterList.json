@@ -102,7 +102,7 @@
     "Author": "Fontaine",
     "SupportedVersion": "1.9.8735.34855",
     "ModVersion": "2.2.0",
-    "PortVersion": "1.2.0",
+    "PortVersion": "1.3.0",
     "Description": "This is a substantial overhaul of how EFT's recoil system works. This recoil system works very similarly to Realism Mods. If you already use that mod then you're not missing out on anything, don't install both.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/953-fontaine-s-recoil-overhaul/",
     "RequiresFiles": false,
