@@ -138,7 +138,7 @@ namespace TechHappy.MinimapSender
 
 
                 //foreach (QuestClass item in questsList)
-                foreach (Quest0 item in questsList)
+                foreach (Quest item in questsList)
                 {
                     if (item.QuestStatus != EQuestStatus.Started)
                         continue;

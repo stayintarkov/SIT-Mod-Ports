@@ -10,7 +10,7 @@ using EFTCore = GClass502;
 using EFTFileSettings = GClass503;
 using EFTSettingsGroup = BotSettingsComponents;
 using EFTSoundPlayer = GClass567;
-using EFTStatModifiersClass = Modif;
+using EFTStatModifiersClass = GClass500;
 using EFTTime = GClass1237;
 using EFTSearchPoint = PlaceForCheck;
 using StayInTarkov;

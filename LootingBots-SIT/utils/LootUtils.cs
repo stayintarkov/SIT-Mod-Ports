@@ -11,11 +11,11 @@ using UnityEngine;
 
 using GridClass = StashGrid;
 using GridClassEx = GridContainer;
-using GridManagerClass = GClass2670;
-using SortResultStruct = SOperationResult2<GClass2670>;
-using GridItemClass = GClass2377;
+using GridManagerClass = OperationResult20;
+using SortResultStruct = SOperationResult1<OperationResult20>;
+using GridItemClass = GItem13;
 using ItemAddressExClass = GridItemAddress;
-using SortErrorClass = GClass3080;
+using SortErrorClass = GInventoryError17;
 using GridCacheClass = GClass1329;
 
 namespace LootingBots.Patch.Util
@@ -29,7 +29,7 @@ namespace LootingBots.Patch.Util
         public static int RESERVED_SLOT_COUNT = 2;
 
         /** Calculate the size of a container */
-        public static int GetContainerSize(SearchableItem container)
+        public static int GetContainerSize(GItem2 container)
         {
             GridClass[] grids = container.Grids;
             int gridSize = 0;
@@ -61,7 +61,7 @@ namespace LootingBots.Patch.Util
         * Sorts the items in a container and places them in grid spaces that match their exact size before moving on to a bigger slot size. This helps make more room in the container for items to be placed in
         */
         public static SortResultStruct SortContainer(
-            SearchableItem container,
+            GItem2 container,
             InventoryController controller
         )
         {
@@ -238,13 +238,13 @@ namespace LootingBots.Patch.Util
             Item item
         )
         {
-            SearchableItem tacVest = (SearchableItem)
+            GItem2 tacVest = (GItem2)
                 equipment.GetSlot(EquipmentSlot.TacticalVest).ContainedItem;
-            SearchableItem backpack = (SearchableItem)
+            GItem2 backpack = (GItem2)
                 equipment.GetSlot(EquipmentSlot.Backpack).ContainedItem;
-            SearchableItem pockets = (SearchableItem)
+            GItem2 pockets = (GItem2)
                 equipment.GetSlot(EquipmentSlot.Pockets).ContainedItem;
-            SearchableItem secureContainer = (SearchableItem)
+            GItem2 secureContainer = (GItem2)
                 equipment.GetSlot(EquipmentSlot.SecuredContainer).ContainedItem;
 
             GridClass[] tacVestGrids = new GridClass[0];

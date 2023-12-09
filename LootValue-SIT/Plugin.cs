@@ -21,7 +21,7 @@ using static System.Collections.Specialized.BitVector32;
 using System.Threading.Tasks;
 
 using StayInTarkov;
-using TraderClass = Trader0;
+using TraderClass = Trader;
 using InventoryControllerClass = InventoryController;
 using GClass1716 = GClass1766;
 using GClass1711 = GClass1761;
@@ -146,7 +146,7 @@ The third is marked as the ultimate color. Anything over 10000 rubles would be w
 	{
 		public static bool isStashItemHovered = false;
 		//public static ISession Session => ClientAppUtils.GetMainApp().GetClientBackEndSession();
-        public static IBackEndSession Session => StayInTarkovHelperConstants.GetMainApp().GetClientBackEndSession();
+        public static ISession Session => StayInTarkovHelperConstants.GetMainApp().GetClientBackEndSession();
         public static ManualLogSource logger { get; set; }
 		public static Item hoveredItem;
 
@@ -344,7 +344,7 @@ The third is marked as the ultimate color. Anything over 10000 rubles would be w
 
 			itemSells.Add(item.Id);
 
-			if (LootValueMod.EnableQuickSell.Value && !GClass1716.InRaid && item != null)
+			if (LootValueMod.EnableQuickSell.Value && !GClass1766.InRaid && item != null)
 			{
 				if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftAlt))
 				{
