@@ -10,11 +10,12 @@ using Comfort.Common;
 using EFT.Animations;
 using System.Collections.Generic;
 
-using PlayerInterface = GInterface118;
+using PlayerInterface = IFirearms;
 using WeaponState = WeaponEffectsManager;
 using FCSubClass = EFT.Player.FirearmController.AbstractFirearmActioner;
 using ScopeStatesStruct = ScopeStates;
-using SightComptInterface = GInterface261;
+using IActiveWeapon = IWeapon;
+using SightComptInterface = ITemplate25;
 using StayInTarkov.Coop;
 using System.Threading.Tasks;
 
@@ -605,7 +606,7 @@ namespace FOVFix
         [PatchPrefix]
         private static bool Prefix(EFT.Animations.ProceduralWeaponAnimation __instance, float dt, float ____overweightAimingMultiplier, float ____aimingSpeed, float ____aimSwayStrength, Player.ValueBlender ____aimSwayBlender, Vector3 ____aimSwayDirection, Vector3 ____headRotationVec, Vector3 ____vCameraTarget, Player.ValueBlenderDelay ____tacticalReload, Quaternion ____cameraIdenity, Quaternion ____rotationOffset)
         {
-            GInterface118 ginterface114 = (GInterface118)AccessTools.Field(typeof(EFT.Animations.ProceduralWeaponAnimation), "_firearmAnimationData").GetValue(__instance);
+            IFirearms ginterface114 = (IFirearms)AccessTools.Field(typeof(EFT.Animations.ProceduralWeaponAnimation), "_firearmAnimationData").GetValue(__instance);
 
             if (ginterface114 != null && ginterface114.Weapon != null)
             {

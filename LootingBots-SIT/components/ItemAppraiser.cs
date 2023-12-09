@@ -9,7 +9,7 @@ using EFT.InventoryLogic;
 
 using LootingBots.Patch.Util;
 
-using HandbookClass = Handbook0;
+using HandbookClass = Handbook;
 
 namespace LootingBots.Patch.Components
 {
@@ -28,7 +28,7 @@ namespace LootingBots.Patch.Components
             if (LootingBots.UseMarketPrices.Value)
             {
                 // Initialize ragfair prices from the BE session
-                Singleton<ClientApplication<IBackEndSession>>.Instance
+                Singleton<ClientApplication<ISession>>.Instance
                     .GetClientBackEndSession()
                     .RagfairGetPrices(
                         new Callback<Dictionary<string, float>>(
