@@ -14,7 +14,7 @@ namespace InventoryOrganizingFeatures
         public const string MoveLockTag = "@ml";
         public const string SortLockTag = "@sl";
 
-        public static IBackEndSession Session { get; set; } = null;
+        public static ISession Session { get; set; } = null;
 
         public static bool IsMoveLocked(Item item)
         {

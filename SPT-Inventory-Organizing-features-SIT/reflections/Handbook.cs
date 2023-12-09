@@ -6,11 +6,11 @@ using UnityEngine;
 
 namespace InventoryOrganizingFeatures.Reflections
 {
-    internal class Handbook : ReflectionBase
+    internal class IOFHandbook : ReflectionBase
     {
         public Dictionary<string, HandbookNode> NodesTree { get; }
 
-        public Handbook(object instance)
+        public IOFHandbook(object instance)
         {
             ReflectedInstance = instance;
             ReflectedType = instance.GetType();
