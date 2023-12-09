@@ -723,7 +723,7 @@ namespace MoreCheckmarks
             var harmony = new HarmonyLib.Harmony("VIP.TommySoucy.MoreCheckmarks");
 
             // Auto patch
-            harmony.PatchAll();
+            //harmony.PatchAll();
 
             // Manual patch
             MethodInfo profileSelectorOriginal = ProfileSelector.GetMethod("method_0", BindingFlags.NonPublic | BindingFlags.Instance);
