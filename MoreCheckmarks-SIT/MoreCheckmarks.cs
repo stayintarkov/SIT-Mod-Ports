@@ -716,7 +716,7 @@ namespace MoreCheckmarks
                     // UPDATE: This is to know when a new profile is selected so we can load up to date data
                     // We want to do this when client makes request "/client/game/profile/select"
                     // Look for that string in dnspy, this creates a callback with a method_0, that is the method we want to postfix
-                    ProfileSelector = assemblies[i].GetType("BackendSession0").GetNestedType("Class1243", BindingFlags.NonPublic);
+                    ProfileSelector = assemblies[i].GetType("Session4").GetNestedType("Class1243", BindingFlags.NonPublic);
                 }
             }
 
