@@ -30,7 +30,7 @@ namespace dvize.FUInertia
 
         private void Awake()
         {
-            CheckEftVersion();
+            //CheckEftVersion();
 
             tiltSpeed = Config.Bind(
                "Final IK",

@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net472</TargetFramework>
+		<AssemblyName>LootValue</AssemblyName>
+		<Version>1.2.2</Version>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+		<PackageReference Include="UnityEngine.Modules" Version="2019.4.39" IncludeAssets="compile" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="BepInEx">
+		  <HintPath>..\References\BepInEx.dll</HintPath>
+		</Reference>
+		<Reference Include="StayInTarkov">
+			<HintPath>..\References\StayInTarkov.dll</HintPath>
+		</Reference>
+		<Reference Include="Assembly-CSharp">
+			<HintPath>..\References\Assembly-CSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="Comfort">
+			<HintPath>..\References\Comfort.dll</HintPath>
+		</Reference>
+		<Reference Include="bsg.console.core">
+			<HintPath>..\References\bsg.console.core.dll</HintPath>
+		</Reference>
+		<Reference Include="Aki.Common">
+			<HintPath>..\References\Aki.Common.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.UI">
+			<HintPath>..\References\UnityEngine.UI.dll</HintPath>
+		</Reference>
+
+	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="COPY &quot;$(TargetDir)$(TargetName)$(TargetExt)&quot; &quot;$(SolutionDir)Ref\plugins&quot;" />
+	</Target>
+
+</Project>

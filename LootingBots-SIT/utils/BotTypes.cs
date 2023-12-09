@@ -118,8 +118,8 @@ namespace LootingBots.Patch.Util
             // Unchecked to get around cast of usec/bear WildSpawnType added in AkiBotsPrePatcher
             unchecked
             {
-                WildSpawnType bear = (WildSpawnType)0x26;
-                WildSpawnType usec = (WildSpawnType)0x27;
+                WildSpawnType bear = (WildSpawnType)42;
+                WildSpawnType usec = (WildSpawnType)41;
 
                 return wildSpawnType == bear || wildSpawnType == usec;
             }

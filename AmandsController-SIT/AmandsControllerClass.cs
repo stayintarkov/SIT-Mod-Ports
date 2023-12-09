@@ -4596,7 +4596,7 @@ namespace AmandsController
                 ItemController ItemController = Traverse.Create(onPointerEnterItemView).Field("ItemController").GetValue<ItemController>();
                 if (ExecuteInteraction != null && IsInteractionAvailable != null)
                 {
-                    if (onPointerEnterItemView.Item is FoodDrink || onPointerEnterItemView.Item is Meds0)
+                    if (onPointerEnterItemView.Item is FoodDrink || onPointerEnterItemView.Item is Meds)
                     {
                         ExecuteInteractionInvokeParameters[0] = EItemInfoButton.Use;
                         if (!(bool)ExecuteInteraction.Invoke(NewContextInteractionsObject, ExecuteInteractionInvokeParameters))
@@ -5216,7 +5216,7 @@ namespace AmandsController
                         IsInteractionAvailableInvokeParameters[0] = EItemInfoButton.UseAll;
                         if ((bool)IsInteractionAvailable.Invoke(NewContextInteractionsObject, IsInteractionAvailableInvokeParameters)) return "Consume";
                     }
-                    if (onPointerEnterItemView.Item is Meds0)
+                    if (onPointerEnterItemView.Item is Meds)
                     {
                         IsInteractionAvailableInvokeParameters[0] = EItemInfoButton.Use;
                         if ((bool)IsInteractionAvailable.Invoke(NewContextInteractionsObject, IsInteractionAvailableInvokeParameters)) return "Use";

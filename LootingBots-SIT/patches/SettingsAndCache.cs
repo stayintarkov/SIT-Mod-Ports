@@ -1,6 +1,7 @@
 using System.Reflection;
 
-using Aki.Reflection.Patching;
+//using Aki.Reflection.Patching;
+using StayInTarkov;
 
 using EFT;
 

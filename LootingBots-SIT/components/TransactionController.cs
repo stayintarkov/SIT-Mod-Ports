@@ -89,7 +89,7 @@ namespace LootingBots.Patch.Components
         {
             try
             {
-                SearchableItem secureContainer = (SearchableItem)
+                GItem2 secureContainer = (GItem2)
                     _inventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.SecuredContainer)
                         .ContainedItem;
