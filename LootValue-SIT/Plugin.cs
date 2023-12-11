@@ -4,23 +4,16 @@ using EFT;
 using EFT.UI.DragAndDrop;
 using EFT.InventoryLogic;
 using EFT.UI;
-//using Aki.Reflection.Patching;
-//using Aki.Reflection.Utils;
-//using CurrencyUtil = GClass2334;
-using CurrencyUtil = GClass2385;
-using static LootValue.Globals;
 using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Configuration;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using static UnityEngine.EventSystems.EventTrigger;
-using static System.Collections.Specialized.BitVector32;
 using System.Threading.Tasks;
-
 using StayInTarkov;
+using CurrencyUtil = GClass2385;
+using static LootValue.Globals;
 using TraderClass = Trader;
 using InventoryControllerClass = InventoryController;
 using GClass1716 = GClass1766;
@@ -145,7 +138,6 @@ The third is marked as the ultimate color. Anything over 10000 rubles would be w
     internal static class Globals
     {
         public static bool isStashItemHovered = false;
-        //public static ISession Session => ClientAppUtils.GetMainApp().GetClientBackEndSession();
         public static ISession Session => StayInTarkovHelperConstants.GetMainApp().GetClientBackEndSession();
         public static ManualLogSource logger { get; set; }
         public static Item hoveredItem;
@@ -182,6 +174,7 @@ The third is marked as the ultimate color. Anything over 10000 rubles would be w
                 // Get highest price of total weapon build
                 foreach (TraderClass trader in Session.Traders)
                 {
+                    //logger.LogDebug($"LootValue.Trader.Id: " + trader.Id);
                     if (!trader.Info.Available || trader.Info.Disabled || !trader.Info.Unlocked)
                         continue;
 
