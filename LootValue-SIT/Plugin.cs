@@ -185,8 +185,8 @@ The third is marked as the ultimate color. Anything over 10000 rubles would be w
                     if (!trader.Info.Available || trader.Info.Disabled || !trader.Info.Unlocked)
                         continue;
 
-                    //Skip COOP Traders
-                    if ((trader.Id.Contains("usecTrader") || trader.Id.Contains("bearTrader") || trader.Id.Contains("coopTrader")))
+                    //Skip COOP Traders & Anastasia
+                    if (trader.Id.Contains("usecTrader") || trader.Id.Contains("bearTrader") || trader.Id.Contains("coopTrader") || trader.Id.Contains("Anastasia"))
                         continue;
 
                     TraderOffer curPrice = null;
@@ -232,8 +232,8 @@ The third is marked as the ultimate color. Anything over 10000 rubles would be w
                     if (!trader.Info.Available || trader.Info.Disabled || !trader.Info.Unlocked)
                         continue;
 
-                    //Skip COOP Traders
-                    if ((trader.Id.Contains("usecTrader") || trader.Id.Contains("bearTrader") || trader.Id.Contains("coopTrader")))
+                    //Skip COOP Traders & Anastasia
+                    if (trader.Id.Contains("usecTrader") || trader.Id.Contains("bearTrader") || trader.Id.Contains("coopTrader") || trader.Id.Contains("Anastasia"))
                         continue;
 
                     if (GetTraderOffer(item, trader) is TraderOffer offer)
