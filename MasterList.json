@@ -244,7 +244,7 @@
     "Author": "IhanaMies",
     "SupportedVersion": "1.9.8742.42820",
     "ModVersion": "1.2.2",
-    "PortVersion": "1.2.0",
+    "PortVersion": "1.3.0",
     "Description": "Adds selectable quick sell functionality, one button (left click) or two button (left and right click)",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1606-lootvalue/",
     "RequiresFiles": true,
