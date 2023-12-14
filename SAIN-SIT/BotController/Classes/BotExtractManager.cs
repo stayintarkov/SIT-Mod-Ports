@@ -47,7 +47,7 @@ namespace SAIN.Components.BotController
                     {
                         FindExfilsForBots();
                     }
-                    catch ( Exception e )
+                    catch (Exception e)
                     {
                         Logger.LogError(e);
                     }
@@ -57,6 +57,11 @@ namespace SAIN.Components.BotController
 
         private bool GetExfilControl()
         {
+            if (Singleton<AbstractGame>.Instance?.GameTimer == null)
+            {
+                return false;
+            }
+
             if (ExfilController == null)
             {
                 ExfilController = Singleton<GameWorld>.Instance.ExfiltrationController;
@@ -300,23 +305,19 @@ namespace SAIN.Components.BotController
 
         public void CheckTimeRemaining()
         {
-            var GameTime = Singleton<AbstractGame>.Instance?.GameTimer;
-            if (GameTime?.StartDateTime != null && GameTime?.EscapeDateTime != null)
-            {
-                var StartTime = GameTime.StartDateTime.Value;
-                var EscapeTime = GameTime.EscapeDateTime.Value;
-                var Span = EscapeTime - StartTime;
-                TotalRaidTime = (float)Span.TotalSeconds;
-                TimeRemaining = EscapeTimeSeconds(GameTime);
-                float ratio = TimeRemaining / TotalRaidTime;
-                PercentageRemaining = Mathf.Round(ratio * 100f);
-            }
-        }
+            TotalRaidTime = (float)Singleton<RaidSettings>.Instance.SelectedLocation.EscapeTimeLimit;
 
-        public float EscapeTimeSeconds(Timer2 timer)
-        {
-            DateTime? escapeDateTime = timer.EscapeDateTime;
-            return (float)((escapeDateTime != null) ? (escapeDateTime.Value - HelpersGClass.UtcNow) : TimeSpan.MaxValue).TotalSeconds;
+            //if (Aki.SinglePlayer.Utils.InRaid.RaidTimeUtil.HasRaidStarted())
+            if (Singleton<AbstractGame>.Instance.GameTimer.Started())
+            {
+                TimeRemaining = GClass1416.EscapeTimeSeconds(Singleton<AbstractGame>.Instance.GameTimer);
+                PercentageRemaining = Math.Min(GClass1416.EscapeTimeSeconds(Singleton<AbstractGame>.Instance.GameTimer), (float)Singleton<RaidSettings>.Instance.SelectedLocation.EscapeTimeLimit * 60 / (float)Singleton<RaidSettings>.Instance.SelectedLocation.EscapeTimeLimit);
+            }
+            else
+            {
+                TimeRemaining = GClass1416.EscapeTimeSeconds(Singleton<AbstractGame>.Instance.GameTimer);
+                PercentageRemaining = 100f * TimeRemaining / TotalRaidTime;
+            }
         }
     }
 }
