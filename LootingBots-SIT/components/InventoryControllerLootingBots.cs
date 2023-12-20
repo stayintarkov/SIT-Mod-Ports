@@ -129,7 +129,7 @@ namespace LootingBots.Patch.Components
                 Item chest = _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.ArmorVest)
                     .ContainedItem;
-                GItem2 tacVest = (GItem2)
+                GItem1 tacVest = (GItem1)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.TacticalVest)
                         .ContainedItem;
@@ -200,15 +200,15 @@ namespace LootingBots.Patch.Components
         */
         public void UpdateGridStats()
         {
-            GItem2 tacVest = (GItem2)
+            GItem1 tacVest = (GItem1)
                 _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.TacticalVest)
                     .ContainedItem;
-            GItem2 backpack = (GItem2)
+            GItem1 backpack = (GItem1)
                 _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.Backpack)
                     .ContainedItem;
-            GItem2 pockets = (GItem2)
+            GItem1 pockets = (GItem1)
                 _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.Pockets)
                     .ContainedItem;
@@ -229,7 +229,7 @@ namespace LootingBots.Patch.Components
         */
         public async Task<IResult> SortTacVest()
         {
-            GItem2 tacVest = (GItem2)
+            GItem1 tacVest = (GItem1)
                 _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.TacticalVest)
                     .ContainedItem;
@@ -409,19 +409,19 @@ namespace LootingBots.Patch.Components
             // Protection against bot death interruption
             if (_botOwner != null && _botInventoryController != null)
             {
-                GItem2 tacVest = (GItem2)
+                GItem1 tacVest = (GItem1)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.TacticalVest)
                         .ContainedItem;
-                GItem2 backpack = (GItem2)
+                GItem1 backpack = (GItem1)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.Backpack)
                         .ContainedItem;
-                GItem2 pockets = (GItem2)
+                GItem1 pockets = (GItem1)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.Pockets)
                         .ContainedItem;
-                GItem2 secureContainer = (GItem2)
+                GItem1 secureContainer = (GItem1)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.SecuredContainer)
                         .ContainedItem;
@@ -749,8 +749,8 @@ namespace LootingBots.Patch.Components
             // If the item is a container, calculate the size and see if its bigger than what is equipped
             if (equipped.IsContainer)
             {
-                int equippedSize = LootUtils.GetContainerSize(equipped as GItem2);
-                int itemToLootSize = LootUtils.GetContainerSize(itemToLoot as GItem2);
+                int equippedSize = LootUtils.GetContainerSize(equipped as GItem1);
+                int itemToLootSize = LootUtils.GetContainerSize(itemToLoot as GItem1);
 
                 foundBiggerContainer = equippedSize < itemToLootSize;
             }
