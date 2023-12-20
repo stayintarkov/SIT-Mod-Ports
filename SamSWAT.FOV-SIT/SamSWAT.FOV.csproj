@@ -32,22 +32,28 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="Comfort">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\Comfort.dll</HintPath>
     </Reference>
     <Reference Include="StayInTarkov">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\StayInTarkov.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEngine">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -57,209 +63,6 @@
     <Compile Include="PlayerSpringPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SettingsApplierPatch.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="References\0Harmony.dll" />
-    <Content Include="References\0Harmony.xml" />
-    <Content Include="References\0Harmony20.dll" />
-    <Content Include="References\Accessibility.dll" />
-    <Content Include="References\Aki.Common.dll" />
-    <Content Include="References\Aki.Reflection.dll" />
-    <Content Include="References\AmplifyMotion.dll" />
-    <Content Include="References\AnimationSystem.Recording.dll" />
-    <Content Include="References\AnimationSystem.Types.dll" />
-    <Content Include="References\Assembly-CSharp-firstpass.dll" />
-    <Content Include="References\Assembly-CSharp.dll" />
-    <Content Include="References\Autodesk.Fbx.dll" />
-    <Content Include="References\BepInEx.dll" />
-    <Content Include="References\BepInEx.Harmony.dll" />
-    <Content Include="References\BepInEx.Harmony.xml" />
-    <Content Include="References\BepInEx.Preloader.dll" />
-    <Content Include="References\BepInEx.Preloader.xml" />
-    <Content Include="References\BepInEx.xml" />
-    <Content Include="References\bsg.componentace.compression.libs.zlib.dll" />
-    <Content Include="References\bsg.console.core.dll" />
-    <Content Include="References\bsg.microsoft.extensions.objectpool.dll" />
-    <Content Include="References\bsg.system.buffers.dll" />
-    <Content Include="References\BSG.Unity.Wires.dll" />
-    <Content Include="References\Cinemachine.dll" />
-    <Content Include="References\Coffee.SoftMaskForUGUI.dll" />
-    <Content Include="References\com.nvidia.reflex.Runtime.dll" />
-    <Content Include="References\com.unity.multiplayer-hlapi.Runtime.dll" />
-    <Content Include="References\Comfort.dll" />
-    <Content Include="References\Comfort.Unity.dll" />
-    <Content Include="References\CommonExtensions.dll" />
-    <Content Include="References\DissonanceVoip.dll" />
-    <Content Include="References\DOTween.dll" />
-    <Content Include="References\DOTween.Modules.dll" />
-    <Content Include="References\FbxBuildTestAssets.dll" />
-    <Content Include="References\FilesChecker.dll" />
-    <Content Include="References\HarmonyXInterop.dll" />
-    <Content Include="References\ILInjectedProfiler.dll" />
-    <Content Include="References\ItemComponent.Types.dll" />
-    <Content Include="References\ItemTemplate.Types.dll" />
-    <Content Include="References\JBooth.MicroSplat.Core.dll" />
-    <Content Include="References\kcp.dll" />
-    <Content Include="References\LibraryLoaderUtility.dll" />
-    <Content Include="References\Meta.XR.Audio.dll" />
-    <Content Include="References\Mono.Cecil.dll" />
-    <Content Include="References\Mono.Cecil.Mdb.dll" />
-    <Content Include="References\Mono.Cecil.Pdb.dll" />
-    <Content Include="References\Mono.Cecil.Rocks.dll" />
-    <Content Include="References\Mono.Data.Sqlite.dll" />
-    <Content Include="References\Mono.Posix.dll" />
-    <Content Include="References\Mono.Security.dll" />
-    <Content Include="References\Mono.WebBrowser.dll" />
-    <Content Include="References\MonoMod.RuntimeDetour.dll" />
-    <Content Include="References\MonoMod.RuntimeDetour.xml" />
-    <Content Include="References\MonoMod.Utils.dll" />
-    <Content Include="References\MonoMod.Utils.xml" />
-    <Content Include="References\mscorlib.dll" />
-    <Content Include="References\NetCoreServer.dll" />
-    <Content Include="References\netstandard.dll" />
-    <Content Include="References\Newtonsoft.Json.dll" />
-    <Content Include="References\Newtonsoft.Json.UnityConverters.dll" />
-    <Content Include="References\NLog.dll" />
-    <Content Include="References\Novell.Directory.Ldap.dll" />
-    <Content Include="References\Oculus.AudioManager.dll" />
-    <Content Include="References\Oculus.Spatializer.dll" />
-    <Content Include="References\Sirenix.OdinInspector.Attributes.dll" />
-    <Content Include="References\Sirenix.OdinInspector.CompatibilityLayer.dll" />
-    <Content Include="References\Sirenix.Serialization.Config.dll" />
-    <Content Include="References\Sirenix.Serialization.dll" />
-    <Content Include="References\Sirenix.Utilities.dll" />
-    <Content Include="References\StayInTarkov.dll" />
-    <Content Include="References\SteamAudio.dll" />
-    <Content Include="References\System.Buffers.dll" />
-    <Content Include="References\System.ComponentModel.Composition.dll" />
-    <Content Include="References\System.ComponentModel.DataAnnotations.dll" />
-    <Content Include="References\System.Configuration.dll" />
-    <Content Include="References\System.Core.dll" />
-    <Content Include="References\System.Data.dll" />
-    <Content Include="References\System.Design.dll" />
-    <Content Include="References\System.Diagnostics.Debug.dll" />
-    <Content Include="References\System.Diagnostics.StackTrace.dll" />
-    <Content Include="References\System.Diagnostics.Tracing.dll" />
-    <Content Include="References\System.DirectoryServices.dll" />
-    <Content Include="References\System.dll" />
-    <Content Include="References\System.Drawing.Design.dll" />
-    <Content Include="References\System.Drawing.dll" />
-    <Content Include="References\System.EnterpriseServices.dll" />
-    <Content Include="References\System.Globalization.dll" />
-    <Content Include="References\System.Globalization.Extensions.dll" />
-    <Content Include="References\System.IO.Compression.dll" />
-    <Content Include="References\System.IO.Compression.FileSystem.dll" />
-    <Content Include="References\System.Memory.dll" />
-    <Content Include="References\System.Net.Http.dll" />
-    <Content Include="References\System.Numerics.dll" />
-    <Content Include="References\System.Reflection.dll" />
-    <Content Include="References\System.Resources.ResourceManager.dll" />
-    <Content Include="References\System.Runtime.CompilerServices.Unsafe.dll" />
-    <Content Include="References\System.Runtime.dll" />
-    <Content Include="References\System.Runtime.Extensions.dll" />
-    <Content Include="References\System.Runtime.InteropServices.dll" />
-    <Content Include="References\System.Runtime.Serialization.dll" />
-    <Content Include="References\System.Runtime.Serialization.Formatters.Soap.dll" />
-    <Content Include="References\System.Runtime.Serialization.Xml.dll" />
-    <Content Include="References\System.Security.dll" />
-    <Content Include="References\System.ServiceModel.Internals.dll" />
-    <Content Include="References\System.Threading.dll" />
-    <Content Include="References\System.Transactions.dll" />
-    <Content Include="References\System.Web.ApplicationServices.dll" />
-    <Content Include="References\System.Web.dll" />
-    <Content Include="References\System.Web.Services.dll" />
-    <Content Include="References\System.Windows.Forms.dll" />
-    <Content Include="References\System.Xml.dll" />
-    <Content Include="References\System.Xml.Linq.dll" />
-    <Content Include="References\System.Xml.XPath.XDocument.dll" />
-    <Content Include="References\uLipSync.Runtime.dll" />
-    <Content Include="References\Unity.Burst.Cecil.dll" />
-    <Content Include="References\Unity.Burst.Cecil.Mdb.dll" />
-    <Content Include="References\Unity.Burst.Cecil.Pdb.dll" />
-    <Content Include="References\Unity.Burst.Cecil.Rocks.dll" />
-    <Content Include="References\Unity.Burst.dll" />
-    <Content Include="References\Unity.Burst.Unsafe.dll" />
-    <Content Include="References\Unity.Formats.Fbx.Runtime.dll" />
-    <Content Include="References\Unity.Mathematics.dll" />
-    <Content Include="References\Unity.MemoryProfiler.dll" />
-    <Content Include="References\Unity.PlayableGraphVisualizer.dll" />
-    <Content Include="References\Unity.Postprocessing.Runtime.dll" />
-    <Content Include="References\Unity.ProBuilder.Csg.dll" />
-    <Content Include="References\Unity.ProBuilder.dll" />
-    <Content Include="References\Unity.ProBuilder.KdTree.dll" />
-    <Content Include="References\Unity.ProBuilder.Poly2Tri.dll" />
-    <Content Include="References\Unity.ProBuilder.Stl.dll" />
-    <Content Include="References\Unity.Recorder.Base.dll" />
-    <Content Include="References\Unity.Recorder.dll" />
-    <Content Include="References\Unity.ScriptableBuildPipeline.dll" />
-    <Content Include="References\Unity.TextMeshPro.dll" />
-    <Content Include="References\Unity.Timeline.dll" />
-    <Content Include="References\UnityEngine.AccessibilityModule.dll" />
-    <Content Include="References\UnityEngine.AIModule.dll" />
-    <Content Include="References\UnityEngine.AndroidJNIModule.dll" />
-    <Content Include="References\UnityEngine.AnimationModule.dll" />
-    <Content Include="References\UnityEngine.ARModule.dll" />
-    <Content Include="References\UnityEngine.AssetBundleModule.dll" />
-    <Content Include="References\UnityEngine.AudioModule.dll" />
-    <Content Include="References\UnityEngine.ClothModule.dll" />
-    <Content Include="References\UnityEngine.ClusterInputModule.dll" />
-    <Content Include="References\UnityEngine.ClusterRendererModule.dll" />
-    <Content Include="References\UnityEngine.CoreModule.dll" />
-    <Content Include="References\UnityEngine.CrashReportingModule.dll" />
-    <Content Include="References\UnityEngine.DirectorModule.dll" />
-    <Content Include="References\UnityEngine.dll" />
-    <Content Include="References\UnityEngine.DSPGraphModule.dll" />
-    <Content Include="References\UnityEngine.GameCenterModule.dll" />
-    <Content Include="References\UnityEngine.GridModule.dll" />
-    <Content Include="References\UnityEngine.HotReloadModule.dll" />
-    <Content Include="References\UnityEngine.ImageConversionModule.dll" />
-    <Content Include="References\UnityEngine.IMGUIModule.dll" />
-    <Content Include="References\UnityEngine.InputLegacyModule.dll" />
-    <Content Include="References\UnityEngine.InputModule.dll" />
-    <Content Include="References\UnityEngine.JSONSerializeModule.dll" />
-    <Content Include="References\UnityEngine.LocalizationModule.dll" />
-    <Content Include="References\UnityEngine.ParticleSystemModule.dll" />
-    <Content Include="References\UnityEngine.PerformanceReportingModule.dll" />
-    <Content Include="References\UnityEngine.Physics2DModule.dll" />
-    <Content Include="References\UnityEngine.PhysicsModule.dll" />
-    <Content Include="References\UnityEngine.ProfilerModule.dll" />
-    <Content Include="References\UnityEngine.ScreenCaptureModule.dll" />
-    <Content Include="References\UnityEngine.SharedInternalsModule.dll" />
-    <Content Include="References\UnityEngine.SpriteMaskModule.dll" />
-    <Content Include="References\UnityEngine.SpriteShapeModule.dll" />
-    <Content Include="References\UnityEngine.StreamingModule.dll" />
-    <Content Include="References\UnityEngine.SubstanceModule.dll" />
-    <Content Include="References\UnityEngine.SubsystemsModule.dll" />
-    <Content Include="References\UnityEngine.TerrainModule.dll" />
-    <Content Include="References\UnityEngine.TerrainPhysicsModule.dll" />
-    <Content Include="References\UnityEngine.TextCoreModule.dll" />
-    <Content Include="References\UnityEngine.TextRenderingModule.dll" />
-    <Content Include="References\UnityEngine.TilemapModule.dll" />
-    <Content Include="References\UnityEngine.TLSModule.dll" />
-    <Content Include="References\UnityEngine.UI.dll" />
-    <Content Include="References\UnityEngine.UIElementsModule.dll" />
-    <Content Include="References\UnityEngine.UIModule.dll" />
-    <Content Include="References\UnityEngine.UmbraModule.dll" />
-    <Content Include="References\UnityEngine.UNETModule.dll" />
-    <Content Include="References\UnityEngine.UnityAnalyticsModule.dll" />
-    <Content Include="References\UnityEngine.UnityConnectModule.dll" />
-    <Content Include="References\UnityEngine.UnityTestProtocolModule.dll" />
-    <Content Include="References\UnityEngine.UnityWebRequestAssetBundleModule.dll" />
-    <Content Include="References\UnityEngine.UnityWebRequestAudioModule.dll" />
-    <Content Include="References\UnityEngine.UnityWebRequestModule.dll" />
-    <Content Include="References\UnityEngine.UnityWebRequestTextureModule.dll" />
-    <Content Include="References\UnityEngine.UnityWebRequestWWWModule.dll" />
-    <Content Include="References\UnityEngine.VehiclesModule.dll" />
-    <Content Include="References\UnityEngine.VFXModule.dll" />
-    <Content Include="References\UnityEngine.VideoModule.dll" />
-    <Content Include="References\UnityEngine.VRModule.dll" />
-    <Content Include="References\UnityEngine.WindModule.dll" />
-    <Content Include="References\UnityEngine.XRModule.dll" />
-    <Content Include="References\websocket-sharp.dll" />
-    <Content Include="References\where-allocations.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="References\Assembly-CSharp.dll.backup" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
