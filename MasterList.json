@@ -184,6 +184,20 @@
     "ConfigFiles": []
   },
   {
+    "Name": "Questing Bots",
+    "Author": "DanW",
+    "SupportedVersion": "1.9.8742.42820",
+    "ModVersion": "0.3.4",
+    "PortVersion": "0.3.4",
+    "Description": "You're no longer the only PMC running around placing markers and collecting quest items. The bots have transcended and are coming for you...",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1534-questing-bots/",
+    "RequiresFiles": true,
+    "PluginFiles": [
+      
+    ],
+    "ConfigFiles": []
+  },
+  {
     "Name": "TechHappy's Web MiniMap",
     "Author": "TechHappy",
     "SupportedVersion": "1.9.8742.42820",
