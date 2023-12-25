@@ -280,19 +280,5 @@
       "CactusPie.ContainerQuickLoot.dll"
     ],
     "ConfigFiles": []
-  },
-  {
-    "Name": "Unlimited Power",
-    "Author": "DJLang",
-    "SupportedVersion": "1.9.8742.42820",
-    "ModVersion": "1.1.0",
-    "PortVersion": "1.0.0",
-    "Description": "A pretty simple mod that will allow power switches to be turned on at random points throughout your raids.",
-    "ModUrl": "https://hub.sp-tarkov.com/files/file/1664-unlimited-power/",
-    "RequiresFiles": false,
-    "PluginFiles": [
-      "DJsUnlimitedPower.dll"
-    ],
-    "ConfigFiles": []
   }
 ]
