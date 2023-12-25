@@ -53,9 +53,9 @@ namespace SAIN.Preset.BotSettings.SAINSettings.Categories
         [MinMax(0f, 100f)]
         public float MinExtractPercentage = 5f;
 
-        [Name("Enable Extracts")]
-        [Default(true)]
-        public bool EnableExtracts = true;
+        [Name("Enable Extracts (BUGGY IN SIT)")]
+        [Default(false)]
+        public bool EnableExtracts = false;
 
         [Name("Middle Finger Chance")]
         [Description("Chance this bot will flick you off when spotted")]

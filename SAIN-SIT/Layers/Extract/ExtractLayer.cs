@@ -17,11 +17,6 @@ namespace SAIN.Layers
 
         public override bool IsActive()
         {
-            // Disable extracting for the SIT port
-            // Best case they extract but don't disappear for clients (only for host)
-            // Normal/Worst case they don't path correctly and run in circles.
-            if (69420 > 1) return false;
-
             if (SAIN == null) return false;
 
             if (SAIN.Memory.ExfilPosition == null || !SAIN.Info.FileSettings.Mind.EnableExtracts)

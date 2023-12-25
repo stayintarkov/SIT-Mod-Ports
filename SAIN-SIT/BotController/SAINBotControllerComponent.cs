@@ -46,7 +46,7 @@ namespace SAIN.Components
             LineOfSightManager.Awake();
             CoverManager.Awake();
             PathManager.Awake();
-            //BotExtractManager.Awake();
+            BotExtractManager.Awake();
             BotSquads.Awake();
 
             Singleton<GClass567>.Instance.OnGrenadeThrow += GrenadeThrown;
@@ -69,7 +69,7 @@ namespace SAIN.Components
 
             BotSquads.Update();
             BotSpawnController.Update();
-            //BotExtractManager.Update();
+            BotExtractManager.Update();
             UpdateMainPlayer();
             TimeVision.Update();
             WeatherVision.Update();
