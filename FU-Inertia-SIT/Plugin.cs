@@ -156,7 +156,7 @@ namespace dvize.FUInertia
                 float totalWeight = (player.InteractablePlayer.Skills.StrengthBuffElite ? (inventoryController.Inventory.TotalWeightEliteSkill * Plugin.weightCarryingTotalMultiplier.Value)
                     : (inventoryController.Inventory.TotalWeight * Plugin.weightCarryingTotalMultiplier.Value));
 
-                GClass1253.InertiaSettings inertia = Singleton<GClass1253>.Instance.Inertia;
+                Config4.InertiaSettings inertia = Singleton<Config4>.Instance.Inertia;
                 //__instance.Inertia = __instance.CalculateValue(__instance.BaseInertiaLimits, totalWeight);
                 __instance.Inertia = 0f;
                 __instance.SprintAcceleration = inertia.SprintAccelerationLimits.InverseLerp(__instance.Inertia);

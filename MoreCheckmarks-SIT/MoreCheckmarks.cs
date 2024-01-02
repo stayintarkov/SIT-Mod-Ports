@@ -26,10 +26,10 @@ using Comfort.Common;
 // This returns an instance of GClass2805 which has a list field "Actions" containing all available actions of type GClass2804
 // GClass2804.Name will be directly used as the string that will be displayed in the list, so we set it to a TMPro string with correct color and bold
 using InteractionController = GClass1776;
-using InteractionInstance = Interaction;
-using Action = Action2;
+using InteractionInstance = InteractionState1;
+using Action = Action1;
 using Quest0 = Quest;
-using QuestTemplate = Template2;
+using QuestTemplate = Template1;
 using EFT.Hideout;
 
 namespace MoreCheckmarks
@@ -716,7 +716,7 @@ namespace MoreCheckmarks
                     // UPDATE: This is to know when a new profile is selected so we can load up to date data
                     // We want to do this when client makes request "/client/game/profile/select"
                     // Look for that string in dnspy, this creates a callback with a method_0, that is the method we want to postfix
-                    ProfileSelector = assemblies[i].GetType("Session4+Class1243");
+                    ProfileSelector = assemblies[i].GetType("Session1+Class1243");
                 }
             }
 
