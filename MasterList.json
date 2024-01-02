@@ -256,7 +256,7 @@
   {
     "Name": "Inventory Organizing Features",
     "Author": "Nightingale",
-    "SupportedVersion": "1.9.8735.34855",
+    "SupportedVersion": "1.9.8767.26420",
     "ModVersion": "1.1.0",
     "PortVersion": "1.1.0",
     "Description": "Adds several inventory organizing features which rely on item tags, such as sort locking, move locking and container organizing.",
