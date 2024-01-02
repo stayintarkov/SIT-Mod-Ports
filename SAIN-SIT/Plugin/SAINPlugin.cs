@@ -30,13 +30,13 @@ namespace SAIN
         public const string Trademark = "";
         public const string Culture = "";
 
-        public const int TarkovVersion = 27622;
+        public const int TarkovVersion = 27928;
 
         public const string EscapeFromTarkov = "EscapeFromTarkov.exe";
 
         public const string SAINGUID = "me.sol.sain";
         public const string SAINName = "SAIN";
-        public const string SAINVersion = "2.1.7";
+        public const string SAINVersion = "2.1.8";
         public const string SAINPresetVersion = "2.1.6";
 
         public const string SPTGUID = "com.spt-aki.core";
