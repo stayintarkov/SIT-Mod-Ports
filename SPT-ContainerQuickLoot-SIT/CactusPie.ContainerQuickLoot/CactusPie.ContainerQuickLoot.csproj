@@ -1,9 +1,33 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <Version>1.2.0</Version>
     <Authors>CactusPie</Authors>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,35 +39,33 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\References\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="Comfort">
       <HintPath>..\..\References\Comfort.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="Comfort.Unity">
       <HintPath>..\..\References\Comfort.Unity.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="ItemComponent.Types">
       <HintPath>..\..\References\ItemComponent.Types.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="StayInTarkov">
       <HintPath>..\..\References\StayInTarkov.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\References\UnityEngine.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\References\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
       <HintPath>..\..\References\UnityEngine.InputLegacyModule.dll</HintPath>
-      <Private>False</Private>
     </Reference>
   </ItemGroup>
+
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>COPY "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Ref\plugins"</PostBuildEvent>
+  </PropertyGroup>
 
 </Project>
