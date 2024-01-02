@@ -302,10 +302,10 @@
     "ModVersion": "1.4.2",
     "PortVersion": "1.0.0",
     "Description": "Adds High Ready, Low Ready, Point Shooting, Mounting. Short-Stocking and alternate pistol idle with ADS animation. Animations are not synced.",
-    "ModUrl": "https://hub.sp-tarkov.com/files/file/1633-transfer-loot-into-a-container-automatically/",
-    "RequiresFiles": false,
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1098-fontaine-s-combat-stance-overhaul/",
+    "RequiresFiles": true,
     "PluginFiles": [
-      "CactusPie.ContainerQuickLoot.dll"
+      "CombatStances.dll"
     ],
     "ConfigFiles": []
   }
