@@ -175,7 +175,7 @@ namespace AmandsController
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(CoopGame).GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
+            return typeof(StayInTarkovPlugin).Assembly.GetType("StayInTarkov.Coop.CoopGame").GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
         }
 
         private static void WaitForCoopGame(Task<LocalPlayer> task)

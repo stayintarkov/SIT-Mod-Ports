@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 using System;
 using EFT.Animations;
 using PlayerInterface = IFirearms;
-using AimingSettings = GClass1253.AimingConfiguration;
+using AimingSettings = Config4.AimingConfiguration;
 using StayInTarkov;
 using StayInTarkov.Coop;
 using System.Threading.Tasks;
@@ -19,7 +19,7 @@ namespace RecoilStandalone
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(CoopGame).GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
+            return typeof(StayInTarkovPlugin).Assembly.GetType("StayInTarkov.Coop.CoopGame").GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
         }
 
         private static void WaitForCoopGame(Task<LocalPlayer> task)
@@ -194,7 +194,7 @@ namespace RecoilStandalone
                     hasReset = false;
                     timer = 0f;
 
-                    FirearmController fc = player.HandsController as FirearmController;
+                    EFT.Player.FirearmController fc = player.HandsController as EFT.Player.FirearmController;
                     float shotCountFactor = Mathf.Min(Plugin.ShotCount * 0.4f, 1.75f);
                     float angle = ((90f - Plugin.RecoilAngle) / 50f);
                     float dispersion = Mathf.Max(Plugin.TotalDispersion * 2.75f * Plugin.RecoilDispersionFactor.Value * shotCountFactor * fpsFactor, 0f);
@@ -362,7 +362,7 @@ namespace RecoilStandalone
                     bool hasStockMod = false;
                     foreach (Mod mod in weapon.Mods) 
                     {
-                        if (mod is GClass2537) 
+                        if (mod is GClass2540) 
                         {
                             hasStockMod = true;
                         }

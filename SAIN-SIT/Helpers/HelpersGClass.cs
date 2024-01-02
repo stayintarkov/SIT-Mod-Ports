@@ -36,11 +36,11 @@ namespace SAIN.Helpers
         static HelpersGClass()
         {
             InventoryControllerProp = AccessTools.Field(typeof(Player), "_inventoryController");
-            EFTBotSettingsProp = AccessTools.Property(typeof(GClass504), "FileSettings");
-            RefreshSettingsMethod = AccessTools.Method(typeof(GClass504), "method_0");
+            EFTBotSettingsProp = AccessTools.Property(typeof(Settings10), "FileSettings");
+            RefreshSettingsMethod = AccessTools.Method(typeof(Settings10), "method_0");
         }
 
-        public static void RefreshSettings(GClass504 settings)
+        public static void RefreshSettings(Settings10 settings)
         {
             RefreshSettingsMethod.Invoke(settings, null);
         }

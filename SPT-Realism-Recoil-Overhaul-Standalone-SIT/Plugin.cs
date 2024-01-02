@@ -19,7 +19,7 @@ using StayInTarkov;
 
 namespace RecoilStandalone
 {
-    [BepInPlugin("com.sit.recoilstandalone", "Recoil Standalone", "1.0.0")]
+    [BepInPlugin("RecoilStandalone", "RecoilStandalone", "1.0.0")]
     public class Plugin : BaseUnityPlugin
     {
         public static ConfigEntry<float> ResetTime { get; set; }

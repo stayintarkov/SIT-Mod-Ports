@@ -176,7 +176,7 @@ namespace SAIN.SAINComponent.Classes.Info
 
         private static bool IsSilencer(Type modType)
         {
-            return modType == GClass2603.TypeTable[SuppressorTypeId];
+            return modType == GClass2606.TypeTable[SuppressorTypeId];
         }
 
         private static bool IsOptic(Type modType)
@@ -203,14 +203,14 @@ namespace SAIN.SAINComponent.Classes.Info
 
         private static bool CheckTemplateType(Type modType, string id)
         {
-            if (GClass2603.TypeTable.TryGetValue(id, out Type result))
+            if (GClass2606.TypeTable.TryGetValue(id, out Type result))
             {
                 if (result == modType)
                 {
                     return true;
                 }
             }
-            if (GClass2603.TemplateTypeTable.TryGetValue(id, out result))
+            if (GClass2606.TemplateTypeTable.TryGetValue(id, out result))
             {
                 if (result == modType)
                 {
