@@ -11,9 +11,9 @@ using UnityEngine;
 
 using GridClass = StashGrid;
 using GridClassEx = GridContainer;
-using GridManagerClass = OperationResult20;
-using SortResultStruct = SOperationResult1<OperationResult20>;
-using GridItemClass = GItem13;
+using GridManagerClass = OperationResult19;
+using SortResultStruct = SOperationResult2<OperationResult19>;
+using GridItemClass = GItem12;
 using ItemAddressExClass = GridItemAddress;
 using SortErrorClass = GInventoryError17;
 using GridCacheClass = GClass1329;
@@ -29,7 +29,7 @@ namespace LootingBots.Patch.Util
         public static int RESERVED_SLOT_COUNT = 2;
 
         /** Calculate the size of a container */
-        public static int GetContainerSize(GItem2 container)
+        public static int GetContainerSize(GItem1 container)
         {
             GridClass[] grids = container.Grids;
             int gridSize = 0;
@@ -61,7 +61,7 @@ namespace LootingBots.Patch.Util
         * Sorts the items in a container and places them in grid spaces that match their exact size before moving on to a bigger slot size. This helps make more room in the container for items to be placed in
         */
         public static SortResultStruct SortContainer(
-            GItem2 container,
+            GItem1 container,
             InventoryController controller
         )
         {
@@ -238,13 +238,13 @@ namespace LootingBots.Patch.Util
             Item item
         )
         {
-            GItem2 tacVest = (GItem2)
+            GItem1 tacVest = (GItem1)
                 equipment.GetSlot(EquipmentSlot.TacticalVest).ContainedItem;
-            GItem2 backpack = (GItem2)
+            GItem1 backpack = (GItem1)
                 equipment.GetSlot(EquipmentSlot.Backpack).ContainedItem;
-            GItem2 pockets = (GItem2)
+            GItem1 pockets = (GItem1)
                 equipment.GetSlot(EquipmentSlot.Pockets).ContainedItem;
-            GItem2 secureContainer = (GItem2)
+            GItem1 secureContainer = (GItem1)
                 equipment.GetSlot(EquipmentSlot.SecuredContainer).ContainedItem;
 
             GridClass[] tacVestGrids = new GridClass[0];
