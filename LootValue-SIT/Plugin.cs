@@ -12,7 +12,7 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using StayInTarkov;
-using CurrencyUtil = GClass2385;
+using CurrencyUtil = GClass2388;
 using static LootValue.Globals;
 using TraderClass = Trader;
 using InventoryControllerClass = InventoryController;

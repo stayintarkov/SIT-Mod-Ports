@@ -89,7 +89,7 @@ namespace LootingBots.Patch.Components
         {
             try
             {
-                GItem2 secureContainer = (GItem2)
+                GItem1 secureContainer = (GItem1)
                     _inventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.SecuredContainer)
                         .ContainedItem;

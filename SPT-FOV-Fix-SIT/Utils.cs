@@ -44,7 +44,7 @@ namespace FOVFix
 
             foreach (string id in scopeTypes) 
             {
-                isScope = mod.GetType() == GClass2603.TypeTable[id] ? true : false;
+                isScope = mod.GetType() == GClass2606.TypeTable[id] ? true : false;
             }
 
             return isScope;

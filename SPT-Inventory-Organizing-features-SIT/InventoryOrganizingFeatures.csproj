@@ -18,34 +18,35 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<Reference Include="..\References\Assembly-CSharp.dll">
+		<Reference Include="Assembly-CSharp.dll">
 			<HintPath>..\References\Assembly-CSharp.dll</HintPath>
 		</Reference>
-		<Reference Include="..\References\Aki.Common.dll">
+		<Reference Include="Aki.Common">
 			<HintPath>..\References\Aki.Common.dll</HintPath>
+			<SpecificVersion>False</SpecificVersion>
 		</Reference>
-		<Reference Include="..\References\Newtonsoft.Json.dll">
+		<Reference Include="Newtonsoft.Json.dll">
 			<HintPath>..\References\Newtonsoft.Json.dll</HintPath>
 		</Reference>
-		<Reference Include="..\References\Newtonsoft.Json.UnityConverters.dll">
+		<Reference Include="Newtonsoft.Json.UnityConverters.dll">
 			<HintPath>..\References\Newtonsoft.Json.UnityConverters.dll</HintPath>
 		</Reference>
-		<Reference Include="..\References\Comfort.dll">
+		<Reference Include="Comfort.dll">
 			<HintPath>..\References\Comfort.dll</HintPath>
 		</Reference>
-		<Reference Include="..\References\ItemComponent.Types.dll">
+		<Reference Include="ItemComponent.Types.dll">
 			<HintPath>..\References\ItemComponent.Types.dll</HintPath>
 		</Reference>
-		<Reference Include="..\References\Unity.TextMeshPro.dll">
+		<Reference Include="Unity.TextMeshPro.dll">
 			<HintPath>..\References\Unity.TextMeshPro.dll</HintPath>
 		</Reference>
-		<Reference Include="..\References\Sirenix.Serialization.dll">
+		<Reference Include="Sirenix.Serialization.dll">
 			<HintPath>..\References\Sirenix.Serialization.dll</HintPath>
 		</Reference>
-		<Reference Include="..\References\UnityEngine.UI.dll">
+		<Reference Include="UnityEngine.UI.dll">
 			<HintPath>..\References\UnityEngine.UI.dll</HintPath>
 		</Reference>
-		<Reference Include="..\References\StayInTarkov.dll">
+		<Reference Include="StayInTarkov.dll">
 		  <HintPath>..\References\StayInTarkov.dll</HintPath>
 		</Reference>
 		<Reference Include="0Harmony">

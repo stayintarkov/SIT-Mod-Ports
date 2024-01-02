@@ -15,8 +15,7 @@ using WeaponState = WeaponEffectsManager;
 using FCSubClass = EFT.Player.FirearmController.AbstractFirearmActioner;
 using ScopeStatesStruct = ScopeStates;
 using IActiveWeapon = IWeapon;
-using SightComptInterface = ITemplate25;
-using StayInTarkov.Coop;
+using SightComptInterface = GInterface264;
 using System.Threading.Tasks;
 
 namespace FOVFix
@@ -25,7 +24,7 @@ namespace FOVFix
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(CoopGame).GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
+            return typeof(StayInTarkovPlugin).Assembly.GetType("StayInTarkov.Coop.CoopGame").GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
         }
 
         private static void WaitForCoopGame(Task<LocalPlayer> task)
@@ -189,7 +188,7 @@ namespace FOVFix
 
                 isOptic = pwa.CurrentScope.IsOptic;
                 SightComponent sightComp = player.ProceduralWeaponAnimation.CurrentAimingMod;
-                GClass2520 sightModClass = currentAimingMod as GClass2520;
+                GClass2523 sightModClass = currentAimingMod as GClass2523;
                 SightComptInterface inter = (SightComptInterface)sighCompField.GetValue(sightModClass.Sight);
 
                 canToggle = currentAimingMod.Template.ToolModdable;
@@ -367,7 +366,7 @@ namespace FOVFix
                         {
                             hasSetFov = true;
                             Mod currentAimingMod = (pwa.CurrentAimingMod != null) ? pwa.CurrentAimingMod.Item as Mod : null;
-                            GClass2520 sightModClass = currentAimingMod as GClass2520;
+                            GClass2523 sightModClass = currentAimingMod as GClass2523;
                             SightComponent sightComp = player.ProceduralWeaponAnimation.CurrentAimingMod;
                             SightComptInterface sightCompInter = (SightComptInterface)sightComptField.GetValue(sightModClass.Sight);
                             Plugin.IsFixedMag = currentAimingMod.Template.HasShoulderContact;
