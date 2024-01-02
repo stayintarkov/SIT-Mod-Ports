@@ -9,7 +9,7 @@
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1550-amands-controller/",
     "RequiresFiles": true,
     "PluginFiles": [
-        "AmandsController.dll"
+      "AmandsController.dll"
     ],
     "ConfigFiles": []
   },
@@ -23,7 +23,7 @@
     "ModUrl": "https://hub.sp-tarkov.com/files/file/813-amands-s-graphics/",
     "RequiresFiles": false,
     "PluginFiles": [
-        "AmandsGraphics.dll"
+      "AmandsGraphics.dll"
     ],
     "ConfigFiles": []
   },
@@ -37,7 +37,7 @@
     "ModUrl": "https://hub.sp-tarkov.com/files/file/798-amands-s-hitmarker/",
     "RequiresFiles": true,
     "PluginFiles": [
-        "AmandsHitmarker.dll"
+      "AmandsHitmarker.dll"
     ],
     "ConfigFiles": []
   },
@@ -51,7 +51,7 @@
     "ModUrl": "https://github.com/Amands2Mello/AmandsSense",
     "RequiresFiles": true,
     "PluginFiles": [
-        "AmandsSense.dll"
+      "AmandsSense.dll"
     ],
     "ConfigFiles": []
   },
@@ -65,7 +65,7 @@
     "ModUrl": "https://hub.sp-tarkov.com/files/file/843-fu-inertia/",
     "RequiresFiles": false,
     "PluginFiles": [
-        "dvize.FUInertia.dll"
+      "dvize.FUInertia.dll"
     ],
     "ConfigFiles": []
   },
@@ -79,7 +79,7 @@
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1159-morecheckmarks/",
     "RequiresFiles": true,
     "PluginFiles": [
-        "MoreCheckmarks.dll"
+      "MoreCheckmarks.dll"
     ],
     "ConfigFiles": []
   },
@@ -87,8 +87,8 @@
     "Name": "SAIN",
     "Author": "Solarint & DrakiaXYZ",
     "SupportedVersion": "1.9.8767.26420",
-    "ModVersion": "2.1.6",
-    "PortVersion": "1.2.0",
+    "ModVersion": "2.1.8",
+    "PortVersion": "1.3.0",
     "Description": "Bots that don't suck. FULL AI COMBAT SYSTEM REPLACEMENT",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1062-sain-2-0-solarint-s-ai-modifications-full-ai-combat-system-replacement/",
     "RequiresFiles": true,
@@ -124,7 +124,7 @@
       "ConfigurationManager.dll"
     ],
     "ConfigFiles": [
-        "com.bepis.bepinex.configurationmanager.cfg"
+      "com.bepis.bepinex.configurationmanager.cfg"
     ]
   },
   {
@@ -224,7 +224,7 @@
       "DynamicExternalResolution.dll"
     ],
     "ConfigFiles": []
-  },  
+  },
   {
     "Name": "DrakiaXYZ-BotDebug",
     "Author": "DrakiaXYZ",
@@ -238,7 +238,7 @@
       "DrakiaXYZ-BotDebug.dll"
     ],
     "ConfigFiles": []
-  },  
+  },
   {
     "Name": "LootValue",
     "Author": "IhanaMies",
@@ -267,7 +267,7 @@
     ],
     "ConfigFiles": []
   },
-    {
+  {
     "Name": "Container Quick Loot",
     "Author": "CactusPie",
     "SupportedVersion": "1.9.8767.26420",

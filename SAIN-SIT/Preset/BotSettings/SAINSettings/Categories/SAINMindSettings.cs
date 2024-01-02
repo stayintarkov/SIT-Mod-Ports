@@ -53,7 +53,7 @@ namespace SAIN.Preset.BotSettings.SAINSettings.Categories
         [MinMax(0f, 100f)]
         public float MinExtractPercentage = 5f;
 
-        [Name("Enable Extracts")]
+        [Name("Enable Extracts (BUGGY IN SIT)")]
         [Default(true)]
         public bool EnableExtracts = true;
 
