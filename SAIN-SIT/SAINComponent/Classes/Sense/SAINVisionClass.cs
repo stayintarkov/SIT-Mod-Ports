@@ -24,7 +24,7 @@ namespace SAIN.SAINComponent.Classes
             var Enemy = SAIN.Enemy;
             if (Enemy?.EnemyIAIDetails != null && Enemy?.IsVisible == true)
             {
-                FlashLightDazzle.CheckIfDazzleApplied(Enemy.EnemyIAIDetails);
+                FlashLightDazzle.CheckIfDazzleApplied(Enemy);
             }
         }
 
