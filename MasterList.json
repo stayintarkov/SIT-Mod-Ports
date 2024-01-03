@@ -308,5 +308,19 @@
       "CombatStances.dll"
     ],
     "ConfigFiles": []
+  },
+  {
+    "Name": "Fontaine's Inspectionless Malfs",
+    "Author": "Fontaine",
+    "SupportedVersion": "1.9.8767.26420",
+    "ModVersion": "1.2.0",
+    "PortVersion": "1.0.0",
+    "Description": "Makes it so you don't need to inspect/examine malfunctions before clearing them.",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/661-fontaine-s-inspectionless-malfs/",
+    "RequiresFiles": false,
+    "PluginFiles": [
+      "InspectionlessMalfs.dll"
+    ],
+    "ConfigFiles": []
   }
 ]
