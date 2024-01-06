@@ -532,7 +532,7 @@ namespace SPTQuestingBots.Controllers.Bots
                 .Where(q => !invalidQuests.Contains(q))
                 .Where(q => q.NumberOfValidObjectives > 0)
                 .Where(q => q.CanMoreBotsDoQuest())
-                .Where(q => q.CanAssignToBot(bot))
+                // .Where(q => q.CanAssignToBot(bot)) // TODO: Fixme -> Workaround, if there are no quests available for bots, it may start throwing exceptions like no tomorrow.
                 .GroupBy
                 (
                     q => q.Priority,
