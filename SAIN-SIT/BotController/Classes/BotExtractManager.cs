@@ -357,11 +357,13 @@ namespace SAIN.Components.BotController
         {
             // Check each valid extract to ensure the bot can use it and that it isn't too close. If this method is called when a bot is near an extract, it might be because
             // it got stuck. 
+            NavMeshPath Path = new NavMeshPath();
             IDictionary<T, Vector3> possibleExfils = validExfils
                     .Where(x => CanUseExtract(x.Key))
                     .Where(x => Vector3.Distance(bot.Position, x.Value) > MinDistanceToExtract)
+                    .Where(x => NavMesh.CalculatePath(bot.Position, x.Value, -1, Path) && Path.status == NavMeshPathStatus.PathComplete)
                     .ToDictionary(x => x.Key, x => x.Value);
-
+            
             if (!possibleExfils.Any())
             {
                 if (SAINPlugin.DebugMode)
@@ -496,7 +498,7 @@ namespace SAIN.Components.BotController
             }
         }
 
-        public float EscapeTimeSeconds(Timer1 timer)
+        public float EscapeTimeSeconds(Timer2 timer)
         {
             DateTime? escapeDateTime = timer.EscapeDateTime;
             return (float)((escapeDateTime != null) ? (escapeDateTime.Value - HelpersGClass.UtcNow) : TimeSpan.MaxValue).TotalSeconds;

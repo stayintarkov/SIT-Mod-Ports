@@ -131,7 +131,7 @@ namespace SAIN.Layers
                 ExtractTimer = -1f;
                 ReCalcPathTimer = Time.time + 4f;
 
-                NavMeshPathStatus pathStatus = BotOwner.Mover.GoToPoint(point, true, 0.5f, false, false);
+                NavMeshPathStatus pathStatus = BotOwner.Mover.GoToPoint(point, true,  BotExtractManager.MinDistanceToExtract / 2, false, false);
                 float distanceToEndOfPath = Vector3.Distance(BotOwner.Position, BotOwner.Mover.CurPathLastPoint);
                 bool reachedEndOfIncompletePath = (pathStatus == NavMeshPathStatus.PathPartial) && (distanceToEndOfPath < BotExtractManager.MinDistanceToExtract);
 
@@ -167,6 +167,14 @@ namespace SAIN.Layers
                 var botgame = Singleton<IBotGame>.Instance;
                 Player player = SAIN.Player;
                 Singleton<Effects>.Instance.EffectsCommutator.StopBleedingForPlayer(player);
+                // Hacky fix to hide the bots body for clients
+                player.SwitchRenderer(false);
+                player.Position = player.Position + Vector3.down * 1000f;
+                player.ActiveHealthController.AddDamageMultiplier(0);
+                player.ActiveHealthController.SetDamageCoeff(0);
+                player.ActiveHealthController.DisableMetabolism();
+                player.ActiveHealthController.PauseAllEffects();
+                Object.Destroy(player);
                 BotOwner.Deactivate();
                 BotOwner.Dispose();
                 botgame.BotsController.BotDied(BotOwner);

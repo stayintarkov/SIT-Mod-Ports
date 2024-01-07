@@ -16,7 +16,7 @@ namespace SAIN.Components
             Logger = BepInEx.Logging.Logger.CreateLogSource(GetType().Name);
 
             LocalPlayer = Singleton<GameWorld>.Instance.RegisteredPlayers.Find(p => p.IsYourPlayer) as Player;
-            PlayerFlashComponent = LocalPlayer.GetComponent<SAINFlashLightComponent>();
+            if (LocalPlayer != null) PlayerFlashComponent = LocalPlayer.GetComponent<SAINFlashLightComponent>();
         }
 
         public void CreateDetectionPoints(Player player, bool visibleLight)

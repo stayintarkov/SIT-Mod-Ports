@@ -28,7 +28,7 @@ namespace SAIN.Patches.Shoot
         private static float DebugTimer;
 
         [PatchPrefix]
-        public static bool PatchPrefix(ref BotAiming1 __instance, ref BotOwner ___botOwner_0, ref Vector3 ___vector3_5, ref Vector3 ___vector3_4, ref float ___float_13)
+        public static bool PatchPrefix(ref BotAiming2 __instance, ref BotOwner ___botOwner_0, ref Vector3 ___vector3_5, ref Vector3 ___vector3_4, ref float ___float_13)
         {
             // Applies aiming offset, recoil offset, and scatter offsets
             Vector3 finalTarget = __instance.RealTargetPoint
