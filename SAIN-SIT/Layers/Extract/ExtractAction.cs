@@ -165,16 +165,11 @@ namespace SAIN.Layers
                 Logger.LogInfo($"{BotOwner.name} Extracted at {point} for extract {SAIN.Memory.ExfilPoint.Settings.Name} at {System.DateTime.UtcNow}");
 
                 var botgame = Singleton<IBotGame>.Instance;
+                var botPlayer = Singleton<GameWorld>.Instance.RegisteredPlayers.Find(x => x.ProfileId == BotOwner.ProfileId) as Player;
+                if (botPlayer != null) botPlayer.SwitchRenderer(false);
                 Player player = SAIN.Player;
                 Singleton<Effects>.Instance.EffectsCommutator.StopBleedingForPlayer(player);
-                // Hacky fix to hide the bots body for clients
-                player.SwitchRenderer(false);
-                player.Position = player.Position + Vector3.down * 1000f;
-                player.ActiveHealthController.AddDamageMultiplier(0);
-                player.ActiveHealthController.SetDamageCoeff(0);
-                player.ActiveHealthController.DisableMetabolism();
-                player.ActiveHealthController.PauseAllEffects();
-                Object.Destroy(player);
+                BotOwner.IsDead = true;
                 BotOwner.Deactivate();
                 BotOwner.Dispose();
                 botgame.BotsController.BotDied(BotOwner);
