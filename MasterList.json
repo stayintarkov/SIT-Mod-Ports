@@ -270,7 +270,7 @@
     {
     "Name": "Container Quick Loot",
     "Author": "CactusPie",
-    "SupportedVersion": "1.9.8767.26420",
+    "SupportedVersion": "1.9.8766.40295",
     "ModVersion": "1.3.1",
     "PortVersion": "1.0.0",
     "Description": "Looting an item will now place it in a matching container with a @loot tag, such as a dogtag case or a document case",
