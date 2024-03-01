@@ -33,7 +33,7 @@ namespace SAIN.Components.Helpers
             if (Item != null)
             {
                 //DefaultLogger.LogInfo($"Item: {Item.GetType().SAINName} : Sound {sound}");
-                if (Item is ThrowWeap)
+                if (Item is GrenadeClass)
                 {
                     if (sound == "Pin")
                     {
@@ -48,7 +48,7 @@ namespace SAIN.Components.Helpers
                         soundDist = 15f;
                     }
                 }
-                else if (Item is Meds)
+                else if (Item is MedsClass)
                 {
                     if (sound == "CapRemove" || sound == "Inject")
                     {

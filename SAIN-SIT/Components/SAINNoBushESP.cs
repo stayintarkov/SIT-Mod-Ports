@@ -32,7 +32,6 @@ namespace SAIN.Components
         static SAINNoBushESP()
         {
             Logger = BepInEx.Logging.Logger.CreateLogSource(nameof(SAINNoBushESP));
-            NoBushMask = LayerMaskClass.HighPolyWithTerrainMaskAI | (1 << LayerMask.NameToLayer(PropertyNames.PlayerSpirit));
 
             Type botType = typeof(BotOwner);
 
@@ -128,13 +127,13 @@ namespace SAIN.Components
             return false;
         }
 
-        public bool NoBushESPCheck(IAIDetails player)
+        public bool NoBushESPCheck(IPlayer player)
         {
             Vector3 partPos = player.MainParts[BodyPartType.body].Position;
             return RayCast(partPos, HeadPosition);
         }
 
-        public bool NoBushESPCheckEnhanced(IAIDetails player)
+        public bool NoBushESPCheckEnhanced(IPlayer player)
         {
             int hitCount = 0;
             int partCount = player.MainParts.Count;

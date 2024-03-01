@@ -2,6 +2,7 @@
 using EFT.InventoryLogic;
 using EFT.Weather;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using static EFT.Player;
 
@@ -64,23 +65,24 @@ namespace SAIN.Helpers
             return 2f - weapon.SpeedFactor;
         }
 
-        private static float GetMuzzleLoudness(Mod[] mods)
+        private static float GetMuzzleLoudness(IEnumerable<Mod> mods)
         {
             if (!ModDetection.RealismLoaded)
             {
                 return 1f;
             }
             float loudness = 0f;
-            for (int i = 0; i < mods.Length; i++)
+            var enumerable = mods as Mod[] ?? mods.ToArray();
+            for (int i = 0; i < enumerable.Length; i++)
             {
                 //if the muzzle device has a silencer attached to it then it shouldn't contribute to the loudness stat.
-                if (mods[i].Slots.Length > 0 && mods[i].Slots[0].ContainedItem != null && IsSilencer((Mod)mods[i].Slots[0].ContainedItem))
+                if (enumerable[i].Slots.Length > 0 && enumerable[i].Slots[0].ContainedItem != null && IsSilencer((Mod)enumerable[i].Slots[0].ContainedItem))
                 {
                     continue;
                 }
                 else
                 {
-                    loudness += mods[i].Template.Loudness;
+                    loudness += enumerable[i].Template.Loudness;
                 }
             }
             return (loudness / 200) + 1f;
@@ -116,7 +118,7 @@ namespace SAIN.Helpers
 
         public static bool IsSilencer(Mod mod)
         {
-            return mod.GetType() == GClass2606.TypeTable[SuppressorTypeId];
+            return mod.GetType() == GClass2741.TypeTable[SuppressorTypeId];
         }
 
         public static readonly string SuppressorTypeId = "550aa4cd4bdc2dd8348b456c";

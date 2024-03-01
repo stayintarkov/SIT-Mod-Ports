@@ -149,10 +149,13 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\EscapeFromTarkov_Data\Managed\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\References\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="StayInTarkov">
       <HintPath>..\References\StayInTarkov.dll</HintPath>
+    </Reference>
+    <Reference Include="DrakiaXYZ-BigBrain">
+      <HintPath>..\References\DrakiaXYZ-BigBrain.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -232,6 +235,8 @@
     <Compile Include="Attributes\AttributesInfoClass.cs" />
     <Compile Include="Attributes\GUIEntryConfig.cs" />
     <Compile Include="BotController\Classes\BotSquads.cs" />
+    <Compile Include="Components\Extract\ExtractFinderComponent.cs" />
+    <Compile Include="Components\Extract\ExtractPositionFinder.cs" />
     <Compile Include="Components\MainPlayer\BaseMainPlayer.cs" />
     <Compile Include="Components\MainPlayer\SAINCamoClass.cs" />
     <Compile Include="Components\MainPlayer\SAINMainPlayerComponent.cs" />
@@ -244,11 +249,14 @@
     <Compile Include="Helpers\ComponentHelpers.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\ListHelpers.cs" />
+    <Compile Include="Helpers\NavMeshHelpers.cs" />
     <Compile Include="Helpers\UpdateSettingClass.cs" />
     <Compile Include="Layers\DebugOverlay.cs" />
     <Compile Include="Layers\SAINAction.cs" />
     <Compile Include="Layers\SAINLayer.cs" />
     <Compile Include="Plugin\DependencyChecker.cs" />
+    <Compile Include="Plugin\External.cs" />
+    <Compile Include="Plugin\SAINInterop.cs" />
     <Compile Include="Preset\BotSettings\SAINSettings\Categories\SAINBossSettings.cs" />
     <Compile Include="Preset\GlobalSettings\Categories\BigBrain\BotBrains.cs" />
     <Compile Include="Preset\GlobalSettings\Categories\BigBrain\Brain.cs" />
@@ -449,9 +457,6 @@
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
   </ProjectExtensions>
-  <PropertyGroup>
-    <PostBuildEvent>COPY "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Ref\plugins"</PostBuildEvent>
-  </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>

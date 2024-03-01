@@ -5,8 +5,7 @@ using static SAIN.AssemblyInfo;
 using SAIN;
 
 [assembly: AssemblyTitle(Title)]
-[assembly: AssemblyDescription(SAIN.AssemblyInfo.Description)]
-[assembly: AssemblyConfiguration(Configuration)]
+[assembly: AssemblyDescription(Description)]
 [assembly: AssemblyCompany(Company)]
 [assembly: AssemblyProduct(Product)]
 [assembly: AssemblyCopyright(Copyright)]

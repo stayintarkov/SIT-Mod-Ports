@@ -1,5 +1,4 @@
 ﻿using EFT;
-using EFT.NextObservedPlayer;
 using SAIN.SAINComponent.Classes.Info;
 using UnityEngine;
 
@@ -9,7 +8,7 @@ namespace SAIN.SAINComponent.BaseClasses
     {
         void Update();
         bool PlayerNull { get; }
-        IAIDetails IAIDetails { get; }
+        IPlayer IPlayer { get; }
         Player Player { get; }
         Vector3 Position { get; }
         SAINPersonTransformClass Transform { get; }

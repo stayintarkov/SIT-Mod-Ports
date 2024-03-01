@@ -6,12 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
-using EFTCore = GClass502;
-using EFTFileSettings = GClass503;
+using EFTCore = GClass531;
+using EFTFileSettings = GClass532;
 using EFTSettingsGroup = BotSettingsComponents;
-using EFTSoundPlayer = GClass567;
-using EFTStatModifiersClass = GClass500;
-using EFTTime = GClass1237;
+using EFTSoundPlayer = GClass598;
+using EFTStatModifiersClass = GClass529;
+using EFTTime = GClass1296;
 using EFTSearchPoint = PlaceForCheck;
 using StayInTarkov;
 
@@ -36,11 +36,11 @@ namespace SAIN.Helpers
         static HelpersGClass()
         {
             InventoryControllerProp = AccessTools.Field(typeof(Player), "_inventoryController");
-            EFTBotSettingsProp = AccessTools.Property(typeof(Settings10), "FileSettings");
-            RefreshSettingsMethod = AccessTools.Method(typeof(Settings10), "method_0");
+            EFTBotSettingsProp = AccessTools.Property(typeof(Settings9), "FileSettings");
+            RefreshSettingsMethod = AccessTools.Method(typeof(Settings9), "method_0");
         }
 
-        public static void RefreshSettings(Settings10 settings)
+        public static void RefreshSettings(Settings9 settings)
         {
             RefreshSettingsMethod.Invoke(settings, null);
         }
@@ -50,9 +50,9 @@ namespace SAIN.Helpers
         public static readonly PropertyInfo EFTBotSettingsProp;
         public static readonly FieldInfo InventoryControllerProp;
 
-        public static InventoryController GetInventoryController(Player player)
+        public static InventoryControllerClass GetInventoryController(Player player)
         {
-            return (InventoryController)InventoryControllerProp.GetValue(player);
+            return (InventoryControllerClass)InventoryControllerProp.GetValue(player);
         }
 
         public static EFTSettingsGroup GetEFTSettings(WildSpawnType type, BotDifficulty difficulty)
@@ -66,7 +66,7 @@ namespace SAIN.Helpers
         public static float Gravity => EFTCore.Core.G;
         public static float SMOKE_GRENADE_RADIUS_COEF => EFTCore.Core.SMOKE_GRENADE_RADIUS_COEF;
 
-        public static void PlaySound(IAIDetails player, Vector3 pos, float range, AISoundType soundtype)
+        public static void PlaySound(IPlayer player, Vector3 pos, float range, AISoundType soundtype)
         {
             Singleton<EFTSoundPlayer>.Instance?.PlaySound(player, pos, range, soundtype);
         }

@@ -1,5 +1,4 @@
-﻿using StayInTarkov;
-using EFT;
+﻿using EFT;
 using EFT.UI.Ragfair;
 using HarmonyLib;
 using System;
@@ -79,7 +78,7 @@ namespace SAIN.Helpers
             return NormalizeFastSelf(v) * num + from;
         }
 
-        public static bool CanShootToTarget(Shoot2point shootToPoint, Vector3 firePos, LayerMask mask, bool doubleSide = false)
+        public static bool CanShootToTarget(ShootPointClass shootToPoint, Vector3 firePos, LayerMask mask, bool doubleSide = false)
         {
             if (shootToPoint == null)
             {

@@ -36,7 +36,7 @@ namespace SAIN.Components
         public Vector3 MainPlayerPosition { get; private set; }
         private bool ComponentAdded { get; set; }
         private float UpdatePositionTimer { get; set; }
-
+        
         private void Awake()
         {
             GameWorld.OnDispose += Dispose;
@@ -49,8 +49,8 @@ namespace SAIN.Components
             BotExtractManager.Awake();
             BotSquads.Awake();
 
-            Singleton<GClass567>.Instance.OnGrenadeThrow += GrenadeThrown;
-            Singleton<GClass567>.Instance.OnGrenadeExplosive += GrenadeExplosion;
+            Singleton<GClass598>.Instance.OnGrenadeThrow += GrenadeThrown;
+            Singleton<GClass598>.Instance.OnGrenadeExplosive += GrenadeExplosion;
             AISoundPlayed += SoundPlayed;
             PlayerTalk += PlayerTalked;
         }
@@ -198,7 +198,7 @@ namespace SAIN.Components
                     continue;
                 }
                 var Enemy = bot.Enemy;
-                if (Enemy?.EnemyIAIDetails != null && Enemy.EnemyIAIDetails.ProfileId == player.ProfileId)
+                if (Enemy?.EnemyIPlayer != null && Enemy.EnemyIPlayer.ProfileId == player.ProfileId)
                 {
                     if (Enemy.RealDistance <= range)
                     {
@@ -333,8 +333,8 @@ namespace SAIN.Components
 
                 AISoundPlayed -= SoundPlayed;
                 PlayerTalk -= PlayerTalked;
-                Singleton<GClass567>.Instance.OnGrenadeThrow -= GrenadeThrown;
-                Singleton<GClass567>.Instance.OnGrenadeExplosive -= GrenadeExplosion;
+                Singleton<GClass598>.Instance.OnGrenadeThrow -= GrenadeThrown;
+                Singleton<GClass598>.Instance.OnGrenadeExplosive -= GrenadeExplosion;
 
                 if (Bots.Count > 0)
                 {
