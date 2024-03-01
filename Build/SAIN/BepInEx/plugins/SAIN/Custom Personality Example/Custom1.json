@@ -1,0 +1,45 @@
+{
+  "SAINPersonality": "Custom1",
+  "Name": "Custom Personality Example",
+  "Description": "an Example of a custom personality. Custom1 through Custom5 are available for making custom personalities.",
+  
+  "Variables": {
+    "Enabled": false,
+    "CanBeRandomlyAssigned": true,
+    "RandomlyAssignedChance": 50.0,
+    "MaxLevel": 10.0,
+    "RandomChanceIfMeetRequirements": 60.0,
+    "PowerLevelMin": 0.0,
+    "PowerLevelMax": 40.0,
+    "HoldGroundBaseTime": 0.25,
+    "HoldGroundMinRandom": 0.66,
+    "HoldGroundMaxRandom": 1.5,
+    "SearchBaseTime": 60.0,
+    "CanJumpCorners": false,
+    "CanTaunt": false,
+    "FrequentTaunt": false,
+    "ConstantTaunt": false,
+    "CanRespondToVoice": false,
+    "TauntFrequency": 20.0,
+    "TauntMaxDistance": 20.0,
+    "SprintWhileSearch": false,
+    "FrequentSprintWhileSearch": false,
+    "CanRushEnemyReloadHeal": false,
+    "CanFakeDeathRare": false
+  },
+
+  "AllowedBotTypes": {
+    "sptUsec": {
+      "Name": "Usec",
+      "Description": "A PMC of the Usec Faction",
+      "Section": "PMCs",
+      "WildSpawnType": "sptUsec"
+    },
+    "sptBear": {
+      "Name": "Bear",
+      "Description": "A PMC of the Bear Faction",
+      "Section": "PMCs",
+      "WildSpawnType": "sptBear"
+    }
+  }
+}

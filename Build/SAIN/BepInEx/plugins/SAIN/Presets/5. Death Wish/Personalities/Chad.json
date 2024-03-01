@@ -1,0 +1,41 @@
+{
+  "SAINPersonality": "Chad",
+  "Name": "Chad",
+  "Description": "An aggressive player. Typically wearing high tier equipment, and is more aggressive than usual.",
+  "Variables": {
+    "Enabled": true,
+    "CanBeRandomlyAssigned": true,
+    "RandomlyAssignedChance": 5.0,
+    "MaxLevel": 100.0,
+    "RandomChanceIfMeetRequirements": 60.0,
+    "PowerLevelMin": 85.0,
+    "PowerLevelMax": 250.0,
+    "HoldGroundBaseTime": 1.5,
+    "HoldGroundMinRandom": 0.65,
+    "HoldGroundMaxRandom": 1.5,
+    "SearchBaseTime": 4.0,
+    "AggressionMultiplier": 2.0,
+    "CanJumpCorners": true,
+    "CanTaunt": true,
+    "Sneaky": false,
+    "SneakySpeed": 0.0,
+    "SneakyPose": 0.0,
+    "CanAmbush": true,
+    "AmbushChance": 25.0,
+    "CheckAmbushFrequency": 5.0,
+    "BaseSearchMoveSpeed": 1.0,
+    "FrequentTaunt": true,
+    "ConstantTaunt": false,
+    "CanRespondToVoice": true,
+    "TauntFrequency": 10.0,
+    "TauntMaxDistance": 40.0,
+    "SprintWhileSearch": true,
+    "FrequentSprintWhileSearch": false,
+    "CanRushEnemyReloadHeal": true,
+    "CanFakeDeathRare": false,
+    "AllowedTypes": [
+      "Usec",
+      "Bear"
+    ]
+  }
+}

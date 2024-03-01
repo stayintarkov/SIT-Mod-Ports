@@ -1,0 +1,41 @@
+{
+  "SAINPersonality": "GigaChad",
+  "Name": "GigaChad",
+  "Description": "A true alpha threat. Hyper Aggressive and typically wearing high tier equipment.",
+  "Variables": {
+    "Enabled": true,
+    "CanBeRandomlyAssigned": true,
+    "RandomlyAssignedChance": 5.0,
+    "MaxLevel": 100.0,
+    "RandomChanceIfMeetRequirements": 60.0,
+    "PowerLevelMin": 115.0,
+    "PowerLevelMax": 250.0,
+    "HoldGroundBaseTime": 2.0,
+    "HoldGroundMinRandom": 0.65,
+    "HoldGroundMaxRandom": 1.5,
+    "SearchBaseTime": 0.65,
+    "AggressionMultiplier": 4.0,
+    "CanJumpCorners": true,
+    "CanTaunt": true,
+    "Sneaky": false,
+    "SneakySpeed": 0.0,
+    "SneakyPose": 0.0,
+    "CanAmbush": true,
+    "AmbushChance": 25.0,
+    "CheckAmbushFrequency": 5.0,
+    "BaseSearchMoveSpeed": 1.0,
+    "FrequentTaunt": false,
+    "ConstantTaunt": true,
+    "CanRespondToVoice": true,
+    "TauntFrequency": 8.0,
+    "TauntMaxDistance": 50.0,
+    "SprintWhileSearch": true,
+    "FrequentSprintWhileSearch": true,
+    "CanRushEnemyReloadHeal": true,
+    "CanFakeDeathRare": false,
+    "AllowedTypes": [
+      "Usec",
+      "Bear"
+    ]
+  }
+}

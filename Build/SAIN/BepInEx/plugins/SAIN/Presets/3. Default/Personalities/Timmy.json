@@ -1,0 +1,41 @@
+{
+  "SAINPersonality": "Timmy",
+  "Name": "Timmy",
+  "Description": "A New Player, terrified of everything.",
+  "Variables": {
+    "Enabled": true,
+    "CanBeRandomlyAssigned": true,
+    "RandomlyAssignedChance": 25.0,
+    "MaxLevel": 10.0,
+    "RandomChanceIfMeetRequirements": 50.0,
+    "PowerLevelMin": 0.0,
+    "PowerLevelMax": 40.0,
+    "HoldGroundBaseTime": 0.6,
+    "HoldGroundMinRandom": 0.66,
+    "HoldGroundMaxRandom": 1.5,
+    "SearchBaseTime": 120.0,
+    "AggressionMultiplier": 0.75,
+    "CanJumpCorners": false,
+    "CanTaunt": false,
+    "Sneaky": false,
+    "SneakySpeed": 0.0,
+    "SneakyPose": 0.0,
+    "CanAmbush": true,
+    "AmbushChance": 25.0,
+    "CheckAmbushFrequency": 5.0,
+    "BaseSearchMoveSpeed": 0.65,
+    "FrequentTaunt": false,
+    "ConstantTaunt": false,
+    "CanRespondToVoice": true,
+    "TauntFrequency": 20.0,
+    "TauntMaxDistance": 20.0,
+    "SprintWhileSearch": false,
+    "FrequentSprintWhileSearch": false,
+    "CanRushEnemyReloadHeal": false,
+    "CanFakeDeathRare": false,
+    "AllowedTypes": [
+      "Usec",
+      "Bear"
+    ]
+  }
+}
