@@ -49,6 +49,9 @@
     <Reference Include="Comfort">
       <HintPath>..\References\Comfort.dll</HintPath>
     </Reference>
+    <Reference Include="DissonanceVoip">
+      <HintPath>..\References\DissonanceVoip.dll</HintPath>
+    </Reference>
     <Reference Include="DOTween">
       <HintPath>..\References\DOTween.dll</HintPath>
     </Reference>
@@ -103,7 +106,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>COPY "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Ref\plugins"</PostBuildEvent>
-  </PropertyGroup>
 </Project>

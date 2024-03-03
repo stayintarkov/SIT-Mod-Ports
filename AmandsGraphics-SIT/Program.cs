@@ -992,7 +992,7 @@ namespace AmandsGraphics
         [PatchPostfix]
         private static void PatchPostFix(ref TacticalComboVisualController __instance)
         {
-            if (AmandsGraphicsPlugin.Flashlight.Value == EEnabledFeature.On && AmandsGraphicsClass.localPlayer != null && Vector3.Distance(__instance.transform.position, AmandsGraphicsClass.localPlayer.Position) < 5f && AmandsGraphicsClass.localPlayer.HandsController != null && __instance.transform.IsChildOf(AmandsGraphicsClass.localPlayer.HandsController.WeaponRoot))
+            if (AmandsGraphicsPlugin.Flashlight.Value == EEnabledFeature.On && AmandsGraphicsClass.localPlayer != null && Vector3.Distance(__instance.transform.position, ((IPlayer)AmandsGraphicsClass.localPlayer).Position) < 5f && AmandsGraphicsClass.localPlayer.HandsController != null && __instance.transform.IsChildOf(AmandsGraphicsClass.localPlayer.HandsController.WeaponRoot))
             {
                 foreach (Light light in Traverse.Create(__instance).Field("light_0").GetValue<Light[]>())
                 {
