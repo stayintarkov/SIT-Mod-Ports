@@ -2,11 +2,11 @@ using System;
 
 using EFT.InventoryLogic;
 
-using BodyArmorClass = ArmorClass;
-using HeadArmorClass = GClass2639;
-using FaceCoveringClass = GogglesClass;
-using BackpackItemClass = GClass2684;
-using TacticalRigItemClass = ArmorClass1;
+using BodyArmorClass = GClass2503;
+using HeadArmorClass = GClass2502;
+using FaceCoveringClass = GClass2501;
+using BackpackItemClass = GItem113;
+using TacticalRigItemClass = GItem114;
 
 
 namespace LootingBots.Patch.Util
@@ -86,7 +86,9 @@ namespace LootingBots.Patch.Util
                     : allowedGear.HasTacticalRig();
             }
 
-            if (item is GrenadeClass)
+            if (item is GItem6)
+
+            if (item is ThrowWeap)
             {
                 return allowedGear.HasGrenade();
             }

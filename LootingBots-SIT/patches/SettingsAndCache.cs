@@ -41,13 +41,13 @@ namespace LootingBots.Patch
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(Settings9).GetMethod("ApplyPresetLocation");
+            return typeof(Settings10).GetMethod("ApplyPresetLocation");
         }
 
         [PatchPostfix]
         private static void PatchPostfix(
             BotLocationModifier modifier,
-            ref Settings9 __instance,
+            ref Settings10 __instance,
             ref WildSpawnType ___wildSpawnType_0
         )
         {

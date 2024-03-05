@@ -9,23 +9,23 @@ using EFT.InventoryLogic;
 
 using LootingBots.Patch.Util;
 
-using InventoryControllerResultStruct = SOperationResult12345;
+using InventoryControllerResultStruct = SOperationResult4;
 using InventoryHelperClass = ItemMovementHandler;
 using GridClassEx = GridContainer;
-using GridCacheClass = GClass1390;
+using GridCacheClass = GClass1329;
 
 namespace LootingBots.Patch.Components
 {
     public class TransactionController
     {
         readonly BotLog _log;
-        readonly InventoryControllerClass _inventoryController;
+        readonly InventoryController _inventoryController;
         readonly BotOwner _botOwner;
         public bool Enabled;
 
         public TransactionController(
             BotOwner botOwner,
-            InventoryControllerClass inventoryController,
+            InventoryController inventoryController,
             BotLog log
         )
         {
@@ -89,7 +89,7 @@ namespace LootingBots.Patch.Components
         {
             try
             {
-                SearchableItemClass secureContainer = (SearchableItemClass)
+                GItem1 secureContainer = (GItem1)
                     _inventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.SecuredContainer)
                         .ContainedItem;
@@ -130,7 +130,7 @@ namespace LootingBots.Patch.Components
 
                         var location = _inventoryController.FindGridToPickUp(
                             ammo,
-                            ammo.Owner
+                            secureContainer.Grids
                         );
 
                         if (location != null)
@@ -213,7 +213,7 @@ namespace LootingBots.Patch.Components
         {
             try
             {
-                var ableToPickUp = _inventoryController.FindGridToPickUp(item, item.Owner);
+                var ableToPickUp = _inventoryController.FindGridToPickUp(item);
 
                 if (
                     ableToPickUp != null

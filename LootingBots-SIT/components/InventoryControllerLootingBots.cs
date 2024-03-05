@@ -82,7 +82,7 @@ namespace LootingBots.Patch.Components
         private readonly BotLog _log;
         private readonly TransactionController _transactionController;
         private readonly BotOwner _botOwner;
-        private readonly InventoryControllerClass _botInventoryController;
+        private readonly InventoryController _botInventoryController;
         private readonly LootingBrain _lootingBrain;
         private readonly ItemAppraiser _itemAppraiser;
 
@@ -117,7 +117,7 @@ namespace LootingBots.Patch.Components
                 );
 
                 _botOwner = botOwner;
-                _botInventoryController = (InventoryControllerClass)
+                _botInventoryController = (InventoryController)
                     botInventory.GetValue(botOwner.GetPlayer);
                 _transactionController = new TransactionController(
                     _botOwner,
@@ -129,7 +129,7 @@ namespace LootingBots.Patch.Components
                 Item chest = _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.ArmorVest)
                     .ContainedItem;
-                SearchableItemClass tacVest = (SearchableItemClass)
+                GItem1 tacVest = (GItem1)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.TacticalVest)
                         .ContainedItem;
@@ -200,15 +200,15 @@ namespace LootingBots.Patch.Components
         */
         public void UpdateGridStats()
         {
-            SearchableItemClass tacVest = (SearchableItemClass)
+            GItem1 tacVest = (GItem1)
                 _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.TacticalVest)
                     .ContainedItem;
-            SearchableItemClass backpack = (SearchableItemClass)
+            GItem1 backpack = (GItem1)
                 _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.Backpack)
                     .ContainedItem;
-            SearchableItemClass pockets = (SearchableItemClass)
+            GItem1 pockets = (GItem1)
                 _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.Pockets)
                     .ContainedItem;
@@ -229,10 +229,7 @@ namespace LootingBots.Patch.Components
         */
         public async Task<IResult> SortTacVest()
         {
-            if (_botInventoryController.Inventory.Equipment.GetSlot(EquipmentSlot.TacticalVest).ContainedItem == null)
-                return null;
-            
-            SearchableItemClass tacVest = (SearchableItemClass)
+            GItem1 tacVest = (GItem1)
                 _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.TacticalVest)
                     .ContainedItem;
@@ -412,19 +409,19 @@ namespace LootingBots.Patch.Components
             // Protection against bot death interruption
             if (_botOwner != null && _botInventoryController != null)
             {
-                SearchableItemClass tacVest = (SearchableItemClass)
+                GItem1 tacVest = (GItem1)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.TacticalVest)
                         .ContainedItem;
-                SearchableItemClass backpack = (SearchableItemClass)
+                GItem1 backpack = (GItem1)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.Backpack)
                         .ContainedItem;
-                SearchableItemClass pockets = (SearchableItemClass)
+                GItem1 pockets = (GItem1)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.Pockets)
                         .ContainedItem;
-                SearchableItemClass secureContainer = (SearchableItemClass)
+                GItem1 secureContainer = (GItem1)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.SecuredContainer)
                         .ContainedItem;
@@ -752,8 +749,8 @@ namespace LootingBots.Patch.Components
             // If the item is a container, calculate the size and see if its bigger than what is equipped
             if (equipped.IsContainer)
             {
-                int equippedSize = LootUtils.GetContainerSize(equipped as SearchableItemClass);
-                int itemToLootSize = LootUtils.GetContainerSize(itemToLoot as SearchableItemClass);
+                int equippedSize = LootUtils.GetContainerSize(equipped as GItem1);
+                int itemToLootSize = LootUtils.GetContainerSize(itemToLoot as GItem1);
 
                 foundBiggerContainer = equippedSize < itemToLootSize;
             }
@@ -887,7 +884,7 @@ namespace LootingBots.Patch.Components
         */
         public EquipmentSlot[] GetPrioritySlots()
         {
-            InventoryControllerClass botInventoryController = _botInventoryController;
+            InventoryController botInventoryController = _botInventoryController;
             bool hasBackpack =
                 botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.Backpack)

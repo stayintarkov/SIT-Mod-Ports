@@ -58,9 +58,6 @@
     <Reference Include="Comfort">
       <HintPath>..\References\Comfort.dll</HintPath>
     </Reference>
-    <Reference Include="DrakiaXYZ-BigBrain">
-      <HintPath>..\References\DrakiaXYZ-BigBrain.dll</HintPath>
-    </Reference>
     <Reference Include="ItemComponent.Types" HintPath="..\References\ItemComponent.Types.dll" Private="False" />
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -92,5 +89,8 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>COPY "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Ref\plugins"</PostBuildEvent>
   </PropertyGroup>
 </Project>

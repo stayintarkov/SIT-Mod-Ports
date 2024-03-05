@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using BepInEx.Logging;
-
 using Comfort.Common;
 
 using EFT;
@@ -13,19 +11,17 @@ using UnityEngine;
 
 using GridClass = StashGrid;
 using GridClassEx = GridContainer;
-using GridManagerClass = GOperationResult17;
-using SortResultStruct = SOperationResult12<GOperationResult17>;
-using GridItemClass = GItem10;
+using GridManagerClass = OperationResult19;
+using SortResultStruct = SOperationResult2<OperationResult19>;
+using GridItemClass = GItem12;
 using ItemAddressExClass = GridItemAddress;
-using SortErrorClass = GInventoryError18;
-using GridCacheClass = GClass1390;
-using Logger = BepInEx.Logging.Logger;
+using SortErrorClass = GInventoryError17;
+using GridCacheClass = GClass1329;
 
 namespace LootingBots.Patch.Util
 {
     public static class LootUtils
     {
-        private static ManualLogSource logger = BepInEx.Logging.Logger.CreateLogSource("LootingBots");
         public static LayerMask LowPolyMask = LayerMask.GetMask(new string[] { "LowPolyCollider" });
         public static LayerMask LootMask = LayerMask.GetMask(
             new string[] { "Interactive", "Loot", "Deadbody" }
@@ -33,7 +29,7 @@ namespace LootingBots.Patch.Util
         public static int RESERVED_SLOT_COUNT = 2;
 
         /** Calculate the size of a container */
-        public static int GetContainerSize(SearchableItemClass container)
+        public static int GetContainerSize(GItem1 container)
         {
             GridClass[] grids = container.Grids;
             int gridSize = 0;
@@ -65,8 +61,8 @@ namespace LootingBots.Patch.Util
         * Sorts the items in a container and places them in grid spaces that match their exact size before moving on to a bigger slot size. This helps make more room in the container for items to be placed in
         */
         public static SortResultStruct SortContainer(
-            SearchableItemClass container,
-            InventoryControllerClass controller
+            GItem1 container,
+            InventoryController controller
         )
         {
             if (container != null)
@@ -78,7 +74,6 @@ namespace LootingBots.Patch.Util
                 // Remove positions of all loot
                 foreach (var grid in container.Grids)
                 {
-                    logger.LogInfo("Remove positions of all loot");
                     gridManager.SetOldPositions(grid, grid.ItemCollection.ToListOfLocations());
                     itemsInContainer.AddRange(grid.Items);
                     grid.RemoveAll();
@@ -102,13 +97,11 @@ namespace LootingBots.Patch.Util
                 // this should ensure that items prefer to be in slots that match their size, instead of being placed in a larger grid spots
                 foreach (Item item in itemsInContainer)
                 {
-                    logger.LogInfo("Go through each item and try to find a spot in the container for it");
                     bool foundPlace = false;
 
                     // Go through each grid slot and try to add the item
                     foreach (var grid in sortedGrids)
                     {
-                        logger.LogInfo("Go through each grid slot and try to add the item");
                         if (!grid.Add(item).Failed)
                         {
                             foundPlace = true;
@@ -241,17 +234,17 @@ namespace LootingBots.Patch.Util
 
         // Custom extension for EFT Equipment.GetPrioritizedGridsForLoot which sorts the tacVest/backpack and reserves a 1x2 grid slot in the tacvest before finding an available grid space for loot
         public static IEnumerable<GridClass> GetPrioritizedGridsForLoot(
-            this EquipmentClass equipment,
+            this Equipment equipment,
             Item item
         )
         {
-            SearchableItemClass tacVest = (SearchableItemClass)
+            GItem1 tacVest = (GItem1)
                 equipment.GetSlot(EquipmentSlot.TacticalVest).ContainedItem;
-            SearchableItemClass backpack = (SearchableItemClass)
+            GItem1 backpack = (GItem1)
                 equipment.GetSlot(EquipmentSlot.Backpack).ContainedItem;
-            SearchableItemClass pockets = (SearchableItemClass)
+            GItem1 pockets = (GItem1)
                 equipment.GetSlot(EquipmentSlot.Pockets).ContainedItem;
-            SearchableItemClass secureContainer = (SearchableItemClass)
+            GItem1 secureContainer = (GItem1)
                 equipment.GetSlot(EquipmentSlot.SecuredContainer).ContainedItem;
 
             GridClass[] tacVestGrids = new GridClass[0];
@@ -274,7 +267,7 @@ namespace LootingBots.Patch.Util
                     .Concat(backpackGrids)
                     .Concat(secureContainerGrids);
             }
-            else if (item is GrenadeClass)
+            else if (item is ThrowWeap)
             {
                 return pocketGrids
                     .Concat(tacVestGrids)
