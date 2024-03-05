@@ -1,5 +1,7 @@
 using System.Text;
 
+using BepInEx.Logging;
+
 using DrakiaXYZ.BigBrain.Brains;
 
 using EFT;
@@ -10,12 +12,15 @@ using LootingBots.Patch.Util;
 
 using UnityEngine;
 
+using Logger = UnityEngine.Logger;
+
 namespace LootingBots.Brain.Logics
 {
     internal class FindLootLogic : CustomLogic
     {
         private readonly LootingBrain _lootingBrain;
         private readonly BotLog _log;
+        private static ManualLogSource logger = BepInEx.Logging.Logger.CreateLogSource("LootingBots DEBUG:");
 
         private float DetectCorpseDistance
         {
@@ -125,6 +130,7 @@ namespace LootingBots.Brain.Logics
                             closestItem = null;
                             closestContainer = null;
                             closestCorpse = corpse;
+                            logger.LogInfo($"{BotOwner.Profile.Info.Nickname} Found corpse to loot");
                         }
                         else
                         {
@@ -157,6 +163,7 @@ namespace LootingBots.Brain.Logics
             }
             else if (closestCorpse != null)
             {
+                logger.LogInfo($"{BotOwner.Profile.Info.Nickname} Closest Corpse is available");
                 _lootingBrain.ActiveCorpse = closestCorpse;
                 _lootingBrain.LootObjectPosition = closestCorpse.Transform.position;
                 ActiveLootCache.CacheActiveLootId(closestCorpse.name, BotOwner.name);

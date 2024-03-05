@@ -35,7 +35,7 @@ namespace LootingBots.Patch.Components
         public BotOwner BotOwner;
 
         // Component responsible for adding items to the bot inventory
-        public InventoryControllerLootingBots InventoryController;
+        public InventoryControllerLootingBots InventoryControllerClass;
 
         // Current container that the bot will try to loot
         public LootableContainer ActiveContainer;
@@ -61,7 +61,7 @@ namespace LootingBots.Patch.Components
 
         public BotStats Stats
         {
-            get { return InventoryController.Stats; }
+            get { return InventoryControllerClass.Stats; }
         }
 
         public bool HasActiveLootable
@@ -89,7 +89,7 @@ namespace LootingBots.Patch.Components
         {
             _log = new BotLog(LootingBots.LootLog, botOwner);
             BotOwner = botOwner;
-            InventoryController = new InventoryControllerLootingBots(BotOwner, this);
+            InventoryControllerClass = new InventoryControllerLootingBots(BotOwner, this);
             IgnoredLootIds = new List<string> { };
             NonNavigableLootIds = new List<string> { };
         }
@@ -109,10 +109,10 @@ namespace LootingBots.Patch.Components
 
                 if (isLootFinderEnabled && BotOwner.BotState == EBotState.Active)
                 {
-                    if (InventoryController.ShouldSort)
+                    if (InventoryControllerClass.ShouldSort)
                     {
                         // Sort items in tacVest for better space management
-                        await InventoryController.SortTacVest();
+                        await InventoryControllerClass.SortTacVest();
                     }
 
                     // Open any nearby door
@@ -165,11 +165,11 @@ namespace LootingBots.Patch.Components
                     | BindingFlags.Public
                     | BindingFlags.Instance
             );
-            InventoryController corpseInventoryController = (InventoryController)
+            InventoryControllerClass corpseInventoryController = (InventoryControllerClass)
                 corpseInventory.GetValue(corpsePlayer);
 
             // Get items to loot from the corpse in a priority order based off the slots
-            EquipmentSlot[] prioritySlots = InventoryController.GetPrioritySlots();
+            EquipmentSlot[] prioritySlots = InventoryControllerClass.GetPrioritySlots();
 
             Item[] priorityItems = corpseInventoryController.Inventory.Equipment
                 .GetSlotsByName(prioritySlots)
@@ -180,10 +180,10 @@ namespace LootingBots.Patch.Components
             Task delayTask = TransactionController.SimulatePlayerDelay(LootingStartDelay);
             yield return new WaitUntil(() => delayTask.IsCompleted);
 
-            Task<bool> lootTask = InventoryController.TryAddItemsToBot(priorityItems);
+            Task<bool> lootTask = InventoryControllerClass.TryAddItemsToBot(priorityItems);
             yield return new WaitUntil(() => lootTask.IsCompleted);
 
-            InventoryController.UpdateActiveWeapon();
+            InventoryControllerClass.UpdateActiveWeapon();
 
             // Only ignore the corpse if looting was not interrupted
             CleanupCorpse(lootTask.Result);
@@ -218,7 +218,7 @@ namespace LootingBots.Patch.Components
             Task delayTask = TransactionController.SimulatePlayerDelay(LootingStartDelay);
             yield return new WaitUntil(() => delayTask.IsCompleted);
 
-            Task<bool> lootTask = InventoryController.LootNestedItems(item);
+            Task<bool> lootTask = InventoryControllerClass.LootNestedItems(item);
             yield return new WaitUntil(() => lootTask.IsCompleted);
 
             // Close the container after looting if a container was open, and the bot didnt open it
@@ -227,7 +227,7 @@ namespace LootingBots.Patch.Components
                 LootUtils.InteractContainer(ActiveContainer, EInteractionType.Close);
             }
 
-            InventoryController.UpdateActiveWeapon();
+            InventoryControllerClass.UpdateActiveWeapon();
 
             // Only ignore the container if looting was not interrupted
             CleanupContainer(lootTask.Result);
@@ -250,12 +250,12 @@ namespace LootingBots.Patch.Components
 
             _log.LogDebug($"Trying to pick up loose item: {item.Name.Localized()}");
             BotOwner.GetPlayer.UpdateInteractionCast();
-            Task<bool> lootTask = InventoryController.TryAddItemsToBot(new Item[] { item });
+            Task<bool> lootTask = InventoryControllerClass.TryAddItemsToBot(new Item[] { item });
 
             yield return new WaitUntil(() => lootTask.IsCompleted);
 
             BotOwner.GetPlayer.CurrentManagedState.Pickup(false, null);
-            InventoryController.UpdateActiveWeapon();
+            InventoryControllerClass.UpdateActiveWeapon();
 
             // Need to manually cleanup item because the ItemOwner on the original object changes. Only ignore if looting was not interrupted
             CleanupItem(lootTask.Result, item);
@@ -276,7 +276,7 @@ namespace LootingBots.Patch.Components
 
         public void UpdateGridStats()
         {
-            InventoryController.UpdateGridStats();
+            InventoryControllerClass.UpdateGridStats();
         }
 
         /**
@@ -294,7 +294,7 @@ namespace LootingBots.Patch.Components
         public bool IsValuableEnough(Item lootItem)
         {
             float itemValue = LootingBots.ItemAppraiser.GetItemPrice(lootItem);
-            return InventoryController.IsValuableEnough(itemValue);
+            return InventoryControllerClass.IsValuableEnough(itemValue);
         }
 
         /**
@@ -327,19 +327,19 @@ namespace LootingBots.Patch.Components
         }
 
         /**
-        * Wrapper function to enable transactions to be executed by the InventoryController.
+        * Wrapper function to enable transactions to be executed by the InventoryControllerClass.
         */
         public void EnableTransactions()
         {
-            InventoryController.EnableTransactions();
+            InventoryControllerClass.EnableTransactions();
         }
 
         /**
-        * Wrapper function to disable the execution of transactions by the InventoryController.
+        * Wrapper function to disable the execution of transactions by the InventoryControllerClass.
         */
         public void DisableTransactions()
         {
-            InventoryController.DisableTransactions();
+            InventoryControllerClass.DisableTransactions();
             Cleanup(false);
         }
 

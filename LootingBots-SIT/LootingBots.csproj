@@ -73,6 +73,9 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="DrakiaXYZ-BigBrain">
+      <HintPath>..\References\DrakiaXYZ-BigBrain.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.PhysicsModule" HintPath="..\References\UnityEngine.PhysicsModule.dll" Private="False" />
     <Reference Include="UnityEngine.AIModule" HintPath="..\References\UnityEngine.AIModule.dll" Private="False" />
   </ItemGroup>
@@ -89,8 +92,5 @@
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>COPY "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Ref\plugins"</PostBuildEvent>
   </PropertyGroup>
 </Project>

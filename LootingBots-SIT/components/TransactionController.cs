@@ -9,23 +9,23 @@ using EFT.InventoryLogic;
 
 using LootingBots.Patch.Util;
 
-using InventoryControllerResultStruct = SOperationResult5;
+using InventoryControllerResultStruct = SOperationResult12345;
 using InventoryHelperClass = ItemMovementHandler;
 using GridClassEx = GridContainer;
-using GridCacheClass = GClass1385;
+using GridCacheClass = GClass1390;
 
 namespace LootingBots.Patch.Components
 {
     public class TransactionController
     {
         readonly BotLog _log;
-        readonly InventoryController _inventoryController;
+        readonly InventoryControllerClass _inventoryController;
         readonly BotOwner _botOwner;
         public bool Enabled;
 
         public TransactionController(
             BotOwner botOwner,
-            InventoryController inventoryController,
+            InventoryControllerClass inventoryController,
             BotLog log
         )
         {
@@ -89,7 +89,7 @@ namespace LootingBots.Patch.Components
         {
             try
             {
-                GItem1 secureContainer = (GItem1)
+                SearchableItemClass secureContainer = (SearchableItemClass)
                     _inventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.SecuredContainer)
                         .ContainedItem;

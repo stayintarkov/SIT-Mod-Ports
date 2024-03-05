@@ -290,6 +290,7 @@ namespace LootingBots
 
             new SettingsAndCachePatch().Enable();
             new RemoveComponent().Enable();
+            //new GetItemClassFromInspect().Enable();
 
             BrainManager.RemoveLayer(
                 "Utility peace",
