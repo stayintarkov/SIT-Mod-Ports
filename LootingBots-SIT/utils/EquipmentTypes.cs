@@ -4,7 +4,7 @@ using EFT.InventoryLogic;
 
 using BodyArmorClass = GClass2503;
 using HeadArmorClass = GClass2502;
-using FaceCoveringClass = GClass2501;
+using FaceCoveringClass = GClass2632;
 using BackpackItemClass = GItem113;
 using TacticalRigItemClass = GItem114;
 

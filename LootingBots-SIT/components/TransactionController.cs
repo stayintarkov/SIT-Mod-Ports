@@ -9,10 +9,10 @@ using EFT.InventoryLogic;
 
 using LootingBots.Patch.Util;
 
-using InventoryControllerResultStruct = SOperationResult4;
+using InventoryControllerResultStruct = SOperationResult5;
 using InventoryHelperClass = ItemMovementHandler;
 using GridClassEx = GridContainer;
-using GridCacheClass = GClass1329;
+using GridCacheClass = GClass1385;
 
 namespace LootingBots.Patch.Components
 {

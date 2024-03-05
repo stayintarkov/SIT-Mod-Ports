@@ -13,10 +13,10 @@ using GridClass = StashGrid;
 using GridClassEx = GridContainer;
 using GridManagerClass = OperationResult19;
 using SortResultStruct = SOperationResult2<OperationResult19>;
-using GridItemClass = GItem12;
+using GridItemClass = GItem13;
 using ItemAddressExClass = GridItemAddress;
-using SortErrorClass = GInventoryError17;
-using GridCacheClass = GClass1329;
+using SortErrorClass = GInventoryError18;
+using GridCacheClass = GClass1385;
 
 namespace LootingBots.Patch.Util
 {
