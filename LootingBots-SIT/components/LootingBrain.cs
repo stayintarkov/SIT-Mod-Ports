@@ -57,14 +57,16 @@ namespace LootingBots.Patch.Components
 
         // Object ids that were not able to be reached even though a valid path exists. Is cleared every 2 mins by default
         public List<string> NonNavigableLootIds;
+        
+        public bool IsPlayerScav;
 
         public bool IsBrainEnabled
         {
             get
             {
-                return LootingBots.ContainerLootingEnabled.Value.IsBotEnabled(BotOwner)
-                    || LootingBots.LooseItemLootingEnabled.Value.IsBotEnabled(BotOwner)
-                    || LootingBots.CorpseLootingEnabled.Value.IsBotEnabled(BotOwner);
+                return LootingBots.ContainerLootingEnabled.Value.IsBotEnabled(this)
+                       || LootingBots.LooseItemLootingEnabled.Value.IsBotEnabled(this)
+                       || LootingBots.CorpseLootingEnabled.Value.IsBotEnabled(this);
             }
         }
 
@@ -106,6 +108,7 @@ namespace LootingBots.Patch.Components
             InventoryControllerClass = new InventoryControllerLootingBots(BotOwner, this);
             IgnoredLootIds = new List<string> { };
             NonNavigableLootIds = new List<string> { };
+            IsPlayerScav = botOwner.Profile.Nickname.Contains(" (");
             ActiveLootCache.Init();
         }
 

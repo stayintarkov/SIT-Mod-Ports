@@ -4,6 +4,8 @@ using System.Text.RegularExpressions;
 
 using EFT;
 
+using LootingBots.Patch.Components;
+
 namespace LootingBots.Patch.Util
 {
     [Flags]
@@ -62,16 +64,12 @@ namespace LootingBots.Patch.Util
             return botType.HasFlag(BotType.Bloodhound);
         }
         
-        public static bool IsBotEnabled(this BotType enabledTypes, BotOwner botOwner) {
-            WildSpawnType role = botOwner.Profile.Info.Settings.Role;
-
-            string pattern = ".+[(].+[)]";
-            Regex regex = new Regex(pattern);
-            if (regex.Matches(botOwner.Profile.Nickname).Count > 0)
+        public static bool IsBotEnabled(this BotType enabledTypes, LootingBrain brain) {
+            if (brain.IsPlayerScav)
             {
                 return enabledTypes.HasPlayerScav();
             }
-
+            WildSpawnType role = brain.BotOwner.Profile.Info.Settings.Role;
             return IsBotEnabled(enabledTypes, role);
         }
 
