@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 using EFT;
 
@@ -30,6 +31,11 @@ namespace LootingBots.Patch.Util
         {
             return botType.HasFlag(BotType.Pmc);
         }
+        
+        public static bool HasPlayerScav(this BotType botType)
+        {
+            return botType.HasFlag(BotType.Scav);
+        }
 
         public static bool HasRaider(this BotType botType)
         {
@@ -54,6 +60,19 @@ namespace LootingBots.Patch.Util
         public static bool HasBloodhound(this BotType botType)
         {
             return botType.HasFlag(BotType.Bloodhound);
+        }
+        
+        public static bool IsBotEnabled(this BotType enabledTypes, BotOwner botOwner) {
+            WildSpawnType role = botOwner.Profile.Info.Settings.Role;
+
+            string pattern = ".+[(].+[)]";
+            Regex regex = new Regex(pattern);
+            if (regex.Matches(botOwner.Profile.Nickname).Count > 0)
+            {
+                return enabledTypes.HasPlayerScav();
+            }
+
+            return IsBotEnabled(enabledTypes, role);
         }
 
         public static bool IsBotEnabled(this BotType enabledTypes, WildSpawnType botType)

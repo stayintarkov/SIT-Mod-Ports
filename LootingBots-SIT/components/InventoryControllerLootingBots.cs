@@ -258,14 +258,18 @@ namespace LootingBots.Patch.Components
         {
             foreach (Item item in items)
             {
-                if (_transactionController.IsLootingInterrupted())
-                {
-                    UpdateKnownItems();
-                    return false;
-                }
-
                 if (item != null && item.Name != null)
                 {
+                    if (LootingBots.UseExamineTime.Value)
+                    {
+                        await SimulateExamineTime(item);
+                    }
+
+                    if (_transactionController.IsLootingInterrupted())
+                    {
+                        UpdateKnownItems();
+                        return false;
+                    }
                     CurrentItemPrice = _itemAppraiser.GetItemPrice(item);
                     _log.LogInfo($"Loot found: {item.Name.Localized()} ({CurrentItemPrice}₽)");
 
@@ -328,9 +332,8 @@ namespace LootingBots.Patch.Components
                             }
                         }
                     }
-                    else
+                    if (item is SearchableItemClass)
                     {
-                        // Try to pick up any nested items before trying to pick up the item. This helps when looting rigs to transfer ammo to the bots active rig
                         bool success = await LootNestedItems(item);
 
                         if (!success)
@@ -338,17 +341,14 @@ namespace LootingBots.Patch.Components
                             UpdateKnownItems();
                             return success;
                         }
+                    }
 
-                        // Check to see if we can pick up the item
-                        if (
-                            AllowedToPickup(item)
-                            && await _transactionController.TryPickupItem(item)
-                        )
-                        {
-                            Stats.AddNetValue(CurrentItemPrice);
-                            UpdateGridStats();
-                            continue;
-                        }
+                    // Check to see if we can pick up the item
+                    if (AllowedToPickup(item) && await _transactionController.TryPickupItem(item))
+                    {
+                        Stats.AddNetValue(CurrentItemPrice);
+                        UpdateGridStats();
+                        continue;
                     }
                 }
                 else
@@ -361,6 +361,15 @@ namespace LootingBots.Patch.Components
             UpdateKnownItems();
 
             return true;
+        }
+        
+        /** Use the ExamineTime of an object and the AttentionExamineValue of the bot to calculate the delay for discovering an item while looting */
+        public Task SimulateExamineTime(Item item)
+        {
+            // Taken from GClass2665 constructor
+            return TransactionController.SimulatePlayerDelay(
+                item.ExamineTime * 1000f / (1f + _botOwner.Profile.Skills.AttentionExamineValue)
+            );
         }
 
         /**
@@ -819,23 +828,23 @@ namespace LootingBots.Patch.Components
             if (nestedItems.Length > 1)
             {
                 // Filter out the parent item from the list, filter out any items that are children of another container like a magazine, backpack, rig
-                Item[] containerItems = nestedItems
+                Item[] items = parentItem
+                    .GetFirstLevelItems()
+                    .ToArray()
                     .Where(
+                        // Filter out the parent item from the list, quest items, and single use keys
                         nestedItem =>
                             nestedItem.Id != parentItem.Id
-                            && nestedItem.Id == nestedItem.GetRootItem().Id
                             && !nestedItem.QuestItem
                             && !LootUtils.IsSingleUseKey(nestedItem)
                     )
                     .ToArray();
 
-                if (containerItems.Length > 0)
+                if (items.Length > 0)
                 {
-                    _log.LogDebug(
-                        $"Looting {containerItems.Length} items from {parentItem.Name.Localized()}"
-                    );
-                    await TransactionController.SimulatePlayerDelay(1000);
-                    return await TryAddItemsToBot(containerItems);
+                    _log.LogDebug($"Looting {items.Length} items from {parentItem.Name.Localized()}");
+                    await TransactionController.SimulatePlayerDelay(LootingBrain.LootingStartDelay);
+                    return await TryAddItemsToBot(items);
                 }
             }
             else

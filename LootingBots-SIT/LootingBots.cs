@@ -23,7 +23,7 @@ namespace LootingBots
     {
         private const string MOD_GUID = "me.skwizzy.lootingbots";
         private const string MOD_NAME = "LootingBots";
-        private const string MOD_VERSION = "1.1.5";
+        private const string MOD_VERSION = "1.2.0";
 
         public const BotType SettingsDefaults = BotType.Scav | BotType.Pmc | BotType.Raider;
 
@@ -45,6 +45,7 @@ namespace LootingBots
         // Loot Settings
         public static ConfigEntry<bool> UseMarketPrices;
         public static ConfigEntry<int> TransactionDelay;
+        public static ConfigEntry<bool> UseExamineTime;
         public static ConfigEntry<bool> ValueFromMods;
         public static ConfigEntry<bool> CanStripAttachments;
         public static ConfigEntry<float> PMCMinLootThreshold;
@@ -125,12 +126,12 @@ namespace LootingBots
             );
             LootingLogLevels = Config.Bind(
                 "Loot Finder",
-                "Log Levels",
+                "Debug: Log Levels",
                 LogLevel.Error,
                 new ConfigDescription(
                     "Enable different levels of log messages to show in the logs",
                     null,
-                    new ConfigurationManagerAttributes { Order = 0 }
+                    new ConfigurationManagerAttributes { Order = 0, IsAdvanced = true }
                 )
             );
             DebugLootNavigation = Config.Bind(
@@ -140,7 +141,7 @@ namespace LootingBots
                 new ConfigDescription(
                     "Renders shperes where bots are trying to navigate when container looting. (Red): Container position. (Black): 'Optimized' container position. (Green): Calculated bot destination. (Blue): NavMesh corrected destination (where the bot will move).",
                     null,
-                    new ConfigurationManagerAttributes { Order = -1 }
+                    new ConfigurationManagerAttributes { Order = -1, IsAdvanced = true }
                 )
             );
 
@@ -167,12 +168,22 @@ namespace LootingBots
             );
             TransactionDelay = Config.Bind(
                 "Loot Finder (Timing)",
-                "Transaction delay (ms)",
+                "Delay after taking item (ms)",
                 500,
                 new ConfigDescription(
-                    "Amount of milliseconds a bot will wait after a looting transaction has occured before attempting another transaction. Simulates the amount of time it takes for a player to look through loot and equip things.",
+                    "Amount of milliseconds a bot will wait after taking an item into their inventory before attempting to loot another item. Simulates the amount of time it takes for a player to look through loot decide to take something.",
                     null,
                     new ConfigurationManagerAttributes { Order = 1 }
+                )
+            );
+            UseExamineTime = Config.Bind(
+                "Loot Finder (Timing)",
+                "Enable examine time",
+                true,
+                new ConfigDescription(
+                    "Adds a delay before looting an item to simulate the time it takes for a bot to \"uncover (examine)\" an item when searching containers, items and corpses. The delay is calculated using the ExamineTime of an object and the AttentionExamineTime of the bot.",
+                    null,
+                    new ConfigurationManagerAttributes { Order = 0 }
                 )
             );
         }
@@ -292,12 +303,12 @@ namespace LootingBots
 
             ItemAppraiserLogLevels = Config.Bind(
                 "Loot Settings",
-                "Log Levels",
+                "Debug: Log Levels",
                 LogLevel.Error,
                 new ConfigDescription(
                     "Enables logs for the item apprasier that calcualtes the weapon values",
                     null,
-                    new ConfigurationManagerAttributes { Order = 0 }
+                    new ConfigurationManagerAttributes { Order = 0, IsAdvanced = true }
                 )
             );
         }
