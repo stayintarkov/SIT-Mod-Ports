@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx.Configuration;
+using Comfort.Common;
 
 namespace SPTQuestingBots
 {
@@ -19,9 +20,8 @@ namespace SPTQuestingBots
         Shoreline = 64,
         Streets = 128,
         Woods = 256,
-        GroundZero = 512,
 
-        All = Customs | Factory | Interchange | Labs | Lighthouse | Reserve | Shoreline | Streets | Woods | GroundZero,
+        All = Customs | Factory | Interchange | Labs | Lighthouse | Reserve | Shoreline | Streets | Woods,
     }
 
     public static class QuestingBotsPluginConfig
@@ -33,11 +33,17 @@ namespace SPTQuestingBots
         public static ConfigEntry<bool> SprintingEnabled;
 
         public static ConfigEntry<bool> SleepingEnabled;
-        public static ConfigEntry<bool> StreetsMode;
         public static ConfigEntry<bool> SleepingEnabledForQuestingBots;
+        public static ConfigEntry<bool> SleepingEnabledForSniperScavs;
         public static ConfigEntry<int> SleepingMinDistanceToYou;
         public static ConfigEntry<int> SleepingMinDistanceToPMCs;
         public static ConfigEntry<TarkovMaps> MapsToAllowSleepingForQuestingBots;
+
+        public static ConfigEntry<bool> ShowBotInfoOverlays;
+        public static ConfigEntry<bool> ShowQuestInfoOverlays;
+        public static ConfigEntry<bool> ShowQuestInfoForSpawnSearchQuests;
+        public static ConfigEntry<int> QuestOverlayFontSize;
+        public static ConfigEntry<int> QuestOverlayMaxDistance;
 
         public static void BuildConfigOptions(ConfigFile Config)
         {
@@ -50,7 +56,6 @@ namespace SPTQuestingBots
             TarkovMapIDToEnum.Add("RezervBase", TarkovMaps.Reserve);
             TarkovMapIDToEnum.Add("Shoreline", TarkovMaps.Shoreline);
             TarkovMapIDToEnum.Add("TarkovStreets", TarkovMaps.Streets);
-            TarkovMapIDToEnum.Add("Sandbox", TarkovMaps.GroundZero);
             TarkovMapIDToEnum.Add("Woods", TarkovMaps.Woods);
 
             QuestingEnabled = Config.Bind("Main", "Enable Questing",
@@ -60,18 +65,29 @@ namespace SPTQuestingBots
             SprintingEnabled = Config.Bind("Main", "Allow Bots to Sprint while Questing",
                 true, "Allow bots to sprint while questing. This does not affect their ability to sprint when they're not questing.");
 
-            StreetsMode = Config.Bind("Streets Mode", "Special Streets Limiting Mode",
-                true, "Streets will always be AI limited, regardless of the settings below. It will also be limited to 200m range.");
             SleepingEnabled = Config.Bind("AI Limiter", "Enable AI Limiting",
                 false, "Improve FPS by minimizing CPU load for AI out of certain ranges");
             SleepingEnabledForQuestingBots = Config.Bind("AI Limiter", "Enable AI Limiting for Bots That Are Questing",
                 true, "Allow AI to be disabled for bots that are questing");
+            SleepingEnabledForSniperScavs = Config.Bind("AI Limiter", "Enable AI Limiting for Sniper Scavs",
+                false, "Allow AI to be disabled for sniper Scavs");
             MapsToAllowSleepingForQuestingBots = Config.Bind("AI Limiter", "Maps to Allow AI Limiting for Bots That Are Questing",
                 TarkovMaps.Streets, "Only allow AI to be disabled for bots that are questing on the selected maps");
             SleepingMinDistanceToYou = Config.Bind("AI Limiter", "Distance from You (m)",
                 200, new ConfigDescription("AI will only be disabled if it's more than this distance from you", new AcceptableValueRange<int>(50, 1000)));
             SleepingMinDistanceToPMCs = Config.Bind("AI Limiter", "Distance from PMCs (m)",
                 75, new ConfigDescription("AI will only be disabled if it's more than this distance from other PMC's", new AcceptableValueRange<int>(50, 1000)));
+
+            ShowBotInfoOverlays = Config.Bind("Debug", "Show Bot Info Overlays",
+                false, "Show information about what each bot is doing");
+            ShowQuestInfoOverlays = Config.Bind("Debug", "Show Quest Info Overlays",
+                false, "Show information about every nearby quest objective location");
+            ShowQuestInfoForSpawnSearchQuests = Config.Bind("Debug", "Show Quest Info for Spawn-Search Quests",
+                false, "Include quest markers and information for spawn-search quests like 'Spawn Point Wander' and 'Boss Hunter' quests");
+            QuestOverlayMaxDistance = Config.Bind("Debug", "Max Distance (m) to Show Quest Info",
+                100, new ConfigDescription("Quest markers and info overlays will only be shown if the objective location is within this distance from you", new AcceptableValueRange<int>(10, 300)));
+            QuestOverlayFontSize = Config.Bind("Debug", "Font Size for Quest Info",
+                16, new ConfigDescription("Font Size for Quest Overlays", new AcceptableValueRange<int>(12, 36)));
         }
     }
 }

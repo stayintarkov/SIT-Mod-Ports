@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Comfort.Common;
-using StayInTarkov;
+using DrakiaXYZ.BigBrain.Brains;
 using EFT;
 using EFT.HealthSystem;
 using SPTQuestingBots.Controllers;
-using SPTQuestingBots.Controllers.Bots;
 using UnityEngine;
 
 namespace SPTQuestingBots.BotLogic
@@ -26,6 +25,7 @@ namespace SPTQuestingBots.BotLogic
         private bool wasLooting = false;
         private bool hasFoundLoot = false;
         private bool canUseSAINInterop = false;
+        private bool canUseLootingBotsInterop = false;
         private int minTotalQuestsForExtract = int.MaxValue;
         private int minEFTQuestsForExtract = int.MaxValue;
 
@@ -39,10 +39,10 @@ namespace SPTQuestingBots.BotLogic
             extractLayerMonitor = botOwner.GetPlayer.gameObject.AddComponent<LogicLayerMonitor>();
             extractLayerMonitor.Init(botOwner, "SAIN ExtractLayer");
 
+            // This is for using mounted guns, but questing bots aren't allowed to use them right now
             stationaryWSLayerMonitor = botOwner.GetPlayer.gameObject.AddComponent<LogicLayerMonitor>();
             stationaryWSLayerMonitor.Init(botOwner, "StationaryWS");
-            
-            
+
             if (SAIN.Plugin.SAINInterop.Init())
             {
                 canUseSAINInterop = true;
@@ -51,23 +51,14 @@ namespace SPTQuestingBots.BotLogic
             {
                 LoggingController.LogWarning("SAIN Interop not detected. Cannot instruct " + botOwner.GetText() + " to extract.");
             }
-        }
 
-        public void InstructBotToExtract()
-        {
-            if (!canUseSAINInterop)
+            if (LootingBots.LootingBotsInterop.Init())
             {
-                LoggingController.LogWarning("SAIN Interop not detected");
-                return;
-            }
-
-            if (SAIN.Plugin.SAINInterop.TryExtractBot(botOwner))
-            {
-                LoggingController.LogInfo("Instructing " + botOwner.GetText() + " to extract now");
+                canUseLootingBotsInterop = true;
             }
             else
             {
-                LoggingController.LogError("Cannot instruct " + botOwner.GetText() + " to extract. SAIN Interop not initialized properly.");
+                LoggingController.LogWarning("Looting Bots Interop not detected. Cannot instruct " + botOwner.GetText() + " to loot.");
             }
         }
 
@@ -114,8 +105,59 @@ namespace SPTQuestingBots.BotLogic
 
             return false;
         }
-        
-                public bool TryInstructBotToExtract()
+
+        public bool TryPreventBotFromLooting(float duration)
+        {
+            if (!canUseLootingBotsInterop)
+            {
+                //LoggingController.LogWarning("Looting Bots Interop not detected");
+                return false;
+            }
+
+            if (LootingBots.LootingBotsInterop.TryPreventBotFromLooting(botOwner, duration))
+            {
+                LoggingController.LogInfo("Preventing " + botOwner.GetText() + " from looting");
+
+                return true;
+            }
+            else
+            {
+                LoggingController.LogWarning("Cannot prevent " + botOwner.GetText() + " from looting. Looting Bots Interop not initialized properly or is outdated.");
+            }
+
+            return false;
+        }
+
+        public bool TryForceBotToScanLoot()
+        {
+            if (!canUseLootingBotsInterop)
+            {
+                //LoggingController.LogWarning("Looting Bots Interop not detected");
+                return false;
+            }
+
+            // This is required because the priority of the looting brain layers is lower than SAIN's brain layers. Without forcing bots to
+            // forget their current enemies, they will go into a combat layer, not a looting layer.
+            if (canUseSAINInterop && !SAIN.Plugin.SAINInterop.TryResetDecisionsForBot(botOwner))
+            {
+                LoggingController.LogWarning("Cannot instruct " + botOwner.GetText() + " to reset its decisions. SAIN Interop not initialized properly or is outdated.");
+            }
+
+            if (LootingBots.LootingBotsInterop.TryForceBotToScanLoot(botOwner))
+            {
+                LoggingController.LogInfo("Instructing " + botOwner.GetText() + " to loot now");
+
+                return true;
+            }
+            else
+            {
+                LoggingController.LogWarning("Cannot instruct " + botOwner.GetText() + " to loot. Looting Bots Interop not initialized properly or is outdated.");
+            }
+
+            return false;
+        }
+
+        public bool TryInstructBotToExtract()
         {
             if (!canUseSAINInterop)
             {
@@ -123,57 +165,75 @@ namespace SPTQuestingBots.BotLogic
                 return false;
             }
 
-            if (SAIN.Plugin.SAINInterop.TryExtractBot(botOwner))
+            if (!SAIN.Plugin.SAINInterop.TryExtractBot(botOwner))
             {
-                LoggingController.LogInfo("Instructing " + botOwner.GetText() + " to extract now");
+                LoggingController.LogWarning("Cannot instruct " + botOwner.GetText() + " to extract. SAIN Interop not initialized properly or is outdated.");
 
-                foreach(BotOwner follower in HiveMind.BotHiveMindMonitor.GetFollowers(botOwner))
+                return false;
+            }
+
+            LoggingController.LogInfo("Instructing " + botOwner.GetText() + " to extract now");
+
+            foreach (BotOwner follower in HiveMind.BotHiveMindMonitor.GetFollowers(botOwner))
+            {
+                if ((follower == null) || follower.IsDead)
                 {
-                    if (SAIN.Plugin.SAINInterop.TryExtractBot(follower))
-                    {
-                        LoggingController.LogInfo("Instructing follower " + follower.GetText() + " to extract now");
-                    }
-                    else
-                    {
-                        LoggingController.LogWarning("Could not instruct follower " + follower.GetText() + " to extract now");
-                    }
+                    continue;
                 }
 
-                return true;
-            }
-            else
-            {
-                LoggingController.LogError("Cannot instruct " + botOwner.GetText() + " to extract. SAIN Interop not initialized properly.");
+                if (SAIN.Plugin.SAINInterop.TryExtractBot(follower))
+                {
+                    LoggingController.LogInfo("Instructing follower " + follower.GetText() + " to extract now");
+                }
+                else
+                {
+                    LoggingController.LogWarning("Could not instruct follower " + follower.GetText() + " to extract now. SAIN Interop not initialized properly or is outdated.");
+                }
             }
 
-            return false;
+            if (!SAIN.Plugin.SAINInterop.TrySetExfilForBot(botOwner))
+            {
+                LoggingController.LogWarning("Could not find an extract for " + botOwner.GetText());
+                return false;
+            }
+
+            return true;
         }
 
         public bool IsBotReadyToExtract()
         {
-            int minRaidET = GClass1476.SessionSeconds(Singleton<AbstractGame>.Instance.GameTimer);
-            float remainingRaidTime = GClass1476.EscapeTimeSeconds(Singleton<AbstractGame>.Instance.GameTimer);
-
-            if (GClass1476.PastTimeSeconds(Singleton<AbstractGame>.Instance.GameTimer) < (minRaidET - (GClass1476.SessionSeconds(Singleton<AbstractGame>.Instance.GameTimer) - remainingRaidTime)))
+            // Prevent the bot from extracting too soon after it spawns
+            if (Time.time - botOwner.ActivateTime < ConfigController.Config.Questing.ExtractionRequirements.MinAliveTime)
             {
                 return false;
             }
 
+            // If the raid is about to end, make the bot extract
+            float remainingRaidTime = StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil.GetRemainingRaidSeconds();
             if (remainingRaidTime < ConfigController.Config.Questing.ExtractionRequirements.MustExtractTimeRemaining)
             {
                 LoggingController.LogInfo(botOwner.GetText() + " is ready to extract because the raid will be over in " + remainingRaidTime + " seconds.");
                 return true;
             }
 
-            System.Random random = new System.Random();
-            float initialRaidTimeFraction = (float)remainingRaidTime / GClass1476.SessionSeconds(Singleton<AbstractGame>.Instance.GameTimer);
+            // Ensure enough time has elapsed in the raid to prevent players from getting run-throughs
+            int minRaidET = Singleton<BackendConfigSettingsClass>.Instance.Experience.MatchEnd.SurvivedTimeRequirement;
+            if (StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil.GetElapsedRaidSeconds() < (minRaidET - StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidChangesUtil.SurvivalTimeReductionSeconds))
+            {
+                return false;
+            }
 
+            System.Random random = new System.Random();
+            float initialRaidTimeFraction = (float)StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidChangesUtil.NewEscapeTimeMinutes / StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidChangesUtil.OriginalEscapeTimeMinutes;
+
+            // Select a random number of total quests the bot must complete before it's allowed to extract
             if (minTotalQuestsForExtract == int.MaxValue)
             {
                 Configuration.MinMaxConfig minMax = ConfigController.Config.Questing.ExtractionRequirements.TotalQuests * initialRaidTimeFraction;
                 minTotalQuestsForExtract = random.Next((int)minMax.Min, (int)minMax.Max);
             }
 
+            // Check if the bot has completed enough total quests to extract
             int totalQuestsCompleted = botOwner.NumberOfCompletedOrAchivedQuests();
             if (totalQuestsCompleted >= minTotalQuestsForExtract)
             {
@@ -182,12 +242,14 @@ namespace SPTQuestingBots.BotLogic
             }
             //LoggingController.LogInfo(botOwner.GetText() + " has completed " + totalQuestsCompleted + "/" + minTotalQuestsForExtract + " quests");
 
+            // Select a random number of EFT quests the bot must complete before it's allowed to extract
             if (minEFTQuestsForExtract == int.MaxValue)
             {
                 Configuration.MinMaxConfig minMax = ConfigController.Config.Questing.ExtractionRequirements.EFTQuests * initialRaidTimeFraction;
                 minEFTQuestsForExtract = random.Next((int)minMax.Min, (int)minMax.Max);
             }
 
+            // Check if the bot has completed enough EFT quests to extract
             int EFTQuestsCompleted = botOwner.NumberOfCompletedOrAchivedEFTQuests();
             if (EFTQuestsCompleted >= minEFTQuestsForExtract)
             {
@@ -199,7 +261,6 @@ namespace SPTQuestingBots.BotLogic
             return false;
         }
 
-
         public bool ShouldWaitForFollowers()
         {
             // Check if the bot has any followers
@@ -210,7 +271,10 @@ namespace SPTQuestingBots.BotLogic
             }
 
             // Check if the bot is too far from any of its followers
-            IEnumerable<float> followerDistances = followers.Select(f => Vector3.Distance(botOwner.Position, f.Position));
+            IEnumerable<float> followerDistances = followers
+                .Where(f => (f != null) && !f.IsDead)
+                .Select(f => Vector3.Distance(botOwner.Position, f.Position));
+            
             if
             (
                 followerDistances.Any(d => d > ConfigController.Config.Questing.BotQuestingRequirements.MaxFollowerDistance.Furthest)
@@ -294,11 +358,10 @@ namespace SPTQuestingBots.BotLogic
 
         public bool IsLooting()
         {
-            string activeLogicName = DrakiaXYZ.BigBrain.Brains.BrainManager.GetActiveLogic(botOwner)?.GetType()?.Name ?? "null";
+            string activeLogicName = BrainManager.GetActiveLogic(botOwner)?.GetType()?.Name ?? "null";
             return activeLogicName.Contains("Looting");
         }
 
-        // TODO: something broken in here
         public bool ShouldCheckForLoot(float minTimeBetweenLooting)
         {
             if (!ConfigController.Config.Questing.BotQuestingRequirements.BreakForLooting.Enabled)
@@ -324,18 +387,13 @@ namespace SPTQuestingBots.BotLogic
             //      - After the minimum amount of time, the bot will only be allowed to search for a certain amount of time. If it doesn't find any loot
             //        in that time, it will be forced to continue questing
             //      - The minimum amount of time between loot checks depends on whether the bot successfully found loot during the previous check
-
-            if(lootingLayerMonitor.CanUseLayer(minTimeBetweenLooting)){
-                return false;
-            }
-
             if
             (
                 (isLooting || (lootSearchTimer.ElapsedMilliseconds < 1000 * ConfigController.Config.Questing.BotQuestingRequirements.BreakForLooting.MaxLootScanTime))
                 && (isLooting || isSearchingForLoot || lootingLayerMonitor.CanUseLayer(minTimeBetweenLooting))
             )
             {
-                // LoggingController.LogInfo("Layer for bot " + BotOwner.GetText() + ": " + activeLayerName + ". Logic: " + activeLogicName);
+                //LoggingController.LogInfo("Layer for bot " + BotOwner.GetText() + ": " + activeLayerName + ". Logic: " + activeLogicName);
 
                 if (isLooting)
                 {
@@ -370,7 +428,7 @@ namespace SPTQuestingBots.BotLogic
             if (wasLooting || hasFoundLoot)
             {
                 lootingLayerMonitor.RestartCanUseTimer();
-                LoggingController.LogInfo("Bot " + botOwner.GetText() + " is done looting (Loot searching time: " + (lootSearchTimer.ElapsedMilliseconds / 1000.0) + ").");
+                //LoggingController.LogInfo("Bot " + BotOwner.GetText() + " is done looting (Loot searching time: " + (lootSearchTimer.ElapsedMilliseconds / 1000.0) + ").");
             }
 
             lootSearchTimer.Reset();

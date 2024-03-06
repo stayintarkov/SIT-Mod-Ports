@@ -17,7 +17,10 @@ namespace SAIN.Plugin
 
         private static bool _IsSAINLoaded;
         private static Type _SAINExternalType;
+
         private static MethodInfo _ExtractBotMethod;
+        private static MethodInfo _SetExfilForBotMethod;
+        private static MethodInfo _ResetDecisionsForBotMethod;
 
         /**
          * Return true if SAIN is loaded in the client
@@ -28,10 +31,7 @@ namespace SAIN.Plugin
             if (!_SAINLoadedChecked)
             {
                 _SAINLoadedChecked = true;
-                if (Chainloader.PluginInfos.ContainsKey("me.sol.sain"))
-                {
-                    _IsSAINLoaded = true;
-                }
+                _IsSAINLoaded = Chainloader.PluginInfos.ContainsKey("me.sol.sain");
             }
 
             return _IsSAINLoaded;
@@ -55,15 +55,17 @@ namespace SAIN.Plugin
                 if (_SAINExternalType != null)
                 {
                     _ExtractBotMethod = AccessTools.Method(_SAINExternalType, "ExtractBot");
+                    _SetExfilForBotMethod = AccessTools.Method(_SAINExternalType, "TrySetExfilForBot");
+                    _ResetDecisionsForBotMethod = AccessTools.Method(_SAINExternalType, "ResetDecisionsForBot");
                 }
             }
 
-            // If we found the External class, atleast some of the methods are (probably) available
+            // If we found the External class, at least some of the methods are (probably) available
             return (_SAINExternalType != null);
         }
 
         /**
-         * Force a bot into the Extract layer if SAIN is loaded. Return true if the bot was set to extract
+         * Force a bot into the Extract layer if SAIN is loaded. Return true if the bot was set to extract.
          */
         public static bool TryExtractBot(BotOwner botOwner)
         {
@@ -71,6 +73,28 @@ namespace SAIN.Plugin
             if (_ExtractBotMethod == null) return false;
 
             return (bool)_ExtractBotMethod.Invoke(null, new object[] { botOwner });
+        }
+
+        /**
+         * Try to select an exfil point for the bot if SAIN is loaded. Return true if an exfil was assigned to the bot.
+         */
+        public static bool TrySetExfilForBot(BotOwner botOwner)
+        {
+            if (!Init()) return false;
+            if (_SetExfilForBotMethod == null) return false;
+
+            return (bool)_SetExfilForBotMethod.Invoke(null, new object[] { botOwner });
+        }
+
+        /**
+         * Force a bot to reset its decisions if SAIN is loaded. Return true if successful.
+         */
+        public static bool TryResetDecisionsForBot(BotOwner botOwner)
+        {
+            if (!Init()) return false;
+            if (_ResetDecisionsForBotMethod == null) return false;
+
+            return (bool)_ResetDecisionsForBotMethod.Invoke(null, new object[] { botOwner });
         }
     }
 }

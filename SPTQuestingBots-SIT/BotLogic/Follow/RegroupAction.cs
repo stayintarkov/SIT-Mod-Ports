@@ -13,6 +13,8 @@ namespace SPTQuestingBots.BotLogic.Follow
 {
     internal class RegroupAction : BehaviorExtensions.GoToPositionAbstractAction
     {
+        private bool wasStuck = false;
+
         public RegroupAction(BotOwner _BotOwner) : base(_BotOwner, 100)
         {
             SetBaseAction(AIActionNodeAssigner.CreateNode(BotLogicDecision.simplePatrol, BotOwner));
@@ -30,13 +32,16 @@ namespace SPTQuestingBots.BotLogic.Follow
 
         public override void Update()
         {
-            UpdateBaseAction();
+            UpdateBotMovement(CanSprint);
+            UpdateBotSteering();
 
             // Don't allow expensive parts of this behavior to run too often
             if (!canUpdate())
             {
                 return;
             }
+
+            CanSprint = IsAllowedToSprint();
 
             // Force the bot to regroup for a certain amount of time after starting this action
             bool mustRegroup = ActionElpasedTime < ConfigController.Config.Questing.BotQuestingRequirements.MaxFollowerDistance.MinRegroupTime;
@@ -49,6 +54,29 @@ namespace SPTQuestingBots.BotLogic.Follow
             if (mustRegroup || Vector3.Distance(BotOwner.Position, locationOfNearestGroupMember) > targetDistance + 2)
             {
                 RecalculatePath(locationOfNearestGroupMember, targetDistance);
+            }
+            else
+            {
+                ObjectiveManager.PauseRequest = ConfigController.Config.Questing.BotQuestingRequirements.MaxFollowerDistance.RegroupPauseTime;
+            }
+
+            // Check if the bot is unable to reach its boss. If so, fall back to the default EFT layer for a bit. 
+            if (checkIfBotIsStuck())
+            {
+                if (!wasStuck)
+                {
+                    IReadOnlyCollection<BotOwner> followers = HiveMind.BotHiveMindMonitor.GetFollowers(BotOwner);
+                    string followersText = string.Join(", ", followers.Select(f => f.GetText()));
+
+                    LoggingController.LogWarning("Boss " + BotOwner.GetText() + " has been waiting for his followers (" + followersText + ") for a long time...");
+                }
+                wasStuck = true;
+
+                restartStuckTimer();
+            }
+            else
+            {
+                wasStuck = false;
             }
         }
     }

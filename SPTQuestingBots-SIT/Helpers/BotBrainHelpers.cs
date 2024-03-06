@@ -1,21 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using EFT;
 using SPTQuestingBots.Models;
 
-namespace SPTQuestingBots.Controllers.Bots
+namespace SPTQuestingBots.Helpers
 {
-    public enum BotType
-    {
-        Undetermined,
-        Scav,
-        PScav,
-        PMC,
-        Boss
-    }
-
     public static class BotBrainHelpers
     {
         //FollowerGluharAssault and FollowerGluharProtect max layer = 43
@@ -119,7 +109,7 @@ namespace SPTQuestingBots.Controllers.Bots
                 new BotBrainType("BossSanitar"),
                 new BotBrainType("BossGluhar"),
                 new BotBrainType("BossKojaniy"),
-                new BotBrainType("BossBoar")
+                new BotBrainType("BossBoar") 
             });
         }
 
@@ -237,7 +227,6 @@ namespace SPTQuestingBots.Controllers.Bots
             WildSpawnType sptUsec = (WildSpawnType)47;
             WildSpawnType sptBear = (WildSpawnType)48;
 
-            //if (spawnType == WildSpawnType.pmcBot || spawnType == sptUsec)
             if (spawnType == sptUsec)
             {
                 return EPlayerSide.Usec;

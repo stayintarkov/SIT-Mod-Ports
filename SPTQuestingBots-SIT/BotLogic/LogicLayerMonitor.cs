@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using StayInTarkov;
+using DrakiaXYZ.BigBrain.Brains;
 using EFT;
 using HarmonyLib;
 using SPTQuestingBots.Controllers;
@@ -25,16 +25,9 @@ namespace SPTQuestingBots.BotLogic
         private Stopwatch lastRequestedTimer = new Stopwatch();
         private float maxLayerSearchTime = 300;
 
-        public bool CanLayerBeUsed
-        {
-            get { return layer?.IsActive == true; }
-        }
-
-        public double TimeSinceLastRequested
-        {
-            get { return lastRequestedTimer.IsRunning ? lastRequestedTimer.ElapsedMilliseconds / 1000.0 : double.MaxValue; }
-        }
-
+        public bool CanLayerBeUsed => layer?.IsActive == true;
+        public double TimeSinceLastRequested => lastRequestedTimer.IsRunning ? lastRequestedTimer.ElapsedMilliseconds / 1000.0 : double.MaxValue;
+        
         public void Init(BotOwner _botOwner, string _layerName)
         {
             botOwner = _botOwner;
@@ -185,21 +178,21 @@ namespace SPTQuestingBots.BotLogic
             AICoreLayerClass<BotLogicDecision> brainLayer = GetBrainLayerForBot(botOwner, layerName);
             if (brainLayer == null)
             {
-                LoggingController.LogWarning("Could not find brain layer with the name \"" + layerName + "\".");
+                //LoggingController.LogWarning("Could not find brain layer with the name \"" + layerName + "\".");
                 return false;
             }
 
             return brainLayer.IsActive;
         }
 
-        public static DrakiaXYZ.BigBrain.Brains.CustomLayer GetExternalCustomLayer(AICoreLayerClass<BotLogicDecision> layer)
+        public static CustomLayer GetExternalCustomLayer(AICoreLayerClass<BotLogicDecision> layer)
         {
             if (layer == null)
             {
                 return null;
             }
 
-            Assembly bigBrainAssembly = Assembly.GetAssembly(typeof(DrakiaXYZ.BigBrain.Brains.BrainManager));
+            Assembly bigBrainAssembly = Assembly.GetAssembly(typeof(BrainManager));
             if (bigBrainAssembly == null)
             {
                 LoggingController.LogError("Could get the BigBrain assembly");
@@ -220,7 +213,7 @@ namespace SPTQuestingBots.BotLogic
                 return null;
             }
 
-            DrakiaXYZ.BigBrain.Brains.CustomLayer customLayer = (DrakiaXYZ.BigBrain.Brains.CustomLayer)customLayerField.GetValue(layer);
+            CustomLayer customLayer = (CustomLayer)customLayerField.GetValue(layer);
             if (layer == null)
             {
                 LoggingController.LogError("Could not get CustomLayer");

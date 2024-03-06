@@ -4,60 +4,78 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx;
-using StayInTarkov;
+using BepInEx.Bootstrap;
+using DrakiaXYZ.BigBrain.Brains;
 using SPTQuestingBots.Controllers;
-using SPTQuestingBots.Controllers.Bots;
+using SPTQuestingBots.Helpers;
 using SPTQuestingBots.Models;
 
 namespace SPTQuestingBots
 {
     [BepInIncompatibility("com.pandahhcorp.aidisabler")]
     [BepInIncompatibility("com.dvize.AILimit")]
-    //TODO: add requirement for SIT
-    [BepInPlugin("com.DanW.QuestingBots", "DanW-QuestingBots", "0.3.5")]
+    [BepInDependency("xyz.drakia.waypoints", "1.3.0")]
+    [BepInDependency("xyz.drakia.bigbrain", "0.3.2.0")]
+    [BepInPlugin("com.DanW.QuestingBots", "DanW-QuestingBots", "0.4.1")]
     public class QuestingBotsPlugin : BaseUnityPlugin
     {
         public static string ModName { get; private set; } = "???";
+
         private void Awake()
         {
             Logger.LogInfo("Loading QuestingBots...");
-
-            Logger.LogInfo("Loading QuestingBots...getting configuration data...");
-            ConfigController.GetConfig();
             LoggingController.Logger = Logger;
             ModName = Info.Metadata.Name;
 
+            Logger.LogInfo("Loading QuestingBots...getting configuration data...");
+            if (ConfigController.GetConfig() == null)
+            {
+                Chainloader.DependencyErrors.Add("Could not load " + ModName + " because it cannot communicate with the server. Please ensure the mod has been installed correctly.");
+                return;
+            }
+            
             if (ConfigController.Config.Enabled)
             {
                 LoggingController.LogInfo("Loading QuestingBots...enabling patches and controllers...");
-
-                //new Patches.CheckSPTVersionPatch().Enable();
-                new Patches.GameWorldOnDestroyPatch().Enable();
+                
+                new Patches.AddActivePlayerPatch().Enable();
+                new Patches.BotsControllerStopPatch().Enable();
                 new Patches.OnGameStartedPatch().Enable();
                 new Patches.BotOwnerBrainActivatePatch().Enable();
                 new Patches.IsFollowerSuitableForBossPatch().Enable();
                 new Patches.OnBeenKilledByAggressorPatch().Enable();
                 new Patches.AirdropLandPatch().Enable();
-
-                if (ConfigController.Config.InitialPMCSpawns.Enabled)
+                new Patches.ServerRequestPatch().Enable();
+                
+                if (ConfigController.Config.BotSpawns.Enabled)
                 {
-                    new Patches.BossLocationSpawnActivatePatch().Enable();
-                    new Patches.InitBossSpawnLocationPatch().Enable();
-                    new Patches.BotOwnerCreatePatch().Enable();
-                    new Patches.ReadyToPlayPatch().Enable();
+                    new Patches.GameStartPatch().Enable();
+                    new Patches.MatchmakerFinalCountdownUpdatePatch().Enable();
+                    new Patches.ActivateBotsByWavePatch().Enable();
+                    new Patches.AddEnemyPatch().Enable();
 
-                    Logger.LogInfo("Initial PMC spawning is enabled. Adjusting PMC conversion chances...");
+                    if (ConfigController.Config.BotSpawns.SpawnInitialBossesFirst)
+                    {
+                        new Patches.InitBossSpawnLocationPatch().Enable();
+                    }
+                    
+                    if (ConfigController.Config.BotSpawns.LimitInitialBossSpawns.Enabled)
+                    {
+                        new Patches.BossLocationSpawnActivatePatch().Enable();
+                    }
+
+                    if (ConfigController.Config.BotSpawns.AdvancedEFTBotCountManagement)
+                    {
+                        new Patches.GetListByZonePatch().Enable();
+                        new Patches.ExceptAIPatch().Enable();
+                        new Patches.BotDiedPatch().Enable();
+                        new Patches.TryToSpawnInZoneAndDelayPatch().Enable();
+                    }
+
+                    Logger.LogInfo("Bot spawning is enabled. Adjusting PMC conversion chances...");
                     ConfigController.AdjustPMCConversionChances(0, false);
                 }
-
-                this.GetOrAddComponent<LocationController>();
-                this.GetOrAddComponent<BotGenerator>();
-
-                if (ConfigController.Config.Questing.Enabled)
-                {
-                    this.GetOrAddComponent<BotQuestBuilder>();
-                }
-
+                
                 if (ConfigController.Config.Debug.Enabled)
                 {
                     if (ConfigController.Config.Debug.ShowZoneOutlines || ConfigController.Config.Debug.ShowFailedPaths)
@@ -68,7 +86,7 @@ namespace SPTQuestingBots
 
                 // Add options to the F12 menu
                 QuestingBotsPluginConfig.BuildConfigOptions(Config);
-
+                
                 performLobotomies();
             }
 
@@ -81,7 +99,7 @@ namespace SPTQuestingBots
             IEnumerable<BotBrainType> allBrains = allNonSniperBrains.AddAllSniperBrains();
 
             LoggingController.LogInfo("Loading QuestingBots...changing bot brains for sleeping: " + string.Join(", ", allBrains));
-            DrakiaXYZ.BigBrain.Brains.BrainManager.AddCustomLayer(typeof(BotLogic.Sleep.SleepingLayer), allBrains.ToStringList(), 99);
+            BrainManager.AddCustomLayer(typeof(BotLogic.Sleep.SleepingLayer), allBrains.ToStringList(), 99);
 
             if (!ConfigController.Config.Questing.Enabled)
             {
@@ -89,10 +107,10 @@ namespace SPTQuestingBots
             }
 
             LoggingController.LogInfo("Loading QuestingBots...changing bot brains for questing: " + string.Join(", ", allNonSniperBrains));
-            DrakiaXYZ.BigBrain.Brains.BrainManager.AddCustomLayer(typeof(BotLogic.Objective.BotObjectiveLayer), allNonSniperBrains.ToStringList(), ConfigController.Config.Questing.BrainLayerPriority);
+            BrainManager.AddCustomLayer(typeof(BotLogic.Objective.BotObjectiveLayer), allNonSniperBrains.ToStringList(), ConfigController.Config.Questing.BrainLayerPriority);
 
             LoggingController.LogInfo("Loading QuestingBots...changing bot brains for following: " + string.Join(", ", allBrains));
-            DrakiaXYZ.BigBrain.Brains.BrainManager.AddCustomLayer(typeof(BotLogic.Follow.BotFollowerLayer), allBrains.ToStringList(), ConfigController.Config.Questing.BrainLayerPriority + 1);
+            BrainManager.AddCustomLayer(typeof(BotLogic.Follow.BotFollowerLayer), allBrains.ToStringList(), ConfigController.Config.Questing.BrainLayerPriority + 1);
         }
     }
 }

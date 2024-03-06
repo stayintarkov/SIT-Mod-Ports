@@ -4,87 +4,54 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Aki.Common.Http;
 using Comfort.Common;
 using EFT;
 using EFT.Game.Spawning;
 using EFT.Interactive;
 using EFT.Quests;
 using SPTQuestingBots.Configuration;
+using SPTQuestingBots.Controllers;
+using SPTQuestingBots.Helpers;
 using SPTQuestingBots.Models;
 using UnityEngine;
 
-namespace SPTQuestingBots.Controllers.Bots
+namespace SPTQuestingBots.Components
 {
     public class BotQuestBuilder : MonoBehaviour
     {
-        public static bool IsClearing { get; private set; } = false;
-        public static bool IsBuildingQuests { get; private set; } = false;
-        public static bool HaveQuestsBeenBuilt { get; private set; } = false;
+        public bool IsBuildingQuests { get; private set; } = false;
+        public bool HaveQuestsBeenBuilt { get; private set; } = false;
         public static string PreviousLocationID { get; private set; } = null;
 
-        private static CoroutineExtensions.EnumeratorWithTimeLimit enumeratorWithTimeLimit = new CoroutineExtensions.EnumeratorWithTimeLimit(ConfigController.Config.MaxCalcTimePerFrame);
-        private static List<string> zoneIDsInLocation = new List<string>();
+        private CoroutineExtensions.EnumeratorWithTimeLimit enumeratorWithTimeLimit = new CoroutineExtensions.EnumeratorWithTimeLimit(ConfigController.Config.MaxCalcTimePerFrame);
+        private Dictionary<string, int> minLevelForQuest = new Dictionary<string, int>();
+        private Dictionary<Condition, IEnumerable<string>> allZoneIDsForCondition = new Dictionary<Condition, IEnumerable<string>>();
+        private Dictionary<Condition, float?> plantTimeForCondition = new Dictionary<Condition, float?>();
+        private List<string> zoneIDsInLocation = new List<string>();
         
-        public IEnumerator Clear()
+        private void Awake()
         {
-            IsClearing = true;
+            Singleton<GameWorld>.Instance.GetComponent<LocationData>().FindAllInteractiveObjects();
+            StartCoroutine(LoadAllQuests());
 
-            if (IsBuildingQuests)
-            {
-                enumeratorWithTimeLimit.Abort();
-
-                CoroutineExtensions.EnumeratorWithTimeLimit conditionWaiter = new CoroutineExtensions.EnumeratorWithTimeLimit(1);
-                yield return conditionWaiter.WaitForCondition(() => !IsBuildingQuests, nameof(IsBuildingQuests), 3000);
-
-                IsBuildingQuests = false;
-            }
-
-            HaveQuestsBeenBuilt = false;
-            zoneIDsInLocation.Clear();
-
-            IsClearing = false;
+            // Store the name of the current location so it can be used when writing the quest log file. The current location will be null when the log is written.
+            // TODO: I don't think this is needed anymore. Need to try removing it after the 0.4.0 release. 
+            PreviousLocationID = Singleton<GameWorld>.Instance.GetComponent<LocationData>().CurrentLocation.Id;
         }
 
         private void Update()
         {
-            // Wait until data from the previous raid has been erased
-            if (IsClearing)
-            {
-                return;
-            }
-
-            if (LocationController.CurrentLocation == null)
-            {
-                if (IsBuildingQuests || HaveQuestsBeenBuilt)
-                {
-                    LoggingController.LogInfo("Clearing quest data...");
-                }
-
-                StartCoroutine(Clear());
-                return;
-            }
-
-            if (IsBuildingQuests || HaveQuestsBeenBuilt)
-            {
-                return;
-            }
-
-            LocationController.FindAllInteractiveObjects();
-            StartCoroutine(LoadAllQuests());
-
-            // Store the name of the current location so it can be used when writing the quest log file. The current location will be null when the log is written.
-            PreviousLocationID = LocationController.CurrentLocation.Id;
+            
         }
-        
-        public static void AddAirdropChaserQuest(Vector3 airdropPosition)
+
+        public void AddAirdropChaserQuest(Vector3 airdropPosition)
         {
             if (airdropPosition == null)
             {
                 throw new ArgumentNullException(nameof(airdropPosition));
             }
 
-            if (GClass1476.PastTimeSeconds(Singleton<AbstractGame>.Instance.GameTimer) < 1)
+            if (!StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil.HasRaidStarted())
             {
                 LoggingController.LogError("Airdrop chaser quest cannot be added when the raid is not in-progress");
                 return;
@@ -93,8 +60,8 @@ namespace SPTQuestingBots.Controllers.Bots
             Models.QuestQB airdopChaserQuest = createGoToPositionQuest(airdropPosition, "Airdrop Chaser", ConfigController.Config.Questing.BotQuests.AirdropChaser);
             if (airdopChaserQuest != null)
             {
-                float raidET = GClass1476.PastTimeSeconds(Singleton<AbstractGame>.Instance.GameTimer);
-
+                float raidET = StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil.GetElapsedRaidSeconds();
+                
                 airdopChaserQuest.MaxRaidET = raidET + ConfigController.Config.Questing.BotQuests.AirdropBotInterestTime;
                 BotJobAssignmentFactory.AddQuest(airdopChaserQuest);
 
@@ -119,38 +86,29 @@ namespace SPTQuestingBots.Controllers.Bots
 
                     foreach (RawQuestClass questTemplate in allQuestTemplates)
                     {
-                        QuestQB quest = new QuestQB(ConfigController.Config.Questing.BotQuests.EFTQuests.Priority, questTemplate);
-                        quest.ChanceForSelecting = ConfigController.Config.Questing.BotQuests.EFTQuests.Chance;
+                        QuestQB quest = new QuestQB(questTemplate);
+                        QuestSettingsConfig.ApplyQuestSettingsFromConfig(quest, ConfigController.Config.Questing.BotQuests.EFTQuests);
                         quest.PMCsOnly = true;
                         BotJobAssignmentFactory.AddQuest(quest);
                     }
                 }
 
-                // Process each of the quests created by an EFT quest template using the provided action
+                // Process each of the quests created by an EFT quest template
                 yield return BotJobAssignmentFactory.ProcessAllQuests(LoadQuest);
 
-                IEnumerable<TriggerWithId> allTriggers = FindObjectsOfType<TriggerWithId>();
-                //IEnumerable<Type> allTriggerTypes = allTriggers.Select(t => t.GetType()).Distinct();
-                //LoggingController.LogInfo("Found " + allTriggers.Count() + " triggers of types: " + string.Join(", ", allTriggerTypes));
-
-                // Create quest objectives for all matching trigger objects found in the map
+                // Create quest objectives for all matching trigger colliders found in the map
                 enumeratorWithTimeLimit.Reset();
+                IEnumerable<TriggerWithId> allTriggers = FindObjectsOfType<TriggerWithId>();
                 yield return enumeratorWithTimeLimit.Run(allTriggers, ProcessTrigger);
 
+                // Create quest objectives for all matching quest items found in the map
                 //IEnumerable<LootItem> allLoot = FindObjectsOfType<LootItem>(); <-- this does not work for inactive quest items!
                 IEnumerable<LootItem> allItems = Singleton<GameWorld>.Instance.LootItems.Where(i => i.Item != null).Distinct(i => i.TemplateId);
-
-                //IEnumerable<LootItem> allQuestItems = allItems.Where(l => l.Item.QuestItem);
-                //LoggingController.LogInfo("Quest items: " + string.Join(", ", allQuestItems.Select(l => l.Item.LocalizedName())));
-
-                // Create quest objectives for all matching quest items found in the map
                 yield return BotJobAssignmentFactory.ProcessAllQuests(LocateQuestItems, allItems);
 
-                // Update the chance that bots will have keys for EFT quests
-                yield return BotJobAssignmentFactory.ProcessAllQuests(updateChancesOfBotsHavingKeys, ConfigController.Config.Questing.BotQuests.EFTQuests.ChanceOfHavingKeys);
-
                 // Create a quest where the bots wanders to various spawn points around the map. This was implemented as a stop-gap for maps with few other quests.
-                QuestQB spawnPointQuest = createSpawnPointQuest(LocationController.CurrentLocation.SpawnPointParams, "Spawn Point Wander", ConfigController.Config.Questing.BotQuests.SpawnPointWander);
+                SpawnPointParams[] allSpawnPoints = Singleton<GameWorld>.Instance.GetComponent<LocationData>().CurrentLocation.SpawnPointParams;
+                QuestQB spawnPointQuest = createSpawnPointQuest(allSpawnPoints, "Spawn Point Wander", ConfigController.Config.Questing.BotQuests.SpawnPointWander);
                 if (spawnPointQuest != null)
                 {
                     //LoggingController.LogInfo("Adding quest for going to random spawn points...");
@@ -163,14 +121,14 @@ namespace SPTQuestingBots.Controllers.Bots
 
                 // Create a quest where initial PMC's can run to your spawn point (not directly to you).
                 Models.QuestQB spawnRushQuest = null;
-                SpawnPointParams? playerSpawnPoint = LocationController.GetPlayerSpawnPoint();
+                SpawnPointParams? playerSpawnPoint = Singleton<GameWorld>.Instance.GetComponent<LocationData>().GetPlayerSpawnPoint();
                 if (playerSpawnPoint.HasValue)
                 {
                     spawnRushQuest = createGoToPositionQuest(playerSpawnPoint.Value.Position, "Spawn Rush", ConfigController.Config.Questing.BotQuests.SpawnRush);
                 }
                 else
                 {
-                    LoggingController.LogWarning("Cannot find player spawn point.");
+                    LoggingController.LogError("Cannot find player spawn point.");
                 }
 
                 if (spawnRushQuest != null)
@@ -183,19 +141,19 @@ namespace SPTQuestingBots.Controllers.Bots
                 {
                     LoggingController.LogError("Could not add quest for rushing your spawn point");
                 }
-                
-                // Create a quest where initial PMC's can run to your spawn point (not directly to you).
+
+                // Create a quest for PMC's to go to boss spawn locations early in the raid to hunt them
                 QuestQB bossHunterQuest = null;
                 IEnumerable<string> bossZones = getBossSpawnZones();
                 if (bossZones.Any())
                 {
-                    IEnumerable<SpawnPointParams> possibleBossSpawnPoints = LocationController.CurrentLocation.SpawnPointParams.Where(s => bossZones.Contains(s.BotZoneName ?? ""));
+                    IEnumerable<SpawnPointParams> possibleBossSpawnPoints = allSpawnPoints.Where(s => bossZones.Contains(s.BotZoneName ?? ""));
                     bossHunterQuest = createSpawnPointQuest(possibleBossSpawnPoints, "Boss Hunter", ConfigController.Config.Questing.BotQuests.BossHunter);
                 }
 
                 if (bossHunterQuest != null)
                 {
-                    LoggingController.LogInfo("Adding quest for hunting bosses...");
+                    //LoggingController.LogInfo("Adding quest for hunting bosses...");
                     bossHunterQuest.PMCsOnly = true;
                     BotJobAssignmentFactory.AddQuest(bossHunterQuest);
                 }
@@ -206,7 +164,10 @@ namespace SPTQuestingBots.Controllers.Bots
 
                 LoadCustomQuests();
 
-                BotJobAssignmentFactory.RemoveBlacklistedQuestObjectives(LocationController.CurrentLocation.Id);
+                BotJobAssignmentFactory.RemoveBlacklistedQuestObjectives(Singleton<GameWorld>.Instance.GetComponent<LocationData>().CurrentLocation.Id);
+
+                // Update all other settings for EFT quests
+                yield return BotJobAssignmentFactory.ProcessAllQuests(updateEFTQuestObjectives);
 
                 HaveQuestsBeenBuilt = true;
                 LoggingController.LogInfo("Finished loading quest data.");
@@ -220,7 +181,7 @@ namespace SPTQuestingBots.Controllers.Bots
         private void LoadCustomQuests()
         {
             // Load all JSON files for custom quests
-            IEnumerable<QuestQB> customQuests = ConfigController.GetCustomQuests(LocationController.CurrentLocation.Id);
+            IEnumerable<QuestQB> customQuests = ConfigController.GetCustomQuests(Singleton<GameWorld>.Instance.GetComponent<LocationData>().CurrentLocation.Id);
             if (!customQuests.Any())
             {
                 return;
@@ -264,6 +225,7 @@ namespace SPTQuestingBots.Controllers.Bots
 
                 BotJobAssignmentFactory.AddQuest(quest);
             }
+
             LoggingController.LogInfo("Loading custom quests...found " + customQuests.Count() + " custom quests.");
         }
 
@@ -312,19 +274,19 @@ namespace SPTQuestingBots.Controllers.Bots
                     Collider itemCollider = item.GetComponent<Collider>();
                     if (itemCollider == null)
                     {
-                        LoggingController.LogError("Quest item " + item.Item.LocalizedName() + " has no collider");
+                        LoggingController.LogError("QuestQB item " + item.Item.LocalizedName() + " has no collider");
                         continue;
                     }
 
                     // Try to find the nearest NavMesh position next to the quest item.
-                    Vector3? navMeshTargetPoint = LocationController.FindNearestNavMeshPosition(itemCollider.bounds.center, ConfigController.Config.Questing.QuestGeneration.NavMeshSearchDistanceItem);
+                    Vector3? navMeshTargetPoint = Singleton<GameWorld>.Instance.GetComponent<LocationData>().FindNearestNavMeshPosition(itemCollider.bounds.center, ConfigController.Config.Questing.QuestGeneration.NavMeshSearchDistanceItem);
                     if (!navMeshTargetPoint.HasValue)
                     {
                         LoggingController.LogError("Cannot find NavMesh point for quest item " + item.Item.LocalizedName());
 
                         if (ConfigController.Config.Debug.ShowZoneOutlines)
                         {
-                            Vector3[] itemPositionOutline = PathRender.GetSpherePoints(item.transform.position, 0.5f, 10);
+                            Vector3[] itemPositionOutline = DebugHelpers.GetSpherePoints(item.transform.position, 0.5f, 10);
                             PathVisualizationData itemPositionSphere = new PathVisualizationData("QuestItem_" + item.Item.LocalizedName(), itemPositionOutline, Color.red);
                             PathRender.AddOrUpdatePath(itemPositionSphere);
                         }
@@ -371,9 +333,11 @@ namespace SPTQuestingBots.Controllers.Bots
 
         private int getMinLevelForQuest(QuestQB quest)
         {
-            if(quest == null){
-                return 0;
+            if (minLevelForQuest.ContainsKey(quest.Template?.Id))
+            {
+                return minLevelForQuest[quest.Template.Id];
             }
+
             // Be default, use the minimum level set for the quest template
             int minLevel = quest.Template?.Level ?? 0;
 
@@ -407,6 +371,11 @@ namespace SPTQuestingBots.Controllers.Bots
                         // Find the required quest
                         string preReqQuestID = conditionQuest.target;
                         QuestQB preReqQuest = BotJobAssignmentFactory.FindQuest(preReqQuestID);
+                        if (preReqQuest == null)
+                        {
+                            LoggingController.LogWarning("Cannot find prerequisite quest " + preReqQuestID + " for quest " + quest.Name);
+                            continue;
+                        }
 
                         // Get the minimum player level to start that quest
                         int minLevelForPreReqQuest = getMinLevelForQuest(preReqQuest);
@@ -418,6 +387,11 @@ namespace SPTQuestingBots.Controllers.Bots
                         minLevel = minLevelForPreReqQuest;
                     }
                 }
+            }
+
+            if (quest.Template != null)
+            {
+                minLevelForQuest.Add(quest.Template.Id, minLevel);
             }
 
             return minLevel;
@@ -440,6 +414,11 @@ namespace SPTQuestingBots.Controllers.Bots
 
         private IEnumerable<string> getAllZoneIDsForQuestCondition(Condition condition)
         {
+            if (allZoneIDsForCondition.ContainsKey(condition))
+            {
+                return allZoneIDsForCondition[condition];
+            }
+
             List<string> zoneIDs = new List<string>();
 
             ConditionZone conditionZone = condition as ConditionZone;
@@ -492,7 +471,11 @@ namespace SPTQuestingBots.Controllers.Bots
                 zoneIDs.AddRange(getAllZoneIDsForQuestCondition(childCondition));
             }
 
-            return zoneIDs.Distinct();
+            IEnumerable<string> zoneIDsDistinct = zoneIDs.Distinct();
+
+            allZoneIDsForCondition.Add(condition, zoneIDsDistinct);
+
+            return zoneIDsDistinct;
         }
 
         private float? findPlantTimeForQuest(QuestQB quest, string zoneID)
@@ -515,11 +498,17 @@ namespace SPTQuestingBots.Controllers.Bots
 
         private float? findPlantTimeForQuestCondition(Condition condition, string zoneID)
         {
+            if (plantTimeForCondition.ContainsKey(condition))
+            {
+                return plantTimeForCondition[condition];
+            }
+
             ConditionLeaveItemAtLocation conditionLeaveItemAtLocation = condition as ConditionLeaveItemAtLocation;
             if (conditionLeaveItemAtLocation?.zoneId == zoneID)
             {
                 if (conditionLeaveItemAtLocation.plantTime > 0)
                 {
+                    plantTimeForCondition.Add(condition, conditionLeaveItemAtLocation.plantTime);
                     return conditionLeaveItemAtLocation.plantTime;
                 }
             }
@@ -532,6 +521,7 @@ namespace SPTQuestingBots.Controllers.Bots
                     float? plantTime = findPlantTimeForQuestCondition(childCondition, zoneID);
                     if (plantTime.HasValue)
                     {
+                        plantTimeForCondition.Add(condition, plantTime.Value);
                         return plantTime.Value;
                     }
                 }
@@ -542,10 +532,12 @@ namespace SPTQuestingBots.Controllers.Bots
                 float? plantTime = findPlantTimeForQuestCondition(childCondition, zoneID);
                 if (plantTime.HasValue)
                 {
+                    plantTimeForCondition.Add(condition, plantTime.Value);
                     return plantTime.Value;
                 }
             }
 
+            plantTimeForCondition.Add(condition, null);
             return null;
         }
 
@@ -575,6 +567,7 @@ namespace SPTQuestingBots.Controllers.Bots
 
             // Set the target location to be in the center of the collider. If the collider is very large (i.e. for an entire building), set the
             // target location to be just above the floor. 
+            // TO DO: This is kinda sloppy and should be fixed.
             Vector3 triggerTargetPosition = triggerCollider.bounds.center;
             if (triggerCollider.bounds.extents.y > 1.5f)
             {
@@ -586,7 +579,7 @@ namespace SPTQuestingBots.Controllers.Bots
             // TO DO: This is kinda sloppy and should be fixed. 
             float maxSearchDistance = ConfigController.Config.Questing.QuestGeneration.NavMeshSearchDistanceZone;
             maxSearchDistance *= triggerCollider.bounds.Volume() > 20 ? 2 : 1;
-            Vector3? navMeshTargetPoint = LocationController.FindNearestNavMeshPosition(triggerTargetPosition, maxSearchDistance);
+            Vector3? navMeshTargetPoint = Singleton<GameWorld>.Instance.GetComponent<LocationData>().FindNearestNavMeshPosition(triggerTargetPosition, maxSearchDistance);
             if (!navMeshTargetPoint.HasValue)
             {
                 LoggingController.LogError("Cannot find NavMesh point for trigger " + trigger.Id);
@@ -606,41 +599,60 @@ namespace SPTQuestingBots.Controllers.Bots
                 {
                     LoggingController.LogInfo("Found trigger " + trigger.Id + " for quest: " + quest.Name + " - Adding plant time: " + plantTime.Value + "s");
 
-                    objective.AddStep(new QuestObjectiveStep(navMeshTargetPoint.Value, QuestAction.PlantItem, plantTime.Value));
+                    Configuration.MinMaxConfig plantTimeMinMax = new Configuration.MinMaxConfig(plantTime.Value, plantTime.Value);
+                    objective.AddStep(new QuestObjectiveStep(navMeshTargetPoint.Value, QuestAction.PlantItem, plantTimeMinMax));
                 }
-
-                // If the zone is large, allow twice as many bots to do the objective at the same time
-                // TO DO: This is kinda sloppy and should be fixed. 
-                int maxBots = ConfigController.Config.Questing.BotQuests.EFTQuests.MaxBotsPerQuest;
-                quest.MaxBots *= triggerCollider.bounds.Volume() > 5 ? maxBots * 2 : maxBots;
 
                 zoneIDsInLocation.Add(trigger.Id);
             }
 
             if (ConfigController.Config.Debug.ShowZoneOutlines)
             {
-                Vector3[] triggerColliderBounds = PathRender.GetBoundingBoxPoints(triggerCollider.bounds);
+                Vector3[] triggerColliderBounds = DebugHelpers.GetBoundingBoxPoints(triggerCollider.bounds);
                 PathVisualizationData triggerBoundingBox = new PathVisualizationData("Trigger_" + trigger.Id, triggerColliderBounds, Color.cyan);
                 PathRender.AddOrUpdatePath(triggerBoundingBox);
 
-                Vector3[] triggerTargetPoint = PathRender.GetSpherePoints(navMeshTargetPoint.Value, 0.5f, 10);
+                Vector3[] triggerTargetPoint = DebugHelpers.GetSpherePoints(navMeshTargetPoint.Value, 0.5f, 10);
                 PathVisualizationData triggerTargetPosSphere = new PathVisualizationData("TriggerTargetPos_" + trigger.Id, triggerTargetPoint, Color.cyan);
                 PathRender.AddOrUpdatePath(triggerTargetPosSphere);
             }
         }
 
-        private static void updateChancesOfBotsHavingKeys(Models.QuestQB quest, float chance)
+        private void updateEFTQuestObjectives(Models.QuestQB quest)
         {
+            if (!quest.IsEFTQuest)
+            {
+                return;
+            }
+
+            float nearbyObjectiveDistance = ConfigController.Config.Questing.BotQuests.EFTQuests.MatchLootingBehaviorDistance;
             foreach (QuestObjective objective in quest.AllObjectives)
             {
                 foreach (QuestObjectiveStep step in objective.AllSteps)
                 {
-                    step.ChanceOfHavingKey = chance;
+                    step.ChanceOfHavingKey = ConfigController.Config.Questing.BotQuests.EFTQuests.ChanceOfHavingKeys;
+                }
+
+                Vector3? objectivePosition = objective.GetFirstStepPosition();
+                if (!objectivePosition.HasValue)
+                {
+                    continue;
+                }
+
+                // Find all nearby quest objectives that are not from EFT quests
+                QuestObjective[] nearbyObjectives = BotJobAssignmentFactory.GetQuestObjectivesNearPosition(objectivePosition.Value, nearbyObjectiveDistance, false)
+                    .ToArray();
+
+                // Match the looting behavior of the nearby objectives
+                if (!nearbyObjectives.Any() || nearbyObjectives.All(o => o.LootAfterCompletingSetting == LootAfterCompleting.Inhibit))
+                {
+                    objective.LootAfterCompletingSetting = LootAfterCompleting.Inhibit;
+                    //LoggingController.LogInfo("Preventing looting after completing EFT quest objective " + objective.ToString() + " for quest " + quest.ToString());
                 }
             }
         }
 
-        private static Models.QuestQB createGoToPositionQuest(Vector3 position, string questName, QuestSettingsConfig settings)
+        private Models.QuestQB createGoToPositionQuest(Vector3 position, string questName, QuestSettingsConfig settings)
         {
             if (position == null)
             {
@@ -658,14 +670,14 @@ namespace SPTQuestingBots.Controllers.Bots
             }
 
             // Ensure there is a valid NavMesh position nearby
-            Vector3? navMeshPosition = LocationController.FindNearestNavMeshPosition(position, ConfigController.Config.Questing.QuestGeneration.NavMeshSearchDistanceSpawn);
+            Vector3? navMeshPosition = Singleton<GameWorld>.Instance.GetComponent<LocationData>().FindNearestNavMeshPosition(position, ConfigController.Config.Questing.QuestGeneration.NavMeshSearchDistanceSpawn);
             if (!navMeshPosition.HasValue)
             {
                 LoggingController.LogWarning("Cannot find NavMesh position near " + position.ToString());
                 return null;
             }
 
-            Models.QuestQB quest = new Models.QuestQB(settings.Priority, questName);
+            Models.QuestQB quest = new Models.QuestQB(questName);
             QuestSettingsConfig.ApplyQuestSettingsFromConfig(quest, settings);
 
             Models.QuestObjective objective = new Models.QuestObjective(navMeshPosition.Value);
@@ -675,7 +687,7 @@ namespace SPTQuestingBots.Controllers.Bots
             return quest;
         }
 
-        private static Models.QuestQB createSpawnPointQuest(IEnumerable<SpawnPointParams> spawnPoints, string questName, QuestSettingsConfig settings, ESpawnCategoryMask spawnTypes = ESpawnCategoryMask.All)
+        private Models.QuestQB createSpawnPointQuest(IEnumerable<SpawnPointParams> spawnPoints, string questName, QuestSettingsConfig settings, ESpawnCategoryMask spawnTypes = ESpawnCategoryMask.All)
         {
             if (spawnPoints == null)
             {
@@ -699,13 +711,13 @@ namespace SPTQuestingBots.Controllers.Bots
                 return null;
             }
 
-            Models.QuestQB quest = new Models.QuestQB(settings.Priority, questName);
+            Models.QuestQB quest = new Models.QuestQB(questName);
             QuestSettingsConfig.ApplyQuestSettingsFromConfig(quest, settings);
 
             foreach (SpawnPointParams spawnPoint in eligibleSpawnPoints)
             {
                 // Ensure the spawn point has a valid nearby NavMesh position
-                Vector3? navMeshPosition = LocationController.FindNearestNavMeshPosition(spawnPoint.Position, ConfigController.Config.Questing.QuestGeneration.NavMeshSearchDistanceSpawn);
+                Vector3? navMeshPosition = Singleton<GameWorld>.Instance.GetComponent<LocationData>().FindNearestNavMeshPosition(spawnPoint.Position, ConfigController.Config.Questing.QuestGeneration.NavMeshSearchDistanceSpawn);
                 if (!navMeshPosition.HasValue)
                 {
                     LoggingController.LogWarning("Cannot find NavMesh position for spawn point " + spawnPoint.Position.ToUnityVector3().ToString());
@@ -720,15 +732,18 @@ namespace SPTQuestingBots.Controllers.Bots
             return quest;
         }
 
-        private static IEnumerable<string> getBossSpawnZones()
+        private IEnumerable<string> getBossSpawnZones()
         {
+            // TODO: This seems to only return zones in which bosses will definitely spawn, not all possible spawn zones. Need to investigate.
+
             List<string> bossZones = new List<string>();
-            foreach (BossLocationSpawn bossLocationSpawn in LocationController.CurrentLocation.BossLocationSpawn)
+            foreach (BossLocationSpawn bossLocationSpawn in Singleton<GameWorld>.Instance.GetComponent<LocationData>().CurrentLocation.BossLocationSpawn)
             {
                 if (ConfigController.Config.Questing.BotQuests.BlacklistedBossHunterBosses.Contains(bossLocationSpawn.BossName))
                 {
                     continue;
                 }
+
                 bossZones.AddRange(bossLocationSpawn.BossZone.Split(','));
             }
 

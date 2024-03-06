@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using DrakiaXYZ.BigBrain.Brains;
 using EFT;
-using SPTQuestingBots.Controllers;
 
 namespace SPTQuestingBots.BehaviorExtensions
 {
@@ -16,14 +15,16 @@ namespace SPTQuestingBots.BehaviorExtensions
         GoToObjective,
         FollowBoss,
         HoldPosition,
+        Ambush,
         PlantItem,
         Regroup,
         Sleep,
         ToggleSwitch,
-        UnlockDoor
+        UnlockDoor,
+        CloseNearbyDoors
     }
 
-    internal abstract class CustomLayerDelayedUpdate : DrakiaXYZ.BigBrain.Brains.CustomLayer
+    internal abstract class CustomLayerDelayedUpdate : CustomLayer
     {
         protected static int updateInterval { get; private set; } = 100;
         protected bool previousState { get; private set; } = false;
@@ -52,7 +53,7 @@ namespace SPTQuestingBots.BehaviorExtensions
 
         public override Action GetNextAction()
         {
-            LoggingController.LogInfo(BotOwner.GetText() + " is swtiching from " + previousAction.ToString() + " to " + nextAction.ToString());
+            //LoggingController.LogInfo(BotOwner.GetText() + " is swtiching from " + previousAction.ToString() + " to " + nextAction.ToString());
 
             previousAction = nextAction;
 
@@ -61,11 +62,13 @@ namespace SPTQuestingBots.BehaviorExtensions
                 case BotActionType.GoToObjective: return new Action(typeof(BotLogic.Objective.GoToObjectiveAction), actionReason);
                 case BotActionType.FollowBoss: return new Action(typeof(BotLogic.Follow.FollowBossAction), actionReason);
                 case BotActionType.HoldPosition: return new Action(typeof(BotLogic.Objective.HoldAtObjectiveAction), actionReason);
+                case BotActionType.Ambush: return new Action(typeof(BotLogic.Objective.AmbushAction), actionReason);
                 case BotActionType.PlantItem: return new Action(typeof(BotLogic.Objective.PlantItemAction), actionReason);
                 case BotActionType.Regroup: return new Action(typeof(BotLogic.Follow.RegroupAction), actionReason);
                 case BotActionType.Sleep: return new Action(typeof(BotLogic.Sleep.SleepingAction), actionReason);
                 case BotActionType.ToggleSwitch: return new Action(typeof(BotLogic.Objective.ToggleSwitchAction), actionReason);
                 case BotActionType.UnlockDoor: return new Action(typeof(BotLogic.Objective.UnlockDoorAction), actionReason);
+                case BotActionType.CloseNearbyDoors: return new Action(typeof(BotLogic.Objective.CloseNearbyDoorsAction), actionReason);
             }
 
             throw new InvalidOperationException("Invalid action selected for layer");
@@ -106,6 +109,7 @@ namespace SPTQuestingBots.BehaviorExtensions
 
         protected bool pauseLayer(float minTime)
         {
+            previousState = false;
             pauseLayerTime = minTime;
             pauseLayerTimer.Restart();
 

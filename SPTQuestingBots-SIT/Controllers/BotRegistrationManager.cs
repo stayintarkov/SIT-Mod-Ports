@@ -4,10 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Comfort.Common;
 using EFT;
 
-namespace SPTQuestingBots.Controllers.Bots
+namespace SPTQuestingBots.Controllers
 {
+    public enum BotType
+    {
+        Undetermined,
+        Scav,
+        PScav,
+        PMC,
+        Boss
+    }
+
     public static class BotRegistrationManager
     {
         public static int SpawnedBotCount { get; set; } = 0;
@@ -20,6 +30,7 @@ namespace SPTQuestingBots.Controllers.Bots
 
         private static List<BotOwner> registeredPMCs = new List<BotOwner>();
         private static List<BotOwner> registeredBosses = new List<BotOwner>();
+        private static List<BotsGroup> hostileGroups = new List<BotsGroup>();
 
         public static void Clear()
         {
@@ -33,11 +44,12 @@ namespace SPTQuestingBots.Controllers.Bots
 
             registeredPMCs.Clear();
             registeredBosses.Clear();
+            hostileGroups.Clear();
         }
 
         public static BotType GetBotType(BotOwner botOwner)
         {
-            if (botOwner?.Side == null)
+            if (botOwner?.Profile?.Side == null)
             {
                 return BotType.Undetermined;
             }
@@ -50,14 +62,13 @@ namespace SPTQuestingBots.Controllers.Bots
             {
                 return BotType.Boss;
             }
-            string pattern = "\\w+.[(]\\w+[)]";
-            Regex regex = new Regex(pattern);
-            if (regex.Matches(botOwner.Profile.Nickname).Count > 0)
-            {
-                return BotType.PScav;
-            }
             if (botOwner.Profile.Side == EPlayerSide.Savage)
             {
+                if (botOwner.Profile.Nickname.Contains(" ("))
+                {
+                    return BotType.PScav;
+                }
+
                 return BotType.Scav;
             }
 
@@ -70,7 +81,8 @@ namespace SPTQuestingBots.Controllers.Bots
             string message = "Spawned ";
 
             // If initial PMC's need to spawn but haven't yet, assume the bot is a boss. Otherwise, PMC's should have already spawned. 
-            if (BotGenerator.CanSpawnPMCs && (BotGenerator.SpawnedInitialPMCCount == 0) && !BotGenerator.IsSpawningPMCs)
+            Singleton<GameWorld>.Instance.TryGetComponent(out Components.Spawning.PMCGenerator pmcGenerator);
+            if ((pmcGenerator != null) && pmcGenerator.HasGeneratedBots && !pmcGenerator.IsSpawningBots && (pmcGenerator.SpawnedGroupCount == 0))
             {
                 message += "boss " + botOwner.GetText() + " (" + registeredBosses.Count + "/" + ZeroWaveTotalBotCount + ")";
             }
@@ -103,12 +115,76 @@ namespace SPTQuestingBots.Controllers.Bots
             if (!registeredBosses.Contains(botOwner))
             {
                 registeredBosses.Add(botOwner);
+
+                updateAllHostileGroupEnemies();
             }
         }
 
         public static bool IsBotABoss(BotOwner botOwner)
         {
             return registeredBosses.Contains(botOwner);
+        }
+
+        public static void MakeBotGroupHostileTowardAllBosses(BotOwner bot)
+        {
+            if (!hostileGroups.Contains(bot.BotsGroup))
+            {
+                hostileGroups.Add(bot.BotsGroup);
+
+                updateHostileGroupEnemies(bot.BotsGroup);
+            }
+        }
+
+        private static void updateAllHostileGroupEnemies()
+        {
+            foreach (BotsGroup hostileGroup in hostileGroups)
+            {
+                updateHostileGroupEnemies(hostileGroup);
+            }
+        }
+
+        private static void updateHostileGroupEnemies(BotsGroup group)
+        {
+            IEnumerable<BotOwner> groupMembers = getAliveGroupMembers(group);
+            if (!groupMembers.Any())
+            {
+                return;
+            }
+
+            foreach (BotOwner boss in registeredBosses)
+            {
+                if ((boss == null) || boss.IsDead)
+                {
+                    continue;
+                }
+
+                if (group.ContainsEnemy(boss))
+                {
+                    continue;
+                }
+
+                group.AddEnemy(boss, EBotEnemyCause.addPlayer);
+
+                LoggingController.LogInfo("Group containing " + string.Join(", ", groupMembers.Select(m => m.GetText())) + " is now hostile toward " + boss.GetText());
+            }
+        }
+
+        private static IEnumerable<BotOwner> getAliveGroupMembers(BotsGroup group)
+        {
+            List<BotOwner> groupMemberList = new List<BotOwner>();
+            for (int m = 0; m < group.MembersCount; m++)
+            {
+                BotOwner member = group.Member(m);
+
+                if ((member == null) || member.IsDead)
+                {
+                    continue;
+                }
+
+                groupMemberList.Add(member);
+            }
+
+            return groupMemberList;
         }
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +14,7 @@ namespace SPTQuestingBots.Helpers
         {
             try
             {
-                string typeName = "Aki.SinglePlayer.Utils.InRaid.RaidTimeUtil";
+                string typeName = "StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil";
                 Type raidTimeUtilType = AccessTools.TypeByName(typeName);
                 if (raidTimeUtilType == null)
                 {

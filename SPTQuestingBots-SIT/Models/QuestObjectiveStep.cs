@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Comfort.Common;
+using EFT;
 using EFT.Interactive;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -13,30 +15,39 @@ namespace SPTQuestingBots.Models
 {
     public enum QuestAction
     {
-        Undefined = 0,
-        MoveToPosition = 1,
-        PlantItem = 2,
-        ToggleSwitch = 3,
-        RequestExtract = 4,
+        Undefined,
+        MoveToPosition,
+        HoldAtPosition,
+        Ambush,
+        PlantItem,
+        ToggleSwitch,
+        RequestExtract,
+        CloseNearbyDoors
     }
 
     public class QuestObjectiveStep
     {
         [JsonProperty("waitTimeAfterCompleting")]
-        public double WaitTimeAfterCompleting { get; set; } = 10;
+        public double WaitTimeAfterCompleting { get; set; } = ConfigController.Config.Questing.DefaultWaitTimeAfterObjectiveCompletion;
 
         [JsonProperty("position")]
         public SerializableVector3 SerializablePosition { get; set; } = null;
+
+        [JsonProperty("lookToPosition")]
+        public SerializableVector3 SerializableLookToPosition { get; set; } = null;
 
         [JsonProperty("stepType")]
         [JsonConverter(typeof(StringEnumConverter))]
         public QuestAction ActionType { get; set; } = QuestAction.MoveToPosition;
 
         [JsonProperty("minElapsedTime")]
-        public double MinElapsedTime { get; set; } = 0;
+        public Configuration.MinMaxConfig MinElapsedTime { get; set; } = new Configuration.MinMaxConfig(5, 5);
 
         [JsonProperty("switchID")]
         public string SwitchID { get; set; } = "";
+
+        [JsonProperty("maxDistance")]
+        public float MaxDistance { get; set; } = 5;
 
         [JsonProperty("chanceOfHavingKey")]
         public float ChanceOfHavingKey { get; set; } = ConfigController.Config.Questing.UnlockingDoors.DefaultChanceOfBotsHavingKeys;
@@ -67,9 +78,14 @@ namespace SPTQuestingBots.Models
             ActionType = actionType;
         }
 
-        public QuestObjectiveStep(Vector3 position, QuestAction actionType, double minElapsedTime) : this(position, actionType)
+        public QuestObjectiveStep(Vector3 position, QuestAction actionType, Configuration.MinMaxConfig minElapsedTime) : this(position, actionType)
         {
             MinElapsedTime = minElapsedTime;
+        }
+
+        public override string ToString()
+        {
+            return "Step " + (StepNumber.HasValue ? ("#" + StepNumber.Value.ToString()) : "???");
         }
 
         public Vector3? GetPosition()
@@ -80,6 +96,16 @@ namespace SPTQuestingBots.Models
             }
 
             return SerializablePosition.ToUnityVector3();
+        }
+
+        public Vector3? GetLookToPosition()
+        {
+            if ((SerializableLookToPosition == null) || SerializableLookToPosition.Any(float.NaN))
+            {
+                return null;
+            }
+
+            return SerializableLookToPosition.ToUnityVector3();
         }
 
         public void SetPosition(Vector3? position)
@@ -101,7 +127,7 @@ namespace SPTQuestingBots.Models
                 return false;
             }
 
-            Vector3? navMeshPosition = LocationController.FindNearestNavMeshPosition(SerializablePosition.ToUnityVector3(), maxDistance);
+            Vector3? navMeshPosition = Singleton<GameWorld>.Instance.GetComponent<Components.LocationData>().FindNearestNavMeshPosition(SerializablePosition.ToUnityVector3(), maxDistance);
             if (!navMeshPosition.HasValue)
             {
                 LoggingController.LogError("Cannot find NavMesh position for " + SerializablePosition.ToUnityVector3().ToString());
@@ -119,8 +145,15 @@ namespace SPTQuestingBots.Models
                 return true;
             }
 
-            InteractiveObject = LocationController.FindSwitch(SwitchID);
+            InteractiveObject = Singleton<GameWorld>.Instance.GetComponent<Components.LocationData>().FindSwitch(SwitchID);
             return InteractiveObject != null;
+        }
+
+        public double GetRandomMinElapsedTime()
+        {
+            System.Random random = new System.Random();
+            double selectedTime = MinElapsedTime.Min + ((MinElapsedTime.Max - MinElapsedTime.Min) * random.NextDouble());
+            return Math.Round(selectedTime, 1);
         }
     }
 }

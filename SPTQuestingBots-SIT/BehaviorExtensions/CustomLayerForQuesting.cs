@@ -65,7 +65,7 @@ namespace SPTQuestingBots.BehaviorExtensions
         {
             if (objectiveManager.BotMonitor.ShouldSearchForEnemy(searchTimeAfterCombat))
             {
-                // if (!BotHiveMindMonitor.GetValueForBot(BotHiveMindSensorType.InCombat, BotOwner))
+                if (!BotHiveMindMonitor.GetValueForBot(BotHiveMindSensorType.InCombat, BotOwner))
                 {
                     /*bool hasTarget = BotOwner.Memory.GoalTarget.HaveMainTarget();
                     if (hasTarget)
@@ -82,10 +82,10 @@ namespace SPTQuestingBots.BehaviorExtensions
                     searchTimeAfterCombat = objectiveManager.BotMonitor.UpdateSearchTimeAfterCombat();
                     //LoggingController.LogInfo("Bot " + BotOwner.GetText() + " will spend " + searchTimeAfterCombat + " seconds searching for enemies after combat ends..");
                 }
-                // BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.InCombat, BotOwner, true);
+                BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.InCombat, BotOwner, true);
                 return true;
             }
-            // BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.InCombat, BotOwner, false);
+            BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.InCombat, BotOwner, false);
 
             return false;
         }

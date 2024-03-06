@@ -4,9 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using StayInTarkov;
+using Aki.Reflection.Patching;
+using Comfort.Common;
+using EFT;
 using SPTQuestingBots.Controllers;
-using SPTQuestingBots.Controllers.Bots;
 
 namespace SPTQuestingBots.Patches
 {
@@ -15,7 +16,8 @@ namespace SPTQuestingBots.Patches
         protected override MethodBase GetTargetMethod()
         {
             Type localGameType = Aki.Reflection.Utils.PatchConstants.LocalGameType;
-            Type targetType = localGameType.GetNestedType("Class1320", BindingFlags.Public | BindingFlags.Instance);
+            Type targetType = localGameType.GetNestedType("Class1367", BindingFlags.Public | BindingFlags.Instance);
+
             return targetType.GetMethod("method_1", BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
@@ -32,7 +34,7 @@ namespace SPTQuestingBots.Patches
             if (bossWave.BossName.ToLower() == "exusec")
             {
                 // Prevent too many Rogues from spawning, or they will prevent other bots from spawning
-                if (BotRegistrationManager.SpawnedRogueCount + botCount > ConfigController.Config.InitialPMCSpawns.MaxInitialRogues)
+                if (BotRegistrationManager.SpawnedRogueCount + botCount > ConfigController.Config.BotSpawns.LimitInitialBossSpawns.MaxInitialRogues)
                 {
                     BotRegistrationManager.ZeroWaveTotalBotCount -= botCount;
                     BotRegistrationManager.ZeroWaveTotalRogueCount -= botCount;
@@ -43,7 +45,8 @@ namespace SPTQuestingBots.Patches
             }
 
             // Prevent too many bosses from spawning, or they will prevent other bots from spawning
-            if ((BotGenerator.SpawnedInitialPMCCount == 0) && (BotRegistrationManager.SpawnedBossCount + botCount > ConfigController.Config.InitialPMCSpawns.MaxInitialBosses))
+            Singleton<GameWorld>.Instance.TryGetComponent(out Components.Spawning.PMCGenerator pmcGenerator);
+            if ((pmcGenerator != null) && (pmcGenerator.SpawnedGroupCount == 0) && (BotRegistrationManager.SpawnedBossCount + botCount > ConfigController.Config.BotSpawns.LimitInitialBossSpawns.MaxInitialBosses))
             {
                 BotRegistrationManager.ZeroWaveTotalBotCount -= botCount;
 
@@ -55,7 +58,7 @@ namespace SPTQuestingBots.Patches
             BotRegistrationManager.SpawnedBossCount += botCount;
             if (bossWave.BossName.ToLower() == "exusec")
             {
-                LoggingController.LogInfo("Spawning " + (BotRegistrationManager.SpawnedRogueCount + botCount) + "/" + ConfigController.Config.InitialPMCSpawns.MaxInitialRogues + " Rogues...");
+                LoggingController.LogInfo("Spawning " + (BotRegistrationManager.SpawnedRogueCount + botCount) + "/" + ConfigController.Config.BotSpawns.LimitInitialBossSpawns.MaxInitialRogues + " Rogues...");
                 BotRegistrationManager.SpawnedRogueCount += botCount;
             }
 
@@ -66,9 +69,6 @@ namespace SPTQuestingBots.Patches
             message += "...";
             LoggingController.LogInfo(message);
 
-            // This doesn't seem to work
-            //bossWave.IgnoreMaxBots = true;
-            
             return true;
         }
     }

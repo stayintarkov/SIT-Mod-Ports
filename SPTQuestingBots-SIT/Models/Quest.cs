@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using Comfort.Common;
 using EFT;
 using EFT.Game.Spawning;
 using EFT.Interactive;
 using Newtonsoft.Json;
-using Comfort.Common;
 using SPTQuestingBots.Controllers;
-using SPTQuestingBots.Controllers.Bots;
 
 namespace SPTQuestingBots.Models
 {
@@ -32,11 +30,11 @@ namespace SPTQuestingBots.Models
         [JsonProperty("maxBots")]
         public int MaxBots { get; set; } = 2;
 
-        [JsonProperty("chanceForSelecting")]
-        public float ChanceForSelecting { get; set; } = 50;
+        [JsonProperty("maxBotsInGroup")]
+        public int MaxBotsInGroup { get; set; } = 99;
 
-        [JsonProperty("priority")]
-        public int Priority { get; set; } = 99;
+        [JsonProperty("desirability")]
+        public float Desirability { get; set; } = 0;
 
         [JsonProperty("minRaidET")]
         public float MinRaidET { get; set; } = 0;
@@ -79,17 +77,12 @@ namespace SPTQuestingBots.Models
 
         }
 
-        public QuestQB(int priority) : this()
-        {
-            Priority = priority;
-        }
-
-        public QuestQB(int priority, string _name): this(priority)
+        public QuestQB(string _name) : this()
         {
             name = _name;
         }
 
-        public QuestQB(int priority, RawQuestClass template) : this(priority)
+        public QuestQB(RawQuestClass template) : this()
         {
             Template = template;
         }
@@ -106,21 +99,19 @@ namespace SPTQuestingBots.Models
 
         public bool CanAssignBot(BotOwner bot)
         {
-            // if (!Aki.SinglePlayer.Utils.InRaid.RaidTimeUtil.HasRaidStarted())
-             if (!GClass1476.Started(Singleton<AbstractGame>.Instance.GameTimer))
+            if (!StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil.HasRaidStarted())
             {
                 return false;
             }
 
-            // float raidTime = Aki.SinglePlayer.Utils.InRaid.RaidTimeUtil.GetElapsedRaidSeconds();
-            float raidTime = GClass1476.PastTimeSeconds(Singleton<AbstractGame>.Instance.GameTimer);
+            float raidTime = StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil.GetElapsedRaidSeconds();
 
             if (RequiredSwitches.Any(s => !isSwitchInCorrectPosition(s.Key, s.Value)))
             {
                 return false;
             }
 
-            bool canAssign = (!PMCsOnly || BotRegistrationManager.IsBotAPMC(bot))
+            bool canAssign = (!PMCsOnly || Controllers.BotRegistrationManager.IsBotAPMC(bot))
                 && ((bot.Profile.Info.Level >= MinLevel) || !ConfigController.Config.Questing.BotQuestingRequirements.ExcludeBotsByLevel)
                 && ((bot.Profile.Info.Level <= MaxLevel) || !ConfigController.Config.Questing.BotQuestingRequirements.ExcludeBotsByLevel)
                 && (raidTime >= MinRaidET)
@@ -194,7 +185,7 @@ namespace SPTQuestingBots.Models
 
         private bool isSwitchInCorrectPosition(string switchID, bool mustBeOpen)
         {
-            EFT.Interactive.Switch requiredSwitch = LocationController.FindSwitch(switchID);
+            EFT.Interactive.Switch requiredSwitch = Singleton<GameWorld>.Instance.GetComponent<Components.LocationData>().FindSwitch(switchID);
             if (requiredSwitch == null)
             {
                 return true;

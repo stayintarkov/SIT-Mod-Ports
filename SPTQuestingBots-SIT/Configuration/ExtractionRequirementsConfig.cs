@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +9,9 @@ namespace SPTQuestingBots.Configuration
 {
     public class ExtractionRequirementsConfig
     {
+        [JsonProperty("min_alive_time")]
+        public float MinAliveTime { get; set; } = 60;
+
         [JsonProperty("must_extract_time_remaining")]
         public float MustExtractTimeRemaining { get; set; } = 300;
 

@@ -56,7 +56,7 @@ namespace SPTQuestingBots.BotLogic.HiveMind
                 return;
             }
 
-            if (LocationController.CurrentLocation == null)
+            if (Singleton<GameWorld>.Instance.GetComponent<Components.LocationData>().CurrentLocation == null)
             {
                 Clear();
                 return;
@@ -248,7 +248,7 @@ namespace SPTQuestingBots.BotLogic.HiveMind
             foreach (BotOwner bot in botBosses.Keys.ToArray())
             {
                 // Need to check if the reference is for a null object, meaning the bot was despawned and disposed
-                if (bot == null)
+                if ((bot == null) || bot.IsDead)
                 {
                     continue;
                 }
@@ -264,6 +264,7 @@ namespace SPTQuestingBots.BotLogic.HiveMind
 
                 if (deadBots.Contains(botBosses[bot]))
                 {
+                    botBosses[bot] = null;
                     continue;
                 }
 
@@ -277,8 +278,6 @@ namespace SPTQuestingBots.BotLogic.HiveMind
                     }
 
                     deadBots.Add(botBosses[bot]);
-                    botBosses[bot] = null;
-                    
                     continue;
                 }
 
@@ -317,8 +316,18 @@ namespace SPTQuestingBots.BotLogic.HiveMind
             foreach (BotOwner boss in botFollowers.Keys.ToArray())
             {
                 // Need to check if the reference is for a null object, meaning the bot was despawned and disposed
-                if (boss == null)
+                if ((boss == null) || boss.IsDead)
                 {
+                    if (deadBots.Contains(boss))
+                    {
+                        continue;
+                    }
+
+                    Controllers.LoggingController.LogInfo("Boss " + boss.GetText() + " is now dead.");
+
+                    botFollowers.Remove(boss);
+                    deadBots.Add(boss);
+
                     continue;
                 }
 
@@ -329,6 +338,7 @@ namespace SPTQuestingBots.BotLogic.HiveMind
                         Controllers.LoggingController.LogInfo("Removing null follower for " + boss.GetText());
 
                         botFollowers[boss].Remove(follower);
+                        deadBots.Add(follower);
 
                         continue;
                     }

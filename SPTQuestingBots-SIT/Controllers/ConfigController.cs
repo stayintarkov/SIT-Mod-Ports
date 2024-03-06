@@ -4,9 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Aki.Common.Http;
 using Newtonsoft.Json;
+using SPTQuestingBots.Configuration;
 using SPTQuestingBots.Models;
 
 namespace SPTQuestingBots.Controllers
@@ -14,14 +16,18 @@ namespace SPTQuestingBots.Controllers
     public static class ConfigController
     {
         public static Configuration.ModConfig Config { get; private set; } = null;
+        public static Dictionary<string, Configuration.ScavRaidSettingsConfig> ScavRaidSettings = null;
         public static string LoggingPath { get; private set; } = null;
 
         public static Configuration.ModConfig GetConfig()
         {
             string errorMessage = "!!!!! Cannot retrieve config.json data from the server. The mod will not work properly! !!!!!";
-            string json = RequestHandler.GetJson("/QuestingBots/GetConfig");
+            string json = GetJson("/QuestingBots/GetConfig", errorMessage);
 
-            TryDeserializeObject(json, errorMessage, out Configuration.ModConfig _config);
+            if (!TryDeserializeObject(json, errorMessage, out Configuration.ModConfig _config))
+            {
+                return null;
+            }
             Config = _config;
 
             return Config;
@@ -29,12 +35,19 @@ namespace SPTQuestingBots.Controllers
 
         public static void AdjustPMCConversionChances(float factor, bool verify)
         {
-            RequestHandler.GetJson("/QuestingBots/AdjustPMCConversionChances/" + factor + "/" + verify.ToString());
+            GetJson("/QuestingBots/AdjustPMCConversionChances/" + factor + "/" + verify.ToString(), "Could not adjust PMC conversion chances");
+        }
+
+        public static void AdjustPScavChance(float timeRemainingFactor, bool preventPScav)
+        {
+            double factor = preventPScav ? 0 : InterpolateForFirstCol(Config.AdjustPScavChance.ChanceVsTimeRemainingFraction, timeRemainingFactor);
+
+            GetJson("/QuestingBots/AdjustPScavChance/" + factor, "Could not adjust PScav conversion chance");
         }
 
         public static void ReportError(string errorMessage)
         {
-            RequestHandler.GetJson("/QuestingBots/ReportError/" + errorMessage);
+            GetJson("/QuestingBots/ReportError/" + errorMessage, "Could not report an error message to the server");
         }
 
         public static string GetLoggingPath()
@@ -45,32 +58,40 @@ namespace SPTQuestingBots.Controllers
             }
 
             string errorMessage = "Cannot retrieve logging path from the server. Falling back to using the current directory.";
+            string json = GetJson("/QuestingBots/GetLoggingPath", errorMessage);
 
-            try
+            if (TryDeserializeObject(json, errorMessage, out Configuration.LoggingPath _path))
             {
-                string json = RequestHandler.GetJson("/QuestingBots/GetLoggingPath");
-                if (TryDeserializeObject(json, errorMessage, out Configuration.LoggingPath _path))
-                {
-                    LoggingPath = _path.Path;
-                }
-                else
-                {
-                    LoggingPath = Assembly.GetExecutingAssembly().Location;
-                }
+                LoggingPath = _path.Path;
             }
-            catch (Exception e)
+            else
             {
-                //Console.WriteLine(e);
                 LoggingPath = Assembly.GetExecutingAssembly().Location;
             }
 
             return LoggingPath;
         }
 
+        public static Dictionary<string, Configuration.ScavRaidSettingsConfig> GetScavRaidSettings()
+        {
+            if (ScavRaidSettings != null)
+            {
+                return ScavRaidSettings;
+            }
+
+            string errorMessage = "Cannot read scav-raid settings.";
+            string json = GetJson("/QuestingBots/GetScavRaidSettings", errorMessage);
+
+            TryDeserializeObject(json, errorMessage, out Configuration.ScavRaidSettingsResponse _response);
+            ScavRaidSettings = _response.Maps;
+
+            return ScavRaidSettings;
+        }
+
         public static RawQuestClass[] GetAllQuestTemplates()
         {
             string errorMessage = "Cannot read quest templates.";
-            string json = RequestHandler.GetJson("/QuestingBots/GetAllQuestTemplates");
+            string json = GetJson("/QuestingBots/GetAllQuestTemplates", errorMessage);
 
             TryDeserializeObject(json, errorMessage, out Configuration.QuestDataConfig _templates);
             return _templates.Templates;
@@ -117,6 +138,43 @@ namespace SPTQuestingBots.Controllers
             return standardQuests.Concat(customQuests);
         }
 
+        public static string GetJson(string endpoint, string errorMessage)
+        {
+            string json = null;
+            Exception lastException = null;
+
+            // Sometimes server requests fail, and nobody knows why. If this happens, retry a few times.
+            for (int i = 0; i < 5; i++)
+            {
+                try
+                {
+                    json = RequestHandler.GetJson(endpoint);
+                }
+                catch (Exception e)
+                {
+                    lastException = e;
+
+                    LoggingController.LogWarning("Could not get data for " + endpoint);
+                }
+
+                if (json != null)
+                {
+                    break;
+                }
+
+                Thread.Sleep(100);
+            }
+
+            if (json == null)
+            {
+                LoggingController.LogError(lastException.Message);
+                LoggingController.LogError(lastException.StackTrace);
+                LoggingController.LogErrorToServerConsole(errorMessage);
+            }
+
+            return json;
+        }
+
         public static bool TryDeserializeObject<T>(string json, string errorMessage, out T obj)
         {
             try
@@ -124,6 +182,16 @@ namespace SPTQuestingBots.Controllers
                 if (json.Length == 0)
                 {
                     throw new InvalidCastException("Could deserialize an empty string to an object of type " + typeof(T).FullName);
+                }
+
+                // Check if the server failed to provide a valid response
+                if (!json.StartsWith("["))
+                {
+                    ServerResponseError serverResponse = JsonConvert.DeserializeObject<ServerResponseError>(json);
+                    if (serverResponse?.StatusCode != System.Net.HttpStatusCode.OK)
+                    {
+                        throw new System.Net.WebException("Could not retrieve configuration settings from the server. Response: " + serverResponse.StatusCode.ToString());
+                    }
                 }
 
                 obj = JsonConvert.DeserializeObject<T>(json, GClass1448.SerializerSettings);

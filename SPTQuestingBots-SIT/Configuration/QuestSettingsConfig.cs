@@ -10,11 +10,8 @@ namespace SPTQuestingBots.Configuration
 {
     public class QuestSettingsConfig
     {
-        [JsonProperty("priority")]
-        public int Priority { get; set; } = 10;
-
-        [JsonProperty("chance")]
-        public float Chance { get; set; } = 50;
+        [JsonProperty("desirability")]
+        public float Desirability { get; set; } = 50;
 
         [JsonProperty("max_bots_per_quest")]
         public int MaxBotsPerQuest { get; set; } = 10;
@@ -30,6 +27,9 @@ namespace SPTQuestingBots.Configuration
 
         [JsonProperty("chance_of_having_keys")]
         public float ChanceOfHavingKeys { get; set; } = 25;
+
+        [JsonProperty("match_looting_behavior_distance")]
+        public float MatchLootingBehaviorDistance { get; set; } = 0;
 
         [JsonProperty("min_level")]
         public int MinLevel { get; set; } = 0;
@@ -47,7 +47,7 @@ namespace SPTQuestingBots.Configuration
 
         public static void ApplyQuestSettingsFromConfig(Models.QuestQB quest, QuestSettingsConfig settings)
         {
-            quest.ChanceForSelecting = settings.Chance;
+            quest.Desirability = settings.Desirability;
             quest.MaxBots = settings.MaxBotsPerQuest;
             quest.MaxRaidET = settings.MaxRaidET;
             quest.MinLevel = settings.MinLevel;

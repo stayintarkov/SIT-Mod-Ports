@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using EFT;
@@ -65,6 +64,7 @@ namespace SPTQuestingBots.BotLogic.Objective
 
             ObjectiveManager.StartJobAssigment();
 
+            // If the switch has already been toggled, there is nothing else for the bot to do
             if (ObjectiveManager.GetCurrentQuestInteractiveObject().DoorState == EDoorState.Open)
             {
                 LoggingController.LogWarning("Switch " + ObjectiveManager.GetCurrentQuestInteractiveObject().Id + " is already open");
@@ -74,6 +74,7 @@ namespace SPTQuestingBots.BotLogic.Objective
                 return;
             }
 
+            // If players are unable to toggle the switch, the bot shouldn't be allowed either
             if (ObjectiveManager.GetCurrentQuestInteractiveObject().DoorState == EDoorState.Locked)
             {
                 LoggingController.LogWarning("Switch " + ObjectiveManager.GetCurrentQuestInteractiveObject().Id + " is unavailable");
@@ -95,6 +96,9 @@ namespace SPTQuestingBots.BotLogic.Objective
                 return;
             }
 
+            // This doesn't really need to be updated every frame
+            CanSprint = IsAllowedToSprint();
+
             // TO DO: Can this distance be reduced?
             float distanceToTargetPosition = Vector3.Distance(BotOwner.Position, ObjectiveManager.Position.Value);
             if (distanceToTargetPosition > 0.75f)
@@ -109,7 +113,7 @@ namespace SPTQuestingBots.BotLogic.Objective
 
                     if (ConfigController.Config.Debug.ShowFailedPaths)
                     {
-                        //drawBotPath(Color.yellow);
+                        drawBotPath(Color.yellow);
                     }
                 }
 
@@ -122,6 +126,7 @@ namespace SPTQuestingBots.BotLogic.Objective
             }
             else
             {
+                // Presumably, if somebody is interacting with the switch, there is nothing else the bot needs to do for this objective
                 LoggingController.LogWarning("Somebody is already interacting with switch " + ObjectiveManager.GetCurrentQuestInteractiveObject().Id);
             }
 

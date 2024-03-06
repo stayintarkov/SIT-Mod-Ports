@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using StayInTarkov;
+using Aki.Reflection.Patching;
 using EFT;
 using SPTQuestingBots.Controllers;
 
@@ -52,12 +52,12 @@ namespace SPTQuestingBots.Patches
                     totalBots -= bossWave.Supports.Sum(s => s.BossEscortAmount);
                 }
 
-                Controllers.Bots.BotRegistrationManager.ZeroWaveCount++;
-                Controllers.Bots.BotRegistrationManager.ZeroWaveTotalBotCount += totalBots;
-                Controllers.Bots.BotRegistrationManager.ZeroWaveTotalRogueCount += bossWave.BossName.ToLower() == "exusec" ? totalBots : 0;
+                Controllers.BotRegistrationManager.ZeroWaveCount++;
+                Controllers.BotRegistrationManager.ZeroWaveTotalBotCount += totalBots;
+                Controllers.BotRegistrationManager.ZeroWaveTotalRogueCount += bossWave.BossName.ToLower() == "exusec" ? totalBots : 0;
             }
 
-            LoggingController.LogInfo("Total inital bosses and followers " + Controllers.Bots.BotRegistrationManager.ZeroWaveTotalBotCount);
+            LoggingController.LogInfo("Total inital bosses and followers " + Controllers.BotRegistrationManager.ZeroWaveTotalBotCount);
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Comfort.Common;
 using EFT;
 using SPTQuestingBots.BehaviorExtensions;
 using SPTQuestingBots.BotLogic.HiveMind;
@@ -60,7 +61,7 @@ namespace SPTQuestingBots.BotLogic.Objective
             }
 
             // Ensure all quests have been loaded and generated
-            if (!Controllers.Bots.BotQuestBuilder.HaveQuestsBeenBuilt)
+            if (!Singleton<GameWorld>.Instance.GetComponent<Components.BotQuestBuilder>().HaveQuestsBeenBuilt)
             {
                 return updatePreviousState(false);
             }
@@ -68,7 +69,7 @@ namespace SPTQuestingBots.BotLogic.Objective
             // Check if the bot has a boss that's still alive
             if (BotHiveMindMonitor.HasBoss(BotOwner))
             {
-                Controllers.Bots.BotJobAssignmentFactory.InactivateAllJobAssignmentsForBot(BotOwner.Profile.Id);
+                Controllers.BotJobAssignmentFactory.InactivateAllJobAssignmentsForBot(BotOwner.Profile.Id);
 
                 return updatePreviousState(false);
             }
@@ -76,7 +77,7 @@ namespace SPTQuestingBots.BotLogic.Objective
             float pauseRequestTime = getPauseRequestTime();
             if (pauseRequestTime > 0)
             {
-                LoggingController.LogInfo("Pausing layer for " + pauseRequestTime + "s...");
+                //LoggingController.LogInfo("Pausing layer for " + pauseRequestTime + "s...");
                 return pauseLayer(pauseRequestTime);
             }
 
@@ -85,15 +86,15 @@ namespace SPTQuestingBots.BotLogic.Objective
             {
                 return updatePreviousState(false);
             }
-            
+
             // Check if the bot wants to loot
             if (objectiveManager.IsAllowedToTakeABreak() && objectiveManager.BotMonitor.ShouldCheckForLoot(objectiveManager.BotMonitor.NextLootCheckDelay))
             {
-                // BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.WantsToLoot, BotOwner, true);
+                BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.WantsToLoot, BotOwner, true);
                 return updatePreviousState(pauseLayer(ConfigController.Config.Questing.BotQuestingRequirements.BreakForLooting.MaxTimeToStartLooting));
             }
-            // BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.WantsToLoot, BotOwner, false);
-            
+            BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.WantsToLoot, BotOwner, false);
+
             // Check if the bot is currently extracting or wants to extract via SAIN
             if (objectiveManager.IsAllowedToTakeABreak() && objectiveManager.BotMonitor.IsTryingToExtract())
             {
@@ -113,18 +114,19 @@ namespace SPTQuestingBots.BotLogic.Objective
             {
                 return updatePreviousState(pauseLayer());
             }
-            // // Check if any of the bot's group members are in combat
-            // // NOTE: This check MUST be performed after updating this bot's combate state!
-            // if (objectiveManager.IsAllowedToTakeABreak() && BotHiveMindMonitor.GetValueForGroup(BotHiveMindSensorType.InCombat, BotOwner))
-            // {
-            //     // WIP. Hopefully not needed with SAIN.
-            //     //BotHiveMindMonitor.AssignTargetEnemyFromGroup(BotOwner);
 
-            //     //IReadOnlyCollection<BotOwner> groupMembers = BotHiveMindMonitor.GetAllGroupMembers(BotOwner);
-            //     //LoggingController.LogInfo("One of the following group members is in combat: " + string.Join(", ", groupMembers.Select(g => g.GetText())));
+            // Check if any of the bot's group members are in combat
+            // NOTE: This check MUST be performed after updating this bot's combate state!
+            if (objectiveManager.IsAllowedToTakeABreak() && BotHiveMindMonitor.GetValueForGroup(BotHiveMindSensorType.InCombat, BotOwner))
+            {
+                // WIP. Hopefully not needed with SAIN.
+                //BotHiveMindMonitor.AssignTargetEnemyFromGroup(BotOwner);
 
-            //     return updatePreviousState(false);
-            // }
+                //IReadOnlyCollection<BotOwner> groupMembers = BotHiveMindMonitor.GetAllGroupMembers(BotOwner);
+                //LoggingController.LogInfo("One of the following group members is in combat: " + string.Join(", ", groupMembers.Select(g => g.GetText())));
+
+                return updatePreviousState(false);
+            }
 
             // Check if the bot has wandered too far from its followers.
             if (objectiveManager.IsAllowedToTakeABreak() && objectiveManager.BotMonitor.ShouldWaitForFollowers())
@@ -173,6 +175,21 @@ namespace SPTQuestingBots.BotLogic.Objective
                     }
                     return updatePreviousState(true);
 
+                case QuestAction.HoldAtPosition:
+                    setNextAction(BotActionType.HoldPosition, "HoldPosition (" + objectiveManager.MinElapsedActionTime + "s)");
+                    return updatePreviousState(true);
+
+                case QuestAction.Ambush:
+                    if (!objectiveManager.IsCloseToObjective())
+                    {
+                        setNextAction(BotActionType.GoToObjective, "GoToAmbushPosition");
+                    }
+                    else
+                    {
+                        setNextAction(BotActionType.Ambush, "Ambush (" + objectiveManager.MinElapsedActionTime + "s)");
+                    }
+                    return updatePreviousState(true);
+
                 case QuestAction.PlantItem:
                     if (!objectiveManager.IsCloseToObjective())
                     {
@@ -187,7 +204,11 @@ namespace SPTQuestingBots.BotLogic.Objective
                 case QuestAction.ToggleSwitch:
                     setNextAction(BotActionType.ToggleSwitch, "ToggleSwitch");
                     return updatePreviousState(true);
-                
+
+                case QuestAction.CloseNearbyDoors:
+                    setNextAction(BotActionType.CloseNearbyDoors, "CloseNearbyDoors");
+                    return updatePreviousState(true);
+
                 case QuestAction.RequestExtract:
                     if (objectiveManager.BotMonitor.TryInstructBotToExtract())
                     {

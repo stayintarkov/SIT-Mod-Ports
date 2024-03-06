@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using EFT;
 using SPTQuestingBots.Controllers;
-using SPTQuestingBots.Models;
+using SPTQuestingBots.Helpers;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -54,16 +55,8 @@ namespace SPTQuestingBots.BehaviorExtensions
 
         public NavMeshPathStatus? RecalculatePath(Vector3 position, float reachDist)
         {
-            //Vector3 previousLastPoint = BotOwner.Mover.CurPathLastPoint;
-
             // Recalculate a path to the bot's objective. This should be done cyclically in case locked doors are opened, etc. 
             NavMeshPathStatus? pathStatus = BotOwner.Mover?.GoToPoint(position, true, reachDist, false, false);
-
-            /*Vector3 newLastPoint = BotOwner.Mover.CurPathLastPoint;
-            if (!previousLastPoint.Equals(newLastPoint))
-            {
-                LoggingController.LogInfo(BotOwner.GetText() + " changed its final path position from " + previousLastPoint.ToString() + " to " + newLastPoint.ToString() + " to reach " + position.ToString());
-            }*/
 
             return pathStatus;
         }
@@ -98,7 +91,7 @@ namespace SPTQuestingBots.BehaviorExtensions
             {
                 if (drawPath && ConfigController.Config.Debug.ShowFailedPaths)
                 {
-                    //drawBotPath(Color.red);
+                    drawBotPath(Color.red);
                 }
 
                 return true;
@@ -109,22 +102,37 @@ namespace SPTQuestingBots.BehaviorExtensions
 
         protected void drawBotPath(Color color)
         {
-            // Vector3[] botPath = BotOwner.Mover?._pathController.CurPath;
-            // if (botPath == null)
-            // {
-            //     return;
-            // }
+            var mover = BotOwner.Mover;
+            var pathControllerField = typeof(BotMover).GetField("_pathController", BindingFlags.NonPublic | BindingFlags.Instance);
+            var pathController = (PathController)pathControllerField.GetValue(mover);
+            var curPath = pathController.CurPath;
 
-            // List<Vector3> adjustedPathCorners = new List<Vector3>();
-            // foreach (Vector3 corner in botPath)
-            // {
-            //     adjustedPathCorners.Add(new Vector3(corner.x, corner.y + 0.75f, corner.z));
-            // }
+            // Ensure curPath is not null and has a valid path
+            if (curPath == null || curPath.Length == 0)
+            {
+                return;
+            }
 
-            // string pathName = "BotPath_" + BotOwner.Id + "_" + DateTime.Now.ToFileTime();
+            // Initialize a list to hold adjusted path corners
+            List<Vector3> adjustedPathCorners = new List<Vector3>();
 
-            // Models.PathVisualizationData botPathRendering = new Models.PathVisualizationData(pathName, adjustedPathCorners.ToArray(), color);
-            // PathRender.AddOrUpdatePath(botPathRendering);
+            // Iterate over the path points using the Length property and GetPoint method of AbstractPath
+            for (int i = 0; i < curPath.Length; i++)
+            {
+                // Get each point from the CurPath
+                Vector3 corner = curPath.GetPoint(i);
+                // Adjust the height of the path point to raise it above the ground
+                adjustedPathCorners.Add(new Vector3(corner.x, corner.y + 0.75f, corner.z));
+            }
+
+            // Generate a unique path name for identification
+            string pathName = "BotPath_" + BotOwner.Id + "_" + DateTime.Now.ToFileTime();
+
+            // Create the path visualization data with the adjusted path corners
+            Models.PathVisualizationData botPathRendering = new Models.PathVisualizationData(pathName, adjustedPathCorners.ToArray(), color);
+    
+            // Add or update the path visualization in the render system
+            PathRender.AddOrUpdatePath(botPathRendering);
         }
 
         protected void outlineTargetPosition(Color color)
@@ -135,7 +143,7 @@ namespace SPTQuestingBots.BehaviorExtensions
                 return;
             }
 
-            PathRender.outlinePosition(ObjectiveManager.Position.Value, color);
+            DebugHelpers.outlinePosition(ObjectiveManager.Position.Value, color);
         }
     }
 }

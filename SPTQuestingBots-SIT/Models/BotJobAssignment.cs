@@ -20,24 +20,22 @@ namespace SPTQuestingBots.Models
         Archived,
     }
 
-    public class BotJobAssignment
+    public class BotJobAssignment : JobAssignment
     {
         public JobAssignmentStatus Status { get; private set; } = JobAssignmentStatus.NotStarted;
         public BotOwner BotOwner { get; private set; }
         public string BotName { get; private set; } = "???";
         public string BotNickname { get; private set; } = "???";
         public int BotLevel { get; private set; } = -1;
-        public QuestQB QuestAssignment { get; private set; } = null;
-        public QuestObjective QuestObjectiveAssignment { get; private set; } = null;
-        public QuestObjectiveStep QuestObjectiveStepAssignment { get; private set; } = null;
         public Door DoorToUnlock { get; private set; } = null;
         public DateTime? StartTime { get; private set; } = null;
         public DateTime? EndTime { get; private set; } = null;
         public bool HasCompletePath { get; set; } = true;
+        public double MinElapsedTime { get; private set; } = 0;
 
         public bool IsActive => Status == JobAssignmentStatus.Active || Status == JobAssignmentStatus.Pending;
-        public Vector3? Position => QuestObjectiveStepAssignment?.GetPosition() ?? null;
         public bool IsCompletedOrArchived => Status == JobAssignmentStatus.Completed || Status == JobAssignmentStatus.Archived;
+        public Vector3? LookToPosition => QuestObjectiveStepAssignment?.GetLookToPosition();
 
         public BotJobAssignment(BotOwner bot)
         {
@@ -54,12 +52,6 @@ namespace SPTQuestingBots.Models
             {
                 LoggingController.LogWarning("Unable to set first step for " + bot.GetText() + " for " + ToString());
             }
-        }
-
-        public override string ToString()
-        {
-            string stepNumberText = QuestObjectiveStepAssignment?.StepNumber?.ToString() ?? "???";
-            return "Step #" + stepNumberText + " for objective " + (QuestObjectiveAssignment?.ToString() ?? "???") + " in quest " + QuestAssignment.Name;
         }
 
         public double? TimeSinceStarted()
@@ -101,6 +93,7 @@ namespace SPTQuestingBots.Models
             }
 
             QuestObjectiveStepAssignment = nextStep;
+            MinElapsedTime = nextStep.GetRandomMinElapsedTime();
             DoorToUnlock = null;
             EndTime = null;
             startInternal();

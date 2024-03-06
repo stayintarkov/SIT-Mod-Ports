@@ -30,7 +30,7 @@ namespace SPTQuestingBots.Helpers
 
                 // Enumerate all possible equipment slots into which the key can be transferred
                 List<EquipmentSlot> possibleSlots = new List<EquipmentSlot>();
-                if (Controllers.Bots.BotRegistrationManager.IsBotAPMC(botOwner))
+                if (Controllers.BotRegistrationManager.IsBotAPMC(botOwner))
                 {
                     possibleSlots.Add(EquipmentSlot.SecuredContainer);
                 }
@@ -111,7 +111,6 @@ namespace SPTQuestingBots.Helpers
             try
             {
                 IEasyBundle data = Singleton<IEasyAssets>.Instance.System.GetNode(item.Prefab.path).Data;
-
                 if (data.LoadState.Value == Diz.DependencyManager.ELoadState.Loaded)
                 {
                     return true;

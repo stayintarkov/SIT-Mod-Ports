@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Reflection;
-using System.Threading;
 using Comfort.Common;
 using EFT.Interactive;
 using EFT.InventoryLogic;
@@ -50,7 +48,7 @@ namespace SPTQuestingBots.BotLogic.Objective
             }
 
             // Determine the location to which the bot should go in order to unlock the door
-            interactionPosition = LocationController.GetDoorInteractionPosition(door, BotOwner.Position);
+            interactionPosition = Singleton<GameWorld>.Instance.GetComponent<Components.LocationData>().GetDoorInteractionPosition(door, BotOwner.Position);
             if (interactionPosition == null)
             {
                 LoggingController.LogError(BotOwner.GetText() + " cannot find the appropriate interaction position for door " + door.Id);
@@ -159,6 +157,9 @@ namespace SPTQuestingBots.BotLogic.Objective
                 return;
             }
 
+            // This doesn't really need to be updated every frame
+            CanSprint = IsAllowedToSprint();
+
             // Go to the interaction location selected when the action was created
             // TO DO: Can this distance be reduced?
             float distanceToTargetPosition = Vector3.Distance(BotOwner.Position, interactionPosition.Value);
@@ -174,7 +175,7 @@ namespace SPTQuestingBots.BotLogic.Objective
 
                     if (ConfigController.Config.Debug.ShowFailedPaths)
                     {
-                        //drawBotPath(Color.yellow);
+                        drawBotPath(Color.yellow);
                     }
                 }
 
@@ -233,9 +234,9 @@ namespace SPTQuestingBots.BotLogic.Objective
             ObjectiveManager.PauseRequest = ConfigController.Config.Questing.UnlockingDoors.PauseTimeAfterUnlocking;
             
             LoggingController.LogInfo("Bot " + BotOwner.GetText() + " unlocked door " + door.Id);
-            
+
             // Assume the door has been unlocked because bots will constantly try breaching some doors otherwise
-            LocationController.ReportUnlockedDoor(door);
+            Singleton<GameWorld>.Instance.GetComponent<Components.LocationData>().ReportUnlockedDoor(door);
         }
     }
 }

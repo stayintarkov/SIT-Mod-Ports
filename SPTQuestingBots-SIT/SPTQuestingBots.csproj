@@ -87,6 +87,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\References\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\References\UnityEngine.dll</HintPath>
     </Reference>
@@ -96,8 +99,20 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\References\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\References\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextCoreModule">
+      <HintPath>..\References\UnityEngine.TextCoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\References\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\References\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -112,17 +127,38 @@
     <Compile Include="BehaviorExtensions\GoToPositionAbstractAction.cs" />
     <Compile Include="BotLogic\HiveMind\BotHiveMindWantsToLootSensor.cs" />
     <Compile Include="BotLogic\Follow\RegroupAction.cs" />
+    <Compile Include="BotLogic\LootingBotsInterop.cs" />
+    <Compile Include="BotLogic\Objective\AmbushAction.cs" />
+    <Compile Include="BotLogic\Objective\CloseNearbyDoorsAction.cs" />
     <Compile Include="BotLogic\Objective\PlantItemAction.cs" />
     <Compile Include="BotLogic\Objective\ToggleSwitchAction.cs" />
     <Compile Include="BotLogic\Objective\UnlockDoorAction.cs" />
     <Compile Include="BotLogic\SAINInterop.cs" />
+    <Compile Include="Components\BotQuestBuilder.cs" />
+    <Compile Include="Components\DebugData.cs" />
+    <Compile Include="Components\LocationData.cs" />
+    <Compile Include="Components\Spawning\BotGenerator.cs" />
+    <Compile Include="Components\Spawning\PMCGenerator.cs" />
+    <Compile Include="Components\Spawning\PScavGenerator.cs" />
+    <Compile Include="Configuration\AdjustPScavChanceConfig.cs" />
+    <Compile Include="Configuration\BotCapAdjustmentsConfig.cs" />
+    <Compile Include="Configuration\BotSpawnsConfig.cs" />
+    <Compile Include="Configuration\BotSpawnTypeConfig.cs" />
+    <Compile Include="Configuration\BotTypeValueConfig.cs" />
+    <Compile Include="Configuration\DistanceAngleConfig.cs" />
     <Compile Include="Configuration\ExtractionRequirementsConfig.cs" />
+    <Compile Include="Configuration\LimitInitialBossSpawnsConfig.cs" />
     <Compile Include="Configuration\QuestingConfig.cs" />
+    <Compile Include="Configuration\ScavRaidSettingsConfig.cs" />
+    <Compile Include="Configuration\ScavRaidSettingsResponse.cs" />
+    <Compile Include="Configuration\ServerResponseError.cs" />
+    <Compile Include="Configuration\SprintingLimitationsConfig.cs" />
     <Compile Include="Configuration\UnlockingDoorsConfig.cs" />
-    <Compile Include="Controllers\Bots\BotBrainHelpers.cs" />
     <Compile Include="BotLogic\BotMonitor.cs" />
-    <Compile Include="Controllers\Bots\BotJobAssignmentFactory.cs" />
-    <Compile Include="Controllers\Bots\BotRegistrationManager.cs" />
+    <Compile Include="Controllers\BotJobAssignmentFactory.cs" />
+    <Compile Include="Controllers\BotRegistrationManager.cs" />
+    <Compile Include="Helpers\BotBrainHelpers.cs" />
+    <Compile Include="Helpers\DebugHelpers.cs" />
     <Compile Include="Helpers\InteractiveObjectHelpers.cs" />
     <Compile Include="Helpers\ItemHelpers.cs" />
     <Compile Include="Helpers\VersionCheckHelper.cs" />
@@ -140,21 +176,17 @@
     <Compile Include="Configuration\MaxFollowerDistanceConfig.cs" />
     <Compile Include="Configuration\MinMaxConfig.cs" />
     <Compile Include="Configuration\StuckBotDetectionConfig.cs" />
-    <Compile Include="Controllers\Bots\BotQuestBuilder.cs" />
     <Compile Include="BotLogic\Objective\BotObjectiveManager.cs" />
     <Compile Include="BotLogic\Objective\GoToObjectiveAction.cs" />
     <Compile Include="BotLogic\Objective\BotObjectiveLayer.cs" />
     <Compile Include="Configuration\BotQuestsConfig.cs" />
     <Compile Include="Configuration\BotSearchDistanceConfig.cs" />
     <Compile Include="Configuration\DebugConfig.cs" />
-    <Compile Include="Configuration\InitialPMCSpawnsConfig.cs" />
     <Compile Include="Configuration\ModConfig.cs" />
     <Compile Include="Configuration\QuestGenerationConfig.cs" />
     <Compile Include="Configuration\QuestSettingsConfig.cs" />
     <Compile Include="Configuration\QuestDataConfig.cs" />
-    <Compile Include="Controllers\Bots\BotGenerator.cs" />
     <Compile Include="Controllers\ConfigController.cs" />
-    <Compile Include="Controllers\LocationController.cs" />
     <Compile Include="Controllers\LoggingController.cs" />
     <Compile Include="BehaviorExtensions\MonoBehaviourDelayedUpdate.cs" />
     <Compile Include="Controllers\PathRender.cs" />
@@ -162,6 +194,7 @@
     <Compile Include="CoroutineExtensions\MethodWithTimeLimit.cs" />
     <Compile Include="Models\BotJobAssignment.cs" />
     <Compile Include="Models\BotSpawnInfo.cs" />
+    <Compile Include="Models\JobAssignment.cs" />
     <Compile Include="Models\PathVisualizationData.cs" />
     <Compile Include="Models\Quest.cs" />
     <Compile Include="Models\QuestItemObjective.cs" />
@@ -170,18 +203,25 @@
     <Compile Include="Models\QuestSpawnPointObjective.cs" />
     <Compile Include="Models\QuestZoneObjective.cs" />
     <Compile Include="Models\SerializableVector3.cs" />
+    <Compile Include="Patches\ActivateBotsByWavePatch.cs" />
+    <Compile Include="Patches\AddActivePlayerPatch.cs" />
+    <Compile Include="Patches\AddEnemyPatch.cs" />
     <Compile Include="Patches\AirdropLandPatch.cs" />
     <Compile Include="Patches\BossLocationSpawnActivatePatch.cs" />
+    <Compile Include="Patches\BotDiedPatch.cs" />
     <Compile Include="Patches\BotOwnerBrainActivatePatch.cs" />
-    <Compile Include="Patches\BotOwnerCreatePatch.cs" />
-    <Compile Include="Patches\CheckSPTVersionPatch.cs" />
-    <Compile Include="Patches\GameWorldOnDestroyPatch.cs" />
+    <Compile Include="Patches\BotsControllerStopPatch.cs" />
+    <Compile Include="Patches\ExceptAIPatch.cs" />
+    <Compile Include="Patches\GameStartPatch.cs" />
+    <Compile Include="Patches\GetListByZonePatch.cs" />
     <Compile Include="Patches\InitBossSpawnLocationPatch.cs" />
     <Compile Include="Patches\IsFollowerSuitableForBossPatch.cs" />
+    <Compile Include="Patches\LoadBotsPatch.cs" />
+    <Compile Include="Patches\MatchmakerFinalCountdownUpdatePatch.cs" />
     <Compile Include="Patches\OnBeenKilledByAggressorPatch.cs" />
-    <Compile Include="Patches\AirdropLandPatch.cs" />
     <Compile Include="Patches\OnGameStartedPatch.cs" />
-    <Compile Include="Patches\ReadyToPlayPatch.cs" />
+    <Compile Include="Patches\ServerRequestPatch.cs" />
+    <Compile Include="Patches\TryToSpawnInZoneAndDelayPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuestingBotsPlugin.cs" />
     <Compile Include="QuestingBotsPluginConfig.cs" />

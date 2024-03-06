@@ -4,10 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Comfort.Common;
 using EFT;
+using EFT.Interactive;
 using SPTQuestingBots.BotLogic.HiveMind;
 using SPTQuestingBots.Controllers;
-using SPTQuestingBots.Controllers.Bots;
 using SPTQuestingBots.Models;
 using UnityEngine;
 
@@ -17,23 +18,26 @@ namespace SPTQuestingBots.BotLogic.Objective
     {
         public bool IsInitialized { get; private set; } = false;
         public bool IsQuestingAllowed { get; private set; } = false;
-        public bool CanRushPlayerSpawn { get; private set; } = false;
         public int StuckCount { get; set; } = 0;
         public float PauseRequest { get; set; } = 0;
         public BotMonitor BotMonitor { get; private set; } = null;
         public EFT.Interactive.Door DoorToOpen { get; set; } = null;
+        public Vector3? LastCorner { get; set; } = null;
 
         private BotOwner botOwner = null;
         private BotJobAssignment assignment = null;
+        private ExfiltrationPoint exfiltrationPoint = null;
         private Stopwatch timeSpentAtObjectiveTimer = new Stopwatch();
 
         public Vector3? Position => assignment?.Position;
+        public Vector3? LookToPosition => assignment?.LookToPosition;
         public bool IsJobAssignmentActive => assignment?.IsActive == true;
         public bool HasCompletePath => assignment.HasCompletePath;
         public bool MustUnlockDoor => assignment?.DoorToUnlock != null;
         public QuestAction CurrentQuestAction => assignment?.QuestObjectiveStepAssignment?.ActionType ?? QuestAction.Undefined;
-        public double MinElapsedActionTime => assignment?.QuestObjectiveStepAssignment?.MinElapsedTime ?? 0;
+        public double MinElapsedActionTime => assignment?.MinElapsedTime ?? 0;
         public float ChanceOfHavingKey => assignment?.QuestObjectiveStepAssignment?.ChanceOfHavingKey ?? 0;
+        public float? MaxDistanceForCurrentStep => assignment?.QuestObjectiveStepAssignment?.MaxDistance;
 
         public double TimeSpentAtObjective => timeSpentAtObjectiveTimer.ElapsedMilliseconds / 1000.0;
         public float DistanceToObjective => Position.HasValue ? Vector3.Distance(Position.Value, botOwner.Position) : float.NaN;
@@ -96,35 +100,32 @@ namespace SPTQuestingBots.BotLogic.Objective
 
             base.UpdateInterval = 200;
             botOwner = _botOwner;
-            
-            if (BotMonitor != null)
-            {
-                return;
-            }
-            
-            BotMonitor = new BotMonitor(botOwner);
 
+            if (BotMonitor == null)
+            {
+                BotMonitor = new BotMonitor(botOwner);
+            }
+
+            if (exfiltrationPoint == null)
+            {
+                SetExfiliationPointForQuesting();
+            }
         }
 
         private void updateBotType()
         {
             if (!HiveMind.BotHiveMindMonitor.IsRegistered(botOwner))
             {
-                return;
+                LoggingController.LogError(botOwner.GetText() + " has not been registered in BotHiveMindMonitor");
             }
 
-            BotType botType = BotRegistrationManager.GetBotType(botOwner);
+            BotType botType = Controllers.BotRegistrationManager.GetBotType(botOwner);
 
             if ((botType == BotType.PMC) && ConfigController.Config.Questing.AllowedBotTypesForQuesting.PMC)
             {
-                CanRushPlayerSpawn = BotGenerator.IsBotFromInitialPMCSpawns(botOwner);
                 IsQuestingAllowed = true;
             }
             if ((botType == BotType.Boss) && ConfigController.Config.Questing.AllowedBotTypesForQuesting.Boss)
-            {
-                IsQuestingAllowed = true;
-            }
-            if ((botType == BotType.PScav) && ConfigController.Config.Questing.AllowedBotTypesForQuesting.PScav)
             {
                 IsQuestingAllowed = true;
             }
@@ -132,18 +133,18 @@ namespace SPTQuestingBots.BotLogic.Objective
             {
                 IsQuestingAllowed = true;
             }
-
-            // Only set an objective for the bot if its type is allowed to spawn and all quests have been loaded and generated
-            if (IsQuestingAllowed && BotQuestBuilder.HaveQuestsBeenBuilt)
+            if ((botType == BotType.PScav) && ConfigController.Config.Questing.AllowedBotTypesForQuesting.PScav)
             {
-                LoggingController.LogInfo("Setting objective for " + botType.ToString() + " " + botOwner.GetText() + " (Brain type: " + botOwner.Brain.BaseBrain.ShortName() + ")...");
-                assignment = botOwner.GetCurrentJobAssignment();
+                IsQuestingAllowed = true;
             }
 
             if (botType == BotType.Undetermined)
             {
                 LoggingController.LogError("Could not determine bot type for " + botOwner.GetText() + " (Brain type: " + botOwner.Brain.BaseBrain.ShortName() + ")");
-                return;
+            }
+            else
+            {
+                LoggingController.LogInfo(botOwner.GetText() + " is a " + botType.ToString());
             }
 
             IsInitialized = true;
@@ -151,7 +152,7 @@ namespace SPTQuestingBots.BotLogic.Objective
 
         private void Update()
         {
-            if (!BotQuestBuilder.HaveQuestsBeenBuilt)
+            if (!Singleton<GameWorld>.Instance.GetComponent<Components.BotQuestBuilder>().HaveQuestsBeenBuilt)
             {
                 return;
             }
@@ -159,6 +160,8 @@ namespace SPTQuestingBots.BotLogic.Objective
             if (!IsInitialized)
             {
                 updateBotType();
+                setInitialObjective();
+
                 return;
             }
 
@@ -211,6 +214,9 @@ namespace SPTQuestingBots.BotLogic.Objective
         public void CompleteObjective()
         {
             assignment.Complete();
+
+            float duration = (float)assignment.QuestObjectiveStepAssignment.WaitTimeAfterCompleting + 5;
+            UpdateLootingBehavior(assignment.QuestObjectiveAssignment.LootAfterCompletingSetting, duration);
 
             StuckCount = 0;
         }
@@ -281,14 +287,15 @@ namespace SPTQuestingBots.BotLogic.Objective
 
         public bool IsAllowedToTakeABreak()
         {
-            if ((CurrentQuestAction == QuestAction.PlantItem) && IsCloseToObjective())
+            switch (CurrentQuestAction)
             {
-                return false;
-            }
-
-            if (CurrentQuestAction == QuestAction.ToggleSwitch)
-            {
-                return false;
+                case QuestAction.HoldAtPosition:
+                case QuestAction.Ambush:
+                case QuestAction.CloseNearbyDoors:
+                case QuestAction.ToggleSwitch:
+                    return false;
+                case QuestAction.PlantItem:
+                    return !IsCloseToObjective();
             }
 
             return true;
@@ -303,7 +310,7 @@ namespace SPTQuestingBots.BotLogic.Objective
 
             return assignment?.QuestObjectiveStepAssignment?.InteractiveObject;
         }
-        
+
         public bool DoesBotWantToExtract()
         {
             if (BotMonitor.IsTryingToExtract())
@@ -318,6 +325,87 @@ namespace SPTQuestingBots.BotLogic.Objective
             }
 
             return false;
+        }
+
+        public void UpdateLootingBehavior(LootAfterCompleting behavior, float duration = 0)
+        {
+            switch (behavior)
+            {
+                case LootAfterCompleting.Force:
+                    BotMonitor.TryForceBotToScanLoot();
+                    break;
+                case LootAfterCompleting.Inhibit:
+                    BotMonitor.TryPreventBotFromLooting(duration);
+                    break;
+            }
+        }
+
+        public void SetExfiliationPointForQuesting()
+        {
+            Dictionary<ExfiltrationPoint, float> exfiltrationPointDistances = Singleton<GameWorld>.Instance.ExfiltrationController.ExfiltrationPoints
+                .ToDictionary(p => p, p => Vector3.Distance(p.transform.position, botOwner.Position));
+
+            if (exfiltrationPointDistances.Count > 0)
+            {
+                KeyValuePair<ExfiltrationPoint, float> furthestPoint = exfiltrationPointDistances
+                    .OrderBy(p => p.Value)
+                    .Last();
+
+                exfiltrationPoint = furthestPoint.Key;
+
+                //LoggingController.LogInfo(botOwner.GetText() + " has selected " + furthestPoint.Key.Settings.Name + " as its furthest exfil point (" + furthestPoint.Value + "m)");
+            }
+        }
+
+        public float? DistanceToExfiltrationPointForQuesting()
+        {
+            if (exfiltrationPoint == null)
+            {
+                return null;
+            }
+
+            return Vector3.Distance(botOwner.Position, exfiltrationPoint.transform.position);
+        }
+
+        public Vector3? VectorToExfiltrationPointForQuesting()
+        {
+            if (exfiltrationPoint == null)
+            {
+                return null;
+            }
+
+            return exfiltrationPoint.transform.position - botOwner.Position;
+        }
+
+        private Models.BotSpawnInfo tryFindSpawnGroup()
+        {
+            IEnumerable<BotOwner> groupMembers = Enumerable.Empty<BotOwner>();
+            foreach (Components.Spawning.BotGenerator botGenerator in Singleton<GameWorld>.Instance.gameObject.GetComponents(typeof(Components.Spawning.BotGenerator)))
+            {
+                if ((botGenerator != null) && botGenerator.TryGetBotGroup(botOwner, out Models.BotSpawnInfo botSpawnInfo))
+                {
+                    return botSpawnInfo;
+                }
+            }
+
+            return null;
+        }
+
+        private void setInitialObjective()
+        {
+            // Only set an objective for the bot if its type is allowed to spawn and all quests have been loaded and generated
+            if (IsQuestingAllowed && Singleton<GameWorld>.Instance.GetComponent<Components.BotQuestBuilder>().HaveQuestsBeenBuilt)
+            {
+                LoggingController.LogInfo("Setting objective for " + botOwner.GetText() + " (Brain type: " + botOwner.Brain.BaseBrain.ShortName() + ")...");
+                try
+                {
+                    assignment = botOwner.GetCurrentJobAssignment();
+                }
+                catch (TimeoutException)
+                {
+                    LoggingController.LogError("Timed out when trying to select an initial objective for " + botOwner.GetText());
+                }
+            }
         }
     }
 }
