@@ -1,0 +1,304 @@
+{
+	"enabled": true,
+	"debug": {
+		"enabled": false,
+		"scav_cooldown_time": 1500,
+		"free_labs_access": false,
+		"min_level_for_flea": 15,
+		"trader_resupply_time_factor": 1,
+		"loot_path_visualization": {
+			"enabled": false,
+			"points_per_circle": 10,
+			"outline_loot": true,
+			"loot_outline_radius": 0.1,
+			"only_outline_loot_with_pathing": false,
+			"draw_incomplete_paths": false,
+			"draw_complete_paths": true,
+			"outline_obstacles": false,
+			"only_outline_filtered_obstacles": true,
+			"show_obstacle_collision_points": true,
+			"collision_point_radius": 0.05,
+			"show_door_obstacles": true,
+			"door_obstacle_min_radius": 0.3
+		}
+	},
+	"scav_raid_adjustments": {
+		"always_spawn_late": true
+	},
+	"car_extract_departures" : {
+		"enabled": true,
+		"countdown_time": 60,
+		"delay_after_countdown_reset": 120,
+		"exclusion_radius": 150,
+		"exclusion_radius_hysteresis": 0.9,
+		"chance_of_leaving": 50,
+		"raid_fraction_when_leaving": {
+			"min": 0.3,
+			"max": 0.8
+		}
+	},
+	"adjust_bot_spawn_chances": {
+		"enabled": true,
+		"adjust_bosses": true,
+		"adjust_pmc_conversion_chances": false,
+		"pmc_conversion_update_rate": 10,
+		"excluded_bosses": [ "sptBear", "sptUsec" ]
+	},
+	"only_make_changes_just_after_spawning": {
+		"enabled": false,
+		"time_limit": 5,
+		"affected_systems" : {
+			"loot_destruction": true,
+			"opening_unlocked_doors": true,
+			"opening_locked_doors": true,
+			"closing_doors": true,
+			"car_departures": true,
+			"toggling_switches": true
+		}
+	},
+	"destroy_loot_during_raid" : {
+		"enabled": true,
+		"exclusion_radius": 40,
+		"exclusion_radius_bots": 25,
+		"nearby_interactive_object_search_distance": 0.75,
+		"only_search_for_nearby_trunks": true,
+		"avg_slots_per_player": 60,
+		"players_with_loot_factor_for_maps_without_pscavs": 0.3,
+		"min_loot_age": 120,
+		"destruction_event_limits": {
+			"rate": 1,
+			"items": 30,
+			"slots": 50
+		},
+		"map_traversal_speed_mps": 2,
+		"min_distance_traveled_for_update": 1,
+		"min_time_before_update_ms": 30,
+		"max_time_before_update_ms": 5000,
+		"max_calc_time_per_frame_ms": 5,
+		"max_time_without_destroying_any_loot": 60,
+		"ignore_items_dropped_by_player": {
+			"enabled": true,
+			"only_items_brought_into_raid": false
+		},
+		"ignore_items_on_dead_bots" : {
+			"enabled": true,
+			"only_if_you_killed_them": true
+		},
+		"excluded_parents": [ "55d7217a4bdc2d86028b456d", "557596e64bdc2dc2118b4571", "566965d44bdc2d814c8b4571" ],
+		"check_loot_accessibility": {
+			"enabled": true,
+			"exclusion_radius": 25,
+			"max_path_search_distance": 300,
+			"navmesh_search_max_distance_player": 10,
+			"navmesh_search_max_distance_loot": 2,
+			"navmesh_height_offset_complete": 1.25,
+			"navmesh_height_offset_incomplete": 1,
+			"navmesh_obstacle_min_height": 0.9,
+			"navmesh_obstacle_min_volume": 2,
+			"max_calc_time_per_frame_ms": 4,
+			"door_obstacle_update_time": 2
+		},
+		"loot_ranking": {
+			"enabled": true,
+			"randomness": 200,
+			"top_value_retain_count": 5,
+			"alwaysRegenerate": true,
+			"child_item_limits": {
+				"count": 5,
+				"total_weight": 8
+			},
+			"weighting": {
+				"default_inventory_id": "55d7217a4bdc2d86028b456d",
+				"cost_per_slot": 0.001,
+				"weight": -0.5,
+				"size": -1,
+				"gridSize": 1.3,
+				"max_dim": -1,
+				"armor_class": 10,
+				"parents": {
+					"543be6674bdc2df1348b4569":{
+						"name": "FoodDrink",
+						"value": 5
+					},
+					"5422acb9af1c889c16000029": {
+						"name": "Weapon",
+						"value": 3
+					},
+					"5485a8684bdc2da71d8b4567": {
+						"name": "Ammo",
+						"value": 10
+					},
+					"543be6564bdc2df4348b4568": {
+						"name": "ThrowWeap",
+						"value": 10
+					},
+					"5447e1d04bdc2dff2f8b4567": {
+						"name": "Knife",
+						"value": 3
+					},
+					"543be5664bdc2dd4348b4569": {
+						"name": "Meds",
+						"value": 8
+					},
+					"5448e5284bdc2dcb718b4567": {
+						"name": "Vest",
+						"value": 1
+					},
+					"5448e53e4bdc2d60728b4567": {
+						"name": "Backpack",
+						"value": 2
+					},
+					"5645bcb74bdc2ded0b8b4578": {
+						"name": "Headphones",
+						"value": 5
+					},
+					"5448e5724bdc2ddf718b4568": {
+						"name": "Visors",
+						"value": 5
+					},
+					"5a341c4686f77469e155819e": {
+						"name": "FaceCover",
+						"value": 5
+					},
+					"5a341c4086f77401f2541505": {
+						"name": "Headwear",
+						"value": 5
+					},
+					"543be5e94bdc2df1348b4568" : {
+						"name": "Keys",
+						"value": 0
+					}
+				}
+			}
+		}
+	},
+	"open_doors_during_raid" : {
+		"enabled": true,
+		"can_open_locked_doors": true,
+		"can_breach_doors": true,
+		"exclusion_radius": 40,
+		"min_raid_ET": 180,
+		"min_raid_time_remaining": 300,
+		"time_between_door_events": 60,
+		"percentage_of_doors_per_event": 3,
+		"chance_of_unlocking_doors": 50,
+		"chance_of_closing_doors": 15,
+		"max_calc_time_per_frame_ms": 3
+	},
+	"toggle_switches_during_raid": {
+		"enabled": true,
+		"time_between_events_ms": 3000,
+		"exclusion_radius": 150,
+		"min_raid_ET_for_exfil_switches": 600,
+		"delay_after_pressing_prereq_switch_s_per_m": 1,
+		"raid_fraction_when_toggling": {
+			"min": 0.1,
+			"max": 0.95
+		},
+		"fraction_of_switches_to_toggle": {
+			"min": 0.2,
+			"max": 0.7
+		},
+		"max_calc_time_per_frame_ms": 3
+	},
+	"trader_stock_changes": {
+		"enabled": true,
+		"max_ammo_buy_rate": 30,
+		"max_item_buy_rate": 30,
+		"item_sellout_chance": {
+			"min": 10,
+			"max": 101
+		},
+		"barter_trade_sellout_factor": 0.2,
+		"hot_item_sell_chance_global_multiplier": 0.4,
+		"ammo_parent_id": "5485a8684bdc2da71d8b4567",
+		"money_parent_id": "543be5dd4bdc2deb348b4569",
+		"ragfair_refresh_time_fraction": 0.05,
+		"fence_stock_changes": {
+			"enabled": true,
+			"always_regenerate": false,
+			"assort_size": 190,
+			"assort_size_discount": 70,
+			"assort_restock_threshold": 60,
+			"maxPresetsPercent": 25,
+			"max_preset_cost": 150000,
+			"min_allowed_item_value": 20000,
+			"max_ammo_stack": 10000,
+			"sell_chance_multiplier": 3,
+			"itemTypeLimits_Override": {
+				"5448bc234bdc2d3c308b4569": 20,
+				"5a341c4086f77401f2541505": 10,
+				"5448e53e4bdc2d60728b4567": 7,
+				"55818ac54bdc2d5b648b456e": 7,
+				"55818a304bdc2db5418b457d": 8,
+				"55818a594bdc2db9688b456a": 8,
+				"55818a104bdc2db9688b4569": 7,
+				"55818a684bdc2ddd698b456d": 6,
+				"57864a66245977548f04a81f": 5,
+				"5a341c4686f77469e155819e": 5,
+				"5448e54d4bdc2dcc718b4568": 7,
+				"5448f39d4bdc2d0a728b4568": 9,
+				"5b3f15d486f77432d0509248": 1,
+				"5485a8684bdc2da71d8b4567": 20
+			},
+			"blacklist_append": [
+				"543be5dd4bdc2deb348b4569",
+				"543be5cb4bdc2deb348b4568",
+				"5d6e6911a4b9361bd5780d52",
+				"5d6e6806a4b936088465b17e",
+				"5c925fa22e221601da359b7b"
+			],
+			"blacklist_remove": [
+				"5661632d4bdc2d903d8b456b"
+			],
+			"blacklist_ammo_penetration_limit": 31,
+			"blacklist_ammo_damage_limit": 85
+		}
+	},
+	"loot_multipliers": [
+		[0, 0.18],
+		[0.1, 0.2],
+		[0.3, 0.3],
+		[0.5, 0.5],
+		[0.85, 0.8],
+		[0.95, 0.98],
+		[1, 1]
+	],
+	"fraction_of_players_full_of_loot": [
+		[0, 1.8],
+		[0.1, 1.6],
+		[0.3, 1.3],
+		[0.5, 0.7],
+		[0.85, 0.4],
+		[0.95, 0.2],
+		[1, 0]
+	],
+	"pmc_spawn_chance_multipliers": [
+		[0, 0],
+		[0.2, 0.1],
+		[0.6, 0.5],
+		[0.8, 0.7],
+		[0.9, 1],
+		[0.95, 1.5],
+		[1, 2.2]
+	],
+	"boss_spawn_chance_multipliers": [
+		[0, 0.4],
+		[0.6, 0.5],
+		[0.75, 1],
+		[1, 1]
+	],
+	"fence_item_value_permitted_chance": [
+		[0, 100],
+		[20000, 50],
+		[50000, 12],
+		[80000, 4],
+		[150000, 1],
+		[999999, 0]
+	],
+	"item_cost_fraction_vs_durability": [
+		[0, 0.3],
+		[0.5, 0.7],
+		[1, 1]
+	]
+}
