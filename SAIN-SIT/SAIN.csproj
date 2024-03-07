@@ -258,6 +258,8 @@
     <Compile Include="Layers\SAINLayer.cs" />
     <Compile Include="Plugin\DependencyChecker.cs" />
     <Compile Include="Plugin\External.cs" />
+    <Compile Include="Plugin\Patches\BotOwnerBrainActivatePatch.cs" />
+    <Compile Include="Plugin\Patches\BotsControllerStopPatch.cs" />
     <Compile Include="Plugin\SAINInterop.cs" />
     <Compile Include="Preset\BotSettings\SAINSettings\Categories\SAINBossSettings.cs" />
     <Compile Include="Preset\GlobalSettings\Categories\BigBrain\BotBrains.cs" />

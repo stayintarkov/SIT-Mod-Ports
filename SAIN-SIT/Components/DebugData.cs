@@ -67,6 +67,7 @@ namespace SAIN.Components
                 }
 
                 StringBuilder sb = new StringBuilder();
+                sb.AppendLabeledValue("Name", bot.Profile.Info.Nickname, Color.magenta, Color.magenta);
                 sb.AppendLabeledValue("Brain", bot.Brain.BaseBrain.ShortName(), Color.cyan, Color.cyan);
                 sb.AppendLabeledValue("Layer", bot.Brain.ActiveLayerName(), Color.yellow, Color.yellow);
                 sb.AppendLabeledValue("Reason", bot.Brain.GetActiveNodeReason(), Color.white, Color.white);

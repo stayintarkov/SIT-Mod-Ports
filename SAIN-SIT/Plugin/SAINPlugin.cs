@@ -13,6 +13,7 @@ using SAIN.Preset;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using SAIN.Plugin.Patches;
 using UnityEngine;
 using static SAIN.AssemblyInfo;
 using static SAIN.Editor.SAINLayout;
@@ -125,7 +126,9 @@ namespace SAIN
                 typeof(Patches.Shoot.EndRecoilPatch),
                 typeof(Patches.Shoot.FullAutoPatch),
                 typeof(Patches.Shoot.SemiAutoPatch),
-                typeof(Patches.Components.AddComponentPatch)
+                typeof(Patches.Components.AddComponentPatch),
+                typeof(BotOwnerBrainActivatePatch),
+                typeof(BotsControllerStopPatch)
             };
 
             // Reflection go brrrrrrrrrrrrrr
