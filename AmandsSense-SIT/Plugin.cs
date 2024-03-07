@@ -5,6 +5,7 @@ using System.Reflection;
 using UnityEngine;
 using EFT;
 using System.Threading.Tasks;
+using Comfort.Common;
 using StayInTarkov.Coop;
 
 namespace AmandsSense
@@ -231,30 +232,18 @@ namespace AmandsSense
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(StayInTarkovPlugin).Assembly.GetType("StayInTarkov.Coop.CoopGame").GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
+            return typeof(GameWorld).GetMethod(nameof(GameWorld.OnGameStarted));
         }
-
-        private static void WaitForCoopGame(Task<LocalPlayer> task)
-        {
-            task.Wait();
-
-            LocalPlayer localPlayer = task.Result;
-
-            if (localPlayer != null && localPlayer.IsYourPlayer)
-            {
-                AmandsSenseClass.localPlayer = localPlayer;
-                AmandsSenseClass.ItemsSenses.Clear();
-                AmandsSenseClass.ItemsAlwaysOn.Clear();
-                AmandsSenseClass.ContainersAlwaysOn.Clear();
-                AmandsSenseClass.DeadbodyAlwaysOn.Clear();
-                AmandsSensePlugin.AmandsSenseClassComponent.DynamicAlwaysOnSense();
-            }
-        }
-
+        
         [PatchPostfix]
-        private static void PatchPostFix(Task<LocalPlayer> __result)
+        private static void PatchPostFix()
         {
-            Task.Run(() => WaitForCoopGame(__result));
+            AmandsSenseClass.localPlayer = Singleton<GameWorld>.Instance.MainPlayer as LocalPlayer;
+            AmandsSenseClass.ItemsSenses.Clear();
+            AmandsSenseClass.ItemsAlwaysOn.Clear();
+            AmandsSenseClass.ContainersAlwaysOn.Clear();
+            AmandsSenseClass.DeadbodyAlwaysOn.Clear();
+            AmandsSensePlugin.AmandsSenseClassComponent.DynamicAlwaysOnSense();
         }
     }
 
