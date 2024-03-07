@@ -1,1 +1,0 @@
-Thanks goes out to Solarint#1522 for creating these waypoint presets, the mod wouldn't be nearly as good as it is without his help!
