@@ -82,10 +82,10 @@ namespace SPTQuestingBots.BotLogic.Objective
             }
 
             // Check if the bot wants to use a mounted weapon
-            if (objectiveManager.IsAllowedToTakeABreak() && objectiveManager.BotMonitor.WantsToUseStationaryWeapon())
-            {
-                return updatePreviousState(false);
-            }
+            //if (objectiveManager.IsAllowedToTakeABreak() && objectiveManager.BotMonitor.WantsToUseStationaryWeapon())
+            //{
+            //    return updatePreviousState(false);
+            //}
 
             // Check if the bot wants to loot
             if (objectiveManager.IsAllowedToTakeABreak() && objectiveManager.BotMonitor.ShouldCheckForLoot(objectiveManager.BotMonitor.NextLootCheckDelay))

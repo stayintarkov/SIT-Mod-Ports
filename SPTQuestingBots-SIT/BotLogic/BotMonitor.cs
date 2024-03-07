@@ -17,7 +17,7 @@ namespace SPTQuestingBots.BotLogic
         private BotOwner botOwner;
         private LogicLayerMonitor lootingLayerMonitor;
         private LogicLayerMonitor extractLayerMonitor;
-        private LogicLayerMonitor stationaryWSLayerMonitor;
+        //private LogicLayerMonitor stationaryWSLayerMonitor;
         private Stopwatch lootSearchTimer = new Stopwatch();
         private bool wasLooting = false;
         private bool hasFoundLoot = false;
@@ -37,8 +37,8 @@ namespace SPTQuestingBots.BotLogic
             extractLayerMonitor.Init(botOwner, "SAIN ExtractLayer");
 
             // This is for using mounted guns, but questing bots aren't allowed to use them right now
-            stationaryWSLayerMonitor = botOwner.GetPlayer.gameObject.AddComponent<LogicLayerMonitor>();
-            stationaryWSLayerMonitor.Init(botOwner, "StationaryWS");
+            //stationaryWSLayerMonitor = botOwner.GetPlayer.gameObject.AddComponent<LogicLayerMonitor>();
+            //stationaryWSLayerMonitor.Init(botOwner, "StationaryWS");
 
             if (SAIN.Plugin.SAINInterop.Init())
             {
@@ -77,6 +77,7 @@ namespace SPTQuestingBots.BotLogic
             return random.Next((int)ConfigController.Config.Questing.SearchTimeAfterCombat.Min, (int)ConfigController.Config.Questing.SearchTimeAfterCombat.Max);
         }
 
+        /*
         public bool WantsToUseStationaryWeapon()
         {
             if (stationaryWSLayerMonitor.CanLayerBeUsed && stationaryWSLayerMonitor.IsLayerRequested())
@@ -86,6 +87,7 @@ namespace SPTQuestingBots.BotLogic
 
             return false;
         }
+        */
 
         public bool IsTryingToExtract()
         {

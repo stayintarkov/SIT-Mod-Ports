@@ -93,6 +93,7 @@ namespace SPTQuestingBots.Components
                 StringBuilder sb = new StringBuilder();
                 sb.AppendLabeledValue(Controllers.BotRegistrationManager.GetBotType(bot).ToString(), bot.GetText(), getColorForBotType(bot), Color.white);
                 sb.AppendLabeledValue("Layer", bot.Brain.ActiveLayerName(), Color.yellow, Color.yellow);
+                sb.AppendLabeledValue("Brain", bot.Brain.BaseBrain.ShortName(), Color.cyan, Color.cyan);
                 sb.AppendLabeledValue("Reason", bot.Brain.GetActiveNodeReason(), Color.white, Color.white);
 
                 BotOwner boss = BotHiveMindMonitor.GetBoss(bot);
