@@ -1,0 +1,32 @@
+{
+    "Locations": [
+        {
+            "MapName": "rezervbase",
+            "Name": "basement usec",
+            "Position": {
+                "x": -103.623047,
+                "y": -14.5272884,
+                "z": 42.0608864
+            },
+			"WildSpawnType": "sptusec",
+			"MinDistance": 25.0,
+			"MaxDistance": 60,
+			"MaxRandomNumBots": 2,
+			"SpawnChance": 100
+        },
+		{
+            "MapName": "rezervbase",
+            "Name": "basement bears",
+            "Position": {
+                "x": -103.623047,
+                "y": -14.5272884,
+                "z": 42.0608864
+            },
+			"WildSpawnType": "sptbear",
+			"MinDistance": 25.0,
+			"MaxDistance": 60,
+			"MaxRandomNumBots": 2,
+			"SpawnChance": 100
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "Locations": [
+        {
+            "MapName": "bigmap",
+            "Name": "dorms center courtyard scav",
+            "Position": {
+                "x": 203.292038,
+                "y": -0.876712441,
+                "z": 153.84726
+            },
+			"WildSpawnType": "assault",
+			"MinDistance": 25.0,
+			"MaxDistance": 60,
+			"MaxRandomNumBots": 2,
+			"SpawnChance": 100
+        }
+    ]
+}
