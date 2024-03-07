@@ -53,6 +53,7 @@ namespace SAIN.Components
             Singleton<GClass598>.Instance.OnGrenadeExplosive += GrenadeExplosion;
             AISoundPlayed += SoundPlayed;
             PlayerTalk += PlayerTalked;
+            Singleton<GameWorld>.Instance.gameObject.AddComponent<DebugData>();
         }
 
         private void Update()
