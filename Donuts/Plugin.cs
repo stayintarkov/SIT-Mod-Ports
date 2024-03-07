@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Aki.Reflection.Patching;
 using BepInEx;
 using BepInEx.Configuration;
 using dvize.Donuts;
@@ -11,6 +10,7 @@ using EFT;
 using EFT.Communications;
 using Newtonsoft.Json;
 using UnityEngine;
+using StayInTarkov;
 
 //disable the ide0007 warning for the entire file
 #pragma warning disable IDE0007
@@ -19,7 +19,6 @@ namespace Donuts
 {
 
     [BepInPlugin("com.dvize.Donuts", "dvize.Donuts", "1.3.5")]
-    [BepInDependency("com.spt-aki.core", "3.7.5")]
     [BepInDependency("xyz.drakia.bigbrain")]
     [BepInDependency("xyz.drakia.waypoints")]
     [BepInDependency("me.sol.sain")]

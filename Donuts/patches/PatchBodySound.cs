@@ -1,8 +1,8 @@
 ﻿using System.Reflection;
-using Aki.Reflection.Patching;
 using EFT;
 using HarmonyLib;
 using UnityEngine;
+using StayInTarkov;
 
 namespace dvize.Donuts
 {

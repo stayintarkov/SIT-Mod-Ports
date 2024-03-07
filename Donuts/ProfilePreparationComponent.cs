@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Aki.PrePatch;
 using BepInEx.Logging;
 using Comfort.Common;
 using EFT;
@@ -10,8 +9,8 @@ using HarmonyLib;
 using UnityEngine;
 
 //custom usings
-using BotCacheClass = GClass513;
-using IProfileData = GClass514;
+using BotCacheClass = Data1;
+using IProfileData = Data8;
 
 #pragma warning disable IDE0007, CS4014
 
@@ -102,8 +101,8 @@ namespace Donuts
             //init the main vars
             botSpawnerClass = Singleton<IBotGame>.Instance.BotsController.BotSpawner;
             botCreator = AccessTools.Field(typeof(BotSpawner), "_botCreator").GetValue(botSpawnerClass) as IBotCreator;
-            sptUsec = (WildSpawnType)AkiBotsPrePatcher.sptUsecValue;
-            sptBear = (WildSpawnType)AkiBotsPrePatcher.sptBearValue;
+            sptUsec = DonutComponent.SPTUsec;
+            sptBear = DonutComponent.SPTBear;
             replenishInterval = 60.0f;
             timeSinceLastReplenish = 0f;
             botsReplenishedCount = 0;

@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Aki.Reflection.Patching;
-using Aki.Reflection.Utils;
 using EFT;
 using EFT.AssetsManager;
 using UnityEngine;
+using StayInTarkov;
 
 namespace dvize.Donuts
 {
@@ -15,8 +14,8 @@ namespace dvize.Donuts
         protected override MethodBase GetTargetMethod()
         {
             // Method used by SPT for finding BaseLocalGame
-            return PatchConstants.EftTypes.Single(x => x.Name == "LocalGame").BaseType // BaseLocalGame
-                .GetMethod("smethod_4", BindingFlags.FlattenHierarchy | BindingFlags.NonPublic | BindingFlags.Static);
+            return StayInTarkovHelperConstants.EftTypes.Single(x => x.Name == "LocalGame").BaseType // BaseLocalGame
+                .GetMethod("smethod_4", BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static);
         }
 
         [PatchPrefix]

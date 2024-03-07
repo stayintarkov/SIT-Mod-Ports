@@ -8,27 +8,28 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Aki.PrePatch;
-using Aki.Reflection.Utils;
 using BepInEx.Logging;
 using Comfort.Common;
 using EFT;
 using EFT.Communications;
 using HarmonyLib;
 using Newtonsoft.Json;
+using StayInTarkov;
 using Systems.Effects;
 using UnityEngine;
 using UnityEngine.AI;
 
 //custom using
-using BotCacheClass = GClass513;
-using IProfileData = GClass514;
+using BotCacheClass = Data1;
+using IProfileData = Data8;
 
 #pragma warning disable IDE0007, IDE0044
 namespace Donuts
 {
     public class DonutComponent : MonoBehaviour
     {
+        public static WildSpawnType SPTUsec = (WildSpawnType)47;
+        public static WildSpawnType SPTBear = (WildSpawnType)48;
 
         internal static FightLocations fightLocations;
         internal static FightLocations sessionLocations;
@@ -38,8 +39,8 @@ namespace Donuts
 
         internal List<WildSpawnType> validDespawnListPMC = new List<WildSpawnType>()
         {
-            (WildSpawnType)AkiBotsPrePatcher.sptUsecValue,
-            (WildSpawnType)AkiBotsPrePatcher.sptBearValue
+            SPTUsec,
+            SPTBear
         };
 
         internal List<WildSpawnType> validDespawnListScav = new List<WildSpawnType>()
@@ -76,9 +77,6 @@ namespace Donuts
         private static Coroutine gizmoUpdateCoroutine;
         internal static IBotCreator ibotCreator;
 
-        WildSpawnType sptUsec;
-        WildSpawnType sptBear;
-
         internal static ManualLogSource Logger
         {
             get; private set;
@@ -101,7 +99,7 @@ namespace Donuts
             methodCache = new Dictionary<string, MethodInfo>();
 
             // Retrieve displayMessageNotification MethodInfo
-            var displayMessageNotification = PatchConstants.EftTypes.Single(x => x.GetMethod("DisplayMessageNotification") != null).GetMethod("DisplayMessageNotification");
+            var displayMessageNotification = StayInTarkovHelperConstants.EftTypes.Single(x => x.GetMethod("DisplayMessageNotification") != null).GetMethod("DisplayMessageNotification");
             if (displayMessageNotification != null)
             {
                 displayMessageNotificationMethod = displayMessageNotification;
@@ -180,9 +178,6 @@ namespace Donuts
             drawnCoordinates = new HashSet<Vector3>();
             gizmoSpheres = new List<GameObject>();
             ibotCreator = AccessTools.Field(typeof(BotSpawner), "_botCreator").GetValue(botSpawnerClass) as IBotCreator;
-
-            sptUsec = (WildSpawnType)AkiBotsPrePatcher.sptUsecValue;
-            sptBear = (WildSpawnType)AkiBotsPrePatcher.sptBearValue;
         }
         private void SetupBotLimit(string folderName)
         {
@@ -389,7 +384,7 @@ namespace Donuts
             var scenarioSelection = DonutsPlugin.scenarioSelection.Value;
 
             // check if this is a SCAV raid; this only works during raid load
-            if (Aki.SinglePlayer.Utils.InRaid.RaidChangesUtil.IsScavRaid)
+            if (StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidChangesUtil.IsScavRaid)
             {
                 #if DEBUG
                     Logger.LogDebug($"This is a SCAV raid, using SCAV raid preset selector");
@@ -589,7 +584,7 @@ namespace Donuts
                     Logger.LogDebug($"Hard stop PMCs is enabled, checking raid time");
                 #endif
                 var pluginRaidTimeLeft = DonutsPlugin.hardStopTimePMC.Value;
-                var raidTimeLeft = Aki.SinglePlayer.Utils.InRaid.RaidTimeUtil.GetRemainingRaidSeconds();
+                var raidTimeLeft = StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil.GetRemainingRaidSeconds();
                 if (raidTimeLeft < DonutsPlugin.hardStopTimePMC.Value)
                 {
                     #if DEBUG
@@ -605,7 +600,7 @@ namespace Donuts
                     Logger.LogDebug($"Hard stop SCAVs is enabled, checking raid time");
                 #endif
                 var pluginRaidTimeLeft = DonutsPlugin.hardStopTimeSCAV;
-                var raidTimeLeft = Aki.SinglePlayer.Utils.InRaid.RaidTimeUtil.GetRemainingRaidSeconds();
+                var raidTimeLeft = StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil.GetRemainingRaidSeconds();
                 if (raidTimeLeft < DonutsPlugin.hardStopTimeSCAV.Value)
                 {
                     #if DEBUG
@@ -691,7 +686,7 @@ namespace Donuts
 
             bool IsPMC(WildSpawnType role)
             {
-                return role == (WildSpawnType)AkiBotsPrePatcher.sptUsecValue || role == (WildSpawnType)AkiBotsPrePatcher.sptBearValue;
+                return role == SPTUsec || role == SPTBear;
             }
 
             bool IsSCAV(WildSpawnType role)
@@ -936,7 +931,7 @@ namespace Donuts
             {
                 return grabSCAVDifficulty();
             }
-            else if (wildSpawnType == sptUsec || wildSpawnType == sptBear || wildSpawnType == WildSpawnType.pmcBot)
+            else if (wildSpawnType == SPTUsec || wildSpawnType == SPTBear || wildSpawnType == WildSpawnType.pmcBot)
             {
                 return grabPMCDifficulty();
             }
@@ -1036,7 +1031,7 @@ namespace Donuts
                 botCacheList.Remove(botCacheElement);
 
                 var closestBotZone = botSpawnerClass.GetClosestZone(spawnPosition, out float dist);
-                botCacheElement.AddPosition(spawnPosition);
+                botCacheElement.AddPosition(spawnPosition, 1);
 
             #if DEBUG
                 DonutComponent.Logger.LogWarning($"Spawning bot at distance to player of: {Vector3.Distance(spawnPosition, DonutComponent.gameWorld.MainPlayer.Position)} " +
@@ -1064,7 +1059,7 @@ namespace Donuts
                 botCacheList.Remove(botCacheElement);
 
                 var closestBotZone = botSpawnerClass.GetClosestZone(spawnPosition, out float dist);
-                botCacheElement.AddPosition(spawnPosition);
+                botCacheElement.AddPosition(spawnPosition, 1);
 
                 #if DEBUG
                     DonutComponent.Logger.LogWarning($"Spawning grouped bots at distance to player of: {Vector3.Distance(spawnPosition, DonutComponent.gameWorld.MainPlayer.Position)} " +
@@ -1080,7 +1075,7 @@ namespace Donuts
 
             IProfileData botData = new IProfileData(side, wildSpawnType, botdifficulty, 0f, null);
             BotCacheClass bot = await BotCacheClass.Create(botData, ibotCreator, 1, botSpawnerClass);
-            bot.AddPosition((Vector3)spawnPosition);
+            bot.AddPosition((Vector3)spawnPosition, 1);
 
             var closestBotZone = botSpawnerClass.GetClosestZone((Vector3)spawnPosition, out float dist);
             #if DEBUG
@@ -1202,13 +1197,13 @@ namespace Donuts
                 case "sectantwarrior":
                     return WildSpawnType.sectantWarrior;
                 case "usec":
-                    return (WildSpawnType)AkiBotsPrePatcher.sptUsecValue;
+                    return SPTUsec;
                 case "bear":
-                    return (WildSpawnType)AkiBotsPrePatcher.sptBearValue;
+                    return SPTBear;
                 case "sptusec":
-                    return (WildSpawnType)AkiBotsPrePatcher.sptUsecValue;
+                    return SPTUsec;
                 case "sptbear":
-                    return (WildSpawnType)AkiBotsPrePatcher.sptBearValue;
+                    return SPTBear;
                 case "followerbigpipe":
                     return WildSpawnType.followerBigPipe;
                 case "followerbirdeye":
@@ -1217,7 +1212,7 @@ namespace Donuts
                     return WildSpawnType.bossKnight;
                 case "pmc":
                     //random wildspawntype is either assigned sptusec or sptbear at 50/50 chance
-                    return (UnityEngine.Random.Range(0, 2) == 0) ? (WildSpawnType)AkiBotsPrePatcher.sptUsecValue : (WildSpawnType)AkiBotsPrePatcher.sptBearValue;
+                    return (UnityEngine.Random.Range(0, 2) == 0) ? SPTUsec : SPTBear;
                 default:
                     return WildSpawnType.assault;
             }
@@ -1226,8 +1221,8 @@ namespace Donuts
         private EPlayerSide GetSideForWildSpawnType(WildSpawnType spawnType)
         {
             //define spt wildspawn
-            WildSpawnType sptUsec = (WildSpawnType)AkiBotsPrePatcher.sptUsecValue;
-            WildSpawnType sptBear = (WildSpawnType)AkiBotsPrePatcher.sptBearValue;
+            WildSpawnType sptUsec = SPTUsec;
+            WildSpawnType sptBear = SPTBear;
 
             if (spawnType == WildSpawnType.pmcBot || spawnType == sptUsec)
             {
