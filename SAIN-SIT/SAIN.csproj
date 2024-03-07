@@ -235,6 +235,7 @@
     <Compile Include="Attributes\AttributesInfoClass.cs" />
     <Compile Include="Attributes\GUIEntryConfig.cs" />
     <Compile Include="BotController\Classes\BotSquads.cs" />
+    <Compile Include="Components\DebugData.cs" />
     <Compile Include="Components\Extract\ExtractFinderComponent.cs" />
     <Compile Include="Components\Extract\ExtractPositionFinder.cs" />
     <Compile Include="Components\MainPlayer\BaseMainPlayer.cs" />
@@ -247,6 +248,7 @@
     <Compile Include="Editor\IEditorCache.cs" />
     <Compile Include="Editor\Util\ModifyLists.cs" />
     <Compile Include="Helpers\ComponentHelpers.cs" />
+    <Compile Include="Helpers\DebugHelpers.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\ListHelpers.cs" />
     <Compile Include="Helpers\NavMeshHelpers.cs" />
