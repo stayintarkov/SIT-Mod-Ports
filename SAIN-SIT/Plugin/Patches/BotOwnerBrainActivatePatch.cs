@@ -15,7 +15,7 @@ namespace SAIN.Plugin.Patches
         [PatchPostfix]
         private static void PatchPostfix(BotOwner __instance)
         {
-            registerBot(__instance);
+            // registerBot(__instance);
         }
 
         private static void registerBot(BotOwner __instance)
