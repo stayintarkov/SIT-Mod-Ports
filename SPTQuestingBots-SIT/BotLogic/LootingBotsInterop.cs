@@ -1,15 +1,8 @@
 ﻿using BepInEx.Bootstrap;
-
 using EFT;
-
 using HarmonyLib;
-
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LootingBots
 {
@@ -67,6 +60,7 @@ namespace LootingBots
         /**
          * Force a bot to search for loot immediately if Looting Bots is loaded. Return true if successful.
          */
+        
         public static bool TryForceBotToScanLoot(BotOwner botOwner)
         {
             if (!Init()) return false;
