@@ -140,64 +140,27 @@ namespace LootingBots.Brain.Logics
                 string lootableName =
                     _lootingBrain.ActiveContainer?.ItemOwner.Items.ToArray()[0].Name.Localized()
                     ?? _lootingBrain.ActiveItem?.Name.Localized()
-                    ?? _lootingBrain.ActiveCorpse.GetPlayer?.name.Localized();
+                    ?? _lootingBrain.ActiveCorpse?.GetPlayer.name.Localized();
 
                 // If the bot has not been stuck for more than 2 navigation checks, attempt to navigate to the lootable otherwise ignore the container forever
                 bool isBotStuck = _stuckCount > 1;
                 bool isNavigationLimit = _navigationAttempts > 30;
-                if (!isBotStuck && !isNavigationLimit)
+                if (!isBotStuck && !isNavigationLimit && _lootingBrain.Destination != Vector3.zero)
                 {
-                    Vector3 center = _lootingBrain.LootObjectCenter;
-
-                    // Try to snap the desired destination point to the nearest NavMesh to ensure the bot can draw a navigable path to the point
-                    Vector3 pointNearbyContainer = NavMesh.SamplePosition(
-                        center,
-                        out NavMeshHit navMeshAlignedPoint,
-                        1f,
-                        NavMesh.AllAreas
-                    )
-                        ? navMeshAlignedPoint.position
-                        : Vector3.zero;
-
-                    // Since SamplePosition always snaps to the closest point on the NavMesh, sometimes this point is a little too close to the loot and causes the bot to shake violently while looting.
-                    // Add a small amount of padding by pushing the point away from the nearbyPoint
-                    Vector3 padding = center - pointNearbyContainer;
-                    padding.y = 0;
-                    padding.Normalize();
-
                     // Make sure the point is still snapped to the NavMesh after its been pushed
-                    _destination = pointNearbyContainer = NavMesh.SamplePosition(
-                        center - padding,
-                        out navMeshAlignedPoint,
-                        1f,
-                        navMeshAlignedPoint.mask
-                    )
-                        ? navMeshAlignedPoint.position
-                        : pointNearbyContainer;
-
-                    // Debug for bot loot navigation
-                    if (LootingBots.DebugLootNavigation.Value)
-                    {
-                        GameObjectHelper.DrawSphere(center, 0.5f, Color.red);
-                        GameObjectHelper.DrawSphere(center - padding, 0.5f, Color.green);
-                        if (pointNearbyContainer != Vector3.zero)
-                        {
-                            GameObjectHelper.DrawSphere(pointNearbyContainer, 0.5f, Color.blue);
-                        }
-                    }
+                    _destination = _lootingBrain.Destination;
 
                     // If we were able to snap the loot position to a NavMesh, attempt to navigate
-                    if (pointNearbyContainer != Vector3.zero && HasLOS())
+                    if (HasLOS())
                     {
                         NavMeshPathStatus pathStatus = BotOwner.GoToPoint(
-                            pointNearbyContainer,
+                            _destination,
                             true,
                             1f,
                             false,
                             false,
                             true
                         );
-
                         // Log every 5 movement attempts to reduce noise
                         if (_navigationAttempts % 5 == 1)
                         {
@@ -214,9 +177,7 @@ namespace LootingBots.Brain.Logics
                     }
                     else
                     {
-                        _log.LogWarning(
-                            $"Unable to snap loot position to NavMesh. Ignoring {lootableName}"
-                        );
+                        _log.LogWarning($"Have no LOS. Ignoring {lootableName}");
                         canMove = false;
                     }
                 }
