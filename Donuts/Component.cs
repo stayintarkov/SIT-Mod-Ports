@@ -1244,7 +1244,7 @@ namespace Donuts
             float maxDistance = -1f;
             Player furthestBot = null;
             var tempBotCount = 0;
-
+            
             if (bottype == "pmc")
             {
                 if (Time.time - PMCdespawnCooldown < PMCdespawnCooldownDuration)
@@ -1255,8 +1255,12 @@ namespace Donuts
                 //don't know distances so have to loop through all bots
                 foreach (Player bot in bots)
                 {
-                    // Ignore bots on the invalid despawn list, and the player
-                    if (bot.IsYourPlayer || !validDespawnListPMC.Contains(bot.Profile.Info.Settings.Role) || bot.AIData.BotOwner.BotState != EBotState.Active)
+                    // Ignore players
+                    if(!bot.IsAI || bot.IsYourPlayer)
+                        continue;
+                    
+                    // Ignore bots on the invalid despawn list
+                    if (!validDespawnListPMC.Contains(bot.Profile.Info.Settings.Role) || bot.AIData.BotOwner.BotState != EBotState.Active)
                     {
                         continue;
                     }
@@ -1291,8 +1295,12 @@ namespace Donuts
                 //don't know distances so have to loop through all bots
                 foreach (Player bot in bots)
                 {
-                    // Ignore bots on the invalid despawn list, and the player
-                    if (bot.IsYourPlayer || !validDespawnListScav.Contains(bot.Profile.Info.Settings.Role) || bot.AIData.BotOwner.BotState != EBotState.Active)
+                    // Ignore players
+                    if(!bot.IsAI || bot.IsYourPlayer)
+                        continue;
+                    
+                    // Ignore bots on the invalid despawn list
+                    if (!validDespawnListScav.Contains(bot.Profile.Info.Settings.Role) || bot.AIData.BotOwner.BotState != EBotState.Active)
                     {
                         continue;
                     }

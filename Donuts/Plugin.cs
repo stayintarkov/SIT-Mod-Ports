@@ -776,7 +776,10 @@ namespace Donuts
         protected override MethodBase GetTargetMethod() => typeof(GameWorld).GetMethod(nameof(GameWorld.OnGameStarted));
 
         [PatchPrefix]
-        public static void PatchPrefix() => DonutComponent.Enable();
+        public static void PatchPrefix()
+        {
+            DonutComponent.Enable();
+        }
     }
 
     // Don't add invalid enemies
