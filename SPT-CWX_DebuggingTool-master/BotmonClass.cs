@@ -1,7 +1,6 @@
 ﻿using Comfort.Common;
 using EFT;
 using EFT.UI;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -66,11 +65,12 @@ namespace CWX_DebuggingTool
                 foreach (var player in _gameWorld.AllAlivePlayersList)
                 {
                     if (player.IsYourPlayer) continue;
-
+                    if (!player.IsAI) continue;
+                    
                     _playerRoleAndDiff.Add(player.ProfileId, GetBotRoleAndDiffClass(player.Profile.Info));
-
+                    
                     var theirZone = player.AIData.BotOwner.BotsGroup.BotZone.NameZone;
-
+                    
                     _zoneAndPlayers[theirZone].Add(player);
                 }
             }
