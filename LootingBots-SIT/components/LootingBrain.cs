@@ -5,9 +5,12 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
+using BepInEx.Logging;
+
 using EFT;
 using EFT.Interactive;
 using EFT.InventoryLogic;
+using EFT.UI;
 
 using LootingBots.Patch.Util;
 
@@ -110,6 +113,7 @@ namespace LootingBots.Patch.Components
             NonNavigableLootIds = new List<string> { };
             IsPlayerScav = botOwner.Profile.Nickname.Contains(" (");
             ActiveLootCache.Init();
+            SAIN.Plugin.SAINInterop.Init();
         }
 
         /*
@@ -150,14 +154,17 @@ namespace LootingBots.Patch.Components
         {
             if (ActiveContainer)
             {
+                ConsoleScreen.LogWarning($"{BotOwner.Profile.Info.Nickname} starting container loot");
                 StartCoroutine(LootContainer());
             }
             else if (ActiveItem)
             {
+                ConsoleScreen.LogWarning($"{BotOwner.Profile.Info.Nickname} starting item loot");
                 StartCoroutine(LootItem());
             }
             else if (ActiveCorpse)
             {
+                ConsoleScreen.LogWarning($"{BotOwner.Profile.Info.Nickname} starting corpse loot");
                 StartCoroutine(LootCorpse());
             }
         }
@@ -215,6 +222,8 @@ namespace LootingBots.Patch.Components
                 );
             }
         }
+        
+        private static ManualLogSource logger = BepInEx.Logging.Logger.CreateLogSource("LOOTING BOTS");
 
         /**
         * Handles looting a container found on the map.
@@ -235,7 +244,7 @@ namespace LootingBots.Patch.Components
                 LootUtils.InteractContainer(ActiveContainer, EInteractionType.Open);
                 didOpen = true;
             }
-
+            
             Task delayTask = TransactionController.SimulatePlayerDelay(LootingStartDelay);
             yield return new WaitUntil(() => delayTask.IsCompleted);
 
@@ -282,17 +291,19 @@ namespace LootingBots.Patch.Components
 
                 // Need to manually cleanup item because the ItemOwner on the original object changes. Only ignore if looting was not interrupted
                 CleanupItem(lootTask.Result, item);
-                OnLootTaskEnd(lootTask.Result);
+                OnLootTaskEnd(lootTask.Result, BotOwner);
                 _log.LogDebug($"Net Worth: {Stats.NetLootValue}");
             }
         }
 
-        public void OnLootTaskEnd(bool lootingSuccessful)
+        public void OnLootTaskEnd(bool lootingSuccessful, BotOwner botOwner)
         {
             Destination = Vector3.zero;
             UpdateGridStats();
             BotOwner.AIData.CalcPower();
             LootTaskRunning = false;
+            SAIN.Plugin.SAINInterop.TryResetDecisionsForBot(botOwner);
+            logger.LogWarning($"Loot Task Ended, Result: {(lootingSuccessful ? "Success" : "Failure")}");
         }
 
         public void UpdateGridStats()

@@ -6,6 +6,7 @@ using Comfort.Common;
 
 using EFT;
 using EFT.InventoryLogic;
+using EFT.UI;
 
 using LootingBots.Patch.Util;
 
@@ -241,19 +242,23 @@ namespace LootingBots.Patch.Components
         /** Moves an item to a specified item address. Supports executing a callback */
         public async Task<bool> MoveItem(MoveAction moveAction)
         {
+            ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Move Item");
             try
             {
                 if (IsLootingInterrupted())
                 {
+                    ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Move Item looting interrupted");
                     return false;
                 }
 
                 if (moveAction.ToMove is Weapon weapon && !(moveAction.ToMove is BulletClass))
                 {
+                    ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Adding extra ammo");
                     AddExtraAmmo(weapon);
                 }
 
                 _log.LogDebug($"Moving item to: {moveAction?.Place?.Container?.ID?.Localized()}");
+                ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Move Item to {moveAction?.Place?.Container?.ID?.Localized()}");
                 var value = InventoryHelperClass.Move(
                     moveAction.ToMove,
                     moveAction.Place,
@@ -263,6 +268,7 @@ namespace LootingBots.Patch.Components
 
                 if (value.Failed)
                 {
+                    ConsoleScreen.LogError($"{_botOwner.Profile.Info.Nickname} Failed to move");
                     _log.LogError(
                         $"Failed to move {moveAction.ToMove.Name.Localized()} to {moveAction.Place.Container.ID.Localized()}"
                     );
@@ -271,9 +277,40 @@ namespace LootingBots.Patch.Components
 
                 if (moveAction.Callback == null)
                 {
-                    await SimulatePlayerDelay();
-                    await _inventoryController.TryRunNetworkTransaction(value, null);
+                    ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Sim Player Delay");
+                    try
+                    {
+                        await SimulatePlayerDelay();
+                    }
+                    catch (Exception ex)
+                    {
+                        ConsoleScreen.LogError($"{_botOwner.Profile.Info.Nickname} Sim Player Delay Error: {ex.Message}");
+                        // Consider whether you should continue or return after logging the error.
+                    }
+
+                    ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Try Run Net Trans");
+                    try
+                    {
+                        var task = _inventoryController.TryRunNetworkTransaction(value, null);
+                        if (await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(5))) == task)
+                        {
+                            // Completed within timeout
+                            ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Ran Net Trans");
+                        }
+                        else
+                        {
+                            // Timeout logic
+                            ConsoleScreen.LogError($"{_botOwner.Profile.Info.Nickname} Run Net Trans Timeout");
+                            return false;
+                            // Handle the timeout situation (e.g., retry, log, abort)
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        ConsoleScreen.LogError($"{_botOwner.Profile.Info.Nickname} Run Net Trans Error: {ex.Message}");
+                    }
                 }
+
                 else
                 {
                     TaskCompletionSource<IResult> promise = new TaskCompletionSource<IResult>();
@@ -292,13 +329,21 @@ namespace LootingBots.Patch.Components
                             }
                         )
                     );
+                    
+                    ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Run Net Trans w/ Callback");
 
                     await promise.Task;
                 }
+                ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Ran Net Trans w/ Callback");
                 if (moveAction.OnComplete != null)
                 {
+                    ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Move Action Complete");
                     await SimulatePlayerDelay();
                     await moveAction.OnComplete();
+                }
+                else
+                {
+                    ConsoleScreen.LogError($"{_botOwner.Profile.Info.Nickname} Move Action Incomplete, NULL!");
                 }
             }
             catch (Exception e)
