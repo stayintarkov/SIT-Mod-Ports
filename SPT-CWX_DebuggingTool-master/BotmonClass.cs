@@ -79,6 +79,8 @@ namespace CWX_DebuggingTool
             _botGame.BotsController.BotSpawner.OnBotCreated += owner =>
             {
                 var player = owner.GetPlayer;
+                if (!player.IsAI)
+                    return;
                 _zoneAndPlayers[owner.BotsGroup.BotZone.NameZone].Add(player);
                 _playerRoleAndDiff.Add(player.ProfileId, GetBotRoleAndDiffClass(player.Profile.Info));
             };
@@ -87,6 +89,8 @@ namespace CWX_DebuggingTool
             _botGame.BotsController.BotSpawner.OnBotRemoved += owner =>
             {
                 var player = owner.GetPlayer;
+                if (!player.IsAI)
+                    return;
                 _zoneAndPlayers[owner.BotsGroup.BotZone.NameZone].Remove(player);
                 _playerRoleAndDiff.Remove(player.ProfileId);
             };
