@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Aki.Reflection.Patching;
 using EFT;
+using StayInTarkov.Coop.Matchmaker;
 
 namespace SPTQuestingBots.Patches
 {
@@ -19,7 +20,8 @@ namespace SPTQuestingBots.Patches
         [PatchPostfix]
         private static void PatchPostfix(GameWorld __instance)
         {
-            __instance.GetOrAddComponent<BotLogic.HiveMind.BotHiveMindMonitor>();
+            if(SITMatchmaking.IsServer)
+                __instance.GetOrAddComponent<BotLogic.HiveMind.BotHiveMindMonitor>();
         }
     }
 }

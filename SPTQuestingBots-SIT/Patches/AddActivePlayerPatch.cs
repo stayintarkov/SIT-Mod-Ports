@@ -8,6 +8,7 @@ using Aki.Reflection.Patching;
 using Comfort.Common;
 using EFT;
 using SPTQuestingBots.Controllers;
+using StayInTarkov.Coop.Matchmaker;
 
 namespace SPTQuestingBots.Patches
 {
@@ -19,8 +20,13 @@ namespace SPTQuestingBots.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix()
+        private static void PatchPostfix(Player player)
         {
+            if (!player.IsYourPlayer)
+            {
+                return;
+            }
+            
             Singleton<GameWorld>.Instance.gameObject.AddComponent<Components.LocationData>();
 
             if (ConfigController.Config.BotSpawns.DelayGameStartUntilBotGenFinishes)

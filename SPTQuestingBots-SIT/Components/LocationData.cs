@@ -12,6 +12,7 @@ using HarmonyLib;
 using SPTQuestingBots.Components.Spawning;
 using SPTQuestingBots.Controllers;
 using SPTQuestingBots.Helpers;
+using StayInTarkov.Coop.Matchmaker;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -40,13 +41,13 @@ namespace SPTQuestingBots.Components
 
             UpdateMaxTotalBots();
 
-            if (ConfigController.Config.Questing.Enabled)
+            if (ConfigController.Config.Questing.Enabled && SITMatchmaking.IsServer)
             {
                 Singleton<GameWorld>.Instance.gameObject.AddComponent<BotQuestBuilder>();
                 Singleton<GameWorld>.Instance.gameObject.AddComponent<DebugData>();
             }
 
-            if (ConfigController.Config.BotSpawns.Enabled)
+            if (ConfigController.Config.BotSpawns.Enabled && SITMatchmaking.IsServer)
             {
                 if (ConfigController.Config.BotSpawns.PMCs.Enabled)
                 {
@@ -57,8 +58,8 @@ namespace SPTQuestingBots.Components
                 {
                     Singleton<GameWorld>.Instance.gameObject.AddComponent<Spawning.PScavGenerator>();
                 }
-
-                BotGenerator.RunBotGenerationTasks();
+                if(SITMatchmaking.IsServer)
+                    BotGenerator.RunBotGenerationTasks();
             }
         }
 
