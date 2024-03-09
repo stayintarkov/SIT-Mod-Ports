@@ -106,9 +106,9 @@ namespace ThatsLit.Patches.Vision
                 __instance.Owner.AimingData.SetNextAimingDelay(UnityEngine.Random.Range(0f, 0.15f) * Mathf.Clamp01(__state.angle/15f));
             }
 
-            if (aim is GClass388 g388 && !__instance.Owner.WeaponManager.ShootController.IsAiming)
+            if (aim is BotAiming botAiming && !__instance.Owner.WeaponManager.ShootController.IsAiming)
             {
-                g388.ScatteringData.CurScatering += __instance.Owner.Settings.Current.CurrentMaxScatter * UnityEngine.Random.Range(0f, 0.15f) * Mathf.Clamp01((__state.angle - 30f)/45f);
+                botAiming.ScatteringData.CurScatering += __instance.Owner.Settings.Current.CurrentMaxScatter * UnityEngine.Random.Range(0f, 0.15f) * Mathf.Clamp01((__state.angle - 30f)/45f);
             }
 
 #region BENCHMARK

@@ -6,7 +6,6 @@ using ThatsLit;
 
 [assembly: AssemblyTitle(Title)]
 [assembly: AssemblyDescription(Description)]
-[assembly: AssemblyConfiguration(Configuration)]
 [assembly: AssemblyCompany(Company)]
 [assembly: AssemblyProduct(Product)]
 [assembly: AssemblyCopyright(Copyright)]

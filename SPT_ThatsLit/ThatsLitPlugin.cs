@@ -15,24 +15,19 @@ namespace ThatsLit
     {
         public const string Title = ModName;
         public const string Description = "One step closer to fair gameplay, by giving AIs non-perfect vision and reactions. Because we too deserve grasses, bushes and nights.";
-        public const string Configuration = SPTVersion;
         public const string Company = "";
         public const string Product = ModName;
         public const string Copyright = "Copyright © 2023 BA";
         public const string Trademark = "";
         public const string Culture = "";
 
-        public const int TarkovVersion = 26535;
+        public const int TarkovVersion = 28965;
         public const string EscapeFromTarkov = "EscapeFromTarkov.exe";
         public const string ModName = "That's Lit";
         public const string ModVersion = "1.373.5";
-
-        public const string SPTGUID = "com.spt-aki.core";
-        public const string SPTVersion = "3.7.1";
     }
 
     [BepInPlugin("bastudio.thatslit", ModName, ModVersion)]
-    [BepInDependency(SPTGUID, SPTVersion)]
     [BepInProcess(EscapeFromTarkov)]
     public class ThatsLitPlugin : BaseUnityPlugin
     {
