@@ -291,18 +291,18 @@ namespace LootingBots.Patch.Components
 
                 // Need to manually cleanup item because the ItemOwner on the original object changes. Only ignore if looting was not interrupted
                 CleanupItem(lootTask.Result, item);
-                OnLootTaskEnd(lootTask.Result, BotOwner);
+                OnLootTaskEnd(lootTask.Result);
                 _log.LogDebug($"Net Worth: {Stats.NetLootValue}");
             }
         }
 
-        public void OnLootTaskEnd(bool lootingSuccessful, BotOwner botOwner)
+        public void OnLootTaskEnd(bool lootingSuccessful)
         {
             Destination = Vector3.zero;
             UpdateGridStats();
             BotOwner.AIData.CalcPower();
             LootTaskRunning = false;
-            SAIN.Plugin.SAINInterop.TryResetDecisionsForBot(botOwner);
+            //SAIN.Plugin.SAINInterop.TryResetDecisionsForBot(botOwner);
             logger.LogWarning($"Loot Task Ended, Result: {(lootingSuccessful ? "Success" : "Failure")}");
         }
 

@@ -291,19 +291,7 @@ namespace LootingBots.Patch.Components
                     ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Try Run Net Trans");
                     try
                     {
-                        var task = _inventoryController.TryRunNetworkTransaction(value, null);
-                        if (await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(5))) == task)
-                        {
-                            // Completed within timeout
-                            ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Ran Net Trans");
-                        }
-                        else
-                        {
-                            // Timeout logic
-                            ConsoleScreen.LogError($"{_botOwner.Profile.Info.Nickname} Run Net Trans Timeout");
-                            return false;
-                            // Handle the timeout situation (e.g., retry, log, abort)
-                        }
+                        await _inventoryController.TryRunNetworkTransaction(value, null);
                     }
                     catch (Exception ex)
                     {
