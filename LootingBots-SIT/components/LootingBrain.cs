@@ -113,7 +113,6 @@ namespace LootingBots.Patch.Components
             NonNavigableLootIds = new List<string> { };
             IsPlayerScav = botOwner.Profile.Nickname.Contains(" (");
             ActiveLootCache.Init();
-            SAIN.Plugin.SAINInterop.Init();
         }
 
         /*
@@ -154,17 +153,14 @@ namespace LootingBots.Patch.Components
         {
             if (ActiveContainer)
             {
-                ConsoleScreen.LogWarning($"{BotOwner.Profile.Info.Nickname} starting container loot");
                 StartCoroutine(LootContainer());
             }
             else if (ActiveItem)
             {
-                ConsoleScreen.LogWarning($"{BotOwner.Profile.Info.Nickname} starting item loot");
                 StartCoroutine(LootItem());
             }
             else if (ActiveCorpse)
             {
-                ConsoleScreen.LogWarning($"{BotOwner.Profile.Info.Nickname} starting corpse loot");
                 StartCoroutine(LootCorpse());
             }
         }

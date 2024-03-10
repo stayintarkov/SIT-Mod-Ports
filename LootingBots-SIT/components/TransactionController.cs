@@ -8,6 +8,8 @@ using EFT;
 using EFT.InventoryLogic;
 using EFT.UI;
 
+using JetBrains.Annotations;
+
 using LootingBots.Patch.Util;
 
 using InventoryControllerResultStruct = SOperationResult12345;
@@ -238,27 +240,119 @@ namespace LootingBots.Patch.Components
             }
             return false;
         }
+        
+        // TraderControllerClass.Class2110.method_0
+        public void method_0_2(IResult result)
+        {
+            Callback callback = callback2;
+            if (callback == null)
+            {
+                return;
+            }
+            callback.Invoke(result);
+        }
+        
+        // TraderControllerClass.Class2110.operation
+        public AbstractInventoryOperation operation2;
+        
+        // TraderControllerClass.Class2110.callback
+        public Callback callback2;
+        
+        // TraderControllerClass.Execute
+        public virtual void Execute(AbstractInventoryOperation operation, [CanBeNull] Callback callback)
+        {
+            operation2 = operation;
+            callback2 = callback;
+            if (_inventoryController.vmethod_0(operation2))
+            {
+                operation2.vmethod_0(new Callback(method_0_2), false);
+                return;
+            }
+            operation2.Dispose();
+            Callback callback3 = callback2;
+            if (callback3 == null)
+            {
+                return;
+            }
+            CallbackExtensions.Fail(callback3, string.Format("Can't execute {0}", operation2), 1);
+        }
+        
+        // TraderControllerClass.CanExecute
+        public bool CanExecute(IOperationResult operationResult)
+        {
+            return operationResult != null && operationResult.CanExecute(_inventoryController);
+        }
+        
+        // TraderControllerClass RunNetworkTransaction
+        public void RunNetTrans(IOperationResult operationResult, Callback callback = null)
+        {
+            if (!CanExecute(operationResult) && callback != null)
+            {
+                CallbackExtensions.Fail(callback, "Execution discarded locally");
+            }
+            AbstractInventoryOperation abstractInventoryOperation = _inventoryController.ConvertOperationResultToOperation(operationResult);
+            Execute(abstractInventoryOperation, callback);
+        }
+        
+        // TraderControllerClass.Class2109.method_0
+        public void method_0_1(IResult result)
+        {
+            callbackTask1.SetResult(result);
+            Callback callback = callback1;
+            if (callback == null)
+            {
+                return;
+            }
+            callback.Invoke(result);
+        }
+        
+        // TraderControllerClass.Class2109.callbackTask
+        public TaskCompletionSource<IResult> callbackTask1;
+        
+        // TraderControllerClass.Class2109.callback
+        public Callback callback1;
+        
+        // TraderControllerClass TryRunNetworkTransaction
+        public virtual Task<IResult> TryRunNetTrans(SOperationResult12345 operationResult, Callback callback = null)
+        {
+            callback1 = callback;
+            callbackTask1 = new TaskCompletionSource<IResult>();
+            if (operationResult.Failed)
+            {
+                AsyncExtensions.Fail(callbackTask1, operationResult.Error.ToString(), 0);
+            }
+            else if (operationResult.Value.CanExecute(_inventoryController))
+            {
+                RunNetTrans(operationResult.Value, new Callback(method_0_1));
+            }
+            else
+            {
+                AsyncExtensions.Fail(callbackTask1, "Can not execute", 0);
+                Callback callback2 = callback1;
+                if (callback2 != null)
+                {
+                    callback2.Invoke(new FailedResult("Can't execute 'operationResult.Value.CanExecute()'", 0));
+                }
+            }
+            return callbackTask1.Task;
+        }
 
         /** Moves an item to a specified item address. Supports executing a callback */
         public async Task<bool> MoveItem(MoveAction moveAction)
         {
-            ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Move Item");
             try
             {
                 if (IsLootingInterrupted())
                 {
-                    ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Move Item looting interrupted");
                     return false;
                 }
 
                 if (moveAction.ToMove is Weapon weapon && !(moveAction.ToMove is BulletClass))
                 {
-                    ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Adding extra ammo");
                     AddExtraAmmo(weapon);
                 }
 
                 _log.LogDebug($"Moving item to: {moveAction?.Place?.Container?.ID?.Localized()}");
-                ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Move Item to {moveAction?.Place?.Container?.ID?.Localized()}");
                 var value = InventoryHelperClass.Move(
                     moveAction.ToMove,
                     moveAction.Place,
@@ -268,7 +362,6 @@ namespace LootingBots.Patch.Components
 
                 if (value.Failed)
                 {
-                    ConsoleScreen.LogError($"{_botOwner.Profile.Info.Nickname} Failed to move");
                     _log.LogError(
                         $"Failed to move {moveAction.ToMove.Name.Localized()} to {moveAction.Place.Container.ID.Localized()}"
                     );
@@ -277,33 +370,16 @@ namespace LootingBots.Patch.Components
 
                 if (moveAction.Callback == null)
                 {
-                    ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Sim Player Delay");
-                    try
-                    {
-                        await SimulatePlayerDelay();
-                    }
-                    catch (Exception ex)
-                    {
-                        ConsoleScreen.LogError($"{_botOwner.Profile.Info.Nickname} Sim Player Delay Error: {ex.Message}");
-                        // Consider whether you should continue or return after logging the error.
-                    }
-
-                    ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Try Run Net Trans");
-                    try
-                    {
-                        await _inventoryController.TryRunNetworkTransaction(value, null);
-                    }
-                    catch (Exception ex)
-                    {
-                        ConsoleScreen.LogError($"{_botOwner.Profile.Info.Nickname} Run Net Trans Error: {ex.Message}");
-                    }
+                    await SimulatePlayerDelay();
+                    // await _inventoryController.TryRunNetworkTransaction(value, null);
+                    await TryRunNetTrans(value, null);
                 }
 
                 else
                 {
                     TaskCompletionSource<IResult> promise = new TaskCompletionSource<IResult>();
 
-                    await _inventoryController.TryRunNetworkTransaction(
+                    await TryRunNetTrans(
                         value,
                         new Callback(
                             async (IResult result) =>
@@ -318,20 +394,12 @@ namespace LootingBots.Patch.Components
                         )
                     );
                     
-                    ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Run Net Trans w/ Callback");
-
                     await promise.Task;
                 }
-                ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Ran Net Trans w/ Callback");
                 if (moveAction.OnComplete != null)
                 {
-                    ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Move Action Complete");
                     await SimulatePlayerDelay();
                     await moveAction.OnComplete();
-                }
-                else
-                {
-                    ConsoleScreen.LogError($"{_botOwner.Profile.Info.Nickname} Move Action Incomplete, NULL!");
                 }
             }
             catch (Exception e)

@@ -243,7 +243,7 @@ namespace LootingBots.Patch.Components
 
                 if (result.Succeeded)
                 {
-                    return await _transactionController.TryRunNetworkTransaction(result);
+                    return await _transactionController.TryRunNetTrans(result);
                 }
             }
 
@@ -257,27 +257,21 @@ namespace LootingBots.Patch.Components
         */
         public async Task<bool> TryAddItemsToBot(Item[] items)
         {
-            ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Try Add Items");
             foreach (Item item in items)
             {
                 if (item != null && item.Name != null)
                 {
                     if (LootingBots.UseExamineTime.Value)
                     {
-                        ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Simulate Examine");
                         await SimulateExamineTime(item);
                     }
                     
-                    ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Examine Complete");
-
                     if (_transactionController.IsLootingInterrupted())
                     {
-                        ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Looting Interrupted");
                         UpdateKnownItems();
                         return false;
                     }
                     CurrentItemPrice = _itemAppraiser.GetItemPrice(item);
-                    ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Loot found: {{item.Name.Localized()}} ({{CurrentItemPrice}}\u20bd)");
                     _log.LogInfo($"Loot found: {item.Name.Localized()} ({CurrentItemPrice}₽)");
 
                     // Ignore magazines that a bot cannot actively use
@@ -291,7 +285,6 @@ namespace LootingBots.Patch.Components
                     TransactionController.EquipAction action = GetEquipAction(item);
                     if (action.Swap != null)
                     {
-                        ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Throw And Equip");
                         await _transactionController.ThrowAndEquip(action.Swap);
                         continue;
                     }
@@ -300,7 +293,6 @@ namespace LootingBots.Patch.Components
                         _log.LogDebug("Moving due to GetEquipAction");
                         if (await _transactionController.MoveItem(action.Move))
                         {
-                            ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Move Item");
                             Stats.AddNetValue(CurrentItemPrice);
                         }
                         continue;
@@ -309,7 +301,6 @@ namespace LootingBots.Patch.Components
                     // Check to see if we can equip the item
                     if (AllowedToEquip(item) && await _transactionController.TryEquipItem(item))
                     {
-                        ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Try Equip Item");
                         Stats.AddNetValue(CurrentItemPrice);
                         continue;
                     }
@@ -344,7 +335,6 @@ namespace LootingBots.Patch.Components
                     }
                     if (item is SearchableItemClass)
                     {
-                        ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Searchable Item Class");
                         bool success = await LootNestedItems(item);
 
                         if (!success)
@@ -357,7 +347,6 @@ namespace LootingBots.Patch.Components
                     // Check to see if we can pick up the item
                     if (AllowedToPickup(item) && await _transactionController.TryPickupItem(item))
                     {
-                        ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Try Pickup");
                         Stats.AddNetValue(CurrentItemPrice);
                         UpdateGridStats();
                         continue;
@@ -365,7 +354,6 @@ namespace LootingBots.Patch.Components
                 }
                 else
                 {
-                    ConsoleScreen.LogError($"{_botOwner.Profile.Info.Nickname} Item Was Null");
                     _log.LogDebug("Item was null");
                 }
             }
@@ -902,7 +890,6 @@ namespace LootingBots.Patch.Components
 
         public bool AllowedToPickup(Item lootItem)
         {
-            ConsoleScreen.LogWarning($"{_botOwner.Profile.Info.Nickname} Allowed to pickup? {lootItem.Name}");
             WildSpawnType botType = _botOwner.Profile.Info.Settings.Role;
             bool isPMC = BotTypeUtils.IsPMC(botType);
             bool pickupNotRestricted = isPMC
