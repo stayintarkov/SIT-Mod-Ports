@@ -825,6 +825,48 @@ namespace ThatsLit.Components
             return result;
         }
     }
+    
+    public class GroundZeroScoreCalculator : ScoreCalculator
+    {
+        protected override float MinBaseAmbienceScore => -0.7f;
+        protected override float MaxSunlightScore { get => 0.05f; }
+        protected override float MaxMoonlightScore { get => 0.1f; }
+        protected override float MinAmbienceLum { get => 0.011f; }
+        protected override float MaxAmbienceLum { get => 0.111f; }
+        protected override float ThresholdShine { get => 0.2f; }
+        protected override float ThresholdHigh { get => 0.1f; }
+        protected override float ThresholdHighMid { get => 0.05f; }
+        protected override float ThresholdMid { get => 0.02f; }
+        protected override float ThresholdMidLow { get => 0.01f; }
+        protected override float ThresholdLow { get => 0.005f; }
+        protected override float PixelLumScoreScale { get => 3f; }
+
+        protected override float GetMapAmbienceCoef(string locationId, float time)
+        {
+            float result;
+
+            if (time >= 6 && time < 7.5f) // 0 ~ 0.35f
+                result = 0.35f * GetTimeProgress(time, 6, 7.5f);
+            else if (time >= 7.5f && time < 12f) // 0.5f ~ 1
+                result = 0.5f + 0.5f * GetTimeProgress(time, 7.5f, 12);
+            else if (time >= 12 && time < 15) // 1 ~ 1
+                return 1;
+            else if (time >= 15 && time < 18) // 1 ~ 0.8f
+                return 1f - 0.2f * GetTimeProgress(time, 18, 20);
+            else if (time >= 18 && time < 20) // 1 ~ 0.3f
+                result = 0.8f - 0.4f * GetTimeProgress(time, 18, 20);
+            else if (time >= 20 && time < 21.5f) // 0.3 ~ 0
+                result = 0.3f - 0.3f * GetTimeProgress(time, 20, 21.5f);
+            else if (time >= 22 && time < 24) // 0 ~ 0.1
+                return 0.1f * GetTimeProgress(time, 22, 24);
+            else if (time >= 0 && time < 3) // 0 ~ 0.1
+                return 0.1f;
+            else if (time >= 3 && time < 5) // 0.1 ~ 0
+                result = 0.1f * GetTimeProgress(time, 3, 5);
+            else result = 0;
+            return result;
+        }
+    }
 
     public class NightFactoryScoreCalculator : ScoreCalculator
     {
