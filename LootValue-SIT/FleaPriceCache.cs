@@ -33,10 +33,42 @@ namespace LootValue
 			else
 				return QueryAndTryUpsertPrice(templateId, false);
 		}
+		
+		private static string GetBackendUrl()
+		{
+			string[] args = Environment.GetCommandLineArgs();
+			if (args == null)
+				return null;
+
+			var beUrl = string.Empty;
+            
+			foreach (string arg in args)
+			{
+				if (arg.Contains("BackendUrl"))
+				{
+					string json = arg.Replace("-config=", string.Empty);
+					dynamic result = JsonConvert.DeserializeObject(json);
+					if(result != null)
+						beUrl = result.BackendUrl;
+					break;
+				}
+			}
+            
+			return beUrl;
+		}
 
 		private static string QueryPrice(string templateId)
 		{
-			return RequestHandler.PostJson("/LootValue/GetItemLowestFleaPrice", JsonConvert.SerializeObject(new FleaPriceRequest(templateId)));
+			string backendUrl = GetBackendUrl();
+			bool backendHasTrailing = backendUrl.EndsWith(@"/");
+			if (backendHasTrailing)
+			{
+				return RequestHandler.PostJson("LootValue/GetItemLowestFleaPrice", JsonConvert.SerializeObject(new FleaPriceRequest(templateId)));
+			}
+			else
+			{
+				return RequestHandler.PostJson("/LootValue/GetItemLowestFleaPrice", JsonConvert.SerializeObject(new FleaPriceRequest(templateId)));
+			}
 		}
 
 		private static double? QueryAndTryUpsertPrice(string templateId, bool update)

@@ -15,6 +15,9 @@
 		<Reference Include="BepInEx">
 		  <HintPath>..\References\BepInEx.dll</HintPath>
 		</Reference>
+		<Reference Include="Microsoft.CSharp">
+		  <HintPath>..\References\Microsoft.CSharp.dll</HintPath>
+		</Reference>
 		<Reference Include="StayInTarkov">
 			<HintPath>..\References\StayInTarkov.dll</HintPath>
 		</Reference>
