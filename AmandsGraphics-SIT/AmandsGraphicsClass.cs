@@ -147,6 +147,7 @@ namespace AmandsGraphics
         public void Start()
         {
             sceneLevelSettings.Add("City_Scripts", "---City_ levelsettings ---");
+            sceneLevelSettings.Add("Sandbox_Scripts", "---Sandbox_ levelsettings ---");
             sceneLevelSettings.Add("Laboratory_Scripts", "---Laboratory_levelsettings---");
             sceneLevelSettings.Add("custom_Light", "---Custom_levelsettings---");
             sceneLevelSettings.Add("Factory_Day", "---FactoryDay_levelsettings---");
@@ -202,6 +203,7 @@ namespace AmandsGraphics
             AmandsGraphicsPlugin.MysticalGlow.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.MysticalGlowIntensity.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.StreetsMysticalGlowIntensity.SettingChanged += SettingsUpdated;
+            AmandsGraphicsPlugin.GroundZeroMysticalGlowIntensity.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.CustomsMysticalGlowIntensity.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.LighthouseMysticalGlowIntensity.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.InterchangeMysticalGlowIntensity.SettingChanged += SettingsUpdated;
@@ -226,6 +228,7 @@ namespace AmandsGraphics
             AmandsGraphicsPlugin.SkyColor.SettingChanged += SettingsUpdated;
 
             AmandsGraphicsPlugin.StreetsFogLevel.SettingChanged += SettingsUpdated;
+            AmandsGraphicsPlugin.GroundZeroFogLevel.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.CustomsFogLevel.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.LighthouseFogLevel.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.InterchangeFogLevel.SettingChanged += SettingsUpdated;
@@ -234,6 +237,7 @@ namespace AmandsGraphics
             AmandsGraphicsPlugin.ShorelineFogLevel.SettingChanged += SettingsUpdated;
 
             AmandsGraphicsPlugin.StreetsTonemap.SettingChanged += SettingsUpdated;
+            AmandsGraphicsPlugin.GroundZeroTonemap.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.LabsTonemap.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.CustomsTonemap.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.FactoryTonemap.SettingChanged += SettingsUpdated;
@@ -246,7 +250,9 @@ namespace AmandsGraphics
             AmandsGraphicsPlugin.HideoutTonemap.SettingChanged += SettingsUpdated;
 
             AmandsGraphicsPlugin.StreetsACES.SettingChanged += SettingsUpdated;
+            AmandsGraphicsPlugin.GroundZeroACES.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.StreetsACESS.SettingChanged += SettingsUpdated;
+            AmandsGraphicsPlugin.GroundZeroACESS.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.LabsACES.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.LabsACESS.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.CustomsACES.SettingChanged += SettingsUpdated;
@@ -269,7 +275,9 @@ namespace AmandsGraphics
             AmandsGraphicsPlugin.HideoutACESS.SettingChanged += SettingsUpdated;
 
             AmandsGraphicsPlugin.StreetsFilmic.SettingChanged += SettingsUpdated;
+            AmandsGraphicsPlugin.GroundZeroFilmic.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.StreetsFilmicS.SettingChanged += SettingsUpdated;
+            AmandsGraphicsPlugin.GroundZeroFilmicS.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.LabsFilmic.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.LabsFilmicS.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.CustomsFilmic.SettingChanged += SettingsUpdated;
@@ -813,6 +821,9 @@ namespace AmandsGraphics
                     case "City_Scripts":
                         Traverse.Create(mBOIT_Scattering).Field("ZeroLevel").SetValue(defaultMBOITZeroLevel + AmandsGraphicsPlugin.StreetsFogLevel.Value);
                         break;
+                    case "Sandbox_Scripts":
+                        Traverse.Create(mBOIT_Scattering).Field("ZeroLevel").SetValue(defaultMBOITZeroLevel + AmandsGraphicsPlugin.GroundZeroFogLevel.Value);
+                        break;
                     case "Laboratory_Scripts":
                         break;
                     case "custom_Light":
@@ -1099,6 +1110,17 @@ namespace AmandsGraphics
                             }
                             levelSettings.ZeroLevel = defaultZeroLevel + AmandsGraphicsPlugin.StreetsFogLevel.Value;
                             break;
+                        case "Sandbox_Scripts":
+                            if (AmandsGraphicsPlugin.MysticalGlow.Value == EEnabledFeature.On)
+                            {
+                                levelSettings.SkyColor = Color.white * AmandsGraphicsPlugin.MysticalGlowIntensity.Value * AmandsGraphicsPlugin.GroundZeroMysticalGlowIntensity.Value;
+                            }
+                            else
+                            {
+                                levelSettings.SkyColor = defaultSkyColor;
+                            }
+                            levelSettings.ZeroLevel = defaultZeroLevel + AmandsGraphicsPlugin.GroundZeroFogLevel.Value;
+                            break;
                         case "Laboratory_Scripts":
                             break;
                         case "custom_Light":
@@ -1199,6 +1221,9 @@ namespace AmandsGraphics
                     {
                         case "City_Scripts":
                             levelSettings.ZeroLevel = defaultZeroLevel + AmandsGraphicsPlugin.StreetsFogLevel.Value;
+                            break;
+                        case "Sandbox_Scripts":
+                            levelSettings.ZeroLevel = defaultZeroLevel + AmandsGraphicsPlugin.GroundZeroFogLevel.Value;
                             break;
                         case "Laboratory_Scripts":
                             break;
@@ -1421,6 +1446,10 @@ namespace AmandsGraphics
                         FPSCameraPrismEffects.toneValues = AmandsGraphicsPlugin.StreetsACES.Value;
                         FPSCameraPrismEffects.secondaryToneValues = AmandsGraphicsPlugin.StreetsACESS.Value;
                         break;
+                    case "Sandbox_Scripts":
+                        FPSCameraPrismEffects.toneValues = AmandsGraphicsPlugin.GroundZeroACES.Value;
+                        FPSCameraPrismEffects.secondaryToneValues = AmandsGraphicsPlugin.GroundZeroACESS.Value;
+                        break;
                     case "Laboratory_Scripts":
                         FPSCameraPrismEffects.toneValues = AmandsGraphicsPlugin.LabsACES.Value;
                         FPSCameraPrismEffects.secondaryToneValues = AmandsGraphicsPlugin.LabsACESS.Value;
@@ -1476,6 +1505,10 @@ namespace AmandsGraphics
                         FPSCameraPrismEffects.toneValues = AmandsGraphicsPlugin.StreetsFilmic.Value;
                         FPSCameraPrismEffects.secondaryToneValues = AmandsGraphicsPlugin.StreetsFilmicS.Value;
                         break;
+                    case "Sandbox_Scripts":
+                        FPSCameraPrismEffects.toneValues = AmandsGraphicsPlugin.GroundZeroFilmic.Value;
+                        FPSCameraPrismEffects.secondaryToneValues = AmandsGraphicsPlugin.GroundZeroFilmicS.Value;
+                        break;
                     case "Laboratory_Scripts":
                         FPSCameraPrismEffects.toneValues = AmandsGraphicsPlugin.LabsFilmic.Value;
                         FPSCameraPrismEffects.secondaryToneValues = AmandsGraphicsPlugin.LabsFilmicS.Value;
@@ -1529,6 +1562,9 @@ namespace AmandsGraphics
                 {
                     case "City_Scripts":
                         tonemap = AmandsGraphicsPlugin.StreetsTonemap.Value;
+                        break;
+                    case "Sandbox_Scripts":
+                        tonemap = AmandsGraphicsPlugin.GroundZeroTonemap.Value;
                         break;
                     case "Laboratory_Scripts":
                         tonemap = AmandsGraphicsPlugin.LabsTonemap.Value;
