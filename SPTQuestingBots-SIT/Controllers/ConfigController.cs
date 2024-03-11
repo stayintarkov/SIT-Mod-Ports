@@ -137,11 +137,40 @@ namespace SPTQuestingBots.Controllers
 
             return standardQuests.Concat(customQuests);
         }
+        
+        private static string GetBackendUrl()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            if (args == null)
+                return null;
+
+            var beUrl = string.Empty;
+            
+            foreach (string arg in args)
+            {
+                if (arg.Contains("BackendUrl"))
+                {
+                    string json = arg.Replace("-config=", string.Empty);
+                    dynamic result = JsonConvert.DeserializeObject(json);
+                    if(result != null)
+                        beUrl = result.BackendUrl;
+                    break;
+                }
+            }
+            
+            return beUrl;
+        }
 
         public static string GetJson(string endpoint, string errorMessage)
         {
             string json = null;
             Exception lastException = null;
+
+            string backendUrl = GetBackendUrl();
+            bool backendHasTrailing = backendUrl.EndsWith(@"/");
+            bool endpointHasLeading = endpoint.StartsWith(@"/");
+            if (backendHasTrailing && endpointHasLeading)
+                endpoint = endpoint.Substring(1);
 
             // Sometimes server requests fail, and nobody knows why. If this happens, retry a few times.
             for (int i = 0; i < 5; i++)
