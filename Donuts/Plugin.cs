@@ -901,6 +901,10 @@ namespace Donuts
         {
             get; set;
         }
+        public int SandboxBotLimit
+        {
+            get; set;
+        }
     }
 
     internal class SCAVBotLimitPresets
@@ -938,6 +942,10 @@ namespace Donuts
             get; set;
         }
         public int TarkovStreetsBotLimit
+        {
+            get; set;
+        }
+        public int SandboxBotLimit
         {
             get; set;
         }

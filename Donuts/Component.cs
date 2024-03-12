@@ -221,6 +221,10 @@ namespace Donuts
                     PMCBotLimit = raidFolderSelected.PMCBotLimitPresets.TarkovStreetsBotLimit;
                     SCAVBotLimit = raidFolderSelected.SCAVBotLimitPresets.TarkovStreetsBotLimit;
                     break;
+                case "sandbox":
+                    PMCBotLimit = raidFolderSelected.PMCBotLimitPresets.SandboxBotLimit;
+                    SCAVBotLimit = raidFolderSelected.SCAVBotLimitPresets.SandboxBotLimit;
+                    break;
                 default:
                     PMCBotLimit = 8;
                     SCAVBotLimit = 5;
