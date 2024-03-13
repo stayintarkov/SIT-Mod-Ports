@@ -54,6 +54,7 @@
     <Reference Include="BepInEx">
       <HintPath>..\References\BepInEx.dll</HintPath>
     </Reference>
+    <Reference Include="com.unity.multiplayer-hlapi.Runtime, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="Comfort">
       <HintPath>..\References\Comfort.dll</HintPath>
     </Reference>

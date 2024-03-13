@@ -26,7 +26,7 @@ namespace SPTQuestingBots.Patches
         protected override MethodBase GetTargetMethod()
         {
             Type localGameType = Aki.Reflection.Utils.PatchConstants.LocalGameType;
-            return localGameType.GetMethod("method_18", BindingFlags.NonPublic | BindingFlags.Instance);
+            return localGameType.GetMethod("method_18", BindingFlags.Public | BindingFlags.Instance);
         }
 
         [PatchPostfix]
@@ -161,12 +161,12 @@ namespace SPTQuestingBots.Patches
                 timers.Add(timer);
             }
 
-            FieldInfo bossWavesField = AccessTools.Field(Aki.Reflection.Utils.PatchConstants.LocalGameType, "gclass503_0");
-            GClass503 bossWaves = (GClass503)bossWavesField.GetValue(localGameObj);
+            FieldInfo bossWavesField = AccessTools.Field(Aki.Reflection.Utils.PatchConstants.LocalGameType, "gclass579_0");
+            BossWaveManager bossWaves = (BossWaveManager)bossWavesField.GetValue(localGameObj);
 
             //LoggingController.LogInfo("Found Boss Waves instance");
 
-            FieldInfo bossWavesTimersField = AccessTools.Field(typeof(GClass503), "list_0");
+            FieldInfo bossWavesTimersField = AccessTools.Field(typeof(BossWaveManager), "list_0");
             ICollection bossWavesTimers = (ICollection)bossWavesTimersField.GetValue(bossWaves);
 
             LoggingController.LogInfo("Found Boss Waves timers (" + bossWavesTimers.Count + " timers)");
@@ -176,12 +176,12 @@ namespace SPTQuestingBots.Patches
                 timers.Add(timer);
             }
 
-            FieldInfo questTriggerField = AccessTools.Field(typeof(GClass503), "gclass504_0");
-            GClass504 questTrigger = (GClass504)questTriggerField.GetValue(bossWaves);
+            FieldInfo questTriggerField = AccessTools.Field(typeof(BossWaveManager), "gclass580_0");
+            GClass580 questTrigger = (GClass580)questTriggerField.GetValue(bossWaves);
 
             //LoggingController.LogInfo("Found Boss Waves Quest Trigger instance");
 
-            FieldInfo questTriggerTimerField = AccessTools.Field(typeof(GClass504), "ginterface8_0");
+            FieldInfo questTriggerTimerField = AccessTools.Field(typeof(GClass580), "ginterface13_0");
             object questTriggerTimer = questTriggerTimerField.GetValue(questTrigger);
 
             if (questTriggerTimer != null)

@@ -20,7 +20,7 @@ namespace SPTQuestingBots.Patches
         [PatchPostfix]
         private static void PatchPostfix(GameWorld __instance)
         {
-            if(SITMatchmaking.IsServer)
+            if (SITMatchmaking.IsServer || SITMatchmaking.IsSinglePlayer)
                 __instance.GetOrAddComponent<BotLogic.HiveMind.BotHiveMindMonitor>();
         }
     }
