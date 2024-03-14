@@ -332,7 +332,7 @@ The third is marked as the ultimate color. Anything over 10000 rubles would be w
 
     internal class LootValueItemViewOnClickPatch : ModulePatch
     {
-        protected override MethodBase GetTargetMethod() => typeof(GridItemView).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.NonPublic);
+        protected override MethodBase GetTargetMethod() => typeof(GridItemView).GetMethod("OnClick", BindingFlags.Instance | BindingFlags.Public);
 
         private static HashSet<string> itemSells = new HashSet<string>();
 
@@ -492,7 +492,12 @@ The third is marked as the ultimate color. Anything over 10000 rubles would be w
 
     internal class LootValueShowTooltipPatch : ModulePatch
     {
-        protected override MethodBase GetTargetMethod() => typeof(SimpleTooltip).GetMethod("Show", BindingFlags.Instance | BindingFlags.Public);
+        protected override MethodBase GetTargetMethod()
+        {
+            Type[] parameterTypes = new Type[] { typeof(string), typeof(Vector2?), typeof(float), typeof(float?), typeof(bool) };
+            return typeof(SimpleTooltip).GetMethod("Show", BindingFlags.Instance | BindingFlags.Public, null, parameterTypes, null);
+        }
+
 
         [PatchPrefix]
         private static void Prefix(ref string text, ref float delay, SimpleTooltip __instance)

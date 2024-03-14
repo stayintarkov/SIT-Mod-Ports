@@ -11,9 +11,9 @@ using UnityEngine;
 
 using GridClass = StashGrid;
 using GridClassEx = GridContainer;
-using GridManagerClass = GOperationResult17;
-using SortResultStruct = SOperationResult12<GOperationResult17>;
-using GridItemClass = GItem10;
+using GridManagerClass = GOperationResult16;
+using SortResultStruct = SOperationResult12<GOperationResult16>;
+using GridItemClass = GItem8;
 using ItemAddressExClass = GridItemAddress;
 using SortErrorClass = GInventoryError18;
 using GridCacheClass = GClass1390;

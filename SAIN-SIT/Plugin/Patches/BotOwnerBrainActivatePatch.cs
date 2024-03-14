@@ -9,7 +9,7 @@ namespace SAIN.Plugin.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(BotOwner).GetMethod("method_10", BindingFlags.NonPublic | BindingFlags.Instance);
+            return typeof(BotOwner).GetMethod("method_10", BindingFlags.Public | BindingFlags.Instance);
         }
 
         [PatchPostfix]

@@ -4,6 +4,7 @@
 		<TargetFramework>net472</TargetFramework>
 		<AssemblyName>LootValue</AssemblyName>
 		<Version>1.2.2</Version>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>

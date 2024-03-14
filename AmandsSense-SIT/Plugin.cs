@@ -273,7 +273,7 @@ namespace AmandsSense
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(PrismEffects).GetMethod("OnEnable", BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(PrismEffects).GetMethod("OnEnable", BindingFlags.Instance | BindingFlags.Public);
         }
         [PatchPostfix]
         private static void PatchPostFix(ref PrismEffects __instance)

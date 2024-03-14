@@ -18,7 +18,7 @@ namespace SPTQuestingBots.BehaviorExtensions
     public abstract class CustomLogicDelayedUpdate : CustomLogic
     {
         protected BotLogic.Objective.BotObjectiveManager ObjectiveManager { get; private set; }
-        protected GClass134 baseAction { get; private set; } = null;
+        protected AbstractCreateNode baseAction { get; private set; } = null;
         protected static int updateInterval { get; private set; } = 100;
         
         private Stopwatch updateTimer = Stopwatch.StartNew();
@@ -66,7 +66,7 @@ namespace SPTQuestingBots.BehaviorExtensions
             actionElapsedTime.Restart();
         }
 
-        public void SetBaseAction(GClass134 _baseAction)
+        public void SetBaseAction(AbstractCreateNode _baseAction)
         {
             baseAction = _baseAction;
             baseAction.Awake();

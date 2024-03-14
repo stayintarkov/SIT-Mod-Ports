@@ -30,7 +30,7 @@ namespace SAIN
         public const string Trademark = "";
         public const string Culture = "";
 
-        public const int TarkovVersion = 28965;
+        public const int TarkovVersion = 29197;
 
         public const string EscapeFromTarkov = "EscapeFromTarkov.exe";
 

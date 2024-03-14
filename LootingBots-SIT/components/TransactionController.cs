@@ -12,7 +12,7 @@ using JetBrains.Annotations;
 
 using LootingBots.Patch.Util;
 
-using InventoryControllerResultStruct = SOperationResult12345;
+using InventoryControllerResultStruct = SOperationResult;
 using InventoryHelperClass = ItemMovementHandler;
 using GridClassEx = GridContainer;
 using GridCacheClass = GClass1390;
@@ -313,7 +313,7 @@ namespace LootingBots.Patch.Components
         public Callback callback1;
         
         // TraderControllerClass TryRunNetworkTransaction
-        public virtual Task<IResult> TryRunNetTrans(SOperationResult12345 operationResult, Callback callback = null)
+        public virtual Task<IResult> TryRunNetTrans(SOperationResult operationResult, Callback callback = null)
         {
             callback1 = callback;
             callbackTask1 = new TaskCompletionSource<IResult>();
