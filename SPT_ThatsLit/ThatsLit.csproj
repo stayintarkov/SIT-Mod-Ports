@@ -156,4 +156,8 @@
 
     <Message Text="Copied build files" Importance="High" />
   </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy &quot;F:\Gaming\SITDev\SIT-Mod-Ports\SPT_ThatsLit\bin\Release\net472\ThatsLit-Release.dll&quot; &quot;F:\Gaming\SITDev\SIT-Mod-Ports\- Plugins\&quot; /y " />
+  </Target>
 </Project>
