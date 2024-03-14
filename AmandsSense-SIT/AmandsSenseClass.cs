@@ -26,8 +26,8 @@ namespace AmandsSense
     {
         public static LocalPlayer localPlayer;
 
-        public static LayerMask SphereInteractiveLayerMask = LayerMask.GetMask("Interactive");
-        public static LayerMask SphereDeadbodyLayerMask = LayerMask.GetMask("Deadbody");
+        public static LayerMask SphereInteractiveLayerMask;
+        public static LayerMask SphereDeadbodyLayerMask;
 
         public static Dictionary<string, Sprite> LoadedSprites = new Dictionary<string, Sprite>();
         public static Dictionary<string, AudioClip> LoadedAudioClips = new Dictionary<string, AudioClip>();
@@ -62,6 +62,9 @@ namespace AmandsSense
             onItemsSensesAdded += ItemsSensesAddedMethod;
             onItemsSensesRemove += ItemsSensesRemoveMethod;
             onContainerSensesAdded += ContainerSensesAddedMethod;
+            SphereInteractiveLayerMask = LayerMask.GetMask("Interactive");
+            SphereDeadbodyLayerMask = LayerMask.GetMask("Deadbody");
+            ;
         }
         public void ItemsSensesAddedMethod(string Id, string TemplateId, bool CanSellOnRagfair, Vector3 position, ESenseItemType SenseItemType)
         {

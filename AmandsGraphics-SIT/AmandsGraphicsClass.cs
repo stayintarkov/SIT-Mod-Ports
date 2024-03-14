@@ -70,9 +70,9 @@ namespace AmandsGraphics
         private static float OpticDOFFocusDistanceAnimation;
         private static RaycastHit hit;
         private static RaycastHit foliageHit;
-        private static LayerMask LowLayerMask = LayerMask.GetMask("Terrain", "LowPolyCollider", "HitCollider");
-        private static LayerMask HighLayerMask = LayerMask.GetMask("Terrain", "HighPolyCollider", "HitCollider");
-        private static LayerMask FoliageLayerMask = LayerMask.GetMask("Terrain", "HighPolyCollider", "HitCollider", "Foliage");
+        private static LayerMask LowLayerMask;
+        private static LayerMask HighLayerMask;
+        private static LayerMask FoliageLayerMask;
         private static Transform TargetCollider;
         private static Vector3 TargetLocal;
         private static AnimationCurve ApertureAnimationCurve;
@@ -137,6 +137,7 @@ namespace AmandsGraphics
         private static AnimationCurve NVGAmbientContrast;
         private static AnimationCurve defaultAmbientBrightness;
         private static float defaultLightIntensity;
+        private static int hitColliderLayer;
 
         private static Dictionary<string, string> sceneLevelSettings = new Dictionary<string, string>();
 
@@ -158,6 +159,12 @@ namespace AmandsGraphics
             sceneLevelSettings.Add("Reserve_Base_DesignStuff", "---Reserve_levelsettings---");
             sceneLevelSettings.Add("shoreline_scripts", "---ShoreLine_levelsettings---");
             sceneLevelSettings.Add("default", "!settings");
+
+            // stops unity from FREAKING OUT
+            hitColliderLayer = LayerMask.NameToLayer("HitCollider");
+            LowLayerMask = LayerMask.GetMask("Terrain", "LowPolyCollider", "HitCollider");
+            HighLayerMask = LayerMask.GetMask("Terrain", "HighPolyCollider", "HitCollider");
+            FoliageLayerMask = LayerMask.GetMask("Terrain", "HighPolyCollider", "HitCollider", "Foliage");
 
             AmandsGraphicsPlugin.MotionBlur.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.MotionBlurSampleCount.SettingChanged += SettingsUpdated;
@@ -478,7 +485,7 @@ namespace AmandsGraphics
                             if (Physics.Raycast(OpticCamera.transform.position, OpticCamera.transform.forward, out hit, AmandsGraphicsPlugin.OpticDOFRaycastDistance.Value, HighLayerMask, QueryTriggerInteraction.Ignore))
                             {
                                 OpticDOFFocusDistance = hit.distance;
-                                if (hit.distance > 2f && hit.collider.gameObject.layer == LayerMask.NameToLayer("HitCollider"))
+                                if (hit.distance > 2f && hit.collider.gameObject.layer == hitColliderLayer)
                                 {
                                     TargetCollider = hit.collider.transform;
                                     TargetLocal = TargetCollider.InverseTransformPoint(hit.point);
@@ -505,7 +512,7 @@ namespace AmandsGraphics
                                         case "Foliage":
                                             if (Physics.Raycast(hit.point, OpticCamera.transform.forward, out foliageHit, AmandsGraphicsPlugin.OpticDOFRaycastDistance.Value - hit.distance, HighLayerMask, QueryTriggerInteraction.Ignore))
                                             {
-                                                if (foliageHit.collider.gameObject.layer == LayerMask.NameToLayer("HitCollider"))
+                                                if (foliageHit.collider.gameObject.layer == hitColliderLayer)
                                                 {
                                                     TargetCollider = foliageHit.collider.transform;
                                                     TargetLocal = TargetCollider.InverseTransformPoint(foliageHit.point);
