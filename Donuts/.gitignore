@@ -10,18 +10,6 @@
 *.userosscache
 *.sln.docstates
 
-# References folder
-Ref/
-References/
-
-# Idea folder
-.idea/
-
-- Plugins/*
-
-# Unfinished mods
-Donuts-SIT/
-
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -373,4 +361,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/References

@@ -21,7 +21,7 @@ namespace ThatsLit
         public const string Trademark = "";
         public const string Culture = "";
 
-        public const int TarkovVersion = 28965;
+        public const int TarkovVersion = 29197;
         public const string EscapeFromTarkov = "EscapeFromTarkov.exe";
         public const string ModName = "That's Lit";
         public const string ModVersion = "1.373.5";

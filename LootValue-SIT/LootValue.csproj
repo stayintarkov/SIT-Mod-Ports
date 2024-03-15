@@ -4,6 +4,7 @@
 		<TargetFramework>net472</TargetFramework>
 		<AssemblyName>LootValue</AssemblyName>
 		<Version>1.2.2</Version>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -38,5 +39,9 @@
 		</Reference>
 
 	</ItemGroup>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="copy &quot;F:\Gaming\SITDev\SIT-Mod-Ports\LootValue-SIT\bin\Release\net472\LootValue.dll&quot; &quot;F:\Gaming\SITDev\SIT-Mod-Ports\- Plugins\&quot; /y " />
+	</Target>
 
 </Project>

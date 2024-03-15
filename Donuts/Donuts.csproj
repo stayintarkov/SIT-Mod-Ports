@@ -4,21 +4,22 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C3C9EBDF-AF8A-4E59-B18F-E76FAE66001C}</ProjectGuid>
+    <ProjectGuid>{967E5737-8917-4C2B-A0A4-B2B553498462}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DrakiaXYZ.BigBrain</RootNamespace>
-    <AssemblyName>DrakiaXYZ-BigBrain</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <RootNamespace>dvize.Donuts</RootNamespace>
+    <AssemblyName>dvize.Donuts</AssemblyName>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -30,15 +31,34 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugType>portable</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>portable</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy DrakiaXYZ-BigBrain.dll "F:\Gaming\SITDev\SIT-Mod-Ports\- Plugins\" /y </PostBuildEvent>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>copy dvize.Donuts.dll "F:\Gaming\SITDev\SIT-Mod-Ports\- Plugins\" /y </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>..\References\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Aki.Build">
-      <HintPath>..\References\Aki.Build.dll</HintPath>
     </Reference>
     <Reference Include="Aki.Common">
       <HintPath>..\References\Aki.Common.dll</HintPath>
@@ -55,8 +75,20 @@
     <Reference Include="Comfort">
       <HintPath>..\References\Comfort.dll</HintPath>
     </Reference>
-    <Reference Include="Comfort.Unity">
-      <HintPath>..\References\Comfort.Unity.dll</HintPath>
+    <Reference Include="DissonanceVoip">
+      <HintPath>..\References\DissonanceVoip.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTween">
+      <HintPath>..\References\DOTween.dll</HintPath>
+    </Reference>
+    <Reference Include="DOTween.Modules">
+      <HintPath>..\References\DOTween.Modules.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\References\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="StayInTarkov">
+      <HintPath>..\References\StayInTarkov.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -75,40 +107,40 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="UnityEngine.IMGUIModule">
       <HintPath>..\References\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>..\References\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="UnityEngine.TextCoreModule">
+      <HintPath>..\References\UnityEngine.TextCoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>..\References\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\References\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>..\References\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BigBrainPlugin.cs" />
-    <Compile Include="Brains\BrainManager.cs" />
-    <Compile Include="Brains\CustomBrain.cs" />
-    <Compile Include="Brains\CustomLayer.cs" />
-    <Compile Include="Brains\CustomLogic.cs" />
-    <Compile Include="Internal\CustomLayerWrapper.cs" />
-    <Compile Include="Internal\CustomLogicWrapper.cs" />
-    <None Include="LICENSE" />
-    <Compile Include="Patches\BotAgentUpdatePatch.cs" />
-    <Compile Include="Patches\BotBaseBrainActivateLayerPatch.cs" />
-    <Compile Include="Patches\BotBaseBrainActivatePatch.cs" />
-    <Compile Include="Patches\BotBaseBrainAddLayerPatch.cs" />
-    <Compile Include="Patches\BotBaseBrainUpdatePatch.cs" />
-    <Compile Include="Patches\BotBrainCreateLogicNodePatch.cs" />
+    <Compile Include="DependencyChecker.cs" />
+    <Compile Include="patches\PatchBodySound.cs" />
+    <Compile Include="patches\PatchStandbyTeleport.cs" />
+    <Compile Include="patches\MatchEndPlayerDisposePatch.cs" />
+    <Compile Include="Component.cs" />
+    <Compile Include="ConfigurationManagerAttributes.cs" />
+    <Compile Include="Plugin.cs" />
+    <Compile Include="ProfilePreparationComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils.cs" />
-    <Compile Include="VersionChecker\TarkovVersion.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <None Include="VersionChecker\setbuild.ps1" />
+    <None Include="patterns\CustomsPMC.json" />
+    <None Include="patterns\CustomsScav.json" />
+    <None Include="patterns\ReservePMC.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

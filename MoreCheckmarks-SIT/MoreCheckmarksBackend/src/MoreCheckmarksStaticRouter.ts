@@ -20,7 +20,7 @@ import { ILocaleBase } from "@spt-aki/models/spt/server/ILocaleBase";
 class Mod implements IPreAkiLoadMod
 {
     protected questConfig: IQuestConfig;
-	
+
     public preAkiLoad(container: DependencyContainer): void {
         const logger = container.resolve<ILogger>("WinstonLogger");
         const dynamicRouterModService = container.resolve<DynamicRouterModService>("DynamicRouterModService");
@@ -40,14 +40,14 @@ class Mod implements IPreAkiLoadMod
             [
                 {
                     url: "/MoreCheckmarksRoutes/quests",
-                    action: (url, info, sessionID, output) => 
+                    action: (url, info, sessionID, output) =>
                     {
                         logger.info("MoreCheckmarks making quest data request");
 						const quests: IQuest[] = [];
 						const allQuests = questHelper.getQuestsFromDb();
 						//const allQuests = databaseServer.getTables().templates.quests;
 						const profile: IPmcData = profileHelper.getPmcProfile(sessionID);
-						
+
 						if(profile && profile.Quests)
 						{
 							for (const quest of allQuests)
@@ -57,7 +57,7 @@ class Mod implements IPreAkiLoadMod
 								{
 									continue;
 								}
-								
+
 								// Skip if already complete or can't complete
 								const questStatus = questHelper.getQuestStatus(profile, quest._id);
 								/*
@@ -76,7 +76,7 @@ class Mod implements IPreAkiLoadMod
 								{
 									continue;
 								}
-								
+
 								quests.push(quest);
 							}
 							logger.info("Got quests");
@@ -85,22 +85,22 @@ class Mod implements IPreAkiLoadMod
 						{
 							logger.info("Unable to fetch quests for MoreCheckmarks");
 						}
-						
+
 						return JSON.stringify(quests);
                     }
                 },
                 {
                     url: "/MoreCheckmarksRoutes/assorts",
-                    action: (url, info, sessionID, output) => 
+                    action: (url, info, sessionID, output) =>
                     {
                         logger.info("MoreCheckmarks making trader assort data request");
 						const assorts: ITraderAssort[] = [];
-						
+
 						if(databaseServer && databaseServer.getTables())
 						{
 							if(Traders && traderHelper)
 							{
-								for (const value of Object.values(Traders)) 
+								for (const value of Object.values(Traders))
 								{
 									if(value == "579dc571d53a0658a154fbec" && fenceService.getRawFenceAssorts())
 									{
@@ -117,16 +117,16 @@ class Mod implements IPreAkiLoadMod
 								logger.info("Unable to fetch assorts for MoreCheckmarks");
 							}
 						}
-						
+
 						return JSON.stringify(assorts);
                     }
                 },
                 {
                     url: "/MoreCheckmarksRoutes/items",
-                    action: (url, info, sessionID, output) => 
+                    action: (url, info, sessionID, output) =>
                     {
                         logger.info("MoreCheckmarks making item data request");
-						
+
 						const items: Record<string, ITemplateItem> = {};
 						if(databaseServer && databaseServer.getTables() && databaseServer.getTables().templates && databaseServer.getTables().templates.items)
 						{
@@ -140,10 +140,10 @@ class Mod implements IPreAkiLoadMod
                 },
                 {
                     url: "/MoreCheckmarksRoutes/locales",
-                    action: (url, info, sessionID, output) => 
+                    action: (url, info, sessionID, output) =>
                     {
                         logger.info("MoreCheckmarks making locale request");
-						
+
 						const locales: ILocaleBase = {};
 						if(databaseServer && databaseServer.getTables() && databaseServer.getTables().locales)
 						{
@@ -154,13 +154,30 @@ class Mod implements IPreAkiLoadMod
 							return JSON.stringify(locales);
 						}
                     }
+                },
+				{
+                    url: "/MoreCheckmarksRoutes/productions",
+                    action: (url, info, sessionID, output) =>
+                    {
+                        logger.info("MoreCheckmarks making productions request");
+
+						const production: IHideoutProduction = {};
+						if(databaseServer && databaseServer.getTables() && databaseServer.getTables().hideout && databaseServer.getTables().hideout.production)
+						{
+							return JSON.stringify(databaseServer.getTables().hideout.production);
+						}
+						else
+						{
+							return JSON.stringify(production);
+						}
+                    }
                 }
             ],
             "custom-static-MoreCheckmarksRoutes"
         );
-        
+
     }
-	
+
     protected questIsForOtherSide(playerSide: string, questId: string): boolean
     {
         const isUsec = playerSide.toLowerCase() === "usec";
