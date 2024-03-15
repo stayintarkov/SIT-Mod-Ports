@@ -27,7 +27,7 @@ using Comfort.Common;
 // This returns an instance of GClass2805 which has a list field "Actions" containing all available actions of type GClass2804
 // GClass2804.Name will be directly used as the string that will be displayed in the list, so we set it to a TMPro string with correct color and bold
 using InteractionController = GetActionsClass;
-using InteractionInstance = InteractionState1;
+using InteractionInstance = InteractionStates;
 using Action = Action1;
 using Quest0 = Quest;
 using QuestTemplate = RawQuestClass;
@@ -770,7 +770,7 @@ namespace MoreCheckmarks
             harmony.PatchAll();
 
             // Manual patch
-            MethodInfo profileSelectorOriginal = ProfileSelector.GetMethod("method_0", BindingFlags.NonPublic | BindingFlags.Instance);
+            MethodInfo profileSelectorOriginal = ProfileSelector.GetMethod("method_0", BindingFlags.Public | BindingFlags.Instance);
             MethodInfo profileSelectorPostfix = typeof(ProfileSelectionPatch).GetMethod("Postfix", BindingFlags.NonPublic | BindingFlags.Static);
 
             harmony.Patch(profileSelectorOriginal, null, new HarmonyMethod(profileSelectorPostfix));

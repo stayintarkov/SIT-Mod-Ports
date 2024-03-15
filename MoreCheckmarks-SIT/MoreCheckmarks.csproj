@@ -31,6 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>copy MoreCheckmarks.dll "F:\Gaming\SITDev\SIT-Mod-Ports\- Plugins\" /y </PostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="MoreCheckmarks.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
