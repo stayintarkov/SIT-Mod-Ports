@@ -41,13 +41,13 @@ namespace SPTQuestingBots.Components
 
             UpdateMaxTotalBots();
 
-            if (ConfigController.Config.Questing.Enabled && SITMatchmaking.IsServer)
+            if (ConfigController.Config.Questing.Enabled && (SITMatchmaking.IsServer || SITMatchmaking.IsSinglePlayer))
             {
                 Singleton<GameWorld>.Instance.gameObject.AddComponent<BotQuestBuilder>();
                 Singleton<GameWorld>.Instance.gameObject.AddComponent<DebugData>();
             }
 
-            if (ConfigController.Config.BotSpawns.Enabled && SITMatchmaking.IsServer)
+            if (ConfigController.Config.BotSpawns.Enabled && (SITMatchmaking.IsServer || SITMatchmaking.IsSinglePlayer))
             {
                 if (ConfigController.Config.BotSpawns.PMCs.Enabled)
                 {
@@ -58,7 +58,7 @@ namespace SPTQuestingBots.Components
                 {
                     Singleton<GameWorld>.Instance.gameObject.AddComponent<Spawning.PScavGenerator>();
                 }
-                if(SITMatchmaking.IsServer)
+                if (SITMatchmaking.IsServer || SITMatchmaking.IsSinglePlayer)
                     BotGenerator.RunBotGenerationTasks();
             }
         }

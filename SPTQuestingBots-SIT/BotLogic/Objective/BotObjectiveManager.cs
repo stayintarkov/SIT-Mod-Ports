@@ -152,6 +152,11 @@ namespace SPTQuestingBots.BotLogic.Objective
 
         private void Update()
         {
+            if (Singleton<GameWorld>.Instance.GetComponent<Components.BotQuestBuilder>() == null)
+            {
+                return;
+            }
+
             if (!Singleton<GameWorld>.Instance.GetComponent<Components.BotQuestBuilder>().HaveQuestsBeenBuilt)
             {
                 return;
