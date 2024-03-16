@@ -31,7 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy DrakiaXYZ-Waypoints.dll "F:\Gaming\SITDev\SIT-Mod-Ports\- Plugins\" /y </PostBuildEvent>
+    <PostBuildEvent>copy "DrakiaXYZ-Waypoints.dll" "$(SolutionDir)- Plugins\" /y </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">

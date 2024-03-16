@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy SPTQuestingBots.dll "F:\Gaming\SITDev\SIT-Mod-Ports\- Plugins\" /y </PostBuildEvent>
+    <PostBuildEvent>copy "SPTQuestingBots.dll" "$(SolutionDir)- Plugins\" /y </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

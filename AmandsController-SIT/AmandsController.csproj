@@ -142,6 +142,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>COPY "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Ref\plugins"</PostBuildEvent>
+    <PostBuildEvent>copy "AmandsController.dll" "$(SolutionDir)- Plugins\" /y </PostBuildEvent>
   </PropertyGroup>
 </Project>

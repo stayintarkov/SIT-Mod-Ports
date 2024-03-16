@@ -462,7 +462,7 @@ namespace LateToTheParty.Controllers
             }
 
             // Ensure there are context menu options for the door
-            InteractionState1 availableActions = GetActionsClass.GetAvailableActions(gamePlayerOwner, interactiveObject);
+            InteractionStates availableActions = GetActionsClass.GetAvailableActions(gamePlayerOwner, interactiveObject);
             if ((availableActions == null) || (availableActions.Actions.Count == 0))
             {
                 if (logResult) LoggingController.LogInfo("Searching for valid interactive objects...interactive object " + interactiveObject.Id + " has no interaction options.");

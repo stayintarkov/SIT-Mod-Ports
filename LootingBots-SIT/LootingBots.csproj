@@ -105,6 +105,6 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy skwizzy.LootingBots.dll "F:\Gaming\SITDev\SIT-Mod-Ports\- Plugins\" /y </PostBuildEvent>
+    <PostBuildEvent>copy "skwizzy.LootingBots.dll" "$(SolutionDir)- Plugins\" /y </PostBuildEvent>
   </PropertyGroup>
 </Project>

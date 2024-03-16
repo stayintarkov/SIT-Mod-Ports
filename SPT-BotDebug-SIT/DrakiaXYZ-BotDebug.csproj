@@ -54,7 +54,7 @@
 		<LangVersion>7.3</LangVersion>
 	</PropertyGroup>
 	<PropertyGroup>
-	  <PostBuildEvent>copy DrakiaXYZ-BotDebug.dll "F:\Gaming\SITDev\SIT-Mod-Ports\- Plugins\" /y </PostBuildEvent>
+	  <PostBuildEvent>copy "DrakiaXYZ-BotDebug.dll" "$(SolutionDir)- Plugins\" /y </PostBuildEvent>
 	</PropertyGroup>
 	<ItemGroup>
 		<Reference Include="DrakiaXYZ-BigBrain">

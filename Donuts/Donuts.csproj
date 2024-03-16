@@ -54,7 +54,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy dvize.Donuts.dll "F:\Gaming\SITDev\SIT-Mod-Ports\- Plugins\" /y </PostBuildEvent>
+    <PostBuildEvent>copy "dvize.Donuts.dll" "$(SolutionDir)- Plugins\" /y </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

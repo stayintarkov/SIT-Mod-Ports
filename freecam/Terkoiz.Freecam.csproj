@@ -46,7 +46,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy &quot;F:\Gaming\SITDev\SIT-Mod-Ports\freecam\bin\Release\net472\Terkoiz.Freecam.dll&quot; &quot;F:\Gaming\SITDev\SIT-Mod-Ports\- Plugins\&quot; /y " />
+    <Exec Command="copy &quot;$(SolutionDir)\freecam\bin\release\net472\Terkoiz.Freecam.dll&quot; &quot;$(SolutionDir)- Plugins\&quot; /y " />
   </Target>
 
 </Project>

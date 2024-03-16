@@ -43,7 +43,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy &quot;F:\Gaming\SITDev\SIT-Mod-Ports\SPT-CWX_DebuggingTool-master\bin\Release\net472\CWX_DebuggingTool.dll&quot; &quot;F:\Gaming\SITDev\SIT-Mod-Ports\- Plugins\&quot; /y " />
+    <Exec Command="copy &quot;$(SolutionDir)\SPT-CWX_DebuggingTool-master\bin\release\net472\CWX_DebuggingTool.dll&quot; &quot;$(SolutionDir)- Plugins\&quot; /y " />
   </Target>
 
 </Project>
