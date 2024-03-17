@@ -240,7 +240,7 @@ namespace LootingBots.Patch.Components
             }
             return false;
         }
-        
+        /*
         // TraderControllerClass.Class2110.method_0
         public void method_0_2(IResult result)
         {
@@ -336,6 +336,7 @@ namespace LootingBots.Patch.Components
             }
             return callbackTask1.Task;
         }
+        */
 
         /** Moves an item to a specified item address. Supports executing a callback */
         public async Task<bool> MoveItem(MoveAction moveAction)
@@ -371,15 +372,16 @@ namespace LootingBots.Patch.Components
                 if (moveAction.Callback == null)
                 {
                     await SimulatePlayerDelay();
-                    // await _inventoryController.TryRunNetworkTransaction(value, null);
-                    await TryRunNetTrans(value, null);
+                     await _inventoryController.TryRunNetworkTransaction(value, null);
+                    //await TryRunNetTrans(value, null);
                 }
 
                 else
                 {
                     TaskCompletionSource<IResult> promise = new TaskCompletionSource<IResult>();
 
-                    await TryRunNetTrans(
+                    //await TryRunNetTrans(
+                    await TryRunNetworkTransaction(
                         value,
                         new Callback(
                             async (IResult result) =>

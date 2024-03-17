@@ -243,7 +243,8 @@ namespace LootingBots.Patch.Components
 
                 if (result.Succeeded)
                 {
-                    return await _transactionController.TryRunNetTrans(result);
+                    //return await _transactionController.TryRunNetTrans(result);
+                    return await _transactionController.TryRunNetworkTransaction(result);
                 }
             }
 
