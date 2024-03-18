@@ -97,9 +97,9 @@ namespace SPTQuestingBots.Controllers
             return _templates.Templates;
         }
 
-        public static IEnumerable<QuestQB> GetCustomQuests(string locationID)
+        public static IEnumerable<Quest0> GetCustomQuests(string locationID)
         {
-            QuestQB[] standardQuests = new QuestQB[0];
+            Quest0[] standardQuests = new Quest0[0];
             string filename = GetLoggingPath() + "..\\quests\\standard\\" + locationID + ".json";
             if (File.Exists(filename))
             {
@@ -117,7 +117,7 @@ namespace SPTQuestingBots.Controllers
                 }
             }
 
-            QuestQB[] customQuests = new QuestQB[0];
+            Quest0[] customQuests = new Quest0[0];
             filename = GetLoggingPath() + "..\\quests\\custom\\" + locationID + ".json";
             if (File.Exists(filename))
             {
@@ -165,7 +165,7 @@ namespace SPTQuestingBots.Controllers
         {
             string json = null;
             Exception lastException = null;
-
+            
             string backendUrl = GetBackendUrl();
             bool backendHasTrailing = backendUrl.EndsWith(@"/");
             bool endpointHasLeading = endpoint.StartsWith(@"/");

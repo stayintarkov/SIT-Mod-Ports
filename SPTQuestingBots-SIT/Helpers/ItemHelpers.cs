@@ -14,19 +14,50 @@ namespace SPTQuestingBots.Helpers
 {
     public static class ItemHelpers
     {
-        public static InventoryController GetInventoryController(this BotOwner bot)
+        public static InventoryControllerClass GetInventoryController(this BotOwner bot)
         {
             Type playerType = typeof(Player);
 
             FieldInfo inventoryControllerField = playerType.GetField("_inventoryController", BindingFlags.NonPublic | BindingFlags.Instance);
-            return (InventoryController)inventoryControllerField.GetValue(bot.GetPlayer);
+            return (InventoryControllerClass)inventoryControllerField.GetValue(bot.GetPlayer);
+        }
+
+        public static float HearingMultiplier(this BotOwner botOwner)
+        {
+            InventoryControllerClass inventoryControllerClass = GetInventoryController(botOwner);
+
+            Item headset = inventoryControllerClass.Inventory.Equipment.GetSlot(EquipmentSlot.Earpiece).ContainedItem;
+            Item helmet = inventoryControllerClass.Inventory.Equipment.GetSlot(EquipmentSlot.Headwear).ContainedItem;
+            
+            float multiplier = 1;
+
+            if (headset != null)
+            {
+                //LoggingController.LogInfo(botOwner.GetText() + " is wearing a headset");
+                multiplier *= ConfigController.Config.Questing.BotQuestingRequirements.HearingSensor.LoudnessMultiplierHeadset;
+            }
+
+            GClass2536 helmetTemplate = helmet?.Template as GClass2536;
+            switch (helmetTemplate?.DeafStrength)
+            {
+                case EDeafStrength.Low:
+                    //LoggingController.LogInfo(botOwner.GetText() + " is wearing a helmet with low deaf strength");
+                    multiplier *= ConfigController.Config.Questing.BotQuestingRequirements.HearingSensor.LoudnessMultiplierHelmetLowDeaf;
+                    break;
+                case EDeafStrength.High:
+                    //LoggingController.LogInfo(botOwner.GetText() + " is wearing a helmet with high deaf strength");
+                    multiplier *= ConfigController.Config.Questing.BotQuestingRequirements.HearingSensor.LoudnessMultiplierHelmetHighDeaf;
+                    break;
+            }
+
+            return multiplier;
         }
 
         public static bool TryTransferItem(this BotOwner botOwner, Item item)
         {
             try
             {
-                InventoryController inventoryController = GetInventoryController(botOwner);
+                InventoryControllerClass inventoryControllerClass = GetInventoryController(botOwner);
 
                 // Enumerate all possible equipment slots into which the key can be transferred
                 List<EquipmentSlot> possibleSlots = new List<EquipmentSlot>();
@@ -37,7 +68,7 @@ namespace SPTQuestingBots.Helpers
                 possibleSlots.AddRange(new EquipmentSlot[] { EquipmentSlot.Backpack, EquipmentSlot.TacticalVest, EquipmentSlot.ArmorVest, EquipmentSlot.Pockets });
 
                 // Try to find an available grid in the equipment slots to which the key can be transferred
-                ItemAddress locationForItem = botOwner.FindLocationForItem(item, possibleSlots, inventoryController);
+                ItemAddress locationForItem = botOwner.FindLocationForItem(item, possibleSlots, inventoryControllerClass);
                 if (locationForItem == null)
                 {
                     LoggingController.LogError("Cannot find any location to put key " + item.LocalizedName() + " for " + botOwner.GetText());
@@ -45,7 +76,7 @@ namespace SPTQuestingBots.Helpers
                 }
 
                 // Initialize the transation to transfer the key to the bot
-                SOperationResult12<AddResult> moveResult = ItemMovementHandler.Add(item, locationForItem, inventoryController, true);
+                SOperationResult12<AddResult> moveResult = ItemMovementHandler.Add(item, locationForItem, inventoryControllerClass, true);
                 if (!moveResult.Succeeded)
                 {
                     LoggingController.LogError("Cannot move key " + item.LocalizedName() + " to inventory of " + botOwner.GetText());
@@ -67,7 +98,7 @@ namespace SPTQuestingBots.Helpers
 
                 // Execute the transation to transfer the key to the bot
                 Callback callback = new Callback(callbackAction);
-                inventoryController.TryRunNetworkTransaction(moveResult, callback);
+                inventoryControllerClass.TryRunNetworkTransaction(moveResult, callback);
 
                 return true;
             }
@@ -80,7 +111,7 @@ namespace SPTQuestingBots.Helpers
             }
         }
 
-        public static ItemAddress FindLocationForItem(this BotOwner botOwner, Item item, IEnumerable<EquipmentSlot> possibleSlots, InventoryController botInventoryController)
+        public static ItemAddress FindLocationForItem(this BotOwner botOwner, Item item, IEnumerable<EquipmentSlot> possibleSlots, InventoryControllerClass botInventoryController)
         {
             foreach (EquipmentSlot slot in possibleSlots)
             {
@@ -156,9 +187,9 @@ namespace SPTQuestingBots.Helpers
         {
             try
             {
-                InventoryController inventoryController = GetInventoryController(botOwner);
+                InventoryControllerClass inventoryControllerClass = GetInventoryController(botOwner);
 
-                IEnumerable<KeyComponent> matchingKeys = inventoryController.Inventory.Equipment
+                IEnumerable<KeyComponent> matchingKeys = inventoryControllerClass.Inventory.Equipment
                     .GetItemComponentsInChildren<KeyComponent>(false)
                     .Where(k => k.Template.KeyId == door.KeyId);
 

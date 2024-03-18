@@ -8,7 +8,6 @@ using Aki.Reflection.Patching;
 using Comfort.Common;
 using EFT;
 using SPTQuestingBots.Controllers;
-using StayInTarkov.Coop.Matchmaker;
 
 namespace SPTQuestingBots.Patches
 {

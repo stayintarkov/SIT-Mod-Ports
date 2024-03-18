@@ -39,7 +39,7 @@ namespace SPTQuestingBots.BotLogic.Objective
 
         public override bool IsActive()
         {
-            if (!canUpdate() && QuestingBotsPluginConfig.QuestingLogicTimeGatingEnabled.Value)
+            if (!canUpdate())
             {
                 return previousState;
             }
@@ -47,22 +47,26 @@ namespace SPTQuestingBots.BotLogic.Objective
             // Check if somebody disabled questing in the F12 menu
             if (!QuestingBotsPluginConfig.QuestingEnabled.Value)
             {
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.None;
                 return updatePreviousState(false);
             }
 
             if ((BotOwner.BotState != EBotState.Active) || BotOwner.IsDead)
             {
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.IsDead;
                 return updatePreviousState(false);
             }
 
             if (!objectiveManager.IsQuestingAllowed)
             {
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.None;
                 return updatePreviousState(false);
             }
 
             // Ensure all quests have been loaded and generated
             if (!Singleton<GameWorld>.Instance.GetComponent<Components.BotQuestBuilder>().HaveQuestsBeenBuilt)
             {
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.QuestsNotReady;
                 return updatePreviousState(false);
             }
 
@@ -71,6 +75,7 @@ namespace SPTQuestingBots.BotLogic.Objective
             {
                 Controllers.BotJobAssignmentFactory.InactivateAllJobAssignmentsForBot(BotOwner.Profile.Id);
 
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.None;
                 return updatePreviousState(false);
             }
 
@@ -82,18 +87,11 @@ namespace SPTQuestingBots.BotLogic.Objective
             }
 
             // Check if the bot wants to use a mounted weapon
-            //if (objectiveManager.IsAllowedToTakeABreak() && objectiveManager.BotMonitor.WantsToUseStationaryWeapon())
-            //{
-            //    return updatePreviousState(false);
-            //}
-
-            // Check if the bot wants to loot
-            if (objectiveManager.IsAllowedToTakeABreak() && objectiveManager.BotMonitor.ShouldCheckForLoot(objectiveManager.BotMonitor.NextLootCheckDelay))
+            if (objectiveManager.IsAllowedToTakeABreak() && objectiveManager.BotMonitor.WantsToUseStationaryWeapon())
             {
-                BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.WantsToLoot, BotOwner, true);
-                return updatePreviousState(pauseLayer(ConfigController.Config.Questing.BotQuestingRequirements.BreakForLooting.MaxTimeToStartLooting));
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.StationaryWeapon;
+                return updatePreviousState(false);
             }
-            BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.WantsToLoot, BotOwner, false);
 
             // Check if the bot is currently extracting or wants to extract via SAIN
             if (objectiveManager.IsAllowedToTakeABreak() && objectiveManager.BotMonitor.IsTryingToExtract())
@@ -101,18 +99,32 @@ namespace SPTQuestingBots.BotLogic.Objective
                 objectiveManager.StopQuesting();
 
                 LoggingController.LogWarning("Bot " + BotOwner.GetText() + " wants to extract and will no longer quest.");
-                return updatePreviousState(false);
-            }
-
-            // Prevent the bot from following its boss if it needs to heal, etc. 
-            if (!IsAbleBodied())
-            {
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.CannotQuest;
                 return updatePreviousState(false);
             }
 
             if (IsInCombat())
             {
-                return updatePreviousState(pauseLayer());
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.InCombat;
+                return pauseLayer();
+            }
+
+            if (objectiveManager.IsAllowedToInvestigate() && IsSuspicious())
+            {
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.Suspicious;
+                return pauseLayer();
+            }
+
+            // Prevent the bot from following its boss if it needs to heal, etc. 
+            if (!IsAbleBodied())
+            {
+                if (NotAbleBodiedTime > 10)
+                {
+                    BotHiveMindMonitor.SeparateBotFromGroup(BotOwner);
+                }
+
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.NotAbleBodied;
+                return updatePreviousState(false);
             }
 
             // Check if any of the bot's group members are in combat
@@ -125,8 +137,27 @@ namespace SPTQuestingBots.BotLogic.Objective
                 //IReadOnlyCollection<BotOwner> groupMembers = BotHiveMindMonitor.GetAllGroupMembers(BotOwner);
                 //LoggingController.LogInfo("One of the following group members is in combat: " + string.Join(", ", groupMembers.Select(g => g.GetText())));
 
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.GroupInCombat;
                 return updatePreviousState(false);
             }
+
+            // Check if any of the bot's group members are suspicious
+            // NOTE: This check MUST be performed after checking if this bot is suspicious!
+            if (objectiveManager.IsAllowedToInvestigate() && BotHiveMindMonitor.GetValueForGroup(BotHiveMindSensorType.IsSuspicious, BotOwner))
+            {
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.GroupIsSuspicious;
+                return updatePreviousState(false);
+            }
+
+            // Check if the bot wants to loot
+            if (objectiveManager.IsAllowedToTakeABreak() && objectiveManager.BotMonitor.ShouldCheckForLoot(objectiveManager.BotMonitor.NextLootCheckDelay))
+            {
+                BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.WantsToLoot, BotOwner, true);
+
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.BreakForLooting;
+                return updatePreviousState(pauseLayer(ConfigController.Config.Questing.BotQuestingRequirements.BreakForLooting.MaxTimeToStartLooting));
+            }
+            BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.WantsToLoot, BotOwner, false);
 
             // Check if the bot has wandered too far from its followers.
             if (objectiveManager.IsAllowedToTakeABreak() && objectiveManager.BotMonitor.ShouldWaitForFollowers())
@@ -141,6 +172,7 @@ namespace SPTQuestingBots.BotLogic.Objective
             // If the bot has wandered too far from its followers for long enough, regroup with them
             if (followersTooFarTimer.ElapsedMilliseconds > ConfigController.Config.Questing.BotQuestingRequirements.MaxFollowerDistance.MaxWaitTime * 1000)
             {
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.Regroup;
                 setNextAction(BotActionType.Regroup, "Regroup");
                 return updatePreviousState(true);
             }
@@ -151,16 +183,20 @@ namespace SPTQuestingBots.BotLogic.Objective
                 LoggingController.LogWarning("Bot " + BotOwner.GetText() + " was stuck " + objectiveManager.StuckCount + " times and likely is unable to quest.");
                 objectiveManager.StopQuesting();
                 BotOwner.Mover.Stop();
+
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.CannotQuest;
                 return updatePreviousState(false);
             }
 
             // Check if the bot needs to complete its assignment
             if (!objectiveManager.IsJobAssignmentActive)
             {
-                return updatePreviousState(pauseLayer());
+                objectiveManager.NotQuestingReason = Objective.NotQuestingReason.WaitForNextQuest;
+                return pauseLayer();
             }
 
             // Determine what type of action is needed for the bot to complete its assignment
+            objectiveManager.NotQuestingReason = Objective.NotQuestingReason.None;
             switch (objectiveManager.CurrentQuestAction)
             {
                 case QuestAction.MoveToPosition:
@@ -187,6 +223,17 @@ namespace SPTQuestingBots.BotLogic.Objective
                     else
                     {
                         setNextAction(BotActionType.Ambush, "Ambush (" + objectiveManager.MinElapsedActionTime + "s)");
+                    }
+                    return updatePreviousState(true);
+
+                case QuestAction.Snipe:
+                    if (!objectiveManager.IsCloseToObjective())
+                    {
+                        setNextAction(BotActionType.GoToObjective, "GoToSnipePosition");
+                    }
+                    else
+                    {
+                        setNextAction(BotActionType.Snipe, "Snipe (" + objectiveManager.MinElapsedActionTime + "s)");
                     }
                     return updatePreviousState(true);
 
@@ -219,6 +266,7 @@ namespace SPTQuestingBots.BotLogic.Objective
             }
 
             // Failsafe
+            objectiveManager.NotQuestingReason = Objective.NotQuestingReason.Unknown;
             return updatePreviousState(false);
         }
     }

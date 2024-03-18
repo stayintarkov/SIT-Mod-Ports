@@ -20,7 +20,8 @@ namespace SPTQuestingBots.BehaviorExtensions
         protected BotLogic.Objective.BotObjectiveManager ObjectiveManager { get; private set; }
         protected AbstractCreateNode baseAction { get; private set; } = null;
         protected static int updateInterval { get; private set; } = 100;
-        
+
+        private PropertyInfo cornerIndexField = null;
         private Stopwatch updateTimer = Stopwatch.StartNew();
         private Stopwatch actionElapsedTime = new Stopwatch();
 
@@ -31,6 +32,7 @@ namespace SPTQuestingBots.BehaviorExtensions
 
         public CustomLogicDelayedUpdate(BotOwner botOwner) : base(botOwner)
         {
+            cornerIndexField = AccessTools.Property(typeof(BotMover), "_cornerIndex");
             ObjectiveManager = BotLogic.Objective.BotObjectiveManager.GetObjectiveManagerForBot(botOwner);
         }
 
@@ -158,7 +160,7 @@ namespace SPTQuestingBots.BehaviorExtensions
             {
                 return false;
             }
-    
+            
             var mover = BotOwner.Mover;
             var pathControllerField = typeof(BotMover).GetField("_pathController", BindingFlags.NonPublic | BindingFlags.Instance);
             var pathController = (PathController)pathControllerField.GetValue(mover);
@@ -185,7 +187,6 @@ namespace SPTQuestingBots.BehaviorExtensions
 
             return false;
         }
-
 
         public bool IsNearAndMovingTowardClosedDoor(Configuration.DistanceAngleConfig maxDistanceMaxAngle)
         {

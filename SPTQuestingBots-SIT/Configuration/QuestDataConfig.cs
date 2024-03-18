@@ -8,7 +8,7 @@ namespace SPTQuestingBots.Configuration
         public RawQuestClass[] Templates { get; set; } = new RawQuestClass[0];
 
         [JsonProperty("quests")]
-        public Models.QuestQB[] Quests { get; set; } = new Models.QuestQB[0];
+        public Models.Quest0[] Quests { get; set; } = new Models.Quest0[0];
 
         public QuestDataConfig()
         {

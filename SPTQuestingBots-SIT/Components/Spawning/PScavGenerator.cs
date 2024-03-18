@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Comfort.Common;
 using EFT;
 using EFT.Game.Spawning;
+using HarmonyLib;
 using SPTQuestingBots.Controllers;
 using SPTQuestingBots.Patches;
 using UnityEngine;
@@ -121,11 +122,16 @@ namespace SPTQuestingBots.Components.Spawning
         {
             Components.LocationData locationData = Singleton<GameWorld>.Instance.GetComponent<Components.LocationData>();
 
+            IEnumerable<Player> playersToAvoid = Singleton<GameWorld>.Instance.AllAlivePlayersList
+                .Where(p => GetAllGeneratedBotProfileIDs().Contains(p.ProfileId))
+                .AddItem(Singleton<GameWorld>.Instance.MainPlayer);
+
             // Find a spawn location for the bot group that is as far from other players and bots as possible
-            SpawnPointParams? spawnPoint = locationData.TryGetFurthestSpawnPointFromAllPlayers(ESpawnCategoryMask.Player, EPlayerSideMask.All, pendingSpawnPoints.ToArray());
+            float minDistanceFromOtherPlayers = ConfigController.Config.BotSpawns.PScavs.MinDistanceFromPlayersDuringRaidFactory + 5;
+            SpawnPointParams? spawnPoint = locationData.TryGetFurthestSpawnPointFromPlayers(playersToAvoid, ESpawnCategoryMask.Player, EPlayerSideMask.All, pendingSpawnPoints.ToArray(), minDistanceFromOtherPlayers);
             if (!spawnPoint.HasValue)
             {
-                LoggingController.LogError("Could not find a valid spawn point for PScav group");
+                LoggingController.LogWarning("Could not find a spawn point for PScav group");
                 return Enumerable.Empty<Vector3>();
             }
 
@@ -140,9 +146,9 @@ namespace SPTQuestingBots.Components.Spawning
             }
 
             // Ensure none of the spawn points are too close to other players or bots
-            if (locationData.AreAnyPositionsCloseToOtherPlayers(spawnPositions, getMinDistanceFromOtherPlayers()))
+            if (AreAnyPositionsCloseToAnyGeneratedBots(spawnPositions, getMinDistanceFromOtherPlayers(), out float distance))
             {
-                LoggingController.LogWarning("Cannot spawn " + BotTypeName + " group at " + spawnPoint.Value.Position.ToUnityVector3().ToString() + ". Other players are too close.");
+                LoggingController.LogWarning("Cannot spawn " + BotTypeName + " group at " + spawnPoint.Value.Position.ToUnityVector3().ToString() + ". Another player is " + distance + "m away.");
                 return Enumerable.Empty<Vector3>();
             }
 

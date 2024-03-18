@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Comfort.Common;
 using EFT;
+using SPTQuestingBots.BotLogic.HiveMind;
 using SPTQuestingBots.BotLogic.Objective;
 using SPTQuestingBots.Models;
 using UnityEngine;
@@ -16,13 +17,13 @@ namespace SPTQuestingBots.Controllers
     public static class BotJobAssignmentFactory
     {
         private static CoroutineExtensions.EnumeratorWithTimeLimit enumeratorWithTimeLimit = new CoroutineExtensions.EnumeratorWithTimeLimit(ConfigController.Config.MaxCalcTimePerFrame);
-        private static List<QuestQB> allQuests = new List<QuestQB>();
+        private static List<Quest0> allQuests = new List<Quest0>();
         private static Dictionary<string, List<BotJobAssignment>> botJobAssignments = new Dictionary<string, List<BotJobAssignment>>();
 
         public static int QuestCount => allQuests.Count;
 
-        public static QuestQB[] FindQuestsWithZone(string zoneId) => allQuests.Where(q => q.GetObjectiveForZoneID(zoneId) != null).ToArray();
-        public static bool CanMoreBotsDoQuest(this QuestQB quest) => quest.NumberOfActiveBots() < quest.MaxBots;
+        public static SPTQuestingBots.Models.Quest0[] FindQuestsWithZone(string zoneId) => allQuests.Where(q => q.GetObjectiveForZoneID(zoneId) != null).ToArray();
+        public static bool CanMoreBotsDoQuest(this Quest0 quest) => quest.NumberOfActiveBots() < quest.MaxBots;
 
         public static void Clear()
         {
@@ -30,7 +31,7 @@ namespace SPTQuestingBots.Controllers
             allQuests.RemoveAll(q => q.Template == null);
 
             // Remove all objectives for remaining quests. New objectives will be generated after loading the map.
-            foreach (QuestQB quest in allQuests)
+            foreach (Quest0 quest in allQuests)
             {
                 quest.Clear();
             }
@@ -38,37 +39,55 @@ namespace SPTQuestingBots.Controllers
             botJobAssignments.Clear();
         }
 
-        public static IEnumerator ProcessAllQuests(Action<QuestQB> action)
+        public static IEnumerator ProcessAllQuests(Action<Quest0> action)
         {
             enumeratorWithTimeLimit.Reset();
             yield return enumeratorWithTimeLimit.Run(allQuests, action);
         }
 
-        public static IEnumerator ProcessAllQuests<T1>(Action<QuestQB, T1> action, T1 param1)
+        public static IEnumerator ProcessAllQuests<T1>(Action<Quest0, T1> action, T1 param1)
         {
             enumeratorWithTimeLimit.Reset();
             yield return enumeratorWithTimeLimit.Run(allQuests, action, param1);
         }
 
-        public static IEnumerator ProcessAllQuests<T1, T2>(Action<QuestQB, T1, T2> action, T1 param1, T2 param2)
+        public static IEnumerator ProcessAllQuests<T1, T2>(Action<Quest0, T1, T2> action, T1 param1, T2 param2)
         {
             enumeratorWithTimeLimit.Reset();
             yield return enumeratorWithTimeLimit.Run(allQuests, action, param1, param2);
         }
 
-        public static void AddQuest(QuestQB quest)
+        public static void AddQuest(Quest0 quest)
         {
             foreach(QuestObjective objective in quest.AllObjectives)
             {
                 objective.UpdateQuestObjectiveStepNumbers();
             }
 
+            if (quest.IsCamping && (ConfigController.Config.Questing.BotQuests.DesirabilityCampingMultiplier != 1))
+            {
+                float newDesirability = quest.Desirability * ConfigController.Config.Questing.BotQuests.DesirabilityCampingMultiplier;
+
+                LoggingController.LogInfo("Adjusting desirability of camping quest " + quest.ToString() + " from " + quest.Desirability + " to " + newDesirability);
+
+                quest.Desirability = newDesirability;
+            }
+
+            if (quest.IsSniping && (ConfigController.Config.Questing.BotQuests.DesirabilitySnipingMultiplier != 1))
+            {
+                float newDesirability = quest.Desirability * ConfigController.Config.Questing.BotQuests.DesirabilitySnipingMultiplier;
+
+                LoggingController.LogInfo("Adjusting desirability of sniping quest " + quest.ToString() + " from " + quest.Desirability + " to " + newDesirability);
+
+                quest.Desirability = newDesirability;
+            }
+
             allQuests.Add(quest);
         }
 
-        public static QuestQB FindQuest(string questID)
+        public static Quest0 FindQuest(string questID)
         {
-            IEnumerable<QuestQB> matchingQuests = allQuests.Where(q => q.TemplateId == questID);
+            IEnumerable<Quest0> matchingQuests = allQuests.Where(q => q.TemplateId == questID);
             if (matchingQuests.Count() == 1)
             {
                 return matchingQuests.First();
@@ -86,7 +105,7 @@ namespace SPTQuestingBots.Controllers
 
         public static void RemoveBlacklistedQuestObjectives(string locationId)
         {
-            foreach (QuestQB quest in allQuests.ToArray())
+            foreach (Quest0 quest in allQuests.ToArray())
             {
                 foreach (QuestObjective objective in quest.AllObjectives)
                 {
@@ -161,7 +180,7 @@ namespace SPTQuestingBots.Controllers
             return matchingAssignments.Count();
         }
 
-        public static int NumberOfActiveBots(this QuestQB quest)
+        public static int NumberOfActiveBots(this Quest0 quest)
         {
             float pendingTimeLimit = 0.3f;
 
@@ -180,7 +199,7 @@ namespace SPTQuestingBots.Controllers
             return num;
         }
 
-        public static IEnumerable<QuestObjective> RemainingObjectivesForBot(this QuestQB quest, BotOwner bot)
+        public static IEnumerable<QuestObjective> RemainingObjectivesForBot(this Quest0 quest, BotOwner bot)
         {
             if (bot == null)
             {
@@ -189,7 +208,7 @@ namespace SPTQuestingBots.Controllers
 
             if (quest == null)
             {
-                throw new ArgumentNullException("QuestQB is null", nameof(quest));
+                throw new ArgumentNullException("Quest0 is null", nameof(quest));
             }
 
             if (!botJobAssignments.ContainsKey(bot.Profile.Id))
@@ -226,7 +245,7 @@ namespace SPTQuestingBots.Controllers
             return objectiveDistances.OrderBy(i => i.Value).First().Key;
         }
 
-        public static DateTime? TimeWhenLastEndedForBot(this QuestQB quest, BotOwner bot)
+        public static DateTime? TimeWhenLastEndedForBot(this Quest0 quest, BotOwner bot)
         {
             if (!botJobAssignments.ContainsKey(bot.Profile.Id))
             {
@@ -248,7 +267,7 @@ namespace SPTQuestingBots.Controllers
             return matchingAssignments.First().EndTime;
         }
 
-        public static double? ElapsedTimeWhenLastEndedForBot(this QuestQB quest, BotOwner bot)
+        public static double? ElapsedTimeWhenLastEndedForBot(this Quest0 quest, BotOwner bot)
         {
             DateTime? lastObjectiveEndingTime = quest.TimeWhenLastEndedForBot(bot);
             if (!lastObjectiveEndingTime.HasValue)
@@ -259,7 +278,7 @@ namespace SPTQuestingBots.Controllers
             return (DateTime.Now - lastObjectiveEndingTime.Value).TotalSeconds;
         }
 
-        public static DateTime? TimeWhenBotStarted(this QuestQB quest, BotOwner bot)
+        public static DateTime? TimeWhenBotStarted(this Quest0 quest, BotOwner bot)
         {
             if (!botJobAssignments.ContainsKey(bot.Profile.Id))
             {
@@ -279,7 +298,7 @@ namespace SPTQuestingBots.Controllers
             return matchingAssignments.Last().EndTime;
         }
 
-        public static double? ElapsedTimeSinceBotStarted(this QuestQB quest, BotOwner bot)
+        public static double? ElapsedTimeSinceBotStarted(this Quest0 quest, BotOwner bot)
         {
             DateTime? firstObjectiveEndingTime = quest.TimeWhenBotStarted(bot);
             if (!firstObjectiveEndingTime.HasValue)
@@ -290,7 +309,7 @@ namespace SPTQuestingBots.Controllers
             return (DateTime.Now - firstObjectiveEndingTime.Value).TotalSeconds;
         }
 
-        public static bool CanAssignToBot(this QuestQB quest, BotOwner bot)
+        public static bool CanAssignToBot(this Quest0 quest, BotOwner bot)
         {
             if (bot == null)
             {
@@ -299,7 +318,7 @@ namespace SPTQuestingBots.Controllers
 
             if (quest == null)
             {
-                throw new ArgumentNullException("QuestQB is null", nameof(quest));
+                throw new ArgumentNullException("Quest0 is null", nameof(quest));
             }
 
             // Check if the bot is eligible to do the quest
@@ -343,7 +362,7 @@ namespace SPTQuestingBots.Controllers
             return false;
         }
 
-        public static bool TryArchiveIfBotCanRepeat(this QuestQB quest, BotOwner bot)
+        public static bool TryArchiveIfBotCanRepeat(this Quest0 quest, BotOwner bot)
         {
             if (!quest.IsRepeatable)
             {
@@ -400,7 +419,7 @@ namespace SPTQuestingBots.Controllers
             return objective.IsRepeatable && matchingAssignments.All(a => a.Status == JobAssignmentStatus.Archived);
         }
 
-        public static bool HasBotBeingDoingQuestTooLong(this QuestQB quest, BotOwner bot, out double? time)
+        public static bool HasBotBeingDoingQuestTooLong(this Quest0 quest, BotOwner bot, out double? time)
         {
             time = quest.ElapsedTimeSinceBotStarted(bot);
             if (time.HasValue && (time >= ConfigController.Config.Questing.BotQuestingRequirements.MaxTimePerQuest))
@@ -502,7 +521,7 @@ namespace SPTQuestingBots.Controllers
             }
 
             // Get the bot's most recent assingment if applicable
-            QuestQB quest = null;
+            Quest0 quest = null;
             QuestObjective objective = null;
             if (botJobAssignments[bot.Profile.Id].Count > 0)
             {
@@ -519,7 +538,7 @@ namespace SPTQuestingBots.Controllers
             }
 
             // Try to find a quest that has at least one objective that can be assigned to the bot
-            List<QuestQB> invalidQuests = new List<QuestQB>();
+            List<Quest0> invalidQuests = new List<Quest0>();
             Stopwatch timeoutMonitor = Stopwatch.StartNew();
             do
             {
@@ -577,7 +596,7 @@ namespace SPTQuestingBots.Controllers
             return assignment;
         }
 
-        public static IEnumerable<QuestQB> GetAllPossibleQuests(this BotOwner bot)
+        public static IEnumerable<Quest0> GetAllPossibleQuests(this BotOwner bot)
         {
             int botGroupSize = BotLogic.HiveMind.BotHiveMindMonitor.GetFollowers(bot).Count + 1;
 
@@ -590,11 +609,11 @@ namespace SPTQuestingBots.Controllers
                 .ToArray();
         }
 
-        public static QuestQB GetRandomQuest(this BotOwner bot, IEnumerable<QuestQB> invalidQuests)
+        public static Quest0 GetRandomQuest(this BotOwner bot, IEnumerable<Quest0> invalidQuests)
         {
             Stopwatch questSelectionTimer = Stopwatch.StartNew();
 
-            QuestQB[] assignableQuests = bot.GetAllPossibleQuests()
+            Quest0[] assignableQuests = bot.GetAllPossibleQuests()
                 .Where(q => !invalidQuests.Contains(q))
                 .ToArray();
 
@@ -606,12 +625,12 @@ namespace SPTQuestingBots.Controllers
             BotObjectiveManager botObjectiveManager = BotObjectiveManager.GetObjectiveManagerForBot(bot);
             Vector3? vectorToExfil = botObjectiveManager?.VectorToExfiltrationPointForQuesting();
 
-            Dictionary<QuestQB, Configuration.MinMaxConfig> questDistanceRanges = new Dictionary<QuestQB, Configuration.MinMaxConfig>();
-            Dictionary<QuestQB, Configuration.MinMaxConfig> questExfilAngleRanges = new Dictionary<QuestQB, Configuration.MinMaxConfig>();
+            Dictionary<Quest0, Configuration.MinMaxConfig> questDistanceRanges = new Dictionary<Quest0, Configuration.MinMaxConfig>();
+            Dictionary<Quest0, Configuration.MinMaxConfig> questExfilAngleRanges = new Dictionary<Quest0, Configuration.MinMaxConfig>();
 
             // Calculate the distances from the bot to all valid quest objectives and the angles between the vector to the bot's selected
             // exfil (for questing) and the vector to each valid quest objective
-            foreach (QuestQB quest in assignableQuests)
+            foreach (Quest0 quest in assignableQuests)
             {
                 IEnumerable<Vector3?> objectivePositions = quest.ValidObjectives.Select(o => o.GetFirstStepPosition());
                 IEnumerable<Vector3> validObjectivePositions = objectivePositions.Where(p => p.HasValue).Select(p => p.Value);
@@ -638,7 +657,7 @@ namespace SPTQuestingBots.Controllers
             int maxRandomDistance = (int)Math.Ceiling(maxDistance * ConfigController.Config.Questing.BotQuests.DistanceRandomness / 100.0);
             float maxExfilAngle = ConfigController.Config.Questing.BotQuests.ExfilDirectionMaxAngle;
 
-            float distanceRandomness = ConfigController.Config.Questing.BotQuests.DistanceRandomness;
+            int distanceRandomness = ConfigController.Config.Questing.BotQuests.DistanceRandomness;
             int desirabilityRandomness = ConfigController.Config.Questing.BotQuests.DesirabilityRandomness;
 
             float distanceWeighting = ConfigController.Config.Questing.BotQuests.DistanceWeighting;
@@ -656,14 +675,14 @@ namespace SPTQuestingBots.Controllers
             }
 
             System.Random random = new System.Random();
-            Dictionary<QuestQB, double> questDistanceFractions = questDistanceRanges
+            Dictionary<Quest0, double> questDistanceFractions = questDistanceRanges
                 .ToDictionary(o => o.Key, o => 1 - (o.Value.Min + random.Next(-1 * maxRandomDistance, maxRandomDistance)) / maxDistance);
-            Dictionary<QuestQB, float> questDesirabilityFractions = questDistanceRanges
+            Dictionary<Quest0, float> questDesirabilityFractions = questDistanceRanges
                 .ToDictionary(o => o.Key, o => (o.Key.Desirability + random.Next(-1 * desirabilityRandomness, desirabilityRandomness)) / 100);
-            Dictionary<QuestQB, double> questExfilAngleFactor = questExfilAngleRanges
+            Dictionary<Quest0, double> questExfilAngleFactor = questExfilAngleRanges
                 .ToDictionary(o => o.Key, o => Math.Max(0, o.Value.Min - maxExfilAngle) / (180 - maxExfilAngle));
 
-            IEnumerable<QuestQB> sortedQuests = questDistanceRanges
+            IEnumerable<Quest0> sortedQuests = questDistanceRanges
                 .OrderBy
                 (o =>
                     (questDistanceFractions[o.Key] * distanceWeighting)
@@ -672,7 +691,7 @@ namespace SPTQuestingBots.Controllers
                 )
                 .Select(o => o.Key);
 
-            QuestQB selectedQuest = sortedQuests.Last();
+            Quest0 selectedQuest = sortedQuests.Last();
 
             //LoggingController.LogInfo("Distance: " + questDistanceFractions[selectedQuest] + ", Desirability: " + questDesirabilityFractions[selectedQuest] + ", Exfil Angle Factor: " + questExfilAngleFactor[selectedQuest]);
             //LoggingController.LogInfo("Time for quest selection: " + questSelectionTimer.ElapsedMilliseconds + "ms");
@@ -726,10 +745,10 @@ namespace SPTQuestingBots.Controllers
 
             // Write the header row
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("QuestQB Name,Objective,Steps,Min Level,Max Level,First Step Position");
+            sb.AppendLine("Quest0 Name,Objective,Steps,Min Level,Max Level,First Step Position");
 
             // Write a row for every objective in every quest
-            foreach (QuestQB quest in allQuests)
+            foreach (Quest0 quest in allQuests)
             {
                 foreach (QuestObjective objective in quest.AllObjectives)
                 {
@@ -748,8 +767,10 @@ namespace SPTQuestingBots.Controllers
                 }
             }
 
+            string locationId = Singleton<GameWorld>.Instance.GetComponent<Components.LocationData>().CurrentLocation.Id;
+
             string filename = ConfigController.GetLoggingPath()
-                + Components.BotQuestBuilder.PreviousLocationID.Replace(" ", "")
+                + locationId.Replace(" ", "")
                 + "_"
                 + timestamp
                 + "_quests.csv";
@@ -774,7 +795,7 @@ namespace SPTQuestingBots.Controllers
 
             // Write the header row
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Bot Name,Bot Nickname,Bot Level,Assignment Status,QuestQB Name,Objective Name,Step Number,Start Time,End Time");
+            sb.AppendLine("Bot Name,Bot Nickname,Bot Level,Assignment Status,Quest0 Name,Objective Name,Step Number,Start Time,End Time");
 
             // Write a row for every quest, objective, and step that each bot was assigned to perform
             foreach (string botID in botJobAssignments.Keys)
@@ -793,8 +814,10 @@ namespace SPTQuestingBots.Controllers
                 }
             }
 
+            string locationId = Singleton<GameWorld>.Instance.GetComponent<Components.LocationData>().CurrentLocation.Id;
+
             string filename = ConfigController.GetLoggingPath()
-                + Components.BotQuestBuilder.PreviousLocationID.Replace(" ", "")
+                + locationId.Replace(" ", "")
                 + "_"
                 + timestamp
                 + "_assignments.csv";
@@ -806,7 +829,7 @@ namespace SPTQuestingBots.Controllers
         {
             List<JobAssignment> allAssignments = new List<JobAssignment>();
 
-            foreach (QuestQB quest in allQuests)
+            foreach (Quest0 quest in allQuests)
             {
                 foreach (QuestObjective objective in quest.ValidObjectives)
                 {
@@ -825,7 +848,7 @@ namespace SPTQuestingBots.Controllers
         {
             List<QuestObjective> nearbyObjectives = new List<QuestObjective>();
 
-            foreach (QuestQB quest in allQuests)
+            foreach (Quest0 quest in allQuests)
             {
                 if (!allowEFTQuests && quest.IsEFTQuest)
                 {
@@ -844,6 +867,30 @@ namespace SPTQuestingBots.Controllers
             }
 
             return nearbyObjectives;
+        }
+
+        public static void CheckBotJobAssignmentValidity(BotOwner bot)
+        {
+            BotJobAssignment botJobAssignment = BotJobAssignmentFactory.GetCurrentJobAssignment(bot, false);
+            if (botJobAssignment?.QuestAssignment == null)
+            {
+                return;
+            }
+
+            int botGroupSize = BotLogic.HiveMind.BotHiveMindMonitor.GetFollowers(bot).Count + 1;
+            if (botGroupSize > botJobAssignment.QuestAssignment.MaxBotsInGroup)
+            {
+                BotObjectiveManager botObjectiveManager = BotObjectiveManager.GetObjectiveManagerForBot(bot);
+
+                if (botObjectiveManager.TryChangeObjective())
+                {
+                    LoggingController.LogWarning("Selected new quest for " + bot.GetText() + " because it has too many followers for its previous quest");
+                }
+                else
+                {
+                    LoggingController.LogError("Cannot select new quest for " + bot.GetText() + ". It has too many followers for quest " + botJobAssignment.QuestAssignment.ToString());
+                }
+            }
         }
     }
 }

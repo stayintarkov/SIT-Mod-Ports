@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Comfort.Common;
 using EFT;
 using SPTQuestingBots.BotLogic.HiveMind;
 using SPTQuestingBots.Controllers;
@@ -13,13 +15,22 @@ namespace SPTQuestingBots.BehaviorExtensions
     {
         protected BotLogic.Objective.BotObjectiveManager objectiveManager { get; private set; } = null;
 
-        private double searchTimeAfterCombat = ConfigController.Config.Questing.SearchTimeAfterCombat.Min;
+        private double searchTimeAfterCombat = ConfigController.Config.Questing.BotQuestingRequirements.SearchTimeAfterCombat.Min;
+        private double suspiciousTime = ConfigController.Config.Questing.BotQuestingRequirements.HearingSensor.SuspiciousTime.Min;
         private bool wasAbleBodied = true;
+        private float maxSuspiciousTime = 60;
+        private Stopwatch totalSuspiciousTimer = new Stopwatch();
+        private Stopwatch notSuspiciousTimer = Stopwatch.StartNew();
+        private Stopwatch notAbleBodiedTimer = new Stopwatch();
+
+        protected float NotAbleBodiedTime => notAbleBodiedTimer.ElapsedMilliseconds / 1000;
 
         public CustomLayerForQuesting(BotOwner _botOwner, int _priority, int delayInterval) : base(_botOwner, _priority, delayInterval)
         {
             objectiveManager = _botOwner.GetPlayer.gameObject.GetOrAddComponent<BotLogic.Objective.BotObjectiveManager>();
             objectiveManager.Init(_botOwner);
+
+            updateMaxSuspiciousTime();
         }
 
         public CustomLayerForQuesting(BotOwner _botOwner, int _priority) : this(_botOwner, _priority, updateInterval)
@@ -49,13 +60,17 @@ namespace SPTQuestingBots.BehaviorExtensions
         {
             if (!objectiveManager.BotMonitor.IsAbleBodied(wasAbleBodied))
             {
+                notAbleBodiedTimer.Start();
                 wasAbleBodied = false;
+
                 return false;
             }
             if (!wasAbleBodied)
             {
                 LoggingController.LogInfo("Bot " + BotOwner.GetText() + " is now able-bodied.");
             }
+
+            notAbleBodiedTimer.Reset();
             wasAbleBodied = true;
 
             return true;
@@ -85,9 +100,72 @@ namespace SPTQuestingBots.BehaviorExtensions
                 BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.InCombat, BotOwner, true);
                 return true;
             }
-            BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.InCombat, BotOwner, false);
 
+            BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.InCombat, BotOwner, false);
             return false;
+        }
+
+        protected bool IsSuspicious()
+        {
+            bool wasSuspiciousTooLong = totalSuspiciousTimer.ElapsedMilliseconds / 1000 > maxSuspiciousTime;
+            //if (wasSuspiciousTooLong && totalSuspiciousTimer.IsRunning)
+            //{
+            //    LoggingController.LogInfo(BotOwner.GetText() + " has been suspicious for too long");
+            //}
+
+            if (!wasSuspiciousTooLong && objectiveManager.BotMonitor.ShouldBeSuspicious(suspiciousTime))
+            {
+                if (!BotHiveMindMonitor.GetValueForBot(BotHiveMindSensorType.IsSuspicious, BotOwner))
+                {
+                    suspiciousTime = objectiveManager.BotMonitor.UpdateSuspiciousTime();
+                    //LoggingController.LogInfo("Bot " + BotOwner.GetText() + " will be suspicious for " + suspiciousTime + " seconds");
+
+                    objectiveManager.BotMonitor.TryPreventBotFromLooting((float)suspiciousTime);
+                }
+
+                totalSuspiciousTimer.Start();
+                notSuspiciousTimer.Reset();
+
+                BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.IsSuspicious, BotOwner, true);
+                return true;
+            }
+
+            if (notSuspiciousTimer.ElapsedMilliseconds / 1000 > ConfigController.Config.Questing.BotQuestingRequirements.HearingSensor.SuspicionCooldownTime)
+            {
+                //if (wasSuspiciousTooLong)
+                //{
+                //    LoggingController.LogInfo(BotOwner.GetText() + " is now allowed to be suspicious");
+                //}
+
+                totalSuspiciousTimer.Reset();
+            }
+            else
+            {
+                totalSuspiciousTimer.Stop();
+            }
+
+            notSuspiciousTimer.Start();
+
+            BotHiveMindMonitor.UpdateValueForBot(BotHiveMindSensorType.IsSuspicious, BotOwner, false);
+            return false;
+        }
+
+        private void updateMaxSuspiciousTime()
+        {
+            string locationId = Singleton<GameWorld>.Instance.GetComponent<Components.LocationData>().CurrentLocation.Id;
+
+            if (ConfigController.Config.Questing.BotQuestingRequirements.HearingSensor.MaxSuspiciousTime.ContainsKey(locationId))
+            {
+                maxSuspiciousTime = ConfigController.Config.Questing.BotQuestingRequirements.HearingSensor.MaxSuspiciousTime[locationId];
+            }
+            else if (ConfigController.Config.Questing.BotQuestingRequirements.HearingSensor.MaxSuspiciousTime.ContainsKey("default"))
+            {
+                maxSuspiciousTime = ConfigController.Config.Questing.BotQuestingRequirements.HearingSensor.MaxSuspiciousTime["default"];
+            }
+            else
+            {
+                LoggingController.LogError("Could not set max suspicious time for " + BotOwner.GetText() + ". Defaulting to 60s.");
+            }
         }
     }
 }

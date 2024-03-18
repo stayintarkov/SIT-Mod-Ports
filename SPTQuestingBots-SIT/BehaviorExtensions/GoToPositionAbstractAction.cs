@@ -113,10 +113,8 @@ namespace SPTQuestingBots.BehaviorExtensions
                 return;
             }
 
-            // Initialize a list to hold adjusted path corners
+            // The visual representation of the bot's path needs to be offset vertically so it's raised above the ground
             List<Vector3> adjustedPathCorners = new List<Vector3>();
-
-            // Iterate over the path points using the Length property and GetPoint method of AbstractPath
             for (int i = 0; i < curPath.Length; i++)
             {
                 // Get each point from the CurPath
@@ -125,13 +123,9 @@ namespace SPTQuestingBots.BehaviorExtensions
                 adjustedPathCorners.Add(new Vector3(corner.x, corner.y + 0.75f, corner.z));
             }
 
-            // Generate a unique path name for identification
             string pathName = "BotPath_" + BotOwner.Id + "_" + DateTime.Now.ToFileTime();
 
-            // Create the path visualization data with the adjusted path corners
             Models.PathVisualizationData botPathRendering = new Models.PathVisualizationData(pathName, adjustedPathCorners.ToArray(), color);
-    
-            // Add or update the path visualization in the render system
             PathRender.AddOrUpdatePath(botPathRendering);
         }
 

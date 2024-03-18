@@ -99,6 +99,44 @@ namespace SPTQuestingBots.Components.Spawning
             return raidSettings.BotSettings.BotAmount != EFT.Bots.EBotAmount.NoBots;
         }
 
+        public static bool IsPositionCloseToAnyGeneratedBots(Vector3 position, float distanceFromPlayers, out float distance)
+        {
+            foreach (BotGenerator botGenerator in Singleton<GameWorld>.Instance.gameObject.GetComponents(typeof(BotGenerator)))
+            {
+                if (botGenerator == null)
+                {
+                    continue;
+                }
+
+                if (botGenerator.IsPositionCloseToGeneratedBots(position, distanceFromPlayers, out distance))
+                {
+                    return true;
+                }
+            }
+
+            distance = float.MaxValue;
+            return false;
+        }
+
+        public static bool AreAnyPositionsCloseToAnyGeneratedBots(IEnumerable<Vector3> positions, float distanceFromPlayers, out float distance)
+        {
+            foreach (BotGenerator botGenerator in Singleton<GameWorld>.Instance.gameObject.GetComponents(typeof(BotGenerator)))
+            {
+                if (botGenerator == null)
+                {
+                    continue;
+                }
+
+                if (botGenerator.AreAnyPositionsCloseToGeneratedBots(positions, distanceFromPlayers, out distance))
+                {
+                    return true;
+                }
+            }
+
+            distance = float.MaxValue;
+            return false;
+        }
+
         public static IEnumerable<string> GetAllGeneratedBotProfileIDs()
         {
             return GetAllGeneratedBotProfiles().Select(b => b.Id);
@@ -114,10 +152,57 @@ namespace SPTQuestingBots.Components.Spawning
                     continue;
                 }
 
-                foreach (Models.BotSpawnInfo botGroup in botGenerator.GetBotGroups())
+                generatedBotProfiles.AddRange(botGenerator.GetGeneratedBotProfiles());
+            }
+
+            return generatedBotProfiles;
+        }
+
+        public bool AreAnyPositionsCloseToGeneratedBots(IEnumerable<Vector3> positions, float distanceFromPlayers, out float distance)
+        {
+            foreach (Vector3 position in positions)
+            {
+                if (IsPositionCloseToGeneratedBots(position, distanceFromPlayers, out distance))
                 {
-                    generatedBotProfiles.AddRange(botGroup.Data.Profiles);
+                    return true;
                 }
+            }
+
+            distance = float.MaxValue;
+            return false;
+        }
+
+        public bool IsPositionCloseToGeneratedBots(Vector3 position, float distanceFromPlayers, out float distance)
+        {
+            foreach (Models.BotSpawnInfo botGroup in GetBotGroups())
+            {
+                IEnumerable<BotOwner> aliveBots = botGroup.SpawnedBots.Where(b => (b != null) && !b.IsDead);
+                foreach (BotOwner bot in aliveBots)
+                {
+                    distance = Vector3.Distance(bot.Position, position);
+                    if (distance <= distanceFromPlayers)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            distance = float.MaxValue;
+            return false;
+        }
+
+        public IEnumerable<string> GetGeneratedBotProfileIDs()
+        {
+            return GetGeneratedBotProfiles().Select(b => b.Id);
+        }
+
+        public IEnumerable<Profile> GetGeneratedBotProfiles()
+        {
+            List<Profile> generatedBotProfiles = new List<Profile>();
+
+            foreach (Models.BotSpawnInfo botGroup in GetBotGroups())
+            {
+                generatedBotProfiles.AddRange(botGroup.Data.Profiles);
             }
 
             return generatedBotProfiles;
@@ -141,6 +226,25 @@ namespace SPTQuestingBots.Components.Spawning
                 }
             }
 
+            return false;
+        }
+
+        public void AddNewBotGroup(Models.BotSpawnInfo newGroup)
+        {
+            BotGroups.Add(newGroup);
+        }
+
+        public static bool TryGetBotGroupFromAnyGenerator(BotOwner bot, out Models.BotSpawnInfo matchingGroupData)
+        {
+            foreach (BotGenerator botGenerator in Singleton<GameWorld>.Instance.gameObject.GetComponents(typeof(BotGenerator)))
+            {
+                if (botGenerator?.TryGetBotGroup(bot, out matchingGroupData) == true)
+                {
+                    return true;
+                }
+            }
+
+            matchingGroupData = null;
             return false;
         }
 
@@ -341,7 +445,7 @@ namespace SPTQuestingBots.Components.Spawning
                     Data8 botProfileData = new Data8(spawnSide, spawnType, botdifficulty, 0f, null);
                     Data1 botSpawnData = await Data1.Create(botProfileData, ibotCreator, bots, botSpawnerClass);
 
-                    botSpawnInfo = new Models.BotSpawnInfo(botSpawnData);
+                    botSpawnInfo = new Models.BotSpawnInfo(botSpawnData, this);
                 }
                 catch (NullReferenceException nre)
                 {

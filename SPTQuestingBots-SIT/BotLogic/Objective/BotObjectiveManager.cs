@@ -14,6 +14,26 @@ using UnityEngine;
 
 namespace SPTQuestingBots.BotLogic.Objective
 {
+    public enum NotQuestingReason
+    {
+        None,
+        Unknown,
+        QuestsNotReady,
+        Pause,
+        IsDead,
+        CannotQuest,
+        WaitForNextQuest,
+        Regroup,
+        Proximity,
+        NotAbleBodied,
+        InCombat,
+        GroupInCombat,
+        Suspicious,
+        GroupIsSuspicious,
+        StationaryWeapon,
+        BreakForLooting
+    }
+
     public class BotObjectiveManager : BehaviorExtensions.MonoBehaviourDelayedUpdate
     {
         public bool IsInitialized { get; private set; } = false;
@@ -23,6 +43,8 @@ namespace SPTQuestingBots.BotLogic.Objective
         public BotMonitor BotMonitor { get; private set; } = null;
         public EFT.Interactive.Door DoorToOpen { get; set; } = null;
         public Vector3? LastCorner { get; set; } = null;
+        public NotQuestingReason NotQuestingReason { get; set; } = NotQuestingReason.None;
+        public NotQuestingReason NotFollowingReason { get; set; } = NotQuestingReason.None;
 
         private BotOwner botOwner = null;
         private BotJobAssignment assignment = null;
@@ -152,11 +174,6 @@ namespace SPTQuestingBots.BotLogic.Objective
 
         private void Update()
         {
-            if (Singleton<GameWorld>.Instance.GetComponent<Components.BotQuestBuilder>() == null)
-            {
-                return;
-            }
-
             if (!Singleton<GameWorld>.Instance.GetComponent<Components.BotQuestBuilder>().HaveQuestsBeenBuilt)
             {
                 return;
@@ -295,6 +312,22 @@ namespace SPTQuestingBots.BotLogic.Objective
             switch (CurrentQuestAction)
             {
                 case QuestAction.HoldAtPosition:
+                case QuestAction.Ambush:
+                case QuestAction.Snipe:
+                case QuestAction.CloseNearbyDoors:
+                case QuestAction.ToggleSwitch:
+                    return false;
+                case QuestAction.PlantItem:
+                    return !IsCloseToObjective();
+            }
+
+            return true;
+        }
+
+        public bool IsAllowedToInvestigate()
+        {
+            switch (CurrentQuestAction)
+            {
                 case QuestAction.Ambush:
                 case QuestAction.CloseNearbyDoors:
                 case QuestAction.ToggleSwitch:

@@ -25,6 +25,7 @@ namespace SPTQuestingBots.Components
         public RaidSettings CurrentRaidSettings { get; private set; } = null;
         
         private TarkovApplication tarkovApplication = null;
+        private GamePlayerOwner gamePlayerOwner = null;
         private Dictionary<Vector3, Vector3> nearestNavMeshPoint = new Dictionary<Vector3, Vector3>();
         private Dictionary<string, EFT.Interactive.Switch> switches = new Dictionary<string, EFT.Interactive.Switch>();
         private Dictionary<Door, bool> areLockedDoorsUnlocked = new Dictionary<Door, bool>();
@@ -36,6 +37,7 @@ namespace SPTQuestingBots.Components
         private void Awake()
         {
             tarkovApplication = FindObjectOfType<TarkovApplication>();
+            gamePlayerOwner = FindObjectOfType<GamePlayerOwner>();
             CurrentRaidSettings = getCurrentRaidSettings();
             CurrentLocation = CurrentRaidSettings.SelectedLocation;
 
@@ -43,6 +45,7 @@ namespace SPTQuestingBots.Components
 
             if (ConfigController.Config.Questing.Enabled && (SITMatchmaking.IsServer || SITMatchmaking.IsSinglePlayer))
             {
+                QuestHelpers.ClearCache();
                 Singleton<GameWorld>.Instance.gameObject.AddComponent<BotQuestBuilder>();
                 Singleton<GameWorld>.Instance.gameObject.AddComponent<DebugData>();
             }
@@ -58,6 +61,7 @@ namespace SPTQuestingBots.Components
                 {
                     Singleton<GameWorld>.Instance.gameObject.AddComponent<Spawning.PScavGenerator>();
                 }
+
                 if (SITMatchmaking.IsServer || SITMatchmaking.IsSinglePlayer)
                     BotGenerator.RunBotGenerationTasks();
             }
@@ -305,41 +309,66 @@ namespace SPTQuestingBots.Components
             return null;
         }
 
-        public bool AreAnyPositionsCloseToOtherPlayers(IEnumerable<Vector3> positions, float distanceFromPlayers)
+        public bool AreAnyPositionsCloseToOtherPlayers(IEnumerable<Vector3> positions, float distanceFromPlayers, out float distance)
         {
-            if (positions.Any(p => IsPositionCloseToOtherPlayers(p, distanceFromPlayers)))
+            foreach (Vector3 postion in positions)
             {
-                return true;
+                if (IsPositionCloseToOtherPlayers(postion, distanceFromPlayers, out distance))
+                {
+                    return true;
+                }
             }
 
+            distance = float.MaxValue;
             return false;
         }
 
-        public bool IsPositionCloseToOtherPlayers(Vector3 position, float distanceFromPlayers)
+        public bool IsPositionCloseToOtherPlayers(Vector3 position, float distanceFromPlayers, out float distance)
         {
-            Player mainPlayer = Singleton<GameWorld>.Instance.MainPlayer;
-            if (Vector3.Distance(position, mainPlayer.Position) < distanceFromPlayers)
-            {
-                return true;
-            }
-
             BotsController botControllerClass = Singleton<IBotGame>.Instance.BotsController;
+
             BotOwner closestBot = botControllerClass.ClosestBotToPoint(position);
-            if ((closestBot != null) && (Vector3.Distance(position, closestBot.Position) < distanceFromPlayers))
+            if (closestBot != null)
             {
-                return true;
+                distance = Vector3.Distance(position, closestBot.Position);
+                if ((closestBot != null) && (distance < distanceFromPlayers))
+                {
+                    return true;
+                }
             }
 
+            Player mainPlayer = Singleton<GameWorld>.Instance.MainPlayer;
+            if (mainPlayer != null)
+            {
+                distance = Vector3.Distance(position, mainPlayer.Position);
+                if (distance < distanceFromPlayers)
+                {
+                    return true;
+                }
+            }
+
+            distance = float.MaxValue;
             return false;
         }
 
         public SpawnPointParams? TryGetFurthestSpawnPointFromAllPlayers(ESpawnCategoryMask allowedCategories, EPlayerSideMask allowedSides)
         {
-            return TryGetFurthestSpawnPointFromAllPlayers(allowedCategories, allowedSides, new SpawnPointParams[0]);
+            return TryGetFurthestSpawnPointFromPlayers(Singleton<GameWorld>.Instance.AllAlivePlayersList, allowedCategories, allowedSides, new SpawnPointParams[0]);
         }
 
         public SpawnPointParams? TryGetFurthestSpawnPointFromAllPlayers(ESpawnCategoryMask allowedCategories, EPlayerSideMask allowedSides, SpawnPointParams[] excludedSpawnPoints)
         {
+            return TryGetFurthestSpawnPointFromPlayers(Singleton<GameWorld>.Instance.AllAlivePlayersList, allowedCategories, allowedSides, new SpawnPointParams[0]);
+        }
+
+        public SpawnPointParams? TryGetFurthestSpawnPointFromPlayers(IEnumerable<Player> players, ESpawnCategoryMask allowedCategories, EPlayerSideMask allowedSides, float distanceFromAllPlayers = 5)
+        {
+            return TryGetFurthestSpawnPointFromPlayers(players, allowedCategories, allowedSides, new SpawnPointParams[0], distanceFromAllPlayers);
+        }
+
+        public SpawnPointParams? TryGetFurthestSpawnPointFromPlayers(IEnumerable<Player> players, ESpawnCategoryMask allowedCategories, EPlayerSideMask allowedSides, SpawnPointParams[] excludedSpawnPoints, float distanceFromAllPlayers = 5)
+        {
+            Vector3[] allPlayerPositions = Singleton<GameWorld>.Instance.AllAlivePlayersList.Select(p => p.Position).ToArray();
             SpawnPointParams[] allSpawnPoints = GetAllValidSpawnPointParams();
 
             // Enumerate all valid spawn points
@@ -347,6 +376,7 @@ namespace SPTQuestingBots.Components
                     .Where(s => !excludedSpawnPoints.Contains(s))
                     .Where(s => s.Categories.Any(allowedCategories))
                     .Where(s => s.Sides.Any(allowedSides))
+                    .Where(s => allPlayerPositions.All(p => Vector3.Distance(s.Position, p) > distanceFromAllPlayers))
                     .ToArray();
 
             if (validSpawnPoints.Length == 0)
@@ -355,7 +385,7 @@ namespace SPTQuestingBots.Components
             }
 
             // Get the locations of all alive bots/players on the map.
-            Vector3[] playerPositions = Singleton<GameWorld>.Instance.AllAlivePlayersList.Select(s => s.Position).ToArray();
+            Vector3[] playerPositions = players.Select(s => s.Position).ToArray();
             if (playerPositions.Length == 0)
             {
                 return null;
@@ -521,7 +551,7 @@ namespace SPTQuestingBots.Components
 
                     if (ConfigController.Config.Debug.Enabled && ConfigController.Config.Debug.ShowDoorInteractionTestPoints)
                     {
-                        //DebugHelpers.outlinePosition(possibleInteractionPosition, Color.white, ConfigController.Config.Questing.QuestGeneration.NavMeshSearchDistanceDoors);
+                        DebugHelpers.outlinePosition(possibleInteractionPosition, Color.white, ConfigController.Config.Questing.QuestGeneration.NavMeshSearchDistanceDoors);
                     }
 
                     continue;
@@ -542,7 +572,7 @@ namespace SPTQuestingBots.Components
 
                 if (ConfigController.Config.Debug.Enabled && ConfigController.Config.Debug.ShowDoorInteractionTestPoints)
                 {
-                    //DebugHelpers.outlinePosition(navMeshPosition.Value, Color.yellow);
+                    DebugHelpers.outlinePosition(navMeshPosition.Value, Color.yellow);
                 }
             }
 
@@ -555,11 +585,11 @@ namespace SPTQuestingBots.Components
                 // If applicable, draw the positions in the world
                 if (ConfigController.Config.Debug.Enabled && ConfigController.Config.Debug.ShowDoorInteractionTestPoints)
                 {
-                    //DebugHelpers.outlinePosition(orderedPostions.First(), Color.green);
+                    DebugHelpers.outlinePosition(orderedPostions.First(), Color.green);
 
                     foreach (Vector3 alternatePosition in orderedPostions.Skip(1))
                     {
-                        //DebugHelpers.outlinePosition(alternatePosition, Color.magenta);
+                        DebugHelpers.outlinePosition(alternatePosition, Color.magenta);
                     }
                 }
 
@@ -578,6 +608,13 @@ namespace SPTQuestingBots.Components
         {
             foreach (Door door in doors)
             {
+                // Ensure a player can interact with the door
+                InteractionStates availableActions = GetActionsClass.GetAvailableActions(gamePlayerOwner, door);
+                if ((availableActions == null) || (availableActions.Actions.Count == 0))
+                {
+                    continue;
+                }
+
                 Vector3? interactionPosition = GetDoorInteractionPosition(door, startingPosition);
                 if (interactionPosition.HasValue)
                 {

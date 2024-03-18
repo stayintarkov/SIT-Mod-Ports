@@ -4,11 +4,10 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Aki.Custom.Airdrops;
+using StayInTarkov.AkiSupport.Airdrops;
 using Aki.Reflection.Patching;
 using Comfort.Common;
 using EFT;
-using StayInTarkov.AkiSupport.Airdrops;
 
 namespace SPTQuestingBots.Patches
 {

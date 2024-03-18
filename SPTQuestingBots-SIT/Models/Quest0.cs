@@ -13,13 +13,19 @@ using SPTQuestingBots.Controllers;
 
 namespace SPTQuestingBots.Models
 {
-    public class QuestQB
+    public class Quest0
     {
         [JsonProperty("repeatable")]
         public bool IsRepeatable { get; set; } = false;
 
         [JsonProperty("pmcsOnly")]
         public bool PMCsOnly { get; set; } = false;
+
+        [JsonProperty("isCamping")]
+        public bool IsCamping { get; set; } = false;
+
+        [JsonProperty("isSniping")]
+        public bool IsSniping { get; set; } = false;
 
         [JsonProperty("minLevel")]
         public int MinLevel { get; set; } = 0;
@@ -72,17 +78,17 @@ namespace SPTQuestingBots.Models
         public IEnumerable<QuestObjective> ValidObjectives => AllObjectives.Where(o => o.GetFirstStepPosition() != null);
         public int NumberOfValidObjectives => ValidObjectives.Count();
 
-        public QuestQB()
+        public Quest0()
         {
 
         }
 
-        public QuestQB(string _name) : this()
+        public Quest0(string _name) : this()
         {
             name = _name;
         }
 
-        public QuestQB(RawQuestClass template) : this()
+        public Quest0(RawQuestClass template) : this()
         {
             Template = template;
         }

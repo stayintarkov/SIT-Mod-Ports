@@ -45,7 +45,7 @@ namespace SPTQuestingBots.Configuration
 
         }
 
-        public static void ApplyQuestSettingsFromConfig(Models.QuestQB quest, QuestSettingsConfig settings)
+        public static void ApplyQuestSettingsFromConfig(Models.Quest0 quest, QuestSettingsConfig settings)
         {
             quest.Desirability = settings.Desirability;
             quest.MaxBots = settings.MaxBotsPerQuest;
