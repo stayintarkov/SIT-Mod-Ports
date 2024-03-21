@@ -21,6 +21,13 @@ If any mod in the SIT Manager mods section has "Requires extra files" checked, y
     - **Server** mod files should be placed in the server folder of SIT under `[server directory]/user/mods`. So if the mod archive you downloaded has a folder called `user` in it, you know you need to click into `user`, click into `mods`, and there you should see a folder with the name of the mod, e.g. `MoreCheckmarksBackend`. You must copy this folder from the mod archive to `[server directory]/user/mods`. Note how the directory structure of the server folder and the mod archive usually matches (`user/mods/[mod name]`)
     - **Client** mod files are similar to the server ones, but they go in a different directory. If you see a `BepInEx` folder in your downloaded mod archive, you know there may be client mod files to copy over. First, in the mod archive, click into `BepInEx/plugins`. If there is only a `.dll` file, **you do not need to do anything else here**. Do not copy any `.dll` files from a mod archive to `BepInEx/plugins`!! However, if there are _other_ files, you will need those. Copy all of those files/folders (again, make sure you do NOT copy the `.dll` file), then navigate to `[SIT offline install directory]/BepInEx/plugins` and paste them there. Viola! Client mod files have been installed
 
+## Additional Step for Server Mods
+Due to recent updates to the AKI Server, server mods will not load correctly unless you make a simple modification:
+1. Locate the server mod, in `server/user/mods`
+2. In the mod folder, there will be a file called `package.json`, open it up in your text editor
+3. Look for the line that says `"akiVersion"`, you will need to change the version to `3.8.0`
+4. Repeat this process for all server mods you have installed
+
 ## Verification
 Once you start the game open the "LogOutput.log" file in \BepInEx\ and make sure all the plugins have loaded without errors.
 
