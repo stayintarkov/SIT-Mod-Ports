@@ -70,9 +70,9 @@ namespace AmandsGraphics
         private static float OpticDOFFocusDistanceAnimation;
         private static RaycastHit hit;
         private static RaycastHit foliageHit;
-        private static LayerMask LowLayerMask = LayerMask.GetMask("Terrain", "LowPolyCollider", "HitCollider");
-        private static LayerMask HighLayerMask = LayerMask.GetMask("Terrain", "HighPolyCollider", "HitCollider");
-        private static LayerMask FoliageLayerMask = LayerMask.GetMask("Terrain", "HighPolyCollider", "HitCollider", "Foliage");
+        private static LayerMask LowLayerMask;
+        private static LayerMask HighLayerMask;
+        private static LayerMask FoliageLayerMask;
         private static Transform TargetCollider;
         private static Vector3 TargetLocal;
         private static AnimationCurve ApertureAnimationCurve;
@@ -137,6 +137,7 @@ namespace AmandsGraphics
         private static AnimationCurve NVGAmbientContrast;
         private static AnimationCurve defaultAmbientBrightness;
         private static float defaultLightIntensity;
+        private static int hitColliderLayer;
 
         private static Dictionary<string, string> sceneLevelSettings = new Dictionary<string, string>();
 
@@ -147,6 +148,7 @@ namespace AmandsGraphics
         public void Start()
         {
             sceneLevelSettings.Add("City_Scripts", "---City_ levelsettings ---");
+            sceneLevelSettings.Add("Sandbox_Scripts", "---Sandbox_ levelsettings ---");
             sceneLevelSettings.Add("Laboratory_Scripts", "---Laboratory_levelsettings---");
             sceneLevelSettings.Add("custom_Light", "---Custom_levelsettings---");
             sceneLevelSettings.Add("Factory_Day", "---FactoryDay_levelsettings---");
@@ -157,6 +159,12 @@ namespace AmandsGraphics
             sceneLevelSettings.Add("Reserve_Base_DesignStuff", "---Reserve_levelsettings---");
             sceneLevelSettings.Add("shoreline_scripts", "---ShoreLine_levelsettings---");
             sceneLevelSettings.Add("default", "!settings");
+
+            // stops unity from FREAKING OUT
+            hitColliderLayer = LayerMask.NameToLayer("HitCollider");
+            LowLayerMask = LayerMask.GetMask("Terrain", "LowPolyCollider", "HitCollider");
+            HighLayerMask = LayerMask.GetMask("Terrain", "HighPolyCollider", "HitCollider");
+            FoliageLayerMask = LayerMask.GetMask("Terrain", "HighPolyCollider", "HitCollider", "Foliage");
 
             AmandsGraphicsPlugin.MotionBlur.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.MotionBlurSampleCount.SettingChanged += SettingsUpdated;
@@ -202,6 +210,7 @@ namespace AmandsGraphics
             AmandsGraphicsPlugin.MysticalGlow.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.MysticalGlowIntensity.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.StreetsMysticalGlowIntensity.SettingChanged += SettingsUpdated;
+            AmandsGraphicsPlugin.GroundZeroMysticalGlowIntensity.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.CustomsMysticalGlowIntensity.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.LighthouseMysticalGlowIntensity.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.InterchangeMysticalGlowIntensity.SettingChanged += SettingsUpdated;
@@ -226,6 +235,7 @@ namespace AmandsGraphics
             AmandsGraphicsPlugin.SkyColor.SettingChanged += SettingsUpdated;
 
             AmandsGraphicsPlugin.StreetsFogLevel.SettingChanged += SettingsUpdated;
+            AmandsGraphicsPlugin.GroundZeroFogLevel.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.CustomsFogLevel.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.LighthouseFogLevel.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.InterchangeFogLevel.SettingChanged += SettingsUpdated;
@@ -234,6 +244,7 @@ namespace AmandsGraphics
             AmandsGraphicsPlugin.ShorelineFogLevel.SettingChanged += SettingsUpdated;
 
             AmandsGraphicsPlugin.StreetsTonemap.SettingChanged += SettingsUpdated;
+            AmandsGraphicsPlugin.GroundZeroTonemap.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.LabsTonemap.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.CustomsTonemap.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.FactoryTonemap.SettingChanged += SettingsUpdated;
@@ -246,7 +257,9 @@ namespace AmandsGraphics
             AmandsGraphicsPlugin.HideoutTonemap.SettingChanged += SettingsUpdated;
 
             AmandsGraphicsPlugin.StreetsACES.SettingChanged += SettingsUpdated;
+            AmandsGraphicsPlugin.GroundZeroACES.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.StreetsACESS.SettingChanged += SettingsUpdated;
+            AmandsGraphicsPlugin.GroundZeroACESS.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.LabsACES.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.LabsACESS.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.CustomsACES.SettingChanged += SettingsUpdated;
@@ -269,7 +282,9 @@ namespace AmandsGraphics
             AmandsGraphicsPlugin.HideoutACESS.SettingChanged += SettingsUpdated;
 
             AmandsGraphicsPlugin.StreetsFilmic.SettingChanged += SettingsUpdated;
+            AmandsGraphicsPlugin.GroundZeroFilmic.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.StreetsFilmicS.SettingChanged += SettingsUpdated;
+            AmandsGraphicsPlugin.GroundZeroFilmicS.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.LabsFilmic.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.LabsFilmicS.SettingChanged += SettingsUpdated;
             AmandsGraphicsPlugin.CustomsFilmic.SettingChanged += SettingsUpdated;
@@ -470,7 +485,7 @@ namespace AmandsGraphics
                             if (Physics.Raycast(OpticCamera.transform.position, OpticCamera.transform.forward, out hit, AmandsGraphicsPlugin.OpticDOFRaycastDistance.Value, HighLayerMask, QueryTriggerInteraction.Ignore))
                             {
                                 OpticDOFFocusDistance = hit.distance;
-                                if (hit.distance > 2f && hit.collider.gameObject.layer == LayerMask.NameToLayer("HitCollider"))
+                                if (hit.distance > 2f && hit.collider.gameObject.layer == hitColliderLayer)
                                 {
                                     TargetCollider = hit.collider.transform;
                                     TargetLocal = TargetCollider.InverseTransformPoint(hit.point);
@@ -497,7 +512,7 @@ namespace AmandsGraphics
                                         case "Foliage":
                                             if (Physics.Raycast(hit.point, OpticCamera.transform.forward, out foliageHit, AmandsGraphicsPlugin.OpticDOFRaycastDistance.Value - hit.distance, HighLayerMask, QueryTriggerInteraction.Ignore))
                                             {
-                                                if (foliageHit.collider.gameObject.layer == LayerMask.NameToLayer("HitCollider"))
+                                                if (foliageHit.collider.gameObject.layer == hitColliderLayer)
                                                 {
                                                     TargetCollider = foliageHit.collider.transform;
                                                     TargetLocal = TargetCollider.InverseTransformPoint(foliageHit.point);
@@ -813,6 +828,9 @@ namespace AmandsGraphics
                     case "City_Scripts":
                         Traverse.Create(mBOIT_Scattering).Field("ZeroLevel").SetValue(defaultMBOITZeroLevel + AmandsGraphicsPlugin.StreetsFogLevel.Value);
                         break;
+                    case "Sandbox_Scripts":
+                        Traverse.Create(mBOIT_Scattering).Field("ZeroLevel").SetValue(defaultMBOITZeroLevel + AmandsGraphicsPlugin.GroundZeroFogLevel.Value);
+                        break;
                     case "Laboratory_Scripts":
                         break;
                     case "custom_Light":
@@ -1099,6 +1117,17 @@ namespace AmandsGraphics
                             }
                             levelSettings.ZeroLevel = defaultZeroLevel + AmandsGraphicsPlugin.StreetsFogLevel.Value;
                             break;
+                        case "Sandbox_Scripts":
+                            if (AmandsGraphicsPlugin.MysticalGlow.Value == EEnabledFeature.On)
+                            {
+                                levelSettings.SkyColor = Color.white * AmandsGraphicsPlugin.MysticalGlowIntensity.Value * AmandsGraphicsPlugin.GroundZeroMysticalGlowIntensity.Value;
+                            }
+                            else
+                            {
+                                levelSettings.SkyColor = defaultSkyColor;
+                            }
+                            levelSettings.ZeroLevel = defaultZeroLevel + AmandsGraphicsPlugin.GroundZeroFogLevel.Value;
+                            break;
                         case "Laboratory_Scripts":
                             break;
                         case "custom_Light":
@@ -1199,6 +1228,9 @@ namespace AmandsGraphics
                     {
                         case "City_Scripts":
                             levelSettings.ZeroLevel = defaultZeroLevel + AmandsGraphicsPlugin.StreetsFogLevel.Value;
+                            break;
+                        case "Sandbox_Scripts":
+                            levelSettings.ZeroLevel = defaultZeroLevel + AmandsGraphicsPlugin.GroundZeroFogLevel.Value;
                             break;
                         case "Laboratory_Scripts":
                             break;
@@ -1421,6 +1453,10 @@ namespace AmandsGraphics
                         FPSCameraPrismEffects.toneValues = AmandsGraphicsPlugin.StreetsACES.Value;
                         FPSCameraPrismEffects.secondaryToneValues = AmandsGraphicsPlugin.StreetsACESS.Value;
                         break;
+                    case "Sandbox_Scripts":
+                        FPSCameraPrismEffects.toneValues = AmandsGraphicsPlugin.GroundZeroACES.Value;
+                        FPSCameraPrismEffects.secondaryToneValues = AmandsGraphicsPlugin.GroundZeroACESS.Value;
+                        break;
                     case "Laboratory_Scripts":
                         FPSCameraPrismEffects.toneValues = AmandsGraphicsPlugin.LabsACES.Value;
                         FPSCameraPrismEffects.secondaryToneValues = AmandsGraphicsPlugin.LabsACESS.Value;
@@ -1476,6 +1512,10 @@ namespace AmandsGraphics
                         FPSCameraPrismEffects.toneValues = AmandsGraphicsPlugin.StreetsFilmic.Value;
                         FPSCameraPrismEffects.secondaryToneValues = AmandsGraphicsPlugin.StreetsFilmicS.Value;
                         break;
+                    case "Sandbox_Scripts":
+                        FPSCameraPrismEffects.toneValues = AmandsGraphicsPlugin.GroundZeroFilmic.Value;
+                        FPSCameraPrismEffects.secondaryToneValues = AmandsGraphicsPlugin.GroundZeroFilmicS.Value;
+                        break;
                     case "Laboratory_Scripts":
                         FPSCameraPrismEffects.toneValues = AmandsGraphicsPlugin.LabsFilmic.Value;
                         FPSCameraPrismEffects.secondaryToneValues = AmandsGraphicsPlugin.LabsFilmicS.Value;
@@ -1529,6 +1569,9 @@ namespace AmandsGraphics
                 {
                     case "City_Scripts":
                         tonemap = AmandsGraphicsPlugin.StreetsTonemap.Value;
+                        break;
+                    case "Sandbox_Scripts":
+                        tonemap = AmandsGraphicsPlugin.GroundZeroTonemap.Value;
                         break;
                     case "Laboratory_Scripts":
                         tonemap = AmandsGraphicsPlugin.LabsTonemap.Value;

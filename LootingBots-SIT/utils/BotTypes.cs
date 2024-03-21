@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 using EFT;
+
+using LootingBots.Patch.Components;
 
 namespace LootingBots.Patch.Util
 {
@@ -30,6 +33,11 @@ namespace LootingBots.Patch.Util
         {
             return botType.HasFlag(BotType.Pmc);
         }
+        
+        public static bool HasPlayerScav(this BotType botType)
+        {
+            return botType.HasFlag(BotType.Scav);
+        }
 
         public static bool HasRaider(this BotType botType)
         {
@@ -54,6 +62,15 @@ namespace LootingBots.Patch.Util
         public static bool HasBloodhound(this BotType botType)
         {
             return botType.HasFlag(BotType.Bloodhound);
+        }
+        
+        public static bool IsBotEnabled(this BotType enabledTypes, LootingBrain brain) {
+            if (brain.IsPlayerScav)
+            {
+                return enabledTypes.HasPlayerScav();
+            }
+            WildSpawnType role = brain.BotOwner.Profile.Info.Settings.Role;
+            return IsBotEnabled(enabledTypes, role);
         }
 
         public static bool IsBotEnabled(this BotType enabledTypes, WildSpawnType botType)

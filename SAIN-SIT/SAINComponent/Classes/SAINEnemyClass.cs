@@ -47,7 +47,7 @@ namespace SAIN.SAINComponent.Classes
         public EnemyPathDistance CheckPathDistance() => Path.CheckPathDistance();
 
         // ActiveEnemy Properties
-        public IAIDetails EnemyIAIDetails => EnemyPerson.IAIDetails;
+        public IPlayer EnemyIPlayer => EnemyPerson.IPlayer;
 
         public Player EnemyPlayer => EnemyPerson.Player;
 
@@ -107,7 +107,7 @@ namespace SAIN.SAINComponent.Classes
 
             bool visible = false;
             bool canshoot = false;
-            bool usingLight = EnemyPlayer?.AIData?.UsingLight == true && Enemy?.Path != null && Enemy.EnemyTransform?.TransformNull == false && Enemy.Path.EnemyDistance < 50f;
+            bool usingLight = EnemyPlayer?.AIData?.UsingLight == true && Enemy?.Path != null && Enemy?.EnemyTransform?.TransformNull == false && Enemy?.Path?.EnemyDistance < 50f;
 
             if (CheckLosTimer < Time.time)
             {
@@ -416,7 +416,7 @@ namespace SAIN.SAINComponent.Classes
 
         public SAINComponentClass SAIN => Enemy.SAIN;
         public Player EnemyPlayer => Enemy.EnemyPlayer;
-        public IAIDetails EnemyIAIDetails => Enemy.EnemyPerson.IAIDetails;
+        public IPlayer EnemyIPlayer => Enemy.EnemyPerson.IPlayer;
         public BotOwner BotOwner => Enemy.BotOwner;
         public SAINEnemyClass Enemy { get; private set; }
         public SAINPersonClass EnemyPerson => Enemy.EnemyPerson;

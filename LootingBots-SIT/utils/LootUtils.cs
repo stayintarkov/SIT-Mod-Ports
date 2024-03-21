@@ -11,12 +11,12 @@ using UnityEngine;
 
 using GridClass = StashGrid;
 using GridClassEx = GridContainer;
-using GridManagerClass = OperationResult19;
-using SortResultStruct = SOperationResult2<OperationResult19>;
-using GridItemClass = GItem12;
+using GridManagerClass = GOperationResult16;
+using SortResultStruct = SOperationResult12<GOperationResult16>;
+using GridItemClass = GItem8;
 using ItemAddressExClass = GridItemAddress;
-using SortErrorClass = GInventoryError17;
-using GridCacheClass = GClass1329;
+using SortErrorClass = GInventoryError18;
+using GridCacheClass = GClass1390;
 
 namespace LootingBots.Patch.Util
 {
@@ -29,7 +29,7 @@ namespace LootingBots.Patch.Util
         public static int RESERVED_SLOT_COUNT = 2;
 
         /** Calculate the size of a container */
-        public static int GetContainerSize(GItem1 container)
+        public static int GetContainerSize(SearchableItemClass container)
         {
             GridClass[] grids = container.Grids;
             int gridSize = 0;
@@ -61,8 +61,8 @@ namespace LootingBots.Patch.Util
         * Sorts the items in a container and places them in grid spaces that match their exact size before moving on to a bigger slot size. This helps make more room in the container for items to be placed in
         */
         public static SortResultStruct SortContainer(
-            GItem1 container,
-            InventoryController controller
+            SearchableItemClass container,
+            InventoryControllerClass controller
         )
         {
             if (container != null)
@@ -211,9 +211,9 @@ namespace LootingBots.Patch.Util
             return dimensions.X * dimensions.Y;
         }
 
-        // Custom extension for EFT InventoryController.FindGridToPickUp that uses a custom method for choosing the grid slot to place a loot item
+        // Custom extension for EFT InventoryControllerClass.FindGridToPickUp that uses a custom method for choosing the grid slot to place a loot item
         public static ItemAddressExClass FindGridToPickUp(
-            this InventoryController controller,
+            this InventoryControllerClass controller,
             Item item,
             IEnumerable<GridClass> grids = null
         )
@@ -234,17 +234,17 @@ namespace LootingBots.Patch.Util
 
         // Custom extension for EFT Equipment.GetPrioritizedGridsForLoot which sorts the tacVest/backpack and reserves a 1x2 grid slot in the tacvest before finding an available grid space for loot
         public static IEnumerable<GridClass> GetPrioritizedGridsForLoot(
-            this Equipment equipment,
+            this EquipmentClass equipment,
             Item item
         )
         {
-            GItem1 tacVest = (GItem1)
+            SearchableItemClass tacVest = (SearchableItemClass)
                 equipment.GetSlot(EquipmentSlot.TacticalVest).ContainedItem;
-            GItem1 backpack = (GItem1)
+            SearchableItemClass backpack = (SearchableItemClass)
                 equipment.GetSlot(EquipmentSlot.Backpack).ContainedItem;
-            GItem1 pockets = (GItem1)
+            SearchableItemClass pockets = (SearchableItemClass)
                 equipment.GetSlot(EquipmentSlot.Pockets).ContainedItem;
-            GItem1 secureContainer = (GItem1)
+            SearchableItemClass secureContainer = (SearchableItemClass)
                 equipment.GetSlot(EquipmentSlot.SecuredContainer).ContainedItem;
 
             GridClass[] tacVestGrids = new GridClass[0];
@@ -267,7 +267,7 @@ namespace LootingBots.Patch.Util
                     .Concat(backpackGrids)
                     .Concat(secureContainerGrids);
             }
-            else if (item is ThrowWeap)
+            else if (item is GrenadeClass)
             {
                 return pocketGrids
                     .Concat(tacVestGrids)

@@ -1,0 +1,334 @@
+{
+    "54491c4f4bdc2db1078b4568": {
+        "name": "MP-133 12ga pump-action shotgun",
+        "value": 28
+    },
+    "5af04b6486f774195a3ebb49": {
+        "name": "Pliers Elite",
+        "value": 20
+    },
+    "5fc3e272f8b6a877a729eac5": {
+        "name": "HK UMP .45 ACP submachine gun",
+        "value": 28
+    },
+    "5d5d646386f7742797261fd9": {
+        "name": "6B3TM-01M armored rig",
+        "value": 5
+    },
+    "5c0e3eb886f7742015526062": {
+        "name": "6B5-16 Zh-86 Uley armored rig",
+        "value": 10
+    },
+    "5c0e446786f7742013381639": {
+        "name": "6B5-15 Zh-86 Uley armored rig",
+        "value": 10
+    },
+    "591c4efa86f7741030027726": {
+        "name": "Axion Kobra EKP-8-18 reflex sight",
+        "value": 10
+    },
+    "5947db3f86f77447880cf76f": {
+        "name": "Axion Kobra EKP-8-02 reflex sight (Dovetail)",
+        "value": 10
+    },
+    "5c82342f2e221644f31c060e": {
+        "name": "BelOMO PSO-1 4x24 scope",
+        "value": 10
+    },
+    "576fd4ec2459777f0b518431": {
+        "name": "BelOMO PSO-1M2-1 4x24 scope",
+        "value": 5
+    },
+    "5c82343a2e221644f31c0611": {
+        "name": "BelOMO PSO-1M2 4x24 scope",
+        "value": 5
+    },
+    "5448fee04bdc2dbc018b4567": {
+        "name": "Bottle of water (0.6L)",
+        "value": 8
+    },
+    "590c661e86f7741e566b646a": {
+        "name": "Car first aid kit",
+        "value": 18
+    },
+    "5cc9c20cd7f00c001336c65d": {
+        "name": "NcSTAR Tactical blue laser LAM-module",
+        "value": 10
+    },
+    "570fd721d2720bc5458b4596": {
+        "name": "Walther MRS reflex sight",
+        "value": 10
+    },
+    "5d2c76ed48f03532f2136169": {
+        "name": "AK AKademia Bastion dust cover",
+        "value": 5
+    },
+    "5a9fbb74a2750c0032157181": {
+        "name": "Rotor 43 .366 TKM muzzle brake-compensator",
+        "value": 5
+    },
+    "5c0672ed0db834001b7353f3": {
+        "name": "PP-19-01 \"Vityaz\" 9x19 PUFGUN SG-919 30 30-round magazine",
+        "value": 6
+    },
+    "5c0673fb0db8340023300271": {
+        "name": "PP-19-01 \"Vityaz\" 9x19 PUFGUN SG-919 20 20-round magazine",
+        "value": 4
+    },
+    "57ffa9f4245977728561e844": {
+        "name": "AKS-74U Zenit B-11 handguard",
+        "value": 10
+    },
+    "5cadc2e0ae9215051e1c21e7": {
+        "name": "M9A3 9x19 17-round magazine",
+        "value": 3
+    },
+    "55d459824bdc2d892f8b4573": {
+        "name": "AR-15 KAC RIS handguard",
+        "value": 5
+    },
+    "637f57b78d137b27f70c496a": {
+        "name": "AR-15 KAC RIS lower handguard",
+        "value": 5
+    },
+    "5c87ca002e221600114cb150": {
+        "name": "KAC vertical foregrip",
+        "value": 7
+    },
+    "5a718b548dc32e000d46d262": {
+        "name": "Glock 9x19 17-round magazine",
+        "value": 3
+    },
+    "5a718da68dc32e000d46d264": {
+        "name": "Glock 9x19 Magpul PMAG GL9 21-round magazine",
+        "value": 4
+    },
+    "59984ab886f7743e98271174": {
+        "name": "PP-19-01 \"Vityaz\" 9x19 submachine gun",
+        "value": 7
+    },
+    "59e6687d86f77411d949b251": {
+        "name": "Molot VPO-209 .366 TKM carbine",
+        "value": 7
+    },
+    "609b9e31506cf869cf3eaf41": {
+        "name": "VOMZ Pilad TargetRing reflex sight",
+        "value": 10
+    },
+    "55d484b44bdc2d1d4e8b456d": {
+        "name": "MP-133 12ga 6-shell magazine",
+        "value": 10
+    },
+    "5ea034f65aad6446a939737e": {
+        "name": "PPSh-41 7.62x25 71-round drum magazine",
+        "value": 8
+    },
+    "5ea034eb5aad6446a939737b": {
+        "name": "PPSh-41 7.62x25 35-round magazine",
+        "value": 7
+    },
+    "5ea03f7400685063ec28bfa8": {
+        "name": "PPSh-41 7.62x25 submachine gun",
+        "value": 10
+    },
+    "5a7c4850e899ef00150be885": {
+        "name": "6B47 Ratnik-BSh helmet",
+        "value": 10
+    },
+    "5aa7cfc0e5b5b00015693143": {
+        "name": "6B47 Ratnik-BSh helmet (Digital Flora cover)",
+        "value": 10
+    },
+    "5448ff904bdc2d6f028b456e": {
+        "name": "Army crackers",
+        "value": 5
+    },
+    "587df583245977373c4f1129": {
+        "name": "SKS 7.62x39 ProMag SKS-A5 20-round magazine",
+        "value": 6
+    },
+    "5c94bbff86f7747ee735c08f": {
+        "name": "TerraGroup Labs access keycard",
+        "value": 6
+    },
+    "59ccfdba86f7747f2109a587": {
+        "name": "AK UltiMAK M1-B gas tube & handguard",
+        "value": 5
+    },
+    "544a5cde4bdc2d39388b456b": {
+        "name": "Flyye MBSS backpack",
+        "value": 5
+    },
+    "5ca20d5986f774331e7c9602": {
+        "name": "WARTECH Berkut BB-102 backpack",
+        "value": 4
+    },
+    "56dee2bdd2720bc8328b4567": {
+        "name": "MP-153 12ga semi-automatic shotgun",
+        "value": 5
+    },
+    "5a7828548dc32e5a9c28b516": {
+        "name": "Remington Model 870 12ga pump-action shotgun",
+        "value": 5
+    },
+    "5e870397991fd70db46995c8": {
+        "name": "Mossberg 590A1 12ga pump-action shotgun",
+        "value": 5
+    },
+    "5648ac824bdc2ded0b8b457d": {
+        "name": "AK Zenit RP-1 charging handle",
+        "value": 4
+    },
+    "56083a334bdc2dc8488b4571": {
+        "name": "MP-133/153 plastic pistol grip",
+        "value": 10
+    },
+    "57dc2fa62459775949412633": {
+        "name": "Kalashnikov AKS-74U 5.45x39 assault rifle",
+        "value": 5
+    },
+    "583990e32459771419544dd2": {
+        "name": "Kalashnikov AKS-74UN 5.45x39 assault rifle",
+        "value": 5
+    },
+    "5839a40f24597726f856b511": {
+        "name": "Kalashnikov AKS-74UB 5.45x39 assault rifle",
+        "value": 5
+    },
+    "57d14d2524597714373db789": {
+        "name": "PP-91 \"Kedr\" 9x18PM submachine gun",
+        "value": 3
+    },
+    "57f3c6bd24597738e730fa2f": {
+        "name": "PP-91-01 \"Kedr-B\" 9x18PM submachine gun",
+        "value": 3
+    },
+    "590c60fc86f77412b13fddcf": {
+        "name": "Documents case",
+        "value": 8
+    },
+    "59fb023c86f7746d0d4b423c": {
+        "name": "Weapon case",
+        "value": 18
+    },
+    "59fb042886f7746c5005a7b2": {
+        "name": "Item case",
+        "value": 4
+    },
+    "5aafbcd986f7745e590fff23": {
+        "name": "Medicine case",
+        "value": 8
+    },
+    "5aafbde786f774389d0cbc0f": {
+        "name": "Ammunition case",
+        "value": 10
+    },
+    "5b6d9ce188a4501afc1b2b25": {
+        "name": "T H I C C Weapon case",
+        "value": 18
+    },
+    "5c0a840b86f7742ffa4f2482": {
+        "name": "T H I C C item case",
+        "value": 18
+    },
+    "5c127c4486f7745625356c13": {
+        "name": "Magazine case",
+        "value": 12
+    },
+    "5e2af55f86f7746d4159f07c": {
+        "name": "Grenade case",
+        "value": 12
+    },
+    "619cbf7d23893217ec30b689": {
+        "name": "Injector case",
+        "value": 6
+    },
+    "56dfef82d2720bbd668b4567": {
+        "name": "5.45x39mm BP gs",
+        "value": 30
+    },
+	"56dff2ced2720bb4668b4567": {
+        "name": "5.45x39mm PP gs",
+        "value": 100
+    },
+    "56dff026d2720bb8668b4567": {
+        "name": "5.45x39mm BS gs",
+        "value": 125
+    },
+    "56dff061d2720bb5668b4567": {
+        "name": "5.45x39mm BT gs",
+        "value": 125
+    },
+	"54527ac44bdc2d36668b4567": {
+        "name": "5.56x45mm M855A1",
+        "value": 125
+    },
+    "5d6e6806a4b936088465b17e": {
+        "name": "12/70 8.5mm Magnum buckshot",
+        "value": 19
+    },
+    "5d6e6911a4b9361bd5780d52": {
+        "name": "12/70 flechette",
+        "value": 19
+    },
+    "5d6e68a8a4b9360b6c0d54e2": {
+        "name": "12/70 AP-20 armor-piercing slug",
+        "value": 11
+    },
+    "59e0d99486f7744a32234762": {
+        "name": "7.62x39mm BP gzh",
+        "value": 13
+    },
+    "5737292724597765e5728562": {
+        "name": "5.45x39mm BP gs ammo pack (120 pcs)",
+        "value": 35
+    },
+    "57372a7f24597766fe0de0c1": {
+        "name": "5.45x39mm BP gs ammo pack (120 pcs)",
+        "value": 35
+    },
+    "57372ac324597767001bc261": {
+        "name": "5.45x39mm BP gs ammo pack (30 pcs)",
+        "value": 35
+    },
+    "57372b832459776701014e41": {
+        "name": "5.45x39mm BS gs ammo pack (120 pcs)",
+        "value": 35
+    },
+    "57372bad245977670b7cd242": {
+        "name": "5.45x39mm BS gs ammo pack (120 pcs)",
+        "value": 35
+    },
+    "57372bd3245977670b7cd243": {
+        "name": "5.45x39mm BS gs ammo pack (30 pcs)",
+        "value": 35
+    },
+    "57372c21245977670937c6c2": {
+        "name": "5.45x39mm BT gs ammo pack (120 pcs)",
+        "value": 35
+    },
+    "57372c56245977685e584582": {
+        "name": "5.45x39mm BT gs ammo pack (120 pcs)",
+        "value": 35
+    },
+    "57372c89245977685d4159b1": {
+        "name": "5.45x39mm BT gs ammo pack (30 pcs)",
+        "value": 35
+    },
+    "57372d1b2459776862260581": {
+        "name": "5.45x39mm PP gs ammo pack (120 pcs)",
+        "value": 26
+    },
+    "57372d4c245977685a3da2a1": {
+        "name": "5.45x39mm PP gs ammo pack (120 pcs)",
+        "value": 26
+    },
+    "57372db0245977685d4159b2": {
+        "name": "5.45x39mm PP gs ammo pack (30 pcs)",
+        "value": 26
+    },
+    "5447ac644bdc2d6c208b4567": {
+        "name": "5.56x45mm M855 ammo pack (30 pcs)",
+        "value": 26
+    }
+}

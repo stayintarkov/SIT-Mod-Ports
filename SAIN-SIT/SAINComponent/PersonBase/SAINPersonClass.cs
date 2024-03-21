@@ -1,5 +1,4 @@
 ﻿using EFT;
-using EFT.NextObservedPlayer;
 using SAIN.SAINComponent.Classes.Info;
 using System;
 using UnityEngine;
@@ -8,10 +7,14 @@ namespace SAIN.SAINComponent.BaseClasses
 {
     public class SAINPersonClass : PersonBaseClass, ISAINPerson
     {
-        public SAINPersonClass(IAIDetails person) : base(person)
+        public SAINPersonClass(IPlayer person) : base(person)
         {
             Transform = new SAINPersonTransformClass(this);
             Profile = person.Profile;
+            if (person?.AIData?.BotOwner != null)
+            {
+                SAIN = person.AIData.BotOwner.GetComponent<SAINComponentClass>();
+            }
         }
 
         public void Update()
@@ -28,7 +31,7 @@ namespace SAIN.SAINComponent.BaseClasses
         public string Name => Player?.name;
         public bool IsAI => BotOwner != null;
         public bool IsSAINBot => SAIN != null;
-        public AIData AIData => IAIDetails?.AIData;
+        public AIData AIData => IPlayer?.AIData;
         public BotOwner BotOwner => AIData?.BotOwner;
         public SAINComponentClass SAIN { get; private set; }
         public SAINBotInfoClass SAINBotInfo => SAIN?.Info;

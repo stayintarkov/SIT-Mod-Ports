@@ -17,7 +17,7 @@ namespace SAIN.Patches.Generic
     {
         protected override MethodBase GetTargetMethod() => typeof(BotsGroup).GetMethod("AddEnemy");
         [PatchPrefix]
-        public static bool PatchPrefix(IAIDetails person)
+        public static bool PatchPrefix(IPlayer person)
         {
             if (person == null || (person.IsAI && person.AIData?.BotOwner?.GetPlayer == null))
             {
@@ -32,7 +32,7 @@ namespace SAIN.Patches.Generic
     {
         protected override MethodBase GetTargetMethod() => typeof(BotMemoryClass).GetMethod("AddEnemy");
         [PatchPrefix]
-        public static bool PatchPrefix(IAIDetails enemy)
+        public static bool PatchPrefix(IPlayer enemy)
         {
             if (enemy == null || (enemy.IsAI && enemy.AIData?.BotOwner?.GetPlayer == null))
             {

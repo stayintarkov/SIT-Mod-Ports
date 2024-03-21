@@ -26,8 +26,8 @@ namespace AmandsSense
     {
         public static LocalPlayer localPlayer;
 
-        public static LayerMask SphereInteractiveLayerMask = LayerMask.GetMask("Interactive");
-        public static LayerMask SphereDeadbodyLayerMask = LayerMask.GetMask("Deadbody");
+        public static LayerMask SphereInteractiveLayerMask;
+        public static LayerMask SphereDeadbodyLayerMask;
 
         public static Dictionary<string, Sprite> LoadedSprites = new Dictionary<string, Sprite>();
         public static Dictionary<string, AudioClip> LoadedAudioClips = new Dictionary<string, AudioClip>();
@@ -62,6 +62,9 @@ namespace AmandsSense
             onItemsSensesAdded += ItemsSensesAddedMethod;
             onItemsSensesRemove += ItemsSensesRemoveMethod;
             onContainerSensesAdded += ContainerSensesAddedMethod;
+            SphereInteractiveLayerMask = LayerMask.GetMask("Interactive");
+            SphereDeadbodyLayerMask = LayerMask.GetMask("Deadbody");
+            ;
         }
         public void ItemsSensesAddedMethod(string Id, string TemplateId, bool CanSellOnRagfair, Vector3 position, ESenseItemType SenseItemType)
         {
@@ -129,7 +132,7 @@ namespace AmandsSense
                 {
                     CooldownTime = 0;
                     Collider[] colliders = new Collider[AmandsSensePlugin.Limit.Value];
-                    int colliderCount = Physics.OverlapSphereNonAlloc(localPlayer.Position, AmandsSensePlugin.Radius.Value, colliders, SphereInteractiveLayerMask, QueryTriggerInteraction.Collide);
+                    int colliderCount = Physics.OverlapSphereNonAlloc(((IPlayer)localPlayer).Position, AmandsSensePlugin.Radius.Value, colliders, SphereInteractiveLayerMask, QueryTriggerInteraction.Collide);
                     for (int i = 0; i < colliderCount; i++)
                     {
                         Component component = colliders[i].transform.gameObject.GetComponent<ObservedLootItem>();
@@ -142,7 +145,7 @@ namespace AmandsSense
                                 AmandsSenseItem amandsSenseItem = SenseItemGameObject.AddComponent<AmandsSenseItem>();
                                 amandsSenseItem.observedLootItem = observedLootItem;
                                 amandsSenseItem.Id = observedLootItem.ItemId;
-                                amandsSenseItem.Delay = Vector3.Distance(localPlayer.Position, observedLootItem.transform.position) / AmandsSensePlugin.Speed.Value;
+                                amandsSenseItem.Delay = Vector3.Distance(((IPlayer)localPlayer).Position, observedLootItem.transform.position) / AmandsSensePlugin.Speed.Value;
                             }
                         }
                         else
@@ -157,14 +160,14 @@ namespace AmandsSense
                                     AmandsSenseContainer amandsSenseContainer = SenseContainerGameObject.AddComponent<AmandsSenseContainer>();
                                     amandsSenseContainer.lootableContainer = lootableContainer;
                                     amandsSenseContainer.Id = lootableContainer.Id;
-                                    amandsSenseContainer.Delay = Vector3.Distance(localPlayer.Position, lootableContainer.transform.position) / AmandsSensePlugin.Speed.Value;
+                                    amandsSenseContainer.Delay = Vector3.Distance(((IPlayer)localPlayer).Position, lootableContainer.transform.position) / AmandsSensePlugin.Speed.Value;
                                 }
                             }
                         }
                     }
                     List<string> players = new List<string>();
                     Collider[] colliders2 = new Collider[AmandsSensePlugin.Limit.Value];
-                    int colliderCount2 = Physics.OverlapSphereNonAlloc(localPlayer.Position, AmandsSensePlugin.DeadbodyRadius.Value, colliders2, SphereDeadbodyLayerMask, QueryTriggerInteraction.Collide);
+                    int colliderCount2 = Physics.OverlapSphereNonAlloc(((IPlayer)localPlayer).Position, AmandsSensePlugin.DeadbodyRadius.Value, colliders2, SphereDeadbodyLayerMask, QueryTriggerInteraction.Collide);
                     for (int i = 0; i < colliderCount2; i++)
                     {
                         BodyPartCollider bodyPartCollider = colliders2[i].transform.gameObject.GetComponent<BodyPartCollider>();
@@ -188,11 +191,11 @@ namespace AmandsSense
                                     amandsSenseDeadbody.Id = corpse.ItemId;
                                     if (bodyPartCollider.Collider != null)
                                     {
-                                        amandsSenseDeadbody.Delay = Vector3.Distance(localPlayer.Position, bodyPartCollider.Collider.transform.position) / AmandsSensePlugin.Speed.Value;
+                                        amandsSenseDeadbody.Delay = Vector3.Distance(((IPlayer)localPlayer).Position, bodyPartCollider.Collider.transform.position) / AmandsSensePlugin.Speed.Value;
                                     }
                                     else
                                     {
-                                        amandsSenseDeadbody.Delay = Vector3.Distance(localPlayer.Position, corpse.transform.position) / AmandsSensePlugin.Speed.Value;
+                                        amandsSenseDeadbody.Delay = Vector3.Distance(((IPlayer)localPlayer).Position, corpse.transform.position) / AmandsSensePlugin.Speed.Value;
                                     }
                                 }
                             }
@@ -227,7 +230,7 @@ namespace AmandsSense
             }
             if (localPlayer == null) return;
             Collider[] colliders = new Collider[AmandsSensePlugin.Limit.Value];
-            int colliderCount = Physics.OverlapSphereNonAlloc(localPlayer.Position, AmandsSensePlugin.AlwaysOnRadius.Value, colliders, SphereInteractiveLayerMask, QueryTriggerInteraction.Collide);
+            int colliderCount = Physics.OverlapSphereNonAlloc(((IPlayer)localPlayer).Position, AmandsSensePlugin.AlwaysOnRadius.Value, colliders, SphereInteractiveLayerMask, QueryTriggerInteraction.Collide);
 
             await Task.Delay((int)(100));
             List<Collider> collidersList = new List<Collider>(colliders);
@@ -318,7 +321,7 @@ namespace AmandsSense
             await Task.Delay((int)(100));
             List<string> players = new List<string>();
             Collider[] colliders2 = new Collider[AmandsSensePlugin.Limit.Value];
-            int colliderCount2 = Physics.OverlapSphereNonAlloc(localPlayer.Position, AmandsSensePlugin.AlwaysOnDeadbodyRadius.Value, colliders2, SphereDeadbodyLayerMask, QueryTriggerInteraction.Collide);
+            int colliderCount2 = Physics.OverlapSphereNonAlloc(((IPlayer)localPlayer).Position, AmandsSensePlugin.AlwaysOnDeadbodyRadius.Value, colliders2, SphereDeadbodyLayerMask, QueryTriggerInteraction.Collide);
 
             await Task.Delay((int)(100));
             List<Collider> colliders2List = new List<Collider>(colliders2);
@@ -403,175 +406,175 @@ namespace AmandsSense
         }
         public static ESenseItemType SenseItemType(Type itemType)
         {
-            if (GClass2606.TypeTable["57864ada245977548638de91"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["57864ada245977548638de91"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.BuildingMaterials;
             }
-            if (GClass2606.TypeTable["57864a66245977548f04a81f"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["57864a66245977548f04a81f"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Electronics;
             }
-            if (GClass2606.TypeTable["57864ee62459775490116fc1"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["57864ee62459775490116fc1"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.EnergyElements;
             }
-            if (GClass2606.TypeTable["57864e4c24597754843f8723"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["57864e4c24597754843f8723"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.FlammableMaterials;
             }
-            if (GClass2606.TypeTable["57864c322459775490116fbf"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["57864c322459775490116fbf"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.HouseholdMaterials;
             }
-            if (GClass2606.TypeTable["57864c8c245977548867e7f1"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["57864c8c245977548867e7f1"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.MedicalSupplies;
             }
-            if (GClass2606.TypeTable["57864bb7245977548b3b66c2"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["57864bb7245977548b3b66c2"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Tools;
             }
-            if (GClass2606.TypeTable["57864a3d24597754843f8721"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["57864a3d24597754843f8721"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Valuables;
             }
-            if (GClass2606.TypeTable["590c745b86f7743cc433c5f2"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["590c745b86f7743cc433c5f2"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Others;
             }
-            if (GClass2606.TypeTable["5448e53e4bdc2d60728b4567"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5448e53e4bdc2d60728b4567"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Backpacks;
             }
-            if (GClass2606.TypeTable["5448e54d4bdc2dcc718b4568"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5448e54d4bdc2dcc718b4568"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.BodyArmor;
             }
-            if (GClass2606.TypeTable["5448e5724bdc2ddf718b4568"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5448e5724bdc2ddf718b4568"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Eyewear;
             }
-            if (GClass2606.TypeTable["5a341c4686f77469e155819e"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5a341c4686f77469e155819e"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Facecovers;
             }
-            if (GClass2606.TypeTable["5a341c4086f77401f2541505"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5a341c4086f77401f2541505"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Headgear;
             }
-            if (GClass2606.TypeTable["57bef4c42459772e8d35a53b"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["57bef4c42459772e8d35a53b"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.GearComponents;
             }
-            if (GClass2606.TypeTable["5b3f15d486f77432d0509248"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5b3f15d486f77432d0509248"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.GearComponents;
             }
-            if (GClass2606.TypeTable["5645bcb74bdc2ded0b8b4578"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5645bcb74bdc2ded0b8b4578"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Headsets;
             }
-            if (GClass2606.TypeTable["5448bf274bdc2dfc2f8b456a"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5448bf274bdc2dfc2f8b456a"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.SecureContainers;
             }
-            if (GClass2606.TypeTable["5795f317245977243854e041"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5795f317245977243854e041"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.StorageContainers;
             }
-            if (GClass2606.TypeTable["5448e5284bdc2dcb718b4567"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5448e5284bdc2dcb718b4567"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.TacticalRigs;
             }
-            if (GClass2606.TypeTable["550aa4154bdc2dd8348b456b"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["550aa4154bdc2dd8348b456b"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.FunctionalMods;
             }
-            if (GClass2606.TypeTable["55802f3e4bdc2de7118b4584"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["55802f3e4bdc2de7118b4584"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.GearMods;
             }
-            if (GClass2606.TypeTable["5a74651486f7744e73386dd1"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5a74651486f7744e73386dd1"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.GearMods;
             }
-            if (GClass2606.TypeTable["55802f4a4bdc2ddb688b4569"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["55802f4a4bdc2ddb688b4569"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.VitalParts;
             }
-            if (GClass2606.TypeTable["5447e1d04bdc2dff2f8b4567"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5447e1d04bdc2dff2f8b4567"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.MeleeWeapons;
             }
-            if (GClass2606.TypeTable["543be6564bdc2df4348b4568"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["543be6564bdc2df4348b4568"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Throwables;
             }
-            if (GClass2606.TypeTable["543be5cb4bdc2deb348b4568"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["543be5cb4bdc2deb348b4568"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.AmmoPacks;
             }
-            if (GClass2606.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Rounds;
             }
-            if (GClass2606.TypeTable["5448e8d64bdc2dce718b4568"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5448e8d64bdc2dce718b4568"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Drinks;
             }
-            if (GClass2606.TypeTable["5448e8d04bdc2ddf718b4569"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5448e8d04bdc2ddf718b4569"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Food;
             }
-            if (GClass2606.TypeTable["5448f3a64bdc2d60728b456a"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5448f3a64bdc2d60728b456a"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Injectors;
             }
-            if (GClass2606.TypeTable["5448f3ac4bdc2dce718b4569"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5448f3ac4bdc2dce718b4569"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.InjuryTreatment;
             }
-            if (GClass2606.TypeTable["5448f39d4bdc2d0a728b4568"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5448f39d4bdc2d0a728b4568"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Medkits;
             }
-            if (GClass2606.TypeTable["5448f3a14bdc2d27728b4569"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5448f3a14bdc2d27728b4569"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Pills;
             }
-            if (GClass2606.TypeTable["5c164d2286f774194c5e69fa"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5c164d2286f774194c5e69fa"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.ElectronicKeys;
             }
-            if (GClass2606.TypeTable["5c99f98d86f7745c314214b3"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5c99f98d86f7745c314214b3"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.MechanicalKeys;
             }
-            if (GClass2606.TypeTable["5448ecbe4bdc2d60728b4568"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5448ecbe4bdc2d60728b4568"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.InfoItems;
             }
-            if (GClass2606.TypeTable["5447e0e74bdc2d3c308b4567"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5447e0e74bdc2d3c308b4567"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.SpecialEquipment;
             }
-            if (GClass2606.TypeTable["616eb7aea207f41933308f46"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["616eb7aea207f41933308f46"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.SpecialEquipment;
             }
-            if (GClass2606.TypeTable["61605ddea09d851a0a0c1bbc"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["61605ddea09d851a0a0c1bbc"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.SpecialEquipment;
             }
-            if (GClass2606.TypeTable["5f4fbaaca5573a5ac31db429"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["5f4fbaaca5573a5ac31db429"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.SpecialEquipment;
             }
-            if (GClass2606.TypeTable["567849dd4bdc2d150f8b456e"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["567849dd4bdc2d150f8b456e"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Maps;
             }
-            if (GClass2606.TypeTable["543be5dd4bdc2deb348b4569"].IsAssignableFrom(itemType))
+            if (GClass2741.TypeTable["543be5dd4bdc2deb348b4569"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Money;
             }
@@ -709,7 +712,7 @@ namespace AmandsSense
         private async void WaitAndStart()
         {
             await Task.Delay((int)(Delay * 1000));
-            if (observedLootItem != null && observedLootItem.gameObject.activeSelf && observedLootItem.Item != null && AmandsSenseClass.localPlayer != null && observedLootItem.transform.position.y > AmandsSenseClass.localPlayer.Position.y + AmandsSensePlugin.MinHeight.Value && observedLootItem.transform.position.y < AmandsSenseClass.localPlayer.Position.y + AmandsSensePlugin.MaxHeight.Value)
+            if (observedLootItem != null && observedLootItem.gameObject.activeSelf && observedLootItem.Item != null && AmandsSenseClass.localPlayer != null && observedLootItem.transform.position.y > ((IPlayer)AmandsSenseClass.localPlayer).Position.y + AmandsSensePlugin.MinHeight.Value && observedLootItem.transform.position.y < ((IPlayer)AmandsSenseClass.localPlayer).Position.y + AmandsSensePlugin.MaxHeight.Value)
             {
                 BoxCollider boxCollider = observedLootItem.gameObject.GetComponent<BoxCollider>();
                 if (boxCollider != null)
@@ -1282,7 +1285,7 @@ namespace AmandsSense
         private async void WaitAndStart()
         {
             await Task.Delay((int)(Delay * 1000));
-            if (lootableContainer != null && lootableContainer.gameObject.activeSelf && AmandsSenseClass.localPlayer != null && lootableContainer.transform.position.y > AmandsSenseClass.localPlayer.Position.y + AmandsSensePlugin.MinHeight.Value && lootableContainer.transform.position.y < AmandsSenseClass.localPlayer.Position.y + AmandsSensePlugin.MaxHeight.Value)
+            if (lootableContainer != null && lootableContainer.gameObject.activeSelf && AmandsSenseClass.localPlayer != null && lootableContainer.transform.position.y > ((IPlayer)AmandsSenseClass.localPlayer).Position.y + AmandsSensePlugin.MinHeight.Value && lootableContainer.transform.position.y < ((IPlayer)AmandsSenseClass.localPlayer).Position.y + AmandsSensePlugin.MaxHeight.Value)
             {
                 BoxCollider boxCollider = lootableContainer.gameObject.GetComponent<BoxCollider>();
                 if (boxCollider != null)
@@ -1297,7 +1300,7 @@ namespace AmandsSense
                 ESenseItemColor eSenseItemColor = ESenseItemColor.Default;
                 if (lootableContainer.ItemOwner != null && AmandsSenseClass.itemsJsonClass != null && AmandsSenseClass.itemsJsonClass.RareItems != null && AmandsSenseClass.itemsJsonClass.KappaItems != null && AmandsSenseClass.itemsJsonClass.NonFleaExclude != null && AmandsSenseClass.localPlayer.Profile != null && AmandsSenseClass.localPlayer.Profile.WishList != null)
                 {
-                    CompoundItem lootItemClass = lootableContainer.ItemOwner.RootItem as CompoundItem;
+                    LootItemClass lootItemClass = lootableContainer.ItemOwner.RootItem as LootItemClass;
                     if (lootItemClass != null)
                     {
                         object[] Grids = Traverse.Create(lootItemClass).Field("Grids").GetValue<object[]>();
@@ -1321,7 +1324,7 @@ namespace AmandsSense
                                         }
                                         else if (item.Template != null && !item.Template.CanSellOnRagfair && !AmandsSenseClass.itemsJsonClass.NonFleaExclude.Contains(item.TemplateId) && eSenseItemColor != ESenseItemColor.Rare && eSenseItemColor != ESenseItemColor.WishList)
                                         {
-                                            if (!AmandsSensePlugin.NonFleaAmmo.Value && GClass2606.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
+                                            if (!AmandsSensePlugin.NonFleaAmmo.Value && GClass2741.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
                                             {
                                                 continue;
                                             }
@@ -1486,7 +1489,7 @@ namespace AmandsSense
         private async void WaitAndStart()
         {
             await Task.Delay((int)(Delay * 1000));
-            if (corpse != null && corpse.gameObject.activeSelf && bodyPartCollider != null && bodyPartCollider.gameObject.activeSelf && bodyPartCollider.Collider != null && AmandsSenseClass.localPlayer != null && bodyPartCollider.Collider.transform.position.y > AmandsSenseClass.localPlayer.Position.y + AmandsSensePlugin.MinHeight.Value && bodyPartCollider.Collider.transform.position.y < AmandsSenseClass.localPlayer.Position.y + AmandsSensePlugin.MaxHeight.Value)
+            if (corpse != null && corpse.gameObject.activeSelf && bodyPartCollider != null && bodyPartCollider.gameObject.activeSelf && bodyPartCollider.Collider != null && AmandsSenseClass.localPlayer != null && bodyPartCollider.Collider.transform.position.y > ((IPlayer)AmandsSenseClass.localPlayer).Position.y + AmandsSensePlugin.MinHeight.Value && bodyPartCollider.Collider.transform.position.y < ((IPlayer)AmandsSenseClass.localPlayer).Position.y + AmandsSensePlugin.MaxHeight.Value)
             {
                 gameObject.transform.position = bodyPartCollider.Collider.transform.position + (Vector3.up * AmandsSensePlugin.NormalSize.Value) + (Vector3.up * 0.5f);
                 ESenseItemColor eSenseItemColor = ESenseItemColor.Default;
@@ -1505,7 +1508,7 @@ namespace AmandsSense
                                 {
                                     if (item.Parent != null)
                                     {
-                                        if (item.Parent.Container != null && item.Parent.Container.ParentItem != null && GClass2606.TypeTable["5448bf274bdc2dfc2f8b456a"].IsAssignableFrom(item.Parent.Container.ParentItem.GetType()))
+                                        if (item.Parent.Container != null && item.Parent.Container.ParentItem != null && GClass2741.TypeTable["5448bf274bdc2dfc2f8b456a"].IsAssignableFrom(item.Parent.Container.ParentItem.GetType()))
                                         {
                                             continue;
                                         }
@@ -1544,7 +1547,7 @@ namespace AmandsSense
                                     }
                                     else if (item.Template != null && !item.Template.CanSellOnRagfair && !AmandsSenseClass.itemsJsonClass.NonFleaExclude.Contains(item.TemplateId) && eSenseItemColor != ESenseItemColor.Rare && eSenseItemColor != ESenseItemColor.WishList)
                                     {
-                                        if (!AmandsSensePlugin.NonFleaAmmo.Value && GClass2606.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
+                                        if (!AmandsSensePlugin.NonFleaAmmo.Value && GClass2741.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
                                         {
                                             continue;
                                         }
@@ -2253,7 +2256,7 @@ namespace AmandsSense
                 ESenseItemColor eSenseItemColor = ESenseItemColor.Default;
                 if (lootableContainer.ItemOwner != null && AmandsSenseClass.itemsJsonClass != null && AmandsSenseClass.itemsJsonClass.RareItems != null && AmandsSenseClass.itemsJsonClass.KappaItems != null && AmandsSenseClass.itemsJsonClass.NonFleaExclude != null && AmandsSenseClass.localPlayer.Profile != null && AmandsSenseClass.localPlayer.Profile.WishList != null)
                 {
-                    CompoundItem lootItemClass = lootableContainer.ItemOwner.RootItem as CompoundItem;
+                    LootItemClass lootItemClass = lootableContainer.ItemOwner.RootItem as LootItemClass;
                     if (lootItemClass != null)
                     {
                         object[] Grids = Traverse.Create(lootItemClass).Field("Grids").GetValue<object[]>();
@@ -2277,7 +2280,7 @@ namespace AmandsSense
                                         }
                                         else if (item.Template != null && !item.Template.CanSellOnRagfair && !AmandsSenseClass.itemsJsonClass.NonFleaExclude.Contains(item.TemplateId) && eSenseItemColor != ESenseItemColor.Rare && eSenseItemColor != ESenseItemColor.WishList)
                                         {
-                                            if (!AmandsSensePlugin.NonFleaAmmo.Value && GClass2606.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
+                                            if (!AmandsSensePlugin.NonFleaAmmo.Value && GClass2741.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
                                             {
                                                 continue;
                                             }
@@ -2446,7 +2449,7 @@ namespace AmandsSense
                                 {
                                     if (item.Parent != null)
                                     {
-                                        if (item.Parent.Container != null && item.Parent.Container.ParentItem != null && GClass2606.TypeTable["5448bf274bdc2dfc2f8b456a"].IsAssignableFrom(item.Parent.Container.ParentItem.GetType()))
+                                        if (item.Parent.Container != null && item.Parent.Container.ParentItem != null && GClass2741.TypeTable["5448bf274bdc2dfc2f8b456a"].IsAssignableFrom(item.Parent.Container.ParentItem.GetType()))
                                         {
                                             continue;
                                         }
@@ -2485,7 +2488,7 @@ namespace AmandsSense
                                     }
                                     else if (item.Template != null && !item.Template.CanSellOnRagfair && !AmandsSenseClass.itemsJsonClass.NonFleaExclude.Contains(item.TemplateId) && eSenseItemColor != ESenseItemColor.Rare && eSenseItemColor != ESenseItemColor.WishList)
                                     {
-                                        if (!AmandsSensePlugin.NonFleaAmmo.Value && GClass2606.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
+                                        if (!AmandsSensePlugin.NonFleaAmmo.Value && GClass2741.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
                                         {
                                             continue;
                                         }

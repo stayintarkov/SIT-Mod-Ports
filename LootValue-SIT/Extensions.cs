@@ -5,8 +5,6 @@ using EFT.InventoryLogic;
 using StayInTarkov;
 using System.Reflection;
 
-using TraderClass = Trader;
-
 namespace LootValue
 {
 	internal static class NumberExtensions

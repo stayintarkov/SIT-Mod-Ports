@@ -402,7 +402,7 @@ namespace AmandsHitmarker
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(StayInTarkovPlugin).Assembly.GetType("StayInTarkov.Coop.CoopGame").GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
+            return typeof(StayInTarkovPlugin).Assembly.GetType("StayInTarkov.Coop.SITGameModes.CoopSITGame").GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
         }
 
         private static void WaitForCoopGame(Task<LocalPlayer> task)

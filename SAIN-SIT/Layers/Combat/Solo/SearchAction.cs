@@ -162,13 +162,13 @@ namespace SAIN.Layers.Combat.Solo
         private bool CanSeeDangerOrCorner(out Vector3 point)
         {
             point = Vector3.zero;
-
+            
             if (Search.SearchMovePoint == null || Search.CurrentState == ESearchMove.MoveToDangerPoint)
             {
                 LookPoint = Vector3.zero;
                 return false;
             }
-
+            
             if (CheckSeeTimer < Time.time)
             {
                 LookPoint = Vector3.zero;
@@ -193,14 +193,14 @@ namespace SAIN.Layers.Combat.Solo
                         LookPoint = Search.SearchMovePoint.Corner;
                     }
                 }
-
+                
                 if (LookPoint != Vector3.zero)
                 {
                     LookPoint.y = 0;
                     LookPoint += headPosition;
                 }
             }
-
+            
             point = LookPoint;
             return point != Vector3.zero;
         }

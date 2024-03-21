@@ -14,6 +14,11 @@
 Ref/
 References/
 
+# Idea folder
+.idea/
+
+- Plugins/*
+
 # Unfinished mods
 Donuts-SIT/
 

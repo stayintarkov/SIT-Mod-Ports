@@ -103,6 +103,7 @@ namespace AmandsGraphics
         public static ConfigEntry<EEnabledFeature> MysticalGlow { get; set; }
         public static ConfigEntry<float> MysticalGlowIntensity { get; set; }
         public static ConfigEntry<float> StreetsMysticalGlowIntensity { get; set; }
+        public static ConfigEntry<float> GroundZeroMysticalGlowIntensity { get; set; }
         public static ConfigEntry<float> CustomsMysticalGlowIntensity { get; set; }
         public static ConfigEntry<float> LighthouseMysticalGlowIntensity { get; set; }
         public static ConfigEntry<float> InterchangeMysticalGlowIntensity { get; set; }
@@ -137,6 +138,7 @@ namespace AmandsGraphics
         public static ConfigEntry<string> LoadPreset { get; set; }
 
         public static ConfigEntry<float> StreetsFogLevel { get; set; }
+        public static ConfigEntry<float> GroundZeroFogLevel { get; set; }
         public static ConfigEntry<float> CustomsFogLevel { get; set; }
         public static ConfigEntry<float> LighthouseFogLevel { get; set; }
         public static ConfigEntry<float> InterchangeFogLevel { get; set; }
@@ -145,6 +147,7 @@ namespace AmandsGraphics
         public static ConfigEntry<float> ShorelineFogLevel { get; set; }
 
         public static ConfigEntry<ETonemap> StreetsTonemap { get; set; }
+        public static ConfigEntry<ETonemap> GroundZeroTonemap { get; set; }
         public static ConfigEntry<ETonemap> LabsTonemap { get; set; }
         public static ConfigEntry<ETonemap> CustomsTonemap { get; set; }
         public static ConfigEntry<ETonemap> FactoryTonemap { get; set; }
@@ -157,7 +160,9 @@ namespace AmandsGraphics
         public static ConfigEntry<ETonemap> HideoutTonemap { get; set; }
 
         public static ConfigEntry<Vector3> StreetsACES { get; set; }
+        public static ConfigEntry<Vector3> GroundZeroACES { get; set; }
         public static ConfigEntry<Vector3> StreetsACESS { get; set; }
+        public static ConfigEntry<Vector3> GroundZeroACESS { get; set; }
         public static ConfigEntry<Vector3> LabsACES { get; set; }
         public static ConfigEntry<Vector3> LabsACESS { get; set; }
         public static ConfigEntry<Vector3> CustomsACES { get; set; }
@@ -180,7 +185,9 @@ namespace AmandsGraphics
         public static ConfigEntry<Vector3> HideoutACESS { get; set; }
 
         public static ConfigEntry<Vector3> StreetsFilmic { get; set; }
+        public static ConfigEntry<Vector3> GroundZeroFilmic { get; set; }
         public static ConfigEntry<Vector3> StreetsFilmicS { get; set; }
+        public static ConfigEntry<Vector3> GroundZeroFilmicS { get; set; }
         public static ConfigEntry<Vector3> LabsFilmic { get; set; }
         public static ConfigEntry<Vector3> LabsFilmicS { get; set; }
         public static ConfigEntry<Vector3> CustomsFilmic { get; set; }
@@ -344,6 +351,14 @@ namespace AmandsGraphics
             StreetsFilmic = Config.Bind("Streets", "Filmic", new Vector3(1f, 2f, 1.75f), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 120, IsAdvanced = true }));
             StreetsFilmicS = Config.Bind("Streets", "FilmicS", new Vector3(0, 0.35f, 0), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 110, IsAdvanced = true }));
             StreetsMysticalGlowIntensity = Config.Bind("Streets", "MysticalGlow Intensity", 0.75f, new ConfigDescription("", new AcceptableValueRange<float>(0.0f, 2.0f), new ConfigurationManagerAttributes { Order = 100, IsAdvanced = true }));
+            
+            GroundZeroFogLevel = Config.Bind("GroundZero", "Fog Level", -250.0f, new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 160 }));
+            GroundZeroTonemap = Config.Bind("GroundZero", "Tonemap", ETonemap.ACES, new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 150 }));
+            GroundZeroACES = Config.Bind("GroundZero", "ACES", new Vector3(25, 0.2f, 25), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 140, IsAdvanced = true }));
+            GroundZeroACESS = Config.Bind("GroundZero", "ACESS", new Vector3(0, 1.1f, 0), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 130, IsAdvanced = true }));
+            GroundZeroFilmic = Config.Bind("GroundZero", "Filmic", new Vector3(1f, 2f, 1.75f), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 120, IsAdvanced = true }));
+            GroundZeroFilmicS = Config.Bind("GroundZero", "FilmicS", new Vector3(0, 0.35f, 0), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 110, IsAdvanced = true }));
+            GroundZeroMysticalGlowIntensity = Config.Bind("GroundZero", "MysticalGlow Intensity", 0.75f, new ConfigDescription("", new AcceptableValueRange<float>(0.0f, 2.0f), new ConfigurationManagerAttributes { Order = 100, IsAdvanced = true }));
 
             LabsTonemap = Config.Bind("Labs", "Tonemap", ETonemap.ACES, new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 150 }));
             LabsACES = Config.Bind("Labs", "ACES", new Vector3(20, 0.2f, 20), new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 140, IsAdvanced = true }));
@@ -482,6 +497,7 @@ namespace AmandsGraphics
                     SunColor = SunColor.Value,
                     SkyColor = SkyColor.Value,
                     StreetsFogLevel = StreetsFogLevel.Value,
+                    GroundZeroFogLevel = GroundZeroFogLevel.Value,
                     CustomsFogLevel = CustomsFogLevel.Value,
                     LighthouseFogLevel = LighthouseFogLevel.Value,
                     InterchangeFogLevel = InterchangeFogLevel.Value,
@@ -490,6 +506,7 @@ namespace AmandsGraphics
                     ShorelineFogLevel = ShorelineFogLevel.Value,
 
                     StreetsTonemap = StreetsTonemap.Value,
+                    GroundZeroTonemap = GroundZeroTonemap.Value,
                     LabsTonemap = LabsTonemap.Value,
                     CustomsTonemap = CustomsTonemap.Value,
                     FactoryTonemap = FactoryTonemap.Value,
@@ -502,7 +519,9 @@ namespace AmandsGraphics
                     HideoutTonemap = HideoutTonemap.Value,
 
                     StreetsACES = StreetsACES.Value,
+                    GroundZeroACES = GroundZeroACES.Value,
                     StreetsACESS = StreetsACESS.Value,
+                    GroundZeroACESS = GroundZeroACESS.Value,
                     LabsACES = LabsACES.Value,
                     LabsACESS = LabsACESS.Value,
                     CustomsACES = CustomsACES.Value,
@@ -525,7 +544,9 @@ namespace AmandsGraphics
                     HideoutACESS = HideoutACESS.Value,
 
                     StreetsFilmic = StreetsFilmic.Value,
+                    GroundZeroFilmic = GroundZeroFilmic.Value,
                     StreetsFilmicS = StreetsFilmicS.Value,
+                    GroundZeroFilmicS = GroundZeroFilmicS.Value,
                     LabsFilmic = LabsFilmic.Value,
                     LabsFilmicS = LabsFilmicS.Value,
                     CustomsFilmic = CustomsFilmic.Value,
@@ -588,6 +609,7 @@ namespace AmandsGraphics
                 SkyColor.Value = preset.SkyColor;
 
                 StreetsFogLevel.Value = preset.StreetsFogLevel;
+                GroundZeroFogLevel.Value = preset.GroundZeroFogLevel;
                 CustomsFogLevel.Value = preset.CustomsFogLevel;
                 LighthouseFogLevel.Value = preset.LighthouseFogLevel;
                 InterchangeFogLevel.Value = preset.InterchangeFogLevel;
@@ -720,6 +742,7 @@ namespace AmandsGraphics
         public bool SkyColor { get; set; }
 
         public float StreetsFogLevel { get; set; }
+        public float GroundZeroFogLevel { get; set; }
         public float CustomsFogLevel { get; set; }
         public float LighthouseFogLevel { get; set; }
         public float InterchangeFogLevel { get; set; }
@@ -728,6 +751,7 @@ namespace AmandsGraphics
         public float ShorelineFogLevel { get; set; }
 
         public ETonemap StreetsTonemap { get; set; }
+        public ETonemap GroundZeroTonemap { get; set; }
         public ETonemap LabsTonemap { get; set; }
         public ETonemap CustomsTonemap { get; set; }
         public ETonemap FactoryTonemap { get; set; }
@@ -740,7 +764,9 @@ namespace AmandsGraphics
         public ETonemap HideoutTonemap { get; set; }
 
         public Vector3 StreetsACES { get; set; }
+        public Vector3 GroundZeroACES { get; set; }
         public Vector3 StreetsACESS { get; set; }
+        public Vector3 GroundZeroACESS { get; set; }
         public Vector3 LabsACES { get; set; }
         public Vector3 LabsACESS { get; set; }
         public Vector3 CustomsACES { get; set; }
@@ -763,7 +789,9 @@ namespace AmandsGraphics
         public Vector3 HideoutACESS { get; set; }
 
         public Vector3 StreetsFilmic { get; set; }
+        public Vector3 GroundZeroFilmic { get; set; }
         public Vector3 StreetsFilmicS { get; set; }
+        public Vector3 GroundZeroFilmicS { get; set; }
         public Vector3 LabsFilmic { get; set; }
         public Vector3 LabsFilmicS { get; set; }
         public Vector3 CustomsFilmic { get; set; }
@@ -819,7 +847,7 @@ namespace AmandsGraphics
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(BSG.CameraEffects.NightVision).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).First(x => x.GetParameters().Count() == 1 && x.GetParameters()[0].Name == "on" && x.Name != "StartSwitch");
+            return typeof(BSG.CameraEffects.NightVision).GetMethods(BindingFlags.Instance | BindingFlags.Public).First(x => x.GetParameters().Count() == 1 && x.GetParameters()[0].Name == "on" && x.Name != "StartSwitch");
         }
         [PatchPostfix]
         private static void PatchPostFix(ref BSG.CameraEffects.NightVision __instance, bool on)
@@ -876,7 +904,7 @@ namespace AmandsGraphics
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(PrismEffects).GetMethod("OnEnable", BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(PrismEffects).GetMethod("OnEnable", BindingFlags.Instance | BindingFlags.Public);
         }
         [PatchPostfix]
         private static void PatchPostFix(ref PrismEffects __instance)
@@ -897,7 +925,7 @@ namespace AmandsGraphics
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(OpticComponentUpdater).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(OpticComponentUpdater).GetMethod("Awake", BindingFlags.Instance | BindingFlags.Public);
         }
         [PatchPostfix]
         private static void PatchPostFix(ref OpticComponentUpdater __instance)
@@ -914,7 +942,7 @@ namespace AmandsGraphics
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(OpticSight).GetMethod("OnEnable", BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(OpticSight).GetMethod("OnEnable", BindingFlags.Instance | BindingFlags.Public);
         }
         [PatchPostfix]
         private static void PatchPostFix(ref OpticSight __instance)
@@ -952,7 +980,7 @@ namespace AmandsGraphics
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(EFT.Animations.ProceduralWeaponAnimation).GetMethods(BindingFlags.Instance | BindingFlags.NonPublic).First(x => x.GetParameters().Count() == 1 && x.GetParameters()[0].Name == "currentScopeIndex");
+            return typeof(EFT.Animations.ProceduralWeaponAnimation).GetMethods(BindingFlags.Instance | BindingFlags.Public).First(x => x.GetParameters().Count() == 1 && x.GetParameters()[0].Name == "currentScopeIndex");
         }
         [PatchPostfix]
         private static void PatchPostFix(ref EFT.Animations.ProceduralWeaponAnimation __instance)
@@ -992,7 +1020,7 @@ namespace AmandsGraphics
         [PatchPostfix]
         private static void PatchPostFix(ref TacticalComboVisualController __instance)
         {
-            if (AmandsGraphicsPlugin.Flashlight.Value == EEnabledFeature.On && AmandsGraphicsClass.localPlayer != null && Vector3.Distance(__instance.transform.position, AmandsGraphicsClass.localPlayer.Position) < 5f && AmandsGraphicsClass.localPlayer.HandsController != null && __instance.transform.IsChildOf(AmandsGraphicsClass.localPlayer.HandsController.WeaponRoot))
+            if (AmandsGraphicsPlugin.Flashlight.Value == EEnabledFeature.On && AmandsGraphicsClass.localPlayer != null && Vector3.Distance(__instance.transform.position, ((IPlayer)AmandsGraphicsClass.localPlayer).Position) < 5f && AmandsGraphicsClass.localPlayer.HandsController != null && __instance.transform.IsChildOf(AmandsGraphicsClass.localPlayer.HandsController.WeaponRoot))
             {
                 foreach (Light light in Traverse.Create(__instance).Field("light_0").GetValue<Light[]>())
                 {
@@ -1025,7 +1053,7 @@ namespace AmandsGraphics
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(FastBlur).GetMethod("Start", BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(FastBlur).GetMethod("Start", BindingFlags.Instance | BindingFlags.Public);
         }
         [PatchPostfix]
         private static void PatchPostFix(ref FastBlur __instance)
@@ -1046,7 +1074,7 @@ namespace AmandsGraphics
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(EffectsController).GetMethod("method_7", BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(EffectsController).GetMethod("method_7", BindingFlags.Instance | BindingFlags.Public);
         }
         [PatchPostfix]
         private static void PatchPostFix(ref EffectsController __instance)
@@ -1076,7 +1104,8 @@ namespace AmandsGraphics
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(EFT.UI.BattleUIScreen).GetMethod("Show", BindingFlags.Instance | BindingFlags.NonPublic);
+            Type[] parameterTypes = new Type[] { typeof(GamePlayerOwner) };
+            return typeof(EFT.UI.BattleUIScreen).GetMethod("Show", BindingFlags.Instance | BindingFlags.Public, null, parameterTypes, null);
         }
         [PatchPostfix]
         private static void PatchPostFix(ref EFT.UI.BattleUIScreen __instance)
@@ -1091,7 +1120,7 @@ namespace AmandsGraphics
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(EffectsController).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(EffectsController).GetMethod("Awake", BindingFlags.Instance | BindingFlags.Public);
         }
         [PatchPostfix]
         private static void PatchPostFix(ref EffectsController __instance)

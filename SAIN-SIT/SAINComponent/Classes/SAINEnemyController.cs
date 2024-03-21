@@ -80,24 +80,24 @@ namespace SAIN.SAINComponent.Classes
         public void CheckAddEnemy()
         {
             var goalEnemy = BotOwner.Memory.GoalEnemy;
-            IAIDetails IAIDetails = goalEnemy?.Person;
+            IPlayer IPlayer = goalEnemy?.Person;
             bool addEnemy = true;
 
-            if (goalEnemy == null || IAIDetails == null)
+            if (goalEnemy == null || IPlayer == null)
             {
                 addEnemy = false;
             }
             else
             {
-                if (IAIDetails.IsAI && (IAIDetails.AIData?.BotOwner == null || IAIDetails.AIData.BotOwner.BotState != EBotState.Active))
+                if (IPlayer.IsAI && (IPlayer.AIData?.BotOwner == null || IPlayer.AIData.BotOwner.BotState != EBotState.Active))
                 {
                     addEnemy = false;
                 }
-                if (IAIDetails.ProfileId == SAIN.ProfileId)
+                if (IPlayer.ProfileId == SAIN.ProfileId)
                 {
                     addEnemy = false;
                 }
-                if (!IAIDetails.HealthController.IsAlive)
+                if (!IPlayer.HealthController.IsAlive)
                 {
                     addEnemy = false;
                 }
@@ -105,7 +105,7 @@ namespace SAIN.SAINComponent.Classes
 
             if (addEnemy)
             {
-                string id = IAIDetails.ProfileId;
+                string id = IPlayer.ProfileId;
 
                 // Check if the dictionary contains a previous SAINEnemy
                 if (Enemies.ContainsKey(id))
@@ -115,14 +115,14 @@ namespace SAIN.SAINComponent.Classes
                 else
                 {
                     SAINPersonClass enemySAINPerson;
-                    BotOwner botOwner = IAIDetails.AIData.BotOwner;
+                    BotOwner botOwner = IPlayer.AIData.BotOwner;
                     if (botOwner != null && botOwner.TryGetComponent(out SAINComponentClass enemySAIN))
                     {
                         enemySAINPerson = enemySAIN.Person;
                     }
                     else
                     {
-                        enemySAINPerson = new SAINPersonClass(IAIDetails);
+                        enemySAINPerson = new SAINPersonClass(IPlayer);
                     }
 
                     ActiveEnemy = new SAINEnemyClass(SAIN, enemySAINPerson);

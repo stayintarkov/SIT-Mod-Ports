@@ -6,26 +6,29 @@ using Comfort.Common;
 
 using EFT;
 using EFT.InventoryLogic;
+using EFT.UI;
+
+using JetBrains.Annotations;
 
 using LootingBots.Patch.Util;
 
-using InventoryControllerResultStruct = SOperationResult4;
+using InventoryControllerResultStruct = SOperationResult;
 using InventoryHelperClass = ItemMovementHandler;
 using GridClassEx = GridContainer;
-using GridCacheClass = GClass1329;
+using GridCacheClass = GClass1390;
 
 namespace LootingBots.Patch.Components
 {
     public class TransactionController
     {
         readonly BotLog _log;
-        readonly InventoryController _inventoryController;
+        readonly InventoryControllerClass _inventoryController;
         readonly BotOwner _botOwner;
         public bool Enabled;
 
         public TransactionController(
             BotOwner botOwner,
-            InventoryController inventoryController,
+            InventoryControllerClass inventoryController,
             BotLog log
         )
         {
@@ -89,7 +92,7 @@ namespace LootingBots.Patch.Components
         {
             try
             {
-                GItem1 secureContainer = (GItem1)
+                SearchableItemClass secureContainer = (SearchableItemClass)
                     _inventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.SecuredContainer)
                         .ContainedItem;
@@ -237,6 +240,103 @@ namespace LootingBots.Patch.Components
             }
             return false;
         }
+        /*
+        // TraderControllerClass.Class2110.method_0
+        public void method_0_2(IResult result)
+        {
+            Callback callback = callback2;
+            if (callback == null)
+            {
+                return;
+            }
+            callback.Invoke(result);
+        }
+        
+        // TraderControllerClass.Class2110.operation
+        public AbstractInventoryOperation operation2;
+        
+        // TraderControllerClass.Class2110.callback
+        public Callback callback2;
+        
+        // TraderControllerClass.Execute
+        public virtual void Execute(AbstractInventoryOperation operation, [CanBeNull] Callback callback)
+        {
+            operation2 = operation;
+            callback2 = callback;
+            if (_inventoryController.vmethod_0(operation2))
+            {
+                operation2.vmethod_0(new Callback(method_0_2), false);
+                return;
+            }
+            operation2.Dispose();
+            Callback callback3 = callback2;
+            if (callback3 == null)
+            {
+                return;
+            }
+            CallbackExtensions.Fail(callback3, string.Format("Can't execute {0}", operation2), 1);
+        }
+        
+        // TraderControllerClass.CanExecute
+        public bool CanExecute(IOperationResult operationResult)
+        {
+            return operationResult != null && operationResult.CanExecute(_inventoryController);
+        }
+        
+        // TraderControllerClass RunNetworkTransaction
+        public void RunNetTrans(IOperationResult operationResult, Callback callback = null)
+        {
+            if (!CanExecute(operationResult) && callback != null)
+            {
+                CallbackExtensions.Fail(callback, "Execution discarded locally");
+            }
+            AbstractInventoryOperation abstractInventoryOperation = _inventoryController.ConvertOperationResultToOperation(operationResult);
+            Execute(abstractInventoryOperation, callback);
+        }
+        
+        // TraderControllerClass.Class2109.method_0
+        public void method_0_1(IResult result)
+        {
+            callbackTask1.SetResult(result);
+            Callback callback = callback1;
+            if (callback == null)
+            {
+                return;
+            }
+            callback.Invoke(result);
+        }
+        
+        // TraderControllerClass.Class2109.callbackTask
+        public TaskCompletionSource<IResult> callbackTask1;
+        
+        // TraderControllerClass.Class2109.callback
+        public Callback callback1;
+        
+        // TraderControllerClass TryRunNetworkTransaction
+        public virtual Task<IResult> TryRunNetTrans(SOperationResult operationResult, Callback callback = null)
+        {
+            callback1 = callback;
+            callbackTask1 = new TaskCompletionSource<IResult>();
+            if (operationResult.Failed)
+            {
+                AsyncExtensions.Fail(callbackTask1, operationResult.Error.ToString(), 0);
+            }
+            else if (operationResult.Value.CanExecute(_inventoryController))
+            {
+                RunNetTrans(operationResult.Value, new Callback(method_0_1));
+            }
+            else
+            {
+                AsyncExtensions.Fail(callbackTask1, "Can not execute", 0);
+                Callback callback2 = callback1;
+                if (callback2 != null)
+                {
+                    callback2.Invoke(new FailedResult("Can't execute 'operationResult.Value.CanExecute()'", 0));
+                }
+            }
+            return callbackTask1.Task;
+        }
+        */
 
         /** Moves an item to a specified item address. Supports executing a callback */
         public async Task<bool> MoveItem(MoveAction moveAction)
@@ -272,13 +372,16 @@ namespace LootingBots.Patch.Components
                 if (moveAction.Callback == null)
                 {
                     await SimulatePlayerDelay();
-                    await _inventoryController.TryRunNetworkTransaction(value, null);
+                     await _inventoryController.TryRunNetworkTransaction(value, null);
+                    //await TryRunNetTrans(value, null);
                 }
+
                 else
                 {
                     TaskCompletionSource<IResult> promise = new TaskCompletionSource<IResult>();
 
-                    await _inventoryController.TryRunNetworkTransaction(
+                    //await TryRunNetTrans(
+                    await TryRunNetworkTransaction(
                         value,
                         new Callback(
                             async (IResult result) =>
@@ -292,7 +395,7 @@ namespace LootingBots.Patch.Components
                             }
                         )
                     );
-
+                    
                     await promise.Task;
                 }
                 if (moveAction.OnComplete != null)
@@ -329,13 +432,10 @@ namespace LootingBots.Patch.Components
                     new Callback(
                         async (IResult result) =>
                         {
-                            if (result.Succeed)
+                            if (result.Succeed && swapAction.Callback != null)
                             {
-                                if (swapAction.Callback != null)
-                                {
-                                    await SimulatePlayerDelay();
-                                    await swapAction.Callback();
-                                }
+                                await SimulatePlayerDelay();
+                                await swapAction.Callback();
                             }
 
                             promise.TrySetResult(result);
@@ -378,14 +478,14 @@ namespace LootingBots.Patch.Components
             return !Enabled;
         }
 
-        public static Task SimulatePlayerDelay(int delay = -1)
+        public static Task SimulatePlayerDelay(float delay = -1f)
         {
             if (delay == -1)
             {
                 delay = LootingBots.TransactionDelay.Value;
             }
 
-            return Task.Delay(delay);
+            return Task.Delay(TimeSpan.FromMilliseconds(delay));
         }
     }
 }

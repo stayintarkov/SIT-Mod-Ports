@@ -48,7 +48,7 @@ namespace SAIN.SAINComponent.Classes.Mover
                 {
                     reachDist = BotOwner.Settings.FileSettings.Move.REACH_DIST;
                 }
-                BotOwner.Mover?.GoToPoint(pointToGo, false, reachDist, false, false);
+                BotOwner.Mover?.GoToPoint(pointToGo, false, reachDist, false, false, false);
                 if (crawl)
                 {
                     Prone.SetProne(true);

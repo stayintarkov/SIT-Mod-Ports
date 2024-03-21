@@ -1,18 +1,17 @@
 ﻿using EFT;
-using EFT.NextObservedPlayer;
 using System;
 
 namespace SAIN.SAINComponent.BaseClasses
 {
     public abstract class PersonBaseClass
     {
-        public PersonBaseClass(IAIDetails iPlayer)
+        public PersonBaseClass(IPlayer iPlayer)
         {
-            IAIDetails = iPlayer;
+            IPlayer = iPlayer;
         }
 
-        public IAIDetails IAIDetails { get; private set; }
-        public bool PlayerNull => IAIDetails == null;
-        public Player Player => IAIDetails as Player;
+        public IPlayer IPlayer { get; private set; }
+        public bool PlayerNull => IPlayer == null;
+        public Player Player => IPlayer as Player;
     }
 }

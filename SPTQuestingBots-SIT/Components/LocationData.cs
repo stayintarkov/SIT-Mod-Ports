@@ -1,0 +1,682 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using Comfort.Common;
+using EFT;
+using EFT.Game.Spawning;
+using EFT.Interactive;
+using HarmonyLib;
+using SPTQuestingBots.Components.Spawning;
+using SPTQuestingBots.Controllers;
+using SPTQuestingBots.Helpers;
+using StayInTarkov.Coop.Matchmaker;
+using UnityEngine;
+using UnityEngine.AI;
+
+namespace SPTQuestingBots.Components
+{
+    public class LocationData : MonoBehaviour
+    {
+        public int MaxTotalBots { get; private set; } = 15;
+        public LocationSettingsClass.Location CurrentLocation { get; private set; } = null;
+        public RaidSettings CurrentRaidSettings { get; private set; } = null;
+        
+        private TarkovApplication tarkovApplication = null;
+        private GamePlayerOwner gamePlayerOwner = null;
+        private Dictionary<Vector3, Vector3> nearestNavMeshPoint = new Dictionary<Vector3, Vector3>();
+        private Dictionary<string, EFT.Interactive.Switch> switches = new Dictionary<string, EFT.Interactive.Switch>();
+        private Dictionary<Door, bool> areLockedDoorsUnlocked = new Dictionary<Door, bool>();
+        private Dictionary<Door, Vector3> doorInteractionPositions = new Dictionary<Door, Vector3>();
+        private float maxExfilPointDistance = 0;
+
+        public bool IsScavRun => StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidChangesUtil.IsScavRaid;
+
+        private void Awake()
+        {
+            tarkovApplication = FindObjectOfType<TarkovApplication>();
+            gamePlayerOwner = FindObjectOfType<GamePlayerOwner>();
+            CurrentRaidSettings = getCurrentRaidSettings();
+            CurrentLocation = CurrentRaidSettings.SelectedLocation;
+
+            UpdateMaxTotalBots();
+
+            if (ConfigController.Config.Questing.Enabled && (SITMatchmaking.IsServer || SITMatchmaking.IsSinglePlayer))
+            {
+                QuestHelpers.ClearCache();
+                Singleton<GameWorld>.Instance.gameObject.AddComponent<BotQuestBuilder>();
+                Singleton<GameWorld>.Instance.gameObject.AddComponent<DebugData>();
+            }
+
+            if (ConfigController.Config.BotSpawns.Enabled && (SITMatchmaking.IsServer || SITMatchmaking.IsSinglePlayer))
+            {
+                if (ConfigController.Config.BotSpawns.PMCs.Enabled)
+                {
+                    Singleton<GameWorld>.Instance.gameObject.AddComponent<Spawning.PMCGenerator>();
+                }
+
+                if (ConfigController.Config.BotSpawns.PScavs.Enabled && !CurrentLocation.DisabledForScav)
+                {
+                    Singleton<GameWorld>.Instance.gameObject.AddComponent<Spawning.PScavGenerator>();
+                }
+
+                if (SITMatchmaking.IsServer || SITMatchmaking.IsSinglePlayer)
+                    BotGenerator.RunBotGenerationTasks();
+            }
+        }
+
+        private void Update()
+        {
+            
+        }
+
+        public void UpdateMaxTotalBots()
+        {
+            BotsController botControllerClass = Singleton<IBotGame>.Instance.BotsController;
+            int botmax = (int)AccessTools.Field(typeof(BotsController), "_maxCount").GetValue(botControllerClass);
+            if (botmax > 0)
+            {
+                MaxTotalBots = botmax;
+            }
+            LoggingController.LogInfo("Max total bots on the map (" + CurrentLocation.Id + ") at the same time: " + MaxTotalBots);
+        }
+
+        public void FindAllInteractiveObjects()
+        {
+            FindAllSwitches();
+            FindAllLockedDoors();
+        }
+
+        public void FindAllSwitches()
+        {
+            switches.Clear();
+
+            EFT.Interactive.Switch[] allSwitches = FindObjectsOfType<EFT.Interactive.Switch>();
+            switches.AddRange(allSwitches.ToDictionary(s => s.Id, s => s));
+            
+            //LoggingController.LogInfo("Found switches: " + string.Join(", ", allSwitches.Select(s => s.Id)));
+
+            foreach (EFT.Interactive.Switch sw in allSwitches)
+            {
+                sw.OnDoorStateChanged += reportSwitchChange;
+            }
+        }
+
+        private void reportSwitchChange(WorldInteractiveObject obj, EDoorState prevState, EDoorState nextState)
+        {
+            LoggingController.LogInfo("Switch " + obj.Id + " has changed from " + prevState.ToString() + " to " + nextState.ToString() + ". Interacting Player: " + (obj.InteractingPlayer?.Profile?.Nickname ?? "(none)"));
+        }
+
+        public EFT.Interactive.Switch FindSwitch(string id)
+        {
+            if (switches.ContainsKey(id))
+            {
+                return switches[id];
+            }
+
+            return null;
+        }
+
+        public void FindAllLockedDoors()
+        {
+            areLockedDoorsUnlocked.Clear();
+
+            Door[] allDoors = FindObjectsOfType<Door>();
+            foreach (Door door in allDoors)
+            {
+                if (!door.Operatable)
+                {
+                    //LoggingController.LogInfo("Door " + door.Id + " is inoperable");
+                    continue;
+                }
+
+                if (!door.CanBeBreached && (door.KeyId == ""))
+                {
+                    //LoggingController.LogInfo("Door " + door.Id + " cannot be breached and has no valid key");
+                    continue;
+                }
+
+                if (door.DoorState != EDoorState.Locked)
+                {
+                    continue;
+                }
+
+                areLockedDoorsUnlocked.Add(door, false);
+            }
+
+            LoggingController.LogInfo("Found " + areLockedDoorsUnlocked.Count + " locked doors");
+            //LoggingController.LogInfo("Found locked doors: " + string.Join(", ", areLockedDoorsUnlocked.Select(s => s.Key.Id)));
+        }
+
+        public IEnumerable<Door> FindLockedDoorsNearPosition(Vector3 position, float maxDistance, bool stillLocked = true)
+        {
+            Dictionary<Door, float> lockedDoorsAndDistance = new Dictionary<Door, float>();
+
+            foreach (Door door in areLockedDoorsUnlocked.Keys.ToArray())
+            {
+                // Check if the door has been unlocked since this method was previously called
+                if (!areLockedDoorsUnlocked[door] && (door.DoorState != EDoorState.Locked))
+                {
+                    LoggingController.LogInfo("Door " + door.Id + " is no longer locked.");
+                    areLockedDoorsUnlocked[door] = true;
+                }
+
+                // Check if the door is within the desired distance
+                float distance = Vector3.Distance(position, door.transform.position);
+                if (distance > maxDistance)
+                {
+                    continue;
+                }
+
+                // Check if the door is locked
+                if (stillLocked && !areLockedDoorsUnlocked[door])
+                {
+                    lockedDoorsAndDistance.Add(door, distance);
+                }
+
+                // Check if the door is unlocked
+                if (!stillLocked && areLockedDoorsUnlocked[door])
+                {
+                    lockedDoorsAndDistance.Add(door, distance);
+                }
+            }
+
+            // Sort the matching doors based on distance to the position
+            return lockedDoorsAndDistance.OrderBy(d => d.Value).Select(d => d.Key);
+        }
+
+        public void ReportUnlockedDoor(Door door)
+        {
+            if (areLockedDoorsUnlocked.ContainsKey(door))
+            {
+                areLockedDoorsUnlocked[door] = true;
+            }
+        }
+
+        public SpawnPointParams[] GetAllValidSpawnPointParams()
+        {
+            if (CurrentLocation == null)
+            {
+                throw new InvalidOperationException("Spawn-point data can only be retrieved after a map has been loaded.");
+            }
+
+            if (CurrentLocation.Id == "TarkovStreets")
+            {
+                // Band-aid fix for BSG not completing the generation of bot-cell data for all parts of the map
+                SpawnPointParams[] validSpawnPointParams = CurrentLocation.SpawnPointParams
+                    .Where(s => s.Position.z < 440)
+                    .ToArray();
+
+                //IEnumerable<SpawnPointParams> removedSpawnPoints = CurrentLocation.SpawnPointParams.Where(s => !validSpawnPointParams.Contains(s));
+                //string removedSpawnPointsText = string.Join(", ", removedSpawnPoints.Select(s => s.Position.ToUnityVector3().ToString()));
+                //Controllers.LoggingController.LogWarning("PMC's cannot spawn south of the cinema on Streets or their minds will be broken. Thanks, BSG! Removed spawn points: " + removedSpawnPointsText);
+
+                return validSpawnPointParams;
+            }
+
+            return CurrentLocation.SpawnPointParams;
+        }
+
+        // This isn't actually used anywhere in this mod, but I left it in here because it's a pretty nifty algorithm
+        public bool TryGetObjectNearPosition<T>(Vector3 position, float maxDistance, bool onlyVisible, out T obj) where T: Behaviour
+        {
+            obj = null;
+
+            // Ensure a map has been loaded in the game
+            if (LocationScene.LoadedScenes.Count == 0)
+            {
+                return false;
+            }
+
+            // Find all objects of the desired type in the map
+            foreach (T item in LocationScene.GetAllObjects<T>(true))
+            {
+                // Check if the object is close enough
+                float distace = Vector3.Distance(item.transform.position, position);
+                if (distace > maxDistance)
+                {
+                    continue;
+                }
+
+                // If the object needs to be visible from the source position, perform additional checks
+                if (onlyVisible)
+                {
+                    // Perform a raycast test from the source position to the object
+                    Vector3 direction = item.transform.position - position;
+                    RaycastHit[] raycastHits = Physics.RaycastAll(position, direction, distace, LayerMaskClass.HighPolyWithTerrainMask);
+
+                    // Ignore raycast hits that are very close to the source position or the object
+                    float rayEndPointThreshold = 0.02f;
+                    IEnumerable<RaycastHit> filteredRaycastHits = raycastHits
+                        .Where(r => r.distance > distace * rayEndPointThreshold)
+                        .Where(r => r.distance < distace * (1 - rayEndPointThreshold));
+
+                    // If there are any remaining raycast hits, assume the object is not visible
+                    if (filteredRaycastHits.Any())
+                    {
+                        //IEnumerable<string> raycastDataText = filteredRaycastHits.Select(h => h.collider.name + " (" + h.distance + "/" + distace + ")");
+                        //LoggingController.LogInfo("Ignoring object " + item.GetType().Name + " at " + item.transform.position.ToString() + " due to raycast hits at: " + string.Join(", ", raycastDataText));
+                        continue;
+                    }
+                }
+
+                obj = item;
+                return true;
+            }
+
+            return false;
+        }
+
+        public Vector3? GetPlayerPosition()
+        {
+            if (Singleton<GameWorld>.Instance == null)
+            {
+                return null;
+            }
+
+            return Singleton<GameWorld>.Instance.MainPlayer.Position;
+        }
+
+        public SpawnPointParams? GetPlayerSpawnPoint()
+        {
+            Vector3? playerPosition = GetPlayerPosition();
+            if (!playerPosition.HasValue)
+            {
+                return null;
+            }
+
+            return GetNearestSpawnPoint(playerPosition.Value);
+        }
+
+        public Vector3? FindNearestNavMeshPosition(Vector3 position, float searchDistance)
+        {
+            // Check if there is a cached value for the position, and if so return it
+            if (nearestNavMeshPoint.ContainsKey(position))
+            {
+                return nearestNavMeshPoint[position];
+            }
+
+            if (NavMesh.SamplePosition(position, out NavMeshHit sourceNearestPoint, searchDistance, NavMesh.AllAreas))
+            {
+                // Cache the result to make subsequent calls for the position faster
+                nearestNavMeshPoint.Add(position, sourceNearestPoint.position);
+
+                return sourceNearestPoint.position;
+            }
+
+            return null;
+        }
+
+        public bool AreAnyPositionsCloseToOtherPlayers(IEnumerable<Vector3> positions, float distanceFromPlayers, out float distance)
+        {
+            foreach (Vector3 postion in positions)
+            {
+                if (IsPositionCloseToOtherPlayers(postion, distanceFromPlayers, out distance))
+                {
+                    return true;
+                }
+            }
+
+            distance = float.MaxValue;
+            return false;
+        }
+
+        public bool IsPositionCloseToOtherPlayers(Vector3 position, float distanceFromPlayers, out float distance)
+        {
+            BotsController botControllerClass = Singleton<IBotGame>.Instance.BotsController;
+
+            BotOwner closestBot = botControllerClass.ClosestBotToPoint(position);
+            if (closestBot != null)
+            {
+                distance = Vector3.Distance(position, closestBot.Position);
+                if ((closestBot != null) && (distance < distanceFromPlayers))
+                {
+                    return true;
+                }
+            }
+
+            Player mainPlayer = Singleton<GameWorld>.Instance.MainPlayer;
+            if (mainPlayer != null)
+            {
+                distance = Vector3.Distance(position, mainPlayer.Position);
+                if (distance < distanceFromPlayers)
+                {
+                    return true;
+                }
+            }
+
+            distance = float.MaxValue;
+            return false;
+        }
+
+        public SpawnPointParams? TryGetFurthestSpawnPointFromAllPlayers(ESpawnCategoryMask allowedCategories, EPlayerSideMask allowedSides)
+        {
+            return TryGetFurthestSpawnPointFromPlayers(Singleton<GameWorld>.Instance.AllAlivePlayersList, allowedCategories, allowedSides, new SpawnPointParams[0]);
+        }
+
+        public SpawnPointParams? TryGetFurthestSpawnPointFromAllPlayers(ESpawnCategoryMask allowedCategories, EPlayerSideMask allowedSides, SpawnPointParams[] excludedSpawnPoints)
+        {
+            return TryGetFurthestSpawnPointFromPlayers(Singleton<GameWorld>.Instance.AllAlivePlayersList, allowedCategories, allowedSides, new SpawnPointParams[0]);
+        }
+
+        public SpawnPointParams? TryGetFurthestSpawnPointFromPlayers(IEnumerable<Player> players, ESpawnCategoryMask allowedCategories, EPlayerSideMask allowedSides, float distanceFromAllPlayers = 5)
+        {
+            return TryGetFurthestSpawnPointFromPlayers(players, allowedCategories, allowedSides, new SpawnPointParams[0], distanceFromAllPlayers);
+        }
+
+        public SpawnPointParams? TryGetFurthestSpawnPointFromPlayers(IEnumerable<Player> players, ESpawnCategoryMask allowedCategories, EPlayerSideMask allowedSides, SpawnPointParams[] excludedSpawnPoints, float distanceFromAllPlayers = 5)
+        {
+            Vector3[] allPlayerPositions = Singleton<GameWorld>.Instance.AllAlivePlayersList.Select(p => p.Position).ToArray();
+            SpawnPointParams[] allSpawnPoints = GetAllValidSpawnPointParams();
+
+            // Enumerate all valid spawn points
+            SpawnPointParams[] validSpawnPoints = allSpawnPoints
+                    .Where(s => !excludedSpawnPoints.Contains(s))
+                    .Where(s => s.Categories.Any(allowedCategories))
+                    .Where(s => s.Sides.Any(allowedSides))
+                    .Where(s => allPlayerPositions.All(p => Vector3.Distance(s.Position, p) > distanceFromAllPlayers))
+                    .ToArray();
+
+            if (validSpawnPoints.Length == 0)
+            {
+                return null;
+            }
+
+            // Get the locations of all alive bots/players on the map.
+            Vector3[] playerPositions = players.Select(s => s.Position).ToArray();
+            if (playerPositions.Length == 0)
+            {
+                return null;
+            }
+
+            //LoggingController.LogInfo("Alive players: " + string.Join(", ", Singleton<GameWorld>.Instance.AllAlivePlayersList.Select(s => s.Profile.Nickname)));
+
+            return GetFurthestSpawnPoint(playerPositions, validSpawnPoints);
+        }
+
+        public SpawnPointParams GetFurthestSpawnPoint(Vector3[] referencePositions, SpawnPointParams[] allSpawnPoints)
+        {
+            if (referencePositions.Length == 0)
+            {
+                throw new ArgumentException("The reference position array is empty.", nameof(referencePositions));
+            }
+
+            if (allSpawnPoints.Length == 0)
+            {
+                throw new ArgumentException("The spawn-point array is empty.", nameof(allSpawnPoints));
+            }
+
+            Dictionary<SpawnPointParams, float> nearestReferencePoints = new Dictionary<SpawnPointParams, float>();
+            for (int s = 0; s < allSpawnPoints.Length; s++)
+            {
+                float nearestDistance = Vector3.Distance(referencePositions[0], allSpawnPoints[s].Position.ToUnityVector3());
+
+                // Search for the nearest reference position to the spawn point
+                for (int b = 1; b < referencePositions.Length; b++)
+                {
+                    float distance = Vector3.Distance(referencePositions[b], allSpawnPoints[s].Position.ToUnityVector3());
+
+                    if (distance < nearestDistance)
+                    {
+                        nearestDistance = distance;
+                    }
+                }
+
+                // For each spawn point, store the distance to the nearest reference point
+                nearestReferencePoints.Add(allSpawnPoints[s], nearestDistance);
+            }
+
+            // The furthest spawn point from all reference positions is the one that has the furthest minimum distance to all of them
+            KeyValuePair<SpawnPointParams, float> selectedPoint = nearestReferencePoints.OrderBy(p => p.Value).Last();
+
+            LoggingController.LogInfo("Found furthest spawn point " + selectedPoint.Key.Position.ToUnityVector3().ToString() + " that is " + selectedPoint.Value + "m from other players");
+
+            return selectedPoint.Key;
+        }
+
+        public SpawnPointParams GetFurthestSpawnPoint(SpawnPointParams[] referenceSpawnPoints, SpawnPointParams[] allSpawnPoints)
+        {
+            return GetFurthestSpawnPoint(referenceSpawnPoints.Select(p => p.Position.ToUnityVector3()).ToArray(), allSpawnPoints);
+        }
+
+        public IEnumerable<SpawnPointParams> GetNearestSpawnPoints(Vector3 position, int count)
+        {
+            return GetNearestSpawnPoints(position, count, new SpawnPointParams[0]);
+        }
+
+        public IEnumerable<SpawnPointParams> GetNearestSpawnPoints(Vector3 position, int count, SpawnPointParams[] excludedSpawnPoints)
+        {
+            if (count < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(count), "At least 1 spawn point must be requested");
+            }
+
+            // If there are multiple bots that will spawn, select nearby spawn points for each of them
+            List<SpawnPointParams> spawnPoints = new List<SpawnPointParams>();
+            while (spawnPoints.Count < count)
+            {
+                SpawnPointParams nextPosition = GetNearestSpawnPoint(position, spawnPoints.ToArray().AddRangeToArray(excludedSpawnPoints));
+
+                Vector3? navMeshPosition = FindNearestNavMeshPosition(nextPosition.Position, ConfigController.Config.Questing.QuestGeneration.NavMeshSearchDistanceSpawn);
+                if (!navMeshPosition.HasValue)
+                {
+                    excludedSpawnPoints = excludedSpawnPoints.AddItem(nextPosition).ToArray();
+                    continue;
+                }
+
+                spawnPoints.Add(nextPosition);
+            }
+
+            return spawnPoints;
+        }
+
+        public SpawnPointParams GetNearestSpawnPoint(Vector3 postition, SpawnPointParams[] excludedSpawnPoints, SpawnPointParams[] allSpawnPoints)
+        {
+            if (allSpawnPoints.Length == 0)
+            {
+                throw new ArgumentException("The spawn-point array is empty.", "allSpawnPoints");
+            }
+
+            // Select the first spawn point by default
+            SpawnPointParams nearestSpawnPoint = allSpawnPoints[0];
+            float nearestDistance = Vector3.Distance(postition, nearestSpawnPoint.Position.ToUnityVector3());
+
+            for (int s = 1; s < allSpawnPoints.Length; s++)
+            {
+                // Check if the spawn point is allowed to be selected
+                if (excludedSpawnPoints.Any(p => p.Id == allSpawnPoints[s].Id))
+                {
+                    continue;
+                }
+
+                // Check if the spawn point is closer than the previous one selected
+                float distance = Vector3.Distance(postition, allSpawnPoints[s].Position.ToUnityVector3());
+                if ((distance < nearestDistance) || excludedSpawnPoints.Contains(nearestSpawnPoint))
+                {
+                    nearestSpawnPoint = allSpawnPoints[s];
+                    nearestDistance = distance;
+                }
+            }
+
+            // Ensure at least one possible spawn point hasn't also been excluded
+            if (excludedSpawnPoints.Contains(nearestSpawnPoint))
+            {
+                throw new InvalidOperationException("All possible spawn points (" + allSpawnPoints.Length + ") are in the blacklist (" + excludedSpawnPoints.Length + ")");
+            }
+
+            return nearestSpawnPoint;
+        }
+
+        public SpawnPointParams GetNearestSpawnPoint(Vector3 postition)
+        {
+            return GetNearestSpawnPoint(postition, new SpawnPointParams[0], GetAllValidSpawnPointParams());
+        }
+
+        public SpawnPointParams GetNearestSpawnPoint(Vector3 postition, SpawnPointParams[] excludedSpawnPoints)
+        {
+            return GetNearestSpawnPoint(postition, excludedSpawnPoints, GetAllValidSpawnPointParams());
+        }
+
+        public Vector3? GetDoorInteractionPosition(Door door, Vector3 startingPosition)
+        {
+            // If a cached position exists, return it
+            if (doorInteractionPositions.ContainsKey(door))
+            {
+                return doorInteractionPositions[door];
+            }
+
+            Dictionary<Vector3, float> validPositions = new Dictionary<Vector3, float>();
+
+            // Determine positions around the door to test
+            float searchDistance = ConfigController.Config.Questing.UnlockingDoors.DoorApproachPositionSearchRadius;
+            float searchOffset = ConfigController.Config.Questing.UnlockingDoors.DoorApproachPositionSearchOffset;
+            Vector3[] possibleInteractionPositions = new Vector3[4]
+            {
+                door.transform.position + new Vector3(searchDistance, 0, 0) + new Vector3(0, searchOffset, 0),
+                door.transform.position - new Vector3(searchDistance, 0, 0) + new Vector3(0, searchOffset, 0),
+                door.transform.position + new Vector3(0, 0, searchDistance) + new Vector3(0, searchOffset, 0),
+                door.transform.position - new Vector3(0, 0, searchDistance) + new Vector3(0, searchOffset, 0)
+            };
+
+            // Test each position
+            foreach (Vector3 possibleInteractionPosition in possibleInteractionPositions)
+            {
+                // Determine if a valid NavMesh location can be found for the position
+                Vector3? navMeshPosition = FindNearestNavMeshPosition(possibleInteractionPosition, ConfigController.Config.Questing.QuestGeneration.NavMeshSearchDistanceDoors);
+                if (!navMeshPosition.HasValue)
+                {
+                    LoggingController.LogInfo("Cannot access position " + possibleInteractionPosition.ToString() + " for door " + door.Id);
+
+                    if (ConfigController.Config.Debug.Enabled && ConfigController.Config.Debug.ShowDoorInteractionTestPoints)
+                    {
+                        DebugHelpers.outlinePosition(possibleInteractionPosition, Color.white, ConfigController.Config.Questing.QuestGeneration.NavMeshSearchDistanceDoors);
+                    }
+
+                    continue;
+                }
+
+                //LoggingController.LogInfo(BotOwner.GetText() + " is checking the accessibility of position " + navMeshPosition.Value.ToString() + " for door " + door.Id + "...");
+
+                // Try to calculate a path from the bot to the NavMesh location identified for the position
+                NavMeshPath path = new NavMeshPath();
+                NavMesh.CalculatePath(startingPosition, navMeshPosition.Value, NavMesh.AllAreas, path);
+
+                // Check if the bot is able to reach the NavMesh location identified for the position
+                if (path.status == NavMeshPathStatus.PathComplete)
+                {
+                    validPositions.Add(navMeshPosition.Value, Vector3.Distance(navMeshPosition.Value, door.transform.position));
+                    continue;
+                }
+
+                if (ConfigController.Config.Debug.Enabled && ConfigController.Config.Debug.ShowDoorInteractionTestPoints)
+                {
+                    DebugHelpers.outlinePosition(navMeshPosition.Value, Color.yellow);
+                }
+            }
+
+            // Check if there are any positions around the door that the bot is able to reach
+            if (validPositions.Count > 0)
+            {
+                // Sort the positions based on their poximity to the door
+                IEnumerable<Vector3> orderedPostions = validPositions.OrderBy(p => p.Value).Select(p => p.Key);
+
+                // If applicable, draw the positions in the world
+                if (ConfigController.Config.Debug.Enabled && ConfigController.Config.Debug.ShowDoorInteractionTestPoints)
+                {
+                    DebugHelpers.outlinePosition(orderedPostions.First(), Color.green);
+
+                    foreach (Vector3 alternatePosition in orderedPostions.Skip(1))
+                    {
+                        DebugHelpers.outlinePosition(alternatePosition, Color.magenta);
+                    }
+                }
+
+                // Select the position closest to the door
+                Vector3 interactionPosition = orderedPostions.First();
+
+                // Cache the position and return it
+                doorInteractionPositions.Add(door, interactionPosition);
+                return interactionPosition;
+            }
+
+            return null;
+        }
+
+        public Door FindFirstAccessibleDoor(IEnumerable<Door> doors, Vector3 startingPosition)
+        {
+            foreach (Door door in doors)
+            {
+                // Ensure a player can interact with the door
+                InteractionStates availableActions = GetActionsClass.GetAvailableActions(gamePlayerOwner, door);
+                if ((availableActions == null) || (availableActions.Actions.Count == 0))
+                {
+                    continue;
+                }
+
+                Vector3? interactionPosition = GetDoorInteractionPosition(door, startingPosition);
+                if (interactionPosition.HasValue)
+                {
+                    return door;
+                }
+            }
+
+            return null;
+        }
+
+        public float GetMaxDistanceBetweenExfils()
+        {
+            if (maxExfilPointDistance > 0)
+            {
+                return maxExfilPointDistance;
+            }
+
+            float maxDistance = 0;
+            foreach (ExfiltrationPoint firstPoint in Singleton<GameWorld>.Instance.ExfiltrationController.ExfiltrationPoints)
+            {
+                foreach (ExfiltrationPoint secondPoint in Singleton<GameWorld>.Instance.ExfiltrationController.ExfiltrationPoints)
+                {
+                    float distance = Vector3.Distance(firstPoint.transform.position, secondPoint.transform.position);
+                    if (distance > maxDistance)
+                    {
+                        maxDistance = distance;
+                    }
+                }
+            }
+
+            maxExfilPointDistance = maxDistance;
+            return maxExfilPointDistance;
+        }
+
+        private LocationSettingsClass getLocationSettings(TarkovApplication app)
+        {
+            if (app == null)
+            {
+                LoggingController.LogError("Invalid Tarkov application instance");
+                return null;
+            }
+
+            ISession session = app.GetClientBackEndSession();
+            if (session == null)
+            {
+                return null;
+            }
+
+            return session.LocationSettings;
+        }
+
+        private RaidSettings getCurrentRaidSettings()
+        {
+            if (tarkovApplication == null)
+            {
+                LoggingController.LogError("Invalid Tarkov application instance");
+                return null;
+            }
+
+            FieldInfo raidSettingsField = typeof(TarkovApplication).GetField("_raidSettings", BindingFlags.NonPublic | BindingFlags.Instance);
+            RaidSettings raidSettings = raidSettingsField.GetValue(tarkovApplication) as RaidSettings;
+            return raidSettings;
+        }
+    }
+}

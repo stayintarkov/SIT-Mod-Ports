@@ -30,6 +30,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>copy "AmandsGraphics.dll" "$(SolutionDir)- Plugins\" /y </PostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>..\References\0Harmony.dll</HintPath>
@@ -48,6 +51,9 @@
     </Reference>
     <Reference Include="Comfort">
       <HintPath>..\References\Comfort.dll</HintPath>
+    </Reference>
+    <Reference Include="DissonanceVoip">
+      <HintPath>..\References\DissonanceVoip.dll</HintPath>
     </Reference>
     <Reference Include="DOTween">
       <HintPath>..\References\DOTween.dll</HintPath>
@@ -103,7 +109,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>COPY "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)Ref\plugins"</PostBuildEvent>
-  </PropertyGroup>
 </Project>

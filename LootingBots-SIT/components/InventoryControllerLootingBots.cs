@@ -9,6 +9,7 @@ using Comfort.Common;
 
 using EFT;
 using EFT.InventoryLogic;
+using EFT.UI;
 
 using LootingBots.Patch.Util;
 
@@ -56,7 +57,7 @@ namespace LootingBots.Patch.Components
         public void StatsDebugPanel(StringBuilder debugPanel)
         {
             Color freeSpaceColor =
-                AvailableGridSpaces == 0
+                AvailableGridSpaces <= 2
                     ? Color.red
                     : AvailableGridSpaces < TotalGridSpaces / 2
                         ? Color.yellow
@@ -82,7 +83,7 @@ namespace LootingBots.Patch.Components
         private readonly BotLog _log;
         private readonly TransactionController _transactionController;
         private readonly BotOwner _botOwner;
-        private readonly InventoryController _botInventoryController;
+        private readonly InventoryControllerClass _botInventoryController;
         private readonly LootingBrain _lootingBrain;
         private readonly ItemAppraiser _itemAppraiser;
 
@@ -117,7 +118,7 @@ namespace LootingBots.Patch.Components
                 );
 
                 _botOwner = botOwner;
-                _botInventoryController = (InventoryController)
+                _botInventoryController = (InventoryControllerClass)
                     botInventory.GetValue(botOwner.GetPlayer);
                 _transactionController = new TransactionController(
                     _botOwner,
@@ -129,7 +130,7 @@ namespace LootingBots.Patch.Components
                 Item chest = _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.ArmorVest)
                     .ContainedItem;
-                GItem1 tacVest = (GItem1)
+                SearchableItemClass tacVest = (SearchableItemClass)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.TacticalVest)
                         .ContainedItem;
@@ -200,15 +201,15 @@ namespace LootingBots.Patch.Components
         */
         public void UpdateGridStats()
         {
-            GItem1 tacVest = (GItem1)
+            SearchableItemClass tacVest = (SearchableItemClass)
                 _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.TacticalVest)
                     .ContainedItem;
-            GItem1 backpack = (GItem1)
+            SearchableItemClass backpack = (SearchableItemClass)
                 _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.Backpack)
                     .ContainedItem;
-            GItem1 pockets = (GItem1)
+            SearchableItemClass pockets = (SearchableItemClass)
                 _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.Pockets)
                     .ContainedItem;
@@ -229,7 +230,7 @@ namespace LootingBots.Patch.Components
         */
         public async Task<IResult> SortTacVest()
         {
-            GItem1 tacVest = (GItem1)
+            SearchableItemClass tacVest = (SearchableItemClass)
                 _botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.TacticalVest)
                     .ContainedItem;
@@ -242,6 +243,7 @@ namespace LootingBots.Patch.Components
 
                 if (result.Succeeded)
                 {
+                    //return await _transactionController.TryRunNetTrans(result);
                     return await _transactionController.TryRunNetworkTransaction(result);
                 }
             }
@@ -258,14 +260,18 @@ namespace LootingBots.Patch.Components
         {
             foreach (Item item in items)
             {
-                if (_transactionController.IsLootingInterrupted())
-                {
-                    UpdateKnownItems();
-                    return false;
-                }
-
                 if (item != null && item.Name != null)
                 {
+                    if (LootingBots.UseExamineTime.Value)
+                    {
+                        await SimulateExamineTime(item);
+                    }
+                    
+                    if (_transactionController.IsLootingInterrupted())
+                    {
+                        UpdateKnownItems();
+                        return false;
+                    }
                     CurrentItemPrice = _itemAppraiser.GetItemPrice(item);
                     _log.LogInfo($"Loot found: {item.Name.Localized()} ({CurrentItemPrice}₽)");
 
@@ -328,9 +334,8 @@ namespace LootingBots.Patch.Components
                             }
                         }
                     }
-                    else
+                    if (item is SearchableItemClass)
                     {
-                        // Try to pick up any nested items before trying to pick up the item. This helps when looting rigs to transfer ammo to the bots active rig
                         bool success = await LootNestedItems(item);
 
                         if (!success)
@@ -338,17 +343,14 @@ namespace LootingBots.Patch.Components
                             UpdateKnownItems();
                             return success;
                         }
+                    }
 
-                        // Check to see if we can pick up the item
-                        if (
-                            AllowedToPickup(item)
-                            && await _transactionController.TryPickupItem(item)
-                        )
-                        {
-                            Stats.AddNetValue(CurrentItemPrice);
-                            UpdateGridStats();
-                            continue;
-                        }
+                    // Check to see if we can pick up the item
+                    if (AllowedToPickup(item) && await _transactionController.TryPickupItem(item))
+                    {
+                        Stats.AddNetValue(CurrentItemPrice);
+                        UpdateGridStats();
+                        continue;
                     }
                 }
                 else
@@ -361,6 +363,15 @@ namespace LootingBots.Patch.Components
             UpdateKnownItems();
 
             return true;
+        }
+        
+        /** Use the ExamineTime of an object and the AttentionExamineValue of the bot to calculate the delay for discovering an item while looting */
+        public Task SimulateExamineTime(Item item)
+        {
+            // Taken from GClass2665 constructor
+            return TransactionController.SimulatePlayerDelay(
+                item.ExamineTime * 1000f / (1f + _botOwner.Profile.Skills.AttentionExamineValue)
+            );
         }
 
         /**
@@ -409,19 +420,19 @@ namespace LootingBots.Patch.Components
             // Protection against bot death interruption
             if (_botOwner != null && _botInventoryController != null)
             {
-                GItem1 tacVest = (GItem1)
+                SearchableItemClass tacVest = (SearchableItemClass)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.TacticalVest)
                         .ContainedItem;
-                GItem1 backpack = (GItem1)
+                SearchableItemClass backpack = (SearchableItemClass)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.Backpack)
                         .ContainedItem;
-                GItem1 pockets = (GItem1)
+                SearchableItemClass pockets = (SearchableItemClass)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.Pockets)
                         .ContainedItem;
-                GItem1 secureContainer = (GItem1)
+                SearchableItemClass secureContainer = (SearchableItemClass)
                     _botInventoryController.Inventory.Equipment
                         .GetSlot(EquipmentSlot.SecuredContainer)
                         .ContainedItem;
@@ -462,7 +473,10 @@ namespace LootingBots.Patch.Components
                 return action;
             }
 
-            if (lootItem.Template is WeaponTemplate && !BotTypeUtils.IsBoss(_botOwner.Profile.Info.Settings.Role))
+            if (
+                lootItem.Template is WeaponTemplate
+                && !BotTypeUtils.IsBoss(_botOwner.Profile.Info.Settings.Role)
+            )
             {
                 return GetWeaponEquipAction(lootItem as Weapon);
             }
@@ -508,23 +522,24 @@ namespace LootingBots.Patch.Components
 
         public bool IsUsableMag(MagazineClass mag)
         {
-            return mag != null && _botInventoryController.Inventory.Equipment
-                    .GetSlotsByName(
-                        new EquipmentSlot[]
-                        {
-                            EquipmentSlot.FirstPrimaryWeapon,
-                            EquipmentSlot.SecondPrimaryWeapon,
-                            EquipmentSlot.Holster
-                        }
-                    )
-                    .Where(
-                        slot =>
-                            slot.ContainedItem != null
-                            && ((Weapon)slot.ContainedItem).GetMagazineSlot() != null
-                            && ((Weapon)slot.ContainedItem).GetMagazineSlot().CanAccept(mag)
-                    )
-                    .ToArray()
-                    .Length > 0;
+            return mag != null
+                   && _botInventoryController.Inventory.Equipment
+                       .GetSlotsByName(
+                           new EquipmentSlot[]
+                           {
+                               EquipmentSlot.FirstPrimaryWeapon,
+                               EquipmentSlot.SecondPrimaryWeapon,
+                               EquipmentSlot.Holster
+                           }
+                       )
+                       .Where(
+                           slot =>
+                               slot.ContainedItem != null
+                               && ((Weapon)slot.ContainedItem).GetMagazineSlot() != null
+                               && ((Weapon)slot.ContainedItem).GetMagazineSlot().CanAccept(mag)
+                       )
+                       .ToArray()
+                       .Length > 0;
         }
 
         /**
@@ -749,8 +764,8 @@ namespace LootingBots.Patch.Components
             // If the item is a container, calculate the size and see if its bigger than what is equipped
             if (equipped.IsContainer)
             {
-                int equippedSize = LootUtils.GetContainerSize(equipped as GItem1);
-                int itemToLootSize = LootUtils.GetContainerSize(itemToLoot as GItem1);
+                int equippedSize = LootUtils.GetContainerSize(equipped as SearchableItemClass);
+                int itemToLootSize = LootUtils.GetContainerSize(itemToLoot as SearchableItemClass);
 
                 foundBiggerContainer = equippedSize < itemToLootSize;
             }
@@ -815,23 +830,23 @@ namespace LootingBots.Patch.Components
             if (nestedItems.Length > 1)
             {
                 // Filter out the parent item from the list, filter out any items that are children of another container like a magazine, backpack, rig
-                Item[] containerItems = nestedItems
+                Item[] items = parentItem
+                    .GetFirstLevelItems()
+                    .ToArray()
                     .Where(
+                        // Filter out the parent item from the list, quest items, and single use keys
                         nestedItem =>
                             nestedItem.Id != parentItem.Id
-                            && nestedItem.Id == nestedItem.GetRootItem().Id
                             && !nestedItem.QuestItem
                             && !LootUtils.IsSingleUseKey(nestedItem)
                     )
                     .ToArray();
 
-                if (containerItems.Length > 0)
+                if (items.Length > 0)
                 {
-                    _log.LogDebug(
-                        $"Looting {containerItems.Length} items from {parentItem.Name.Localized()}"
-                    );
-                    await TransactionController.SimulatePlayerDelay(1000);
-                    return await TryAddItemsToBot(containerItems);
+                    _log.LogDebug($"Looting {items.Length} items from {parentItem.Name.Localized()}");
+                    await TransactionController.SimulatePlayerDelay(LootingBrain.LootingStartDelay);
+                    return await TryAddItemsToBot(items);
                 }
             }
             else
@@ -852,8 +867,15 @@ namespace LootingBots.Patch.Components
             bool isPMC = BotTypeUtils.IsPMC(botType);
 
             // If the bot is a PMC, compare the price against the PMC loot threshold. For all other bot types use the scav threshold
-            return isPMC && itemPrice >= LootingBots.PMCLootThreshold.Value
-                || !isPMC && itemPrice >= LootingBots.ScavLootThreshold.Value;
+            float min = (
+                isPMC ? LootingBots.PMCMinLootThreshold : LootingBots.ScavMinLootThreshold
+            ).Value;
+            float max = (
+                isPMC ? LootingBots.PMCMaxLootThreshold : LootingBots.ScavMaxLootThreshold
+            ).Value;
+
+            // If max is set to 0, do not check agains max threshold
+            return itemPrice >= min && (max == 0f || itemPrice <= max);
         }
 
         public bool AllowedToEquip(Item lootItem)
@@ -874,9 +896,12 @@ namespace LootingBots.Patch.Components
             bool pickupNotRestricted = isPMC
                 ? LootingBots.PMCGearToPickup.Value.IsItemEligible(lootItem)
                 : LootingBots.ScavGearToPickup.Value.IsItemEligible(lootItem);
+            bool isMoney = lootItem.Template is MoneyClass;
             
-            // All usable mags should be considered eligible to loot. Otherwise all other items fall subject to the mod settings for restricting pickup and loot value thresholds
-            return  IsUsableMag(lootItem as MagazineClass) || (pickupNotRestricted && IsValuableEnough(CurrentItemPrice));
+            // All usable mags and money should be considered eligible to loot. Otherwise all other items fall subject to the mod settings for restricting pickup and loot value thresholds
+            return IsUsableMag(lootItem as MagazineClass)
+                   || isMoney
+                   || (pickupNotRestricted && IsValuableEnough(CurrentItemPrice));
         }
 
         /**
@@ -884,7 +909,7 @@ namespace LootingBots.Patch.Components
         */
         public EquipmentSlot[] GetPrioritySlots()
         {
-            InventoryController botInventoryController = _botInventoryController;
+            InventoryControllerClass botInventoryController = _botInventoryController;
             bool hasBackpack =
                 botInventoryController.Inventory.Equipment
                     .GetSlot(EquipmentSlot.Backpack)

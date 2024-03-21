@@ -8,7 +8,7 @@ using static SAIN.Editor.SAINLayout;
 using UnityEngine;
 using static EFT.SpeedTree.TreeWind;
 using SAIN.Preset.GlobalSettings;
-using static GClass1761;
+using static GClass1844;
 using SAIN.Attributes;
 
 namespace SAIN.Editor

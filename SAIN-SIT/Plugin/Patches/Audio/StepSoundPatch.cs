@@ -1,5 +1,5 @@
-﻿using StayInTarkov;
-using EFT;
+﻿using EFT;
+using StayInTarkov;
 using System.Reflection;
 
 namespace SAIN.Patches

@@ -4,6 +4,7 @@
 		<TargetFramework>net472</TargetFramework>
 		<AssemblyName>LootValue</AssemblyName>
 		<Version>1.2.2</Version>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -14,6 +15,9 @@
 	<ItemGroup>
 		<Reference Include="BepInEx">
 		  <HintPath>..\References\BepInEx.dll</HintPath>
+		</Reference>
+		<Reference Include="Microsoft.CSharp">
+		  <HintPath>..\References\Microsoft.CSharp.dll</HintPath>
 		</Reference>
 		<Reference Include="StayInTarkov">
 			<HintPath>..\References\StayInTarkov.dll</HintPath>
@@ -37,7 +41,7 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="COPY &quot;$(TargetDir)$(TargetName)$(TargetExt)&quot; &quot;$(SolutionDir)Ref\plugins&quot;" />
+	  <Exec Command="copy &quot;$(SolutionDir)\LootValue-SIT\bin\release\net472\LootValue.dll&quot; &quot;$(SolutionDir)- Plugins\&quot; /y " />
 	</Target>
 
 </Project>

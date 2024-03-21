@@ -131,8 +131,8 @@ namespace SAIN.BotController.Classes
 
         public bool SquadReady { get; private set; }
 
-        public Action<IAIDetails, DamageInfo, float> LeaderKilled { get; set; }
-        public Action<IAIDetails, DamageInfo, float> MemberKilled { get; set; }
+        public Action<IPlayer, DamageInfo, float> LeaderKilled { get; set; }
+        public Action<IPlayer, DamageInfo, float> MemberKilled { get; set; }
 
         public Action<SAINComponentClass, float> NewLeaderFound { get; set; }
 
@@ -243,7 +243,7 @@ namespace SAIN.BotController.Classes
         private float RecheckSquadTimer;
         private float CheckSquadTimer;
 
-        private void MemberWasKilled(Player player, IAIDetails lastAggressor, DamageInfo lastDamageInfo, EBodyPart lastBodyPart)
+        private void MemberWasKilled(Player player, IPlayer lastAggressor, DamageInfo lastDamageInfo, EBodyPart lastBodyPart)
         {
             if (SAINPlugin.DebugMode)
             {

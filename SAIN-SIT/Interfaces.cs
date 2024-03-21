@@ -22,7 +22,7 @@ namespace SAIN
         Player Player { get; }
     }
 
-    public interface IAIDetailsComponent
+    public interface IPlayerComponent
     {
         void Init(Player player);
         Player Player { get; }
