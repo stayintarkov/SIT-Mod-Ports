@@ -16,7 +16,7 @@ namespace SPTQuestingBots.Patches
         protected override MethodBase GetTargetMethod()
         {
             Type localGameType = Aki.Reflection.Utils.PatchConstants.LocalGameType;
-            Type targetType = localGameType.GetNestedType("Class1367", BindingFlags.Public | BindingFlags.Instance);
+            Type targetType = localGameType.GetNestedType("Class1376", BindingFlags.Public | BindingFlags.Instance);
 
             return targetType.GetMethod("method_1", BindingFlags.Public | BindingFlags.Instance);
         }
