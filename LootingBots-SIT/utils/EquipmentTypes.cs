@@ -3,10 +3,10 @@ using System;
 using EFT.InventoryLogic;
 
 
-using BodyArmorClass = GClass2637;
-using HeadArmorClass = GClass2636;
-using FaceCoveringClass = GClass2635;
-using BackpackItemClass = GClass2684;
+using BodyArmorClass = GClass2648;
+using HeadArmorClass = GClass2647;
+using FaceCoveringClass = GClass2646;
+using BackpackItemClass = GClass2695;
 using TacticalRigItemClass = ArmorClass1;
 
 

@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UIElements;
+using EFTSoundPlayer = GClass603;
 
 namespace SAIN.Components
 {
@@ -49,8 +50,8 @@ namespace SAIN.Components
             BotExtractManager.Awake();
             BotSquads.Awake();
 
-            Singleton<GClass598>.Instance.OnGrenadeThrow += GrenadeThrown;
-            Singleton<GClass598>.Instance.OnGrenadeExplosive += GrenadeExplosion;
+            Singleton<EFTSoundPlayer>.Instance.OnGrenadeThrow += GrenadeThrown;
+            Singleton<EFTSoundPlayer>.Instance.OnGrenadeExplosive += GrenadeExplosion;
             AISoundPlayed += SoundPlayed;
             PlayerTalk += PlayerTalked;
             Singleton<GameWorld>.Instance.gameObject.AddComponent<DebugData>();
@@ -334,8 +335,8 @@ namespace SAIN.Components
 
                 AISoundPlayed -= SoundPlayed;
                 PlayerTalk -= PlayerTalked;
-                Singleton<GClass598>.Instance.OnGrenadeThrow -= GrenadeThrown;
-                Singleton<GClass598>.Instance.OnGrenadeExplosive -= GrenadeExplosion;
+                Singleton<EFTSoundPlayer>.Instance.OnGrenadeThrow -= GrenadeThrown;
+                Singleton<EFTSoundPlayer>.Instance.OnGrenadeExplosive -= GrenadeExplosion;
 
                 if (Bots.Count > 0)
                 {

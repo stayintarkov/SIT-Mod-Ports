@@ -13,6 +13,7 @@ using SPTQuestingBots.BotLogic.Objective;
 using SPTQuestingBots.Controllers;
 using SPTQuestingBots.Helpers;
 using UnityEngine;
+using EFTSoundPlayer = GClass603;
 
 namespace SPTQuestingBots.BotLogic
 {
@@ -39,8 +40,8 @@ namespace SPTQuestingBots.BotLogic
 
             if (ConfigController.Config.Questing.BotQuestingRequirements.HearingSensor.Enabled)
             {
-                Singleton<GClass598>.Instance.OnSoundPlayed += enemySoundHeard;
-                botOwner.GetPlayer.OnIPlayerDeadOrUnspawn += (player) => { Singleton<GClass598>.Instance.OnSoundPlayed -= enemySoundHeard; };
+                Singleton<EFTSoundPlayer>.Instance.OnSoundPlayed += enemySoundHeard;
+                botOwner.GetPlayer.OnIPlayerDeadOrUnspawn += (player) => { Singleton<EFTSoundPlayer>.Instance.OnSoundPlayed -= enemySoundHeard; };
             }
 
             lootingLayerMonitor = botOwner.GetPlayer.gameObject.AddComponent<LogicLayerMonitor>();

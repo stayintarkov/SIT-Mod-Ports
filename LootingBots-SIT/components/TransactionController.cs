@@ -15,7 +15,7 @@ using LootingBots.Patch.Util;
 using InventoryControllerResultStruct = SOperationResult;
 using InventoryHelperClass = ItemMovementHandler;
 using GridClassEx = GridContainer;
-using GridCacheClass = GClass1390;
+using GridCacheClass = GClass1398;
 
 namespace LootingBots.Patch.Components
 {

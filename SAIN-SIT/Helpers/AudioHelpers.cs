@@ -118,7 +118,7 @@ namespace SAIN.Helpers
 
         public static bool IsSilencer(Mod mod)
         {
-            return mod.GetType() == GClass2741.TypeTable[SuppressorTypeId];
+            return mod.GetType() == GClass2752.TypeTable[SuppressorTypeId];
         }
 
         public static readonly string SuppressorTypeId = "550aa4cd4bdc2dd8348b456c";

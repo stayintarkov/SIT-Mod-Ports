@@ -37,7 +37,7 @@ namespace SPTQuestingBots.Helpers
                 multiplier *= ConfigController.Config.Questing.BotQuestingRequirements.HearingSensor.LoudnessMultiplierHeadset;
             }
 
-            GClass2536 helmetTemplate = helmet?.Template as GClass2536;
+            GClass2547 helmetTemplate = helmet?.Template as GClass2547;
             switch (helmetTemplate?.DeafStrength)
             {
                 case EDeafStrength.Low:

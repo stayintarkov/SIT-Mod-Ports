@@ -82,7 +82,6 @@
     <Reference Include="UnityEngine.TextRenderingModule">
       <HintPath>..\References\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.UI" />
     <Reference Include="UnityEngine.PhysicsModule.dll">
       <HintPath>$(ManagedAssembliesPath)\UnityEngine.PhysicsModule.dll</HintPath>
       <Private>False</Private>
@@ -150,14 +149,12 @@
   <Target Name="CopyOutput" AfterTargets="Build">
     <Message Text="Copying new build to dist" Importance="High" />
 
-    <Copy
-      SourceFiles="$(TargetDir)$(AssemblyName).dll"
-      DestinationFolder="$(ProjectDir)\..\..\BepInEx\plugins" />
+    <Copy SourceFiles="$(TargetDir)$(AssemblyName).dll" DestinationFolder="$(ProjectDir)\..\..\BepInEx\plugins" />
 
     <Message Text="Copied build files" Importance="High" />
   </Target>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy &quot;F:\Gaming\SITDev\SIT-Mod-Ports\SPT_ThatsLit\bin\Release\net472\ThatsLit-Release.dll&quot; &quot;F:\Gaming\SITDev\SIT-Mod-Ports\- Plugins\&quot; /y " />
+    <Exec Command="copy &quot;$(TargetDir)ThatsLit-Release.dll&quot; &quot;$(SolutionDir)- Plugins\&quot; /y " />
   </Target>
 </Project>
