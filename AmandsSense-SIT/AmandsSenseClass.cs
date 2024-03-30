@@ -20,6 +20,8 @@ using System.Linq;
 using Aki.Common.Utils;
 using Sirenix.Utilities;
 
+using ItemsListClass = GClass2752;
+
 namespace AmandsSense
 {
     public class AmandsSenseClass : MonoBehaviour
@@ -406,175 +408,175 @@ namespace AmandsSense
         }
         public static ESenseItemType SenseItemType(Type itemType)
         {
-            if (GClass2741.TypeTable["57864ada245977548638de91"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["57864ada245977548638de91"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.BuildingMaterials;
             }
-            if (GClass2741.TypeTable["57864a66245977548f04a81f"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["57864a66245977548f04a81f"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Electronics;
             }
-            if (GClass2741.TypeTable["57864ee62459775490116fc1"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["57864ee62459775490116fc1"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.EnergyElements;
             }
-            if (GClass2741.TypeTable["57864e4c24597754843f8723"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["57864e4c24597754843f8723"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.FlammableMaterials;
             }
-            if (GClass2741.TypeTable["57864c322459775490116fbf"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["57864c322459775490116fbf"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.HouseholdMaterials;
             }
-            if (GClass2741.TypeTable["57864c8c245977548867e7f1"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["57864c8c245977548867e7f1"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.MedicalSupplies;
             }
-            if (GClass2741.TypeTable["57864bb7245977548b3b66c2"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["57864bb7245977548b3b66c2"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Tools;
             }
-            if (GClass2741.TypeTable["57864a3d24597754843f8721"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["57864a3d24597754843f8721"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Valuables;
             }
-            if (GClass2741.TypeTable["590c745b86f7743cc433c5f2"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["590c745b86f7743cc433c5f2"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Others;
             }
-            if (GClass2741.TypeTable["5448e53e4bdc2d60728b4567"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5448e53e4bdc2d60728b4567"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Backpacks;
             }
-            if (GClass2741.TypeTable["5448e54d4bdc2dcc718b4568"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5448e54d4bdc2dcc718b4568"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.BodyArmor;
             }
-            if (GClass2741.TypeTable["5448e5724bdc2ddf718b4568"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5448e5724bdc2ddf718b4568"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Eyewear;
             }
-            if (GClass2741.TypeTable["5a341c4686f77469e155819e"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5a341c4686f77469e155819e"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Facecovers;
             }
-            if (GClass2741.TypeTable["5a341c4086f77401f2541505"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5a341c4086f77401f2541505"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Headgear;
             }
-            if (GClass2741.TypeTable["57bef4c42459772e8d35a53b"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["57bef4c42459772e8d35a53b"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.GearComponents;
             }
-            if (GClass2741.TypeTable["5b3f15d486f77432d0509248"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5b3f15d486f77432d0509248"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.GearComponents;
             }
-            if (GClass2741.TypeTable["5645bcb74bdc2ded0b8b4578"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5645bcb74bdc2ded0b8b4578"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Headsets;
             }
-            if (GClass2741.TypeTable["5448bf274bdc2dfc2f8b456a"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5448bf274bdc2dfc2f8b456a"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.SecureContainers;
             }
-            if (GClass2741.TypeTable["5795f317245977243854e041"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5795f317245977243854e041"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.StorageContainers;
             }
-            if (GClass2741.TypeTable["5448e5284bdc2dcb718b4567"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5448e5284bdc2dcb718b4567"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.TacticalRigs;
             }
-            if (GClass2741.TypeTable["550aa4154bdc2dd8348b456b"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["550aa4154bdc2dd8348b456b"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.FunctionalMods;
             }
-            if (GClass2741.TypeTable["55802f3e4bdc2de7118b4584"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["55802f3e4bdc2de7118b4584"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.GearMods;
             }
-            if (GClass2741.TypeTable["5a74651486f7744e73386dd1"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5a74651486f7744e73386dd1"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.GearMods;
             }
-            if (GClass2741.TypeTable["55802f4a4bdc2ddb688b4569"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["55802f4a4bdc2ddb688b4569"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.VitalParts;
             }
-            if (GClass2741.TypeTable["5447e1d04bdc2dff2f8b4567"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5447e1d04bdc2dff2f8b4567"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.MeleeWeapons;
             }
-            if (GClass2741.TypeTable["543be6564bdc2df4348b4568"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["543be6564bdc2df4348b4568"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Throwables;
             }
-            if (GClass2741.TypeTable["543be5cb4bdc2deb348b4568"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["543be5cb4bdc2deb348b4568"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.AmmoPacks;
             }
-            if (GClass2741.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Rounds;
             }
-            if (GClass2741.TypeTable["5448e8d64bdc2dce718b4568"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5448e8d64bdc2dce718b4568"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Drinks;
             }
-            if (GClass2741.TypeTable["5448e8d04bdc2ddf718b4569"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5448e8d04bdc2ddf718b4569"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Food;
             }
-            if (GClass2741.TypeTable["5448f3a64bdc2d60728b456a"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5448f3a64bdc2d60728b456a"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Injectors;
             }
-            if (GClass2741.TypeTable["5448f3ac4bdc2dce718b4569"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5448f3ac4bdc2dce718b4569"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.InjuryTreatment;
             }
-            if (GClass2741.TypeTable["5448f39d4bdc2d0a728b4568"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5448f39d4bdc2d0a728b4568"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Medkits;
             }
-            if (GClass2741.TypeTable["5448f3a14bdc2d27728b4569"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5448f3a14bdc2d27728b4569"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Pills;
             }
-            if (GClass2741.TypeTable["5c164d2286f774194c5e69fa"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5c164d2286f774194c5e69fa"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.ElectronicKeys;
             }
-            if (GClass2741.TypeTable["5c99f98d86f7745c314214b3"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5c99f98d86f7745c314214b3"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.MechanicalKeys;
             }
-            if (GClass2741.TypeTable["5448ecbe4bdc2d60728b4568"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5448ecbe4bdc2d60728b4568"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.InfoItems;
             }
-            if (GClass2741.TypeTable["5447e0e74bdc2d3c308b4567"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5447e0e74bdc2d3c308b4567"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.SpecialEquipment;
             }
-            if (GClass2741.TypeTable["616eb7aea207f41933308f46"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["616eb7aea207f41933308f46"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.SpecialEquipment;
             }
-            if (GClass2741.TypeTable["61605ddea09d851a0a0c1bbc"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["61605ddea09d851a0a0c1bbc"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.SpecialEquipment;
             }
-            if (GClass2741.TypeTable["5f4fbaaca5573a5ac31db429"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["5f4fbaaca5573a5ac31db429"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.SpecialEquipment;
             }
-            if (GClass2741.TypeTable["567849dd4bdc2d150f8b456e"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["567849dd4bdc2d150f8b456e"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Maps;
             }
-            if (GClass2741.TypeTable["543be5dd4bdc2deb348b4569"].IsAssignableFrom(itemType))
+            if (ItemsListClass.TypeTable["543be5dd4bdc2deb348b4569"].IsAssignableFrom(itemType))
             {
                 return ESenseItemType.Money;
             }
@@ -1324,7 +1326,7 @@ namespace AmandsSense
                                         }
                                         else if (item.Template != null && !item.Template.CanSellOnRagfair && !AmandsSenseClass.itemsJsonClass.NonFleaExclude.Contains(item.TemplateId) && eSenseItemColor != ESenseItemColor.Rare && eSenseItemColor != ESenseItemColor.WishList)
                                         {
-                                            if (!AmandsSensePlugin.NonFleaAmmo.Value && GClass2741.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
+                                            if (!AmandsSensePlugin.NonFleaAmmo.Value && ItemsListClass.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
                                             {
                                                 continue;
                                             }
@@ -1508,7 +1510,7 @@ namespace AmandsSense
                                 {
                                     if (item.Parent != null)
                                     {
-                                        if (item.Parent.Container != null && item.Parent.Container.ParentItem != null && GClass2741.TypeTable["5448bf274bdc2dfc2f8b456a"].IsAssignableFrom(item.Parent.Container.ParentItem.GetType()))
+                                        if (item.Parent.Container != null && item.Parent.Container.ParentItem != null && ItemsListClass.TypeTable["5448bf274bdc2dfc2f8b456a"].IsAssignableFrom(item.Parent.Container.ParentItem.GetType()))
                                         {
                                             continue;
                                         }
@@ -1547,7 +1549,7 @@ namespace AmandsSense
                                     }
                                     else if (item.Template != null && !item.Template.CanSellOnRagfair && !AmandsSenseClass.itemsJsonClass.NonFleaExclude.Contains(item.TemplateId) && eSenseItemColor != ESenseItemColor.Rare && eSenseItemColor != ESenseItemColor.WishList)
                                     {
-                                        if (!AmandsSensePlugin.NonFleaAmmo.Value && GClass2741.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
+                                        if (!AmandsSensePlugin.NonFleaAmmo.Value && ItemsListClass.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
                                         {
                                             continue;
                                         }
@@ -2280,7 +2282,7 @@ namespace AmandsSense
                                         }
                                         else if (item.Template != null && !item.Template.CanSellOnRagfair && !AmandsSenseClass.itemsJsonClass.NonFleaExclude.Contains(item.TemplateId) && eSenseItemColor != ESenseItemColor.Rare && eSenseItemColor != ESenseItemColor.WishList)
                                         {
-                                            if (!AmandsSensePlugin.NonFleaAmmo.Value && GClass2741.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
+                                            if (!AmandsSensePlugin.NonFleaAmmo.Value && ItemsListClass.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
                                             {
                                                 continue;
                                             }
@@ -2449,7 +2451,7 @@ namespace AmandsSense
                                 {
                                     if (item.Parent != null)
                                     {
-                                        if (item.Parent.Container != null && item.Parent.Container.ParentItem != null && GClass2741.TypeTable["5448bf274bdc2dfc2f8b456a"].IsAssignableFrom(item.Parent.Container.ParentItem.GetType()))
+                                        if (item.Parent.Container != null && item.Parent.Container.ParentItem != null && ItemsListClass.TypeTable["5448bf274bdc2dfc2f8b456a"].IsAssignableFrom(item.Parent.Container.ParentItem.GetType()))
                                         {
                                             continue;
                                         }
@@ -2488,7 +2490,7 @@ namespace AmandsSense
                                     }
                                     else if (item.Template != null && !item.Template.CanSellOnRagfair && !AmandsSenseClass.itemsJsonClass.NonFleaExclude.Contains(item.TemplateId) && eSenseItemColor != ESenseItemColor.Rare && eSenseItemColor != ESenseItemColor.WishList)
                                     {
-                                        if (!AmandsSensePlugin.NonFleaAmmo.Value && GClass2741.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
+                                        if (!AmandsSensePlugin.NonFleaAmmo.Value && ItemsListClass.TypeTable["5485a8684bdc2da71d8b4567"].IsAssignableFrom(item.GetType()))
                                         {
                                             continue;
                                         }
