@@ -12,9 +12,10 @@ using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using StayInTarkov;
-using CurrencyUtil = GClass2517;
+using CurrencyUtil = GClass2528;
 using static LootValue.Globals;
-using GClass1711 = GClass1844;
+using InventoryItemInfo = GClass1854;
+using InGameStatus = GClass1859;
 
 /// https://hub.sp-tarkov.com/files/file/1606-lootvalue/
 /// https://github.com/IhanaMies/LootValue
@@ -346,7 +347,7 @@ The third is marked as the ultimate color. Anything over 10000 rubles would be w
 
             itemSells.Add(item.Id);
 
-            if (LootValueMod.EnableQuickSell.Value && !GClass1849.InRaid && item != null)
+            if (LootValueMod.EnableQuickSell.Value && !InGameStatus.InRaid && item != null)
             {
                 if (Input.GetKey(KeyCode.LeftShift) && Input.GetKey(KeyCode.LeftAlt))
                 {
@@ -390,8 +391,8 @@ The third is marked as the ultimate color. Anything over 10000 rubles would be w
                                         return;
                                     }
 
-                                    GClass1711[] gs = {
-                                        new GClass1711 { count = fleaPrice.Value - 1, _tpl = "5449016a4bdc2d6f028b456f" }
+                                    InventoryItemInfo[] gs = {
+                                        new InventoryItemInfo { count = fleaPrice.Value - 1, _tpl = "5449016a4bdc2d6f028b456f" }
                                     };
 
                                     Session.RagFair.AddOffer(false, new string[1] { item.Id }, gs, null);
@@ -481,8 +482,8 @@ The third is marked as the ultimate color. Anything over 10000 rubles would be w
 
             if (Session.RagFair.Available && fleaPrice.HasValue)
             {
-                GClass1711[] gs = {
-                    new GClass1711 { count = fleaPrice.Value - 1, _tpl = "5449016a4bdc2d6f028b456f" }
+                InventoryItemInfo[] gs = {
+                    new InventoryItemInfo { count = fleaPrice.Value - 1, _tpl = "5449016a4bdc2d6f028b456f" }
                 };
 
                 Session.RagFair.AddOffer(false, new string[1] { item.Id }, gs, null);

@@ -88,7 +88,7 @@ namespace SAIN.Patches.Shoot
     {
         protected override MethodBase GetTargetMethod()
         {
-            return AccessTools.Method(typeof(GClass396), "method_1");
+            return AccessTools.Method(typeof(GClass401), "method_1");
         }
 
         [PatchPostfix]

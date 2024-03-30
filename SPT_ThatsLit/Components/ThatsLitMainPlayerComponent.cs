@@ -16,7 +16,7 @@ using UnityEngine.UI;
 
 using BaseCellClass = AbstractSpCell;
 using CellClass = GAbstractSpCell;
-using SpatialPartitionClass = GClass1067<AbstractSpCell>;
+using SpatialPartitionClass = GClass1074<AbstractSpCell>;
 
 namespace ThatsLit.Components
 {
@@ -826,13 +826,13 @@ namespace ThatsLit.Components
                         BaseCellClass cell;
                         if (spData.GetCell(BaseCellClass.CalculateHash(terrainCellX, 0, terrainCellY), out cell))
                         {
-                            CellClass gclass965 = (CellClass)cell;
-                            if (gclass965.detailMapData != null)
+                            CellClass gclass971 = (CellClass)cell;
+                            if (gclass971.detailMapData != null)
                             {
                                 for (int cellResX = 0; cellResX < resolutionPerCell; ++cellResX)
                                 {
                                     for (int cellResY = 0; cellResY < resolutionPerCell; ++cellResY)
-                                        detailLayer[cellResX + terrainCellX * resolutionPerCell, cellResY + terrainCellY * resolutionPerCell] = gclass965.detailMapData[layer][cellResX + cellResY * resolutionPerCell];
+                                        detailLayer[cellResX + terrainCellX * resolutionPerCell, cellResY + terrainCellY * resolutionPerCell] = gclass971.detailMapData[layer][cellResX + cellResY * resolutionPerCell];
                                 }
                             }
                         }

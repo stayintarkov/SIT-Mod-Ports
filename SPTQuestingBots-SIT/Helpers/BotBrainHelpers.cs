@@ -204,8 +204,8 @@ namespace SPTQuestingBots.Helpers
 
         public static readonly WildSpawnType[] pmcSpawnTypes = new WildSpawnType[2]
         {
-            (WildSpawnType)47,
-            (WildSpawnType)48
+            WildSpawnType.sptUsec,
+            WildSpawnType.sptBear
         };
 
         public static bool WillBotBeAPMC(BotOwner botOwner)
@@ -224,8 +224,8 @@ namespace SPTQuestingBots.Helpers
 
         public static EPlayerSide GetSideForWildSpawnType(WildSpawnType spawnType)
         {
-            WildSpawnType sptUsec = (WildSpawnType)47;
-            WildSpawnType sptBear = (WildSpawnType)48;
+            WildSpawnType sptUsec = WildSpawnType.sptUsec;
+            WildSpawnType sptBear = WildSpawnType.sptBear;
 
             if (spawnType == sptUsec)
             {

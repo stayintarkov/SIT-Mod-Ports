@@ -16,7 +16,7 @@ using SortResultStruct = SOperationResult12<GOperationResult16>;
 using GridItemClass = GItem8;
 using ItemAddressExClass = GridItemAddress;
 using SortErrorClass = GInventoryError18;
-using GridCacheClass = GClass1390;
+using GridCacheClass = GClass1398;
 
 namespace LootingBots.Patch.Util
 {
