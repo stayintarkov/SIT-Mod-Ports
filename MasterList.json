@@ -16,7 +16,7 @@
   {
     "Name": "Amands's Graphics",
     "Author": "Amands2Mello",
-    "SupportedVersion": "1.10.8839.30073",
+    "SupportedVersion": "1.10.8854.18454",
     "ModVersion": "1.5.3",
     "PortVersion": "1.2.0",
     "Description": "Lighting and postprocessing overhaul",
@@ -44,7 +44,7 @@
   {
     "Name": "Amands's Sense",
     "Author": "Amands2Mello",
-    "SupportedVersion": "1.10.8839.30073",
+    "SupportedVersion": "1.10.8854.18454",
     "ModVersion": "1.1.0",
     "PortVersion": "1.2.0",
     "Description": "",
@@ -142,7 +142,7 @@
   {
     "Name": "ConfigurationManager",
     "Author": "BepInEx",
-    "SupportedVersion": "1.9.8767.26420",
+    "SupportedVersion": "1.10.8854.18454",
     "ModVersion": "18.0.1",
     "PortVersion": "1.1.0",
     "Description": "An easy way to let user configure how a plugin behaves without the need to make your own GUI. The user can change any of the settings you expose, even keyboard shortcuts.\n\nThe configuration manager can be accessed in-game by pressing the hotkey (by default F1). Hover over the setting names to see their descriptions, if any.",
@@ -284,7 +284,7 @@
   {
     "Name": "LootValue",
     "Author": "IhanaMies",
-    "SupportedVersion": "1.10.8839.30073",
+    "SupportedVersion": "1.10.8854.18454",
     "ModVersion": "1.2.2",
     "PortVersion": "1.4.0",
     "Description": "Adds selectable quick sell functionality, one button (left click) or two button (left and right click)",
