@@ -11,7 +11,7 @@
         public const string Trademark = "";
         public const string Culture = "";
 
-        public const int TarkovVersion = 29197;
+        public const int TarkovVersion = 29351;
 
         public const string EscapeFromTarkov = "EscapeFromTarkov.exe";
 

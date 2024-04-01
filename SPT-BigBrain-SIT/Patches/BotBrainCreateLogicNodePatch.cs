@@ -17,7 +17,7 @@ namespace DrakiaXYZ.BigBrain.Patches
 
         protected override MethodBase GetTargetMethod()
         {
-            return AccessTools.GetDeclaredMethods(typeof(StandartBotBrain)).Single(x =>
+            return AccessTools.GetDeclaredMethods(typeof(BotBrainClass)).Single(x =>
             {
                 var parms = x.GetParameters();
                 return (parms.Length == 1 && parms[0].ParameterType == typeof(BotLogicDecision) && parms[0].Name == "decision");
