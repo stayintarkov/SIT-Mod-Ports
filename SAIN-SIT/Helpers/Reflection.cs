@@ -1,18 +1,18 @@
-﻿using HarmonyLib;
+﻿using Aki.Reflection.Utils;
+using HarmonyLib;
 using SAIN.Preset;
 using SAIN.Preset.BotSettings.SAINSettings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using StayInTarkov;
 
 namespace SAIN.Helpers
 {
     internal class Reflection
     {
-        public static Type AimingDataType = StayInTarkovHelperConstants.EftTypes.Single(x => x.GetProperty("LastSpreadCount") != null && x.GetProperty("LastAimTime") != null);
-        public static PropertyInfo EFTFileSettings = AccessTools.Property(typeof(Settings9), "FileSettings");
+        public static Type AimingDataType = PatchConstants.EftTypes.Single(x => x.GetProperty("LastSpreadCount") != null && x.GetProperty("LastAimTime") != null);
+        public static PropertyInfo EFTFileSettings = AccessTools.Property(typeof(BotDifficultySettingsClass), "FileSettings");
         public static FieldInfo[] EFTSettingsCategories => GetFieldsInType(EFTFileSettings.PropertyType);
         public static FieldInfo[] SAINSettingsCategories => GetFieldsInType<SAINSettingsClass>();
 

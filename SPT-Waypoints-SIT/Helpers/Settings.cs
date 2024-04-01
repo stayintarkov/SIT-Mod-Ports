@@ -2,6 +2,12 @@
 using Comfort.Common;
 using DrakiaXYZ.Waypoints.Components;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace DrakiaXYZ.Waypoints.Helpers
@@ -158,14 +164,14 @@ namespace DrakiaXYZ.Waypoints.Helpers
                 return;
             }
 
-            //if (DebugEnabled.Value)
-            //{
-            //    BotZoneDebugComponent.Enable();
-            //}
-            //else
-            //{
-            //    BotZoneDebugComponent.Disable();
-            //}
+            if (DebugEnabled.Value)
+            {
+                BotZoneDebugComponent.Enable();
+            }
+            else
+            {
+                BotZoneDebugComponent.Disable();
+            }
         }
 
         private static void ShowNavMesh_SettingChanged(object sender, EventArgs e)
@@ -197,14 +203,14 @@ namespace DrakiaXYZ.Waypoints.Helpers
 
         private static void EditorEnabled_SettingChanged(object sender, EventArgs e)
         {
-            //if (EditorEnabled.Value)
-            //{
-            //    EditorComponent.Enable();
-            //}
-            //else
-            //{
-            //    EditorComponent.Disable();
-            //}
+            if (EditorEnabled.Value)
+            {
+                EditorComponent.Enable();
+            }
+            else
+            {
+                EditorComponent.Disable();
+            }
         }
     }
 }

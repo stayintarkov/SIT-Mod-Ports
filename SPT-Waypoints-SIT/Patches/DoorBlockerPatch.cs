@@ -1,7 +1,12 @@
-﻿using DrakiaXYZ.Waypoints.Components;
+﻿using Aki.Reflection.Patching;
+using DrakiaXYZ.Waypoints.Components;
 using EFT;
-using StayInTarkov;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DrakiaXYZ.Waypoints.Patches
 {

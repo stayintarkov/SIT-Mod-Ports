@@ -1,10 +1,10 @@
-﻿using StayInTarkov;
+﻿using Aki.Reflection.Patching;
 using EFT;
 using HarmonyLib;
-
 using System.Reflection;
 using UnityEngine;
 using System;
+using Aki.Reflection.Utils;
 using System.Linq;
 using SAIN.Helpers;
 using SAIN.SAINComponent;
@@ -14,6 +14,7 @@ using SAIN.SAINComponent.Classes.WeaponFunction;
 using SAIN.SAINComponent.Classes.Mover;
 using SAIN.SAINComponent.Classes;
 using SAIN.SAINComponent.SubComponents;
+using EFTAimingClass = GClass518;
 
 namespace SAIN.Patches.Shoot
 {
@@ -22,14 +23,14 @@ namespace SAIN.Patches.Shoot
         private static Type _aimingDataType;
         protected override MethodBase GetTargetMethod()
         {
-            _aimingDataType = StayInTarkovHelperConstants.EftTypes.Single(x => x.GetProperty("LastSpreadCount") != null && x.GetProperty("LastAimTime") != null);
+            _aimingDataType = PatchConstants.EftTypes.Single(x => x.GetProperty("LastSpreadCount") != null && x.GetProperty("LastAimTime") != null);
             return AccessTools.Method(_aimingDataType, "method_13");
         }
 
         private static float DebugTimer;
 
         [PatchPrefix]
-        public static bool PatchPrefix(ref GBotAiming __instance, ref BotOwner ___botOwner_0, ref Vector3 ___vector3_5, ref Vector3 ___vector3_4, ref float ___float_13)
+        public static bool PatchPrefix(ref EFTAimingClass __instance, ref BotOwner ___botOwner_0, ref Vector3 ___vector3_5, ref Vector3 ___vector3_4, ref float ___float_13)
         {
             // Applies aiming offset, recoil offset, and scatter offsets
             Vector3 finalTarget = __instance.RealTargetPoint

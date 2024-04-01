@@ -5,7 +5,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 
-using AICoreLogicAgentClass = GClass26<BotLogicDecision>;
+using AICoreLogicAgentClass = AICoreAgentClass<BotLogicDecision>;
 using AILogicActionResultStruct = AICoreActionResultStruct<BotLogicDecision>;
 
 namespace DrakiaXYZ.BigBrain.Patches

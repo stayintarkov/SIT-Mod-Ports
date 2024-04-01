@@ -1,7 +1,13 @@
-﻿using DrakiaXYZ.Waypoints.Components;
+﻿using Aki.Reflection.Patching;
+using Comfort.Common;
+using DrakiaXYZ.Waypoints.Components;
+using DrakiaXYZ.Waypoints.Helpers;
 using EFT;
-using StayInTarkov;
+using EFT.Game.Spawning;
+using System.Collections.Generic;
 using System.Reflection;
+using UnityEngine;
+using UnityEngine.AI;
 
 namespace DrakiaXYZ.Waypoints.Patches
 {
@@ -15,7 +21,7 @@ namespace DrakiaXYZ.Waypoints.Patches
         [PatchPrefix]
         public static void PatchPrefix()
         {
-            //BotZoneDebugComponent.Enable();
+            BotZoneDebugComponent.Enable();
             NavMeshDebugComponent.Enable();
         }
     }

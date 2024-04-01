@@ -1,4 +1,5 @@
-﻿using StayInTarkov;
+﻿using Aki.Reflection.Patching;
+using Aki.Reflection.Utils;
 using EFT;
 using EFT.InventoryLogic;
 using HarmonyLib;
@@ -18,7 +19,7 @@ namespace SAIN.Patches.Shoot
         protected override MethodBase GetTargetMethod()
         {
             //return AccessTools.Method(typeof(GClass544), "method_7");
-            _aimingDataType = StayInTarkovHelperConstants.EftTypes.Single(x => x.GetProperty("LastSpreadCount") != null && x.GetProperty("LastAimTime") != null);
+            _aimingDataType = PatchConstants.EftTypes.Single(x => x.GetProperty("LastSpreadCount") != null && x.GetProperty("LastAimTime") != null);
             _aimingDataMethod7 = AccessTools.Method(_aimingDataType, "method_7");
             return _aimingDataMethod7;
         }

@@ -1,5 +1,6 @@
-﻿using EFT;
-using StayInTarkov;
+﻿using Aki.Reflection.Patching;
+using DrakiaXYZ.Waypoints.Components;
+using EFT;
 using System.Reflection;
 
 namespace DrakiaXYZ.Waypoints.Patches
@@ -14,7 +15,7 @@ namespace DrakiaXYZ.Waypoints.Patches
         [PatchPrefix]
         public static void PatchPrefix()
         {
-            //EditorComponent.Enable();
+            EditorComponent.Enable();
         }
     }
 }

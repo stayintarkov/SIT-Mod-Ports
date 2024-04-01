@@ -1,4 +1,4 @@
-﻿using StayInTarkov;
+﻿using Aki.Reflection.Patching;
 using Comfort.Common;
 using EFT;
 using HarmonyLib;
