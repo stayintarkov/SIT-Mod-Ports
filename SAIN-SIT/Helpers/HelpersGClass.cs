@@ -6,14 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
-using EFTCore = GClass531;
-using EFTCoreContainer = GClass532;
-using EFTFileSettings = BotSettingsComponents;
-using EFTSettingsGroup = GClass458;
-using EFTStatModifiersClass = GClass529;
-using EFTTime = GClass1296;
+using EFTCore = GClass536;
+using EFTCoreContainer = GClass537;
+using EFTSoundPlayer = GClass603;
+using EFTSettingsGroup = BotSettingsComponents;
+using EFTStatModifiersClass = GClass534;
+using EFTTime = GClass1303;
 using EFTSearchPoint = PlaceForCheck;
-using Aki.Reflection.Patching;
+using StayInTarkov;
 
 ////////
 // Fixed some GClass References here, but classes were renamed in the deobfuscation, so much of this isn't necessary anymore. Need to clean this up
@@ -25,7 +25,7 @@ namespace SAIN.Helpers
     {
         protected override MethodBase GetTargetMethod()
         {
-            return AccessTools.Method(typeof(EFTFileSettings), "smethod_1");
+            return AccessTools.Method(typeof(EFTCoreContainer), "smethod_1");
         }
 
         [PatchPrefix]
@@ -40,11 +40,11 @@ namespace SAIN.Helpers
         static HelpersGClass()
         {
             InventoryControllerProp = AccessTools.Field(typeof(Player), "_inventoryController");
-            EFTBotSettingsProp = AccessTools.Property(typeof(BotDifficultySettingsClass), "FileSettings");
-            RefreshSettingsMethod = AccessTools.Method(typeof(BotDifficultySettingsClass), "method_0");
+            EFTBotSettingsProp = AccessTools.Property(typeof(Settings9), "FileSettings");
+            RefreshSettingsMethod = AccessTools.Method(typeof(Settings9), "method_0");
         }
 
-        public static void RefreshSettings(BotDifficultySettingsClass settings)
+        public static void RefreshSettings(Settings9 settings)
         {
             RefreshSettingsMethod.Invoke(settings, null);
         }
@@ -72,7 +72,7 @@ namespace SAIN.Helpers
 
         public static void PlaySound(IPlayer player, Vector3 pos, float range, AISoundType soundtype)
         {
-            Singleton<BotEventHandler>.Instance?.PlaySound(player, pos, range, soundtype);
+            Singleton<EFTSoundPlayer>.Instance?.PlaySound(player, pos, range, soundtype);
         }
     }
 

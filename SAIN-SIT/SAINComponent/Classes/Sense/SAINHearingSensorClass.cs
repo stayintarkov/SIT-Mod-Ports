@@ -5,6 +5,7 @@ using SAIN.Components;
 using SAIN.Helpers;
 using SAIN.SAINComponent;
 using UnityEngine;
+using EFTSoundPlayer = GClass603;
 
 namespace SAIN.SAINComponent.Classes
 {
@@ -16,7 +17,7 @@ namespace SAIN.SAINComponent.Classes
 
         public void Init()
         {
-            Singleton<BotEventHandler>.Instance.OnSoundPlayed += HearSound;
+            Singleton<EFTSoundPlayer>.Instance.OnSoundPlayed += HearSound;
         }
 
         public void Update()
@@ -25,7 +26,7 @@ namespace SAIN.SAINComponent.Classes
 
         public void Dispose()
         {
-            Singleton<BotEventHandler>.Instance.OnSoundPlayed -= HearSound;
+            Singleton<EFTSoundPlayer>.Instance.OnSoundPlayed -= HearSound;
         }
 
         public void HearSound(IPlayer player, Vector3 position, float power, AISoundType type)

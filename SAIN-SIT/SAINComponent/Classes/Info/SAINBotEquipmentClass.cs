@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using static EFT.Player;
+using TemplateIdToObjectMappingsClass = GClass2752;
 
 namespace SAIN.SAINComponent.Classes.Info
 {

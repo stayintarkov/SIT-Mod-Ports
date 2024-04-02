@@ -14,7 +14,7 @@ using SAIN.SAINComponent.Classes.WeaponFunction;
 using SAIN.SAINComponent.Classes.Mover;
 using SAIN.SAINComponent.Classes;
 using SAIN.SAINComponent.SubComponents;
-using EFTAimingClass = GClass518;
+using EFTAimingClass = GBotAiming;
 
 namespace SAIN.Patches.Shoot
 {

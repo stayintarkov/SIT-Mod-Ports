@@ -4,7 +4,6 @@
     {
         public const string Title = SAINName;
         public const string Description = "Full Revamp of Escape from Tarkov's AI System.";
-        public const string Configuration = SPTVersion;
         public const string Company = "";
         public const string Product = SAINName;
         public const string Copyright = "Copyright © 2024 Solarint";
@@ -19,9 +18,6 @@
         public const string SAINName = "SAIN";
         public const string SAINVersion = "2.1.10";
         public const string SAINPresetVersion = "2.1.10";
-
-        public const string SPTGUID = "com.spt-aki.core";
-        public const string SPTVersion = "3.8.0";
 
         public const string WaypointsGUID = "xyz.drakia.waypoints";
         public const string WaypointsVersion = "1.4.0";

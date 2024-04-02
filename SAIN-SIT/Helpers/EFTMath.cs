@@ -704,9 +704,9 @@ namespace SAIN.Helpers
         /// </summary>
         /// <param value="cam">The camera to create the mesh for.</param>
         /// <returns>A full screen mesh for the given camera.</returns>
-        public static Mesh MakeFullScreenMesh(Camera cam)
+        public static UnityEngine.Mesh MakeFullScreenMesh(Camera cam)
         {
-            Mesh mesh = new Mesh
+            UnityEngine.Mesh mesh = new UnityEngine.Mesh
             {
                 name = "Utils MakeFullScreenMesh"
             };
