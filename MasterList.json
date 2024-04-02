@@ -8,6 +8,7 @@
     "Description": "Controller support for Tarkov.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1550-amands-controller/",
     "RequiresFiles": true,
+    "OriginalDownloadUrl": "https://github.com/Amands2Mello/AmandsHitmarker",
     "PluginFiles": [
         "AmandsController.dll"
     ],
@@ -22,6 +23,7 @@
     "Description": "Lighting and postprocessing overhaul",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/813-amands-s-graphics/",
     "RequiresFiles": false,
+    "OriginalDownloadUrl": "https://github.com/Amands2Mello/AmandsGraphics",
     "PluginFiles": [
         "AmandsGraphics.dll"
     ],
@@ -36,6 +38,7 @@
     "Description": "Hitmarkers with different Shapes, Colors and Sounds",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/798-amands-s-hitmarker/",
     "RequiresFiles": true,
+    "OriginalDownloadUrl": "https://hub.sp-tarkov.com/files/file/798-amands-s-hitmarker/",
     "PluginFiles": [
         "AmandsHitmarker.dll"
     ],
@@ -50,6 +53,7 @@
     "Description": "",
     "ModUrl": "https://github.com/Amands2Mello/AmandsSense",
     "RequiresFiles": true,
+    "OriginalDownloadUrl": "https://github.com/Amands2Mello/AmandsSense",
     "PluginFiles": [
         "AmandsSense.dll"
     ],
@@ -64,6 +68,7 @@
     "Description": "Do you hate inertia? So do I. Here's a Bepinex mod to handle that. Laugh while all the online tarkov players are miserable.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/843-fu-inertia/",
     "RequiresFiles": false,
+    "OriginalDownloadUrl": "https://github.com/dvize/FU-Inertia",
     "PluginFiles": [
         "dvize.FUInertia.dll"
     ],
@@ -78,6 +83,7 @@
     "Description": "A mod that adds checkmarks and more detailed tooltips to items to indicate if it is needed for hideout upgrades, quests, or if it is on your wishlist",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1159-morecheckmarks/",
     "RequiresFiles": true,
+    "OriginalDownloadUrl": "https://github.com/TommySoucy/MoreCheckmarks",
     "PluginFiles": [
         "MoreCheckmarks.dll"
     ],
@@ -92,6 +98,7 @@
     "Description": "Bots that don't suck. FULL AI COMBAT SYSTEM REPLACEMENT",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1062-sain-2-0-solarint-s-ai-modifications-full-ai-combat-system-replacement/",
     "RequiresFiles": true,
+    "OriginalDownloadUrl": "https://github.com/DrakiaXYZ/SAIN",
     "PluginFiles": [
       "SAIN.dll"
     ],
@@ -106,6 +113,7 @@
     "Description": "Required for SAIN and most other AI mods",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1219-bigbrain/",
     "RequiresFiles": false,
+    "OriginalDownloadUrl": "https://github.com/DrakiaXYZ/SPT-BigBrain",
     "PluginFiles": [
       "DrakiaXYZ-BigBrain.dll"
     ],
@@ -120,6 +128,7 @@
     "Description": "Required for SAIN and most other AI mods",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1119-waypoints-expanded-bot-patrols-and-navmesh/",
     "RequiresFiles": true,
+    "OriginalDownloadUrl": "https://github.com/DrakiaXYZ/SPT-Waypoints",
     "PluginFiles": [
       "DrakiaXYZ-Waypoints.dll"
     ],
@@ -134,6 +143,7 @@
     "Description": "This is a substantial overhaul of how EFT's recoil system works. This recoil system works very similarly to Realism Mods. If you already use that mod then you're not missing out on anything, don't install both.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/953-fontaine-s-recoil-overhaul/",
     "RequiresFiles": false,
+    "OriginalDownloadUrl": "https://github.com/space-commits/SPT-Realism-Recoil-Overhaul-Standalone",
     "PluginFiles": [
       "RecoilStandalone.dll"
     ],
@@ -148,6 +158,7 @@
     "Description": "An easy way to let user configure how a plugin behaves without the need to make your own GUI. The user can change any of the settings you expose, even keyboard shortcuts.\n\nThe configuration manager can be accessed in-game by pressing the hotkey (by default F1). Hover over the setting names to see their descriptions, if any.",
     "ModUrl": "https://github.com/BepInEx/BepInEx.ConfigurationManager",
     "RequiresFiles": false,
+    "OriginalDownloadUrl": "https://github.com/BepInEx/BepInEx.ConfigurationManager",
     "PluginFiles": [
       "ConfigurationManager.dll"
     ],
@@ -164,6 +175,7 @@
     "Description": "Tired of AI Looking at your bush and destroying you through it? Now they no longer can.\n\nThis mod checks to see if there is any foilage in the way when a bot looks at the player. If there is, it will make it so that the bot cannot see the player anymore. Its only called filbert, pine, tree.\n\nDo not use this mod with SAIN as it has its own version of no bush within it.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/903-no-bush-esp/",
     "RequiresFiles": false,
+    "OriginalDownloadUrl": "https://github.com/dvize/NoBushESP",
     "PluginFiles": [
       "dvize.BushNoESP.dll"
     ],
@@ -178,6 +190,7 @@
     "Description": "Makes it so FOV does not change when ADSing by default, and allows you to instead set the FOV change yourself.\nIncludes Variable Zoom optics and toggleable zoom (like ARMA).",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/942-fontaine-s-fov-fix-variable-optics/",
     "RequiresFiles": true,
+    "OriginalDownloadUrl": "https://github.com/space-commits/SPT-FOV-Fix",
     "PluginFiles": [
       "FOVFix.dll"
     ],
@@ -192,6 +205,7 @@
     "Description": "An updated version of lualeets Deadzone mod for 3.7.1.\nAdds insurgency style deadzone/free aim, allowing your weapon to drift from the center of the screen.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1568-deadzone-updated/",
     "RequiresFiles": true,
+    "OriginalDownloadUrl": "https://github.com/KillerDJLang/Deadzone",
     "PluginFiles": [
       "DeadzoneMod.dll"
     ],
@@ -206,6 +220,7 @@
     "Description": "This mod aims to add more life to the bots by enhancing some EFT looting behaviors letting bots loot items, containers, and corpses during patrols. More features to come!",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1096-looting-bots/",
     "RequiresFiles": true,
+    "OriginalDownloadUrl": "https://github.com/Skwizzy/SPT-LootingBots",
     "PluginFiles": [
       "skwizzy.LootingBots.dll"
     ],
@@ -220,6 +235,7 @@
     "Description": "This mod aims to add more life to the bots by enhancing some EFT looting behaviors letting bots loot items, containers, and corpses during patrols. More features to come!",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1534-questing-bots/",
     "RequiresFiles": true,
+    "OriginalDownloadUrl": "https://github.com/dwesterwick/SPTQuestingBots",
     "PluginFiles": [
       "SPTQuestingBots.dll"
     ],
@@ -234,6 +250,7 @@
     "Description": "A browser-based map that shows your real-time position. Able to be used on a mobile device or second monitor.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1421-techhappy-s-web-minimap/",
     "RequiresFiles": true,
+    "OriginalDownloadUrl": "https://github.com/NNThomasL/SPTarkovWebMinimap",
     "PluginFiles": [
       "TechHappy.MinimapSender.dll"
     ],
@@ -248,6 +265,7 @@
     "Description": "A plugin that increases the range of FOV selection in the settings menu and allows you to move the FP camera relative to your body.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1474-samswat-s-increased-fov-reupload/?highlight=fov",
     "RequiresFiles": false,
+    "OriginalDownloadUrl": "https://dev.sp-tarkov.com/SamSWAT/FOV",
     "PluginFiles": [
       "SamSWAT.FOV.dll"
     ],
@@ -262,6 +280,7 @@
     "Description": "Dynamically change the resolution of the external image rendering when we enter the optical sight, which gives us an increase in frame rate",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1259-dynamic-external-resolution-patch-derp/",
     "RequiresFiles": false,
+    "OriginalDownloadUrl": "https://github.com/MrFlashMode/SPT-Dynamic-External-Resolution",
     "PluginFiles": [
       "DynamicExternalResolution.dll"
     ],
@@ -276,6 +295,7 @@
     "Description": "This is a development utility for working with bots, allowing you to see some internal state variables of the bot in real time while in game.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1242-botdebug/",
     "RequiresFiles": false,
+    "OriginalDownloadUrl": "https://github.com/DrakiaXYZ/SPT-BotDebug",
     "PluginFiles": [
       "DrakiaXYZ-BotDebug.dll"
     ],
@@ -290,6 +310,7 @@
     "Description": "Adds selectable quick sell functionality, one button (left click) or two button (left and right click)",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1606-lootvalue/",
     "RequiresFiles": true,
+    "OriginalDownloadUrl": "https://github.com/IhanaMies/LootValue",
     "PluginFiles": [
       "LootValue.dll"
     ],
@@ -304,6 +325,7 @@
     "Description": "Adds several inventory organizing features which rely on item tags, such as sort locking, move locking and container organizing.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1152-inventory-organizing-features/",
     "RequiresFiles": false,
+    "OriginalDownloadUrl": "https://github.com/MiraculousNightingale/spt-aki-inventory-organizing-features",
     "PluginFiles": [
       "InventoryOrganizingFeatures.dll"
     ],
@@ -318,6 +340,7 @@
     "Description": "Looting an item will now place it in a matching container with a @loot tag, such as a dogtag case or a document case",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1633-transfer-loot-into-a-container-automatically/",
     "RequiresFiles": false,
+    "OriginalDownloadUrl": "https://github.com/CactusPie/SPT-ContainerQuickLoot",
     "PluginFiles": [
       "CactusPie.ContainerQuickLoot.dll"
     ],
@@ -332,6 +355,7 @@
     "Description": "One step closer to fair gameplay, by giving AIs non-perfect vision and reactions. Because we too deserve grasses, bushes and nights.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1453-that-s-lit/",
     "RequiresFiles": false,
+    "OriginalDownloadUrl": "https://github.com/No3371/SPT_ThatsLit",
     "PluginFiles": [
       "ThatsLit-Release.dll"
     ],
