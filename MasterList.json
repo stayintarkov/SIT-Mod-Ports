@@ -27,7 +27,8 @@
     "PluginFiles": [
         "AmandsGraphics.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "Amands's Hitmarker",
@@ -38,11 +39,12 @@
     "Description": "Hitmarkers with different Shapes, Colors and Sounds",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/798-amands-s-hitmarker/",
     "RequiresFiles": true,
-    "OriginalDownloadUrl": "https://hub.sp-tarkov.com/files/file/798-amands-s-hitmarker/",
+    "OriginalDownloadUrl": "https://github.com/Amands2Mello/AmandsHitmarker",
     "PluginFiles": [
         "AmandsHitmarker.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "Amands's Sense",
@@ -57,7 +59,8 @@
     "PluginFiles": [
         "AmandsSense.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "FU Inertia",
@@ -72,7 +75,8 @@
     "PluginFiles": [
         "dvize.FUInertia.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "MoreCheckmarks",
@@ -87,7 +91,8 @@
     "PluginFiles": [
         "MoreCheckmarks.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "SAIN",
@@ -102,7 +107,11 @@
     "PluginFiles": [
       "SAIN.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": [
+      "BigBrain",
+      "Waypoints"
+    ]
   },
   {
     "Name": "BigBrain",
@@ -117,7 +126,8 @@
     "PluginFiles": [
       "DrakiaXYZ-BigBrain.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "Waypoints",
@@ -132,7 +142,8 @@
     "PluginFiles": [
       "DrakiaXYZ-Waypoints.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "Recoil Overhaul",
@@ -147,7 +158,8 @@
     "PluginFiles": [
       "RecoilStandalone.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "ConfigurationManager",
@@ -164,7 +176,8 @@
     ],
     "ConfigFiles": [
         "com.bepis.bepinex.configurationmanager.cfg"
-    ]
+    ],
+    "Dependencies": []
   },
   {
     "Name": "No Bush ESP",
@@ -179,7 +192,8 @@
     "PluginFiles": [
       "dvize.BushNoESP.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "FovFix",
@@ -194,7 +208,8 @@
     "PluginFiles": [
       "FOVFix.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "Deadzone Updated",
@@ -209,7 +224,8 @@
     "PluginFiles": [
       "DeadzoneMod.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "Looting Bots",
@@ -224,7 +240,10 @@
     "PluginFiles": [
       "skwizzy.LootingBots.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": [
+      "BigBrain"
+    ]
   },
   {
     "Name": "Questing Bots",
@@ -239,7 +258,11 @@
     "PluginFiles": [
       "SPTQuestingBots.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": [
+      "BigBrain",
+      "Waypoints"
+    ]
   },
   {
     "Name": "TechHappy's Web MiniMap",
@@ -254,7 +277,8 @@
     "PluginFiles": [
       "TechHappy.MinimapSender.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "SamSwat's INCREASED FOV",
@@ -269,7 +293,8 @@
     "PluginFiles": [
       "SamSWAT.FOV.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "Dynamic External Resolution Patch",
@@ -284,7 +309,8 @@
     "PluginFiles": [
       "DynamicExternalResolution.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },  
   {
     "Name": "DrakiaXYZ-BotDebug",
@@ -299,7 +325,10 @@
     "PluginFiles": [
       "DrakiaXYZ-BotDebug.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": [
+      "BigBrain"
+    ]
   },  
   {
     "Name": "LootValue",
@@ -314,7 +343,8 @@
     "PluginFiles": [
       "LootValue.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "Inventory Organizing Features",
@@ -329,7 +359,8 @@
     "PluginFiles": [
       "InventoryOrganizingFeatures.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "Container Quick Loot",
@@ -344,7 +375,8 @@
     "PluginFiles": [
       "CactusPie.ContainerQuickLoot.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": []
   },
   {
     "Name": "That's Lit",
@@ -359,6 +391,9 @@
     "PluginFiles": [
       "ThatsLit-Release.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [],
+    "Dependencies": [
+      "SAIN"
+    ]
   }
 ]
