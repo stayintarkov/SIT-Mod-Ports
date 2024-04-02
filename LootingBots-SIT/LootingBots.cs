@@ -13,6 +13,8 @@ using LootingBots.Brain;
 using DrakiaXYZ.BigBrain.Brains;
 using System.Collections.Generic;
 
+using HandbookClass = Handbook;
+
 namespace LootingBots
 {
     [BepInPlugin(MOD_GUID, MOD_NAME, MOD_VERSION)]
@@ -325,6 +327,7 @@ namespace LootingBots
 
             new SettingsAndCachePatch().Enable();
             new RemoveComponent().Enable();
+            new NoBTRPatch().Enable();
 
             BrainManager.RemoveLayer(
                 "Utility peace",

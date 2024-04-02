@@ -7,6 +7,8 @@ using EFT;
 using EFT.HandBook;
 using EFT.InventoryLogic;
 
+using HandbookClass = Handbook;
+
 using LootingBots.Patch.Util;
 
 namespace LootingBots.Patch.Components

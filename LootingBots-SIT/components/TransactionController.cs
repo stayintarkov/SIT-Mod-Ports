@@ -9,9 +9,9 @@ using EFT.InventoryLogic;
 
 using LootingBots.Patch.Util;
 
-using InventoryControllerResultStruct = GStruct413;
-using GridClassEx = GClass2502;
-using GridCacheClass = GClass1390;
+using InventoryControllerResultStruct = SOperationResult;
+using GridClassEx = GridContainer;
+using GridCacheClass = GClass1398;
 
 namespace LootingBots.Patch.Components
 {
@@ -267,7 +267,7 @@ namespace LootingBots.Patch.Components
                         $"Moving item to: {moveAction?.Place?.Container?.ID?.Localized()}"
                     );
 
-                var value = InteractionsHandlerClass.Move(
+                var value = ItemMovementHandler.Move(
                     moveAction.ToMove,
                     moveAction.Place,
                     _inventoryController,
