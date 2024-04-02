@@ -13,19 +13,19 @@ using LootingBots.Brain;
 using DrakiaXYZ.BigBrain.Brains;
 using System.Collections.Generic;
 
-using HandbookClass = Handbook;
-
 namespace LootingBots
 {
     [BepInPlugin(MOD_GUID, MOD_NAME, MOD_VERSION)]
+    [BepInDependency("xyz.drakia.bigbrain", "0.4.0")]
     [BepInProcess("EscapeFromTarkov.exe")]
     public class LootingBots : BaseUnityPlugin
     {
         private const string MOD_GUID = "me.skwizzy.lootingbots";
         private const string MOD_NAME = "LootingBots";
-        private const string MOD_VERSION = "1.2.1";
+        private const string MOD_VERSION = "1.3.0";
 
-        public const BotType SettingsDefaults = BotType.Scav | BotType.Pmc | BotType.Raider;
+        public const BotType SettingsDefaults =
+            BotType.Scav | BotType.Pmc | BotType.PlayerScav | BotType.Raider;
 
         // Loot Finder Settings
         public static ConfigEntry<BotType> CorpseLootingEnabled;
@@ -48,10 +48,12 @@ namespace LootingBots
         public static ConfigEntry<bool> UseExamineTime;
         public static ConfigEntry<bool> ValueFromMods;
         public static ConfigEntry<bool> CanStripAttachments;
+
         public static ConfigEntry<float> PMCMinLootThreshold;
         public static ConfigEntry<float> PMCMaxLootThreshold;
         public static ConfigEntry<float> ScavMinLootThreshold;
         public static ConfigEntry<float> ScavMaxLootThreshold;
+
         public static ConfigEntry<EquipmentType> PMCGearToEquip;
         public static ConfigEntry<EquipmentType> PMCGearToPickup;
         public static ConfigEntry<EquipmentType> ScavGearToEquip;
@@ -323,7 +325,6 @@ namespace LootingBots
 
             new SettingsAndCachePatch().Enable();
             new RemoveComponent().Enable();
-            //new GetItemClassFromInspect().Enable();
 
             BrainManager.RemoveLayer(
                 "Utility peace",
@@ -357,7 +358,6 @@ namespace LootingBots
                     "BossBully",
                     "BossBoar",
                     "BoarSniper",
-
                     "FollowerGluharScout",
                     "FollowerGluharProtect",
                     "FollowerGluharAssault",

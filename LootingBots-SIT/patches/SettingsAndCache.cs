@@ -1,9 +1,13 @@
 using System.Reflection;
+
+using Aki.Reflection.Patching;
+
 using Comfort.Common;
-using StayInTarkov;
+
 using EFT;
 using EFT.InventoryLogic;
 using EFT.UI;
+
 using LootingBots.Patch.Components;
 using LootingBots.Patch.Util;
 
@@ -33,44 +37,14 @@ namespace LootingBots.Patch
         [PatchPrefix]
         private static void PatchPrefix()
         {
-            LootingBots.LootLog.LogDebug($"Resetting Loot Cache");
+            if (LootingBots.LootLog.DebugEnabled)
+                LootingBots.LootLog.LogDebug($"Resetting Loot Cache");
+
             ActiveLootCache.Reset();
         }
     }
 
-    /* Patch that enables all bots to be able to switch weapons. Values based on Usec/Bear bot values */
-    public class EnableWeaponSwitching : ModulePatch
-    {
-        protected override MethodBase GetTargetMethod()
-        {
-            return typeof(Settings9).GetMethod("ApplyPresetLocation");
-        }
-
-        [PatchPostfix]
-        private static void PatchPostfix(
-            BotLocationModifier modifier,
-            ref Settings9 __instance,
-            ref WildSpawnType ___wildSpawnType_0
-        )
-        {
-            bool corpseLootEnabled = LootingBots.CorpseLootingEnabled.Value.IsBotEnabled(
-                ___wildSpawnType_0
-            );
-            bool containerLootEnabled = LootingBots.ContainerLootingEnabled.Value.IsBotEnabled(
-                ___wildSpawnType_0
-            );
-            bool itemLootEnabled = LootingBots.LooseItemLootingEnabled.Value.IsBotEnabled(
-                ___wildSpawnType_0
-            );
-
-            if (corpseLootEnabled || containerLootEnabled || itemLootEnabled)
-            {
-                __instance.FileSettings.Shoot.CHANCE_TO_CHANGE_WEAPON = 80;
-                __instance.FileSettings.Shoot.CHANCE_TO_CHANGE_WEAPON_WITH_HELMET = 40;
-            }
-        }
-    }
-    
+    /** Patch to remove any active loot marked for the player when the inventory screen is closed */
     public class InventoryClosePatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
@@ -84,7 +58,9 @@ namespace LootingBots.Patch
         [PatchPrefix]
         private static void PatchPrefix()
         {
-            LootingBots.LootLog.LogWarning($"Clearing any active player loot");
+            if (LootingBots.LootLog.WarningEnabled)
+                LootingBots.LootLog.LogWarning($"Clearing any active player loot");
+
             ActiveLootCache.PlayerLootId = "";
         }
     }
@@ -103,15 +79,53 @@ namespace LootingBots.Patch
         [PatchPrefix]
         private static void PatchPrefix(IItemOwner loot, Callback callback, ref Player __instance)
         {
-            // If the item we are looting is marked as active by a bot, cleanup its looting brain to stop it from looting the same object
-            if (ActiveLootCache.ActiveLoot.TryGetValue(loot.RootItem.Id, out BotOwner botOwner) && !botOwner.BotsGroup.IsPlayerEnemy(__instance))
+            // If the item we are looting is marked as active by a friendly bot, cleanup its looting brain to stop it from looting the same object
+            if (
+                ActiveLootCache.ActiveLoot.TryGetValue(loot.RootItem.Id, out BotOwner botOwner)
+                && !botOwner.BotsGroup.IsPlayerEnemy(__instance)
+            )
             {
-                LootingBots.LootLog.LogError("Cleanup on bot brain");
+                if (LootingBots.LootLog.WarningEnabled)
+                    LootingBots.LootLog.LogWarning("Cleanup on bot brain");
+
                 LootingBrain brain = botOwner.GetComponent<LootingBrain>();
                 brain?.DisableTransactions();
             }
 
             ActiveLootCache.PlayerLootId = loot.RootItem.Id;
+        }
+    }
+
+    /* Patch that enables all bots to be able to switch weapons. Values based on Usec/Bear bot values */
+    public class EnableWeaponSwitching : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(BotDifficultySettingsClass).GetMethod("ApplyPresetLocation");
+        }
+
+        [PatchPostfix]
+        private static void PatchPostfix(
+            BotLocationModifier modifier,
+            ref BotDifficultySettingsClass __instance,
+            ref WildSpawnType ___wildSpawnType_0
+        )
+        {
+            bool corpseLootEnabled = LootingBots.CorpseLootingEnabled.Value.IsBotEnabled(
+                ___wildSpawnType_0
+            );
+            bool containerLootEnabled = LootingBots.ContainerLootingEnabled.Value.IsBotEnabled(
+                ___wildSpawnType_0
+            );
+            bool itemLootEnabled = LootingBots.LooseItemLootingEnabled.Value.IsBotEnabled(
+                ___wildSpawnType_0
+            );
+
+            if (corpseLootEnabled || containerLootEnabled || itemLootEnabled)
+            {
+                __instance.FileSettings.Shoot.CHANCE_TO_CHANGE_WEAPON = 80;
+                __instance.FileSettings.Shoot.CHANCE_TO_CHANGE_WEAPON_WITH_HELMET = 40;
+            }
         }
     }
 }

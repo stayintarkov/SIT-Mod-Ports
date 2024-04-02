@@ -5,12 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-using BepInEx.Logging;
-
 using EFT;
 using EFT.Interactive;
 using EFT.InventoryLogic;
-using EFT.UI;
 
 using LootingBots.Patch.Util;
 
@@ -38,7 +35,7 @@ namespace LootingBots.Patch.Components
         public BotOwner BotOwner;
 
         // Component responsible for adding items to the bot inventory
-        public InventoryControllerLootingBots InventoryControllerClass;
+        public InventoryController InventoryController;
 
         // Current container that the bot will try to loot
         public LootableContainer ActiveContainer;
@@ -60,7 +57,7 @@ namespace LootingBots.Patch.Components
 
         // Object ids that were not able to be reached even though a valid path exists. Is cleared every 2 mins by default
         public List<string> NonNavigableLootIds;
-        
+
         public bool IsPlayerScav;
 
         public bool IsBrainEnabled
@@ -68,14 +65,14 @@ namespace LootingBots.Patch.Components
             get
             {
                 return LootingBots.ContainerLootingEnabled.Value.IsBotEnabled(this)
-                       || LootingBots.LooseItemLootingEnabled.Value.IsBotEnabled(this)
-                       || LootingBots.CorpseLootingEnabled.Value.IsBotEnabled(this);
+                    || LootingBots.LooseItemLootingEnabled.Value.IsBotEnabled(this)
+                    || LootingBots.CorpseLootingEnabled.Value.IsBotEnabled(this);
             }
         }
 
         public BotStats Stats
         {
-            get { return InventoryControllerClass.Stats; }
+            get { return InventoryController.Stats; }
         }
 
         public bool HasActiveLootable
@@ -88,19 +85,17 @@ namespace LootingBots.Patch.Components
             get { return LootTaskRunning || HasActiveLootable; }
         }
 
-        public bool HasFreeSpace 
+        public bool HasFreeSpace
         {
             get { return Stats.AvailableGridSpaces > LootUtils.RESERVED_SLOT_COUNT; }
         }
 
-
         // Boolean showing when the looting coroutine is running
         public bool LootTaskRunning = false;
-        
+        public float DistanceToLoot = -1f;
+
         // Delay simulating the time it takes for the UI to open and start searching a container
         public const int LootingStartDelay = 2500;
-
-        public float DistanceToLoot = -1f;
 
         private BotLog _log;
 
@@ -108,7 +103,7 @@ namespace LootingBots.Patch.Components
         {
             _log = new BotLog(LootingBots.LootLog, botOwner);
             BotOwner = botOwner;
-            InventoryControllerClass = new InventoryControllerLootingBots(BotOwner, this);
+            InventoryController = new InventoryController(BotOwner, this);
             IgnoredLootIds = new List<string> { };
             NonNavigableLootIds = new List<string> { };
             IsPlayerScav = botOwner.Profile.Nickname.Contains(" (");
@@ -124,10 +119,10 @@ namespace LootingBots.Patch.Components
             {
                 if (IsBrainEnabled && BotOwner.BotState == EBotState.Active)
                 {
-                    if (InventoryControllerClass.ShouldSort)
+                    if (InventoryController.ShouldSort)
                     {
                         // Sort items in tacVest for better space management
-                        await InventoryControllerClass.SortTacVest();
+                        await InventoryController.SortTacVest();
                     }
 
                     // If a player picks up an item that was marked as active by a bot, its ItemOwner?.RootItem will be null. In this case cleanup the active item
@@ -142,7 +137,8 @@ namespace LootingBots.Patch.Components
             }
             catch (Exception e)
             {
-                _log.LogError(e);
+                if (_log.ErrorEnabled)
+                    _log.LogError(e);
             }
         }
 
@@ -176,7 +172,9 @@ namespace LootingBots.Patch.Components
                 watch.Start();
 
                 LootTaskRunning = true;
-                _log.LogWarning($"Trying to loot corpse");
+
+                if (_log.InfoEnabled)
+                    _log.LogInfo($"Trying to loot corpse");
 
                 // Initialize corpse inventory controller
                 Player corpsePlayer = ActiveCorpse.GetPlayer;
@@ -192,7 +190,7 @@ namespace LootingBots.Patch.Components
                     corpseInventory.GetValue(corpsePlayer);
 
                 // Get items to loot from the corpse in a priority order based off the slots
-                EquipmentSlot[] prioritySlots = InventoryControllerClass.GetPrioritySlots();
+                EquipmentSlot[] prioritySlots = InventoryController.GetPrioritySlots();
 
                 Item[] priorityItems = corpseInventoryController.Inventory.Equipment
                     .GetSlotsByName(prioritySlots)
@@ -203,23 +201,23 @@ namespace LootingBots.Patch.Components
                 Task delayTask = TransactionController.SimulatePlayerDelay(LootingStartDelay);
                 yield return new WaitUntil(() => delayTask.IsCompleted);
 
-                Task<bool> lootTask = InventoryControllerClass.TryAddItemsToBot(priorityItems);
+                Task<bool> lootTask = InventoryController.TryAddItemsToBot(priorityItems);
                 yield return new WaitUntil(() => lootTask.IsCompleted);
 
-                InventoryControllerClass.UpdateActiveWeapon();
+                InventoryController.UpdateActiveWeapon();
 
                 // Only ignore the corpse if looting was not interrupted
                 CleanupCorpse(lootTask.Result);
                 OnLootTaskEnd(lootTask.Result);
 
                 watch.Stop();
-                _log.LogDebug(
-                    $"Corpse loot time: {watch.ElapsedMilliseconds / 1000f}s. Net Worth: {Stats.NetLootValue}"
-                );
+
+                if (_log.DebugEnabled)
+                    _log.LogDebug(
+                        $"Corpse loot time: {watch.ElapsedMilliseconds / 1000f}s. Net Worth: {Stats.NetLootValue}"
+                    );
             }
         }
-        
-        private static ManualLogSource logger = BepInEx.Logging.Logger.CreateLogSource("LOOTING BOTS");
 
         /**
         * Handles looting a container found on the map.
@@ -231,7 +229,9 @@ namespace LootingBots.Patch.Components
             LootTaskRunning = true;
 
             Item item = ActiveContainer.ItemOwner.Items.ToArray()[0];
-            _log.LogDebug($"Trying to add items from: {item.Name.Localized()}");
+
+            if (_log.DebugEnabled)
+                _log.LogDebug($"Trying to add items from: {item.Name.Localized()}");
 
             bool didOpen = false;
             // If a container was closed, open it before looting
@@ -240,11 +240,11 @@ namespace LootingBots.Patch.Components
                 LootUtils.InteractContainer(ActiveContainer, EInteractionType.Open);
                 didOpen = true;
             }
-            
+
             Task delayTask = TransactionController.SimulatePlayerDelay(LootingStartDelay);
             yield return new WaitUntil(() => delayTask.IsCompleted);
 
-            Task<bool> lootTask = InventoryControllerClass.LootNestedItems(item);
+            Task<bool> lootTask = InventoryController.LootNestedItems(item);
             yield return new WaitUntil(() => lootTask.IsCompleted);
 
             // Close the container after looting if a container was open, and the bot didnt open it
@@ -253,16 +253,18 @@ namespace LootingBots.Patch.Components
                 LootUtils.InteractContainer(ActiveContainer, EInteractionType.Close);
             }
 
-            InventoryControllerClass.UpdateActiveWeapon();
+            InventoryController.UpdateActiveWeapon();
 
             // Only ignore the container if looting was not interrupted
             CleanupContainer(lootTask.Result);
             OnLootTaskEnd(lootTask.Result);
 
             watch.Stop();
-            _log.LogDebug(
-                $"Container loot time: {watch.ElapsedMilliseconds / 1000f}s. Net Worth: {Stats.NetLootValue}"
-            );
+
+            if (_log.DebugEnabled)
+                _log.LogDebug(
+                    $"Container loot time: {watch.ElapsedMilliseconds / 1000f}s. Net Worth: {Stats.NetLootValue}"
+                );
         }
 
         /**
@@ -276,19 +278,23 @@ namespace LootingBots.Patch.Components
 
                 Item item = ActiveItem.ItemOwner.RootItem;
 
-                _log.LogDebug($"Trying to pick up loose item: {item.Name.Localized()}");
+                if (_log.DebugEnabled)
+                    _log.LogDebug($"Trying to pick up loose item: {item.Name.Localized()}");
+
                 BotOwner.GetPlayer.UpdateInteractionCast();
-                Task<bool> lootTask = InventoryControllerClass.TryAddItemsToBot(new Item[] { item });
+                Task<bool> lootTask = InventoryController.TryAddItemsToBot(new Item[] { item });
 
                 yield return new WaitUntil(() => lootTask.IsCompleted);
 
                 BotOwner.GetPlayer.CurrentManagedState.Pickup(false, null);
-                InventoryControllerClass.UpdateActiveWeapon();
+                InventoryController.UpdateActiveWeapon();
 
                 // Need to manually cleanup item because the ItemOwner on the original object changes. Only ignore if looting was not interrupted
                 CleanupItem(lootTask.Result, item);
                 OnLootTaskEnd(lootTask.Result);
-                _log.LogDebug($"Net Worth: {Stats.NetLootValue}");
+
+                if (_log.DebugEnabled)
+                    _log.LogDebug($"Net Worth: {Stats.NetLootValue}");
             }
         }
 
@@ -298,13 +304,11 @@ namespace LootingBots.Patch.Components
             UpdateGridStats();
             BotOwner.AIData.CalcPower();
             LootTaskRunning = false;
-            //SAIN.Plugin.SAINInterop.TryResetDecisionsForBot(botOwner);
-            logger.LogWarning($"Loot Task Ended, Result: {(lootingSuccessful ? "Success" : "Failure")}");
         }
 
         public void UpdateGridStats()
         {
-            InventoryControllerClass.UpdateGridStats();
+            InventoryController.UpdateGridStats();
         }
 
         /**
@@ -322,7 +326,7 @@ namespace LootingBots.Patch.Components
         public bool IsValuableEnough(Item lootItem)
         {
             float itemValue = LootingBots.ItemAppraiser.GetItemPrice(lootItem);
-            return InventoryControllerClass.IsValuableEnough(itemValue);
+            return InventoryController.IsValuableEnough(itemValue);
         }
 
         /**
@@ -348,19 +352,19 @@ namespace LootingBots.Patch.Components
         }
 
         /**
-        * Wrapper function to enable transactions to be executed by the InventoryControllerClass.
+        * Wrapper function to enable transactions to be executed by the InventoryController.
         */
         public void EnableTransactions()
         {
-            InventoryControllerClass.EnableTransactions();
+            InventoryController.EnableTransactions();
         }
 
         /**
-        * Wrapper function to disable the execution of transactions by the InventoryControllerClass.
+        * Wrapper function to disable the execution of transactions by the InventoryController.
         */
         public void DisableTransactions()
         {
-            InventoryControllerClass.DisableTransactions();
+            InventoryController.DisableTransactions();
             Cleanup(false);
         }
 

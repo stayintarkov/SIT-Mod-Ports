@@ -6,15 +6,11 @@ using Comfort.Common;
 
 using EFT;
 using EFT.InventoryLogic;
-using EFT.UI;
-
-using JetBrains.Annotations;
 
 using LootingBots.Patch.Util;
 
-using InventoryControllerResultStruct = SOperationResult;
-using InventoryHelperClass = ItemMovementHandler;
-using GridClassEx = GridContainer;
+using InventoryControllerResultStruct = GStruct413;
+using GridClassEx = GClass2502;
 using GridCacheClass = GClass1390;
 
 namespace LootingBots.Patch.Components
@@ -101,7 +97,7 @@ namespace LootingBots.Patch.Components
                 Item ammoToAdd =
                     weapon.GetCurrentMagazine()?.FirstRealAmmo()
                     ?? Singleton<ItemFactory>.Instance.CreateItem(
-                        new MongoID(false),
+                        MongoID.Generate(),
                         weapon.CurrentAmmoTemplate._id,
                         null
                     );
@@ -121,7 +117,9 @@ namespace LootingBots.Patch.Components
                 // If we dont have any ammo, attempt to add 10 max ammo stacks into the bot's secure container for use in the bot's internal reloading code
                 if (!alreadyHasAmmo)
                 {
-                    _log.LogDebug($"Trying to add ammo");
+                    if (_log.DebugEnabled)
+                        _log.LogDebug($"Trying to add ammo");
+
                     int ammoAdded = 0;
 
                     for (int i = 0; i < 10; i++)
@@ -139,13 +137,7 @@ namespace LootingBots.Patch.Components
                         if (location != null)
                         {
                             var result = location.AddWithoutRestrictions(ammo, visitorIds);
-                            if (result.Failed)
-                            {
-                                _log.LogError(
-                                    $"Failed to add {ammo.Name.Localized()} to secure container"
-                                );
-                            }
-                            else
+                            if (result.Succeeded)
                             {
                                 ammoAdded += ammo.StackObjectsCount;
                                 Singleton<GridCacheClass>.Instance.Add(
@@ -154,8 +146,14 @@ namespace LootingBots.Patch.Components
                                     ammo
                                 );
                             }
+                            else if (_log.ErrorEnabled)
+                            {
+                                _log.LogError(
+                                    $"Failed to add {ammo.Name.Localized()} to secure container"
+                                );
+                            }
                         }
-                        else
+                        else if (_log.ErrorEnabled)
                         {
                             _log.LogError(
                                 $"Cannot find location in secure container for {ammo.Name.Localized()}"
@@ -163,14 +161,14 @@ namespace LootingBots.Patch.Components
                         }
                     }
 
-                    if (ammoAdded > 0)
+                    if (ammoAdded > 0 && _log.DebugEnabled)
                     {
                         _log.LogDebug(
                             $"Successfully added {ammoAdded} round of {ammoToAdd.Name.Localized()}"
                         );
                     }
                 }
-                else
+                else if (_log.DebugEnabled)
                 {
                     _log.LogDebug($"Already has ammo for {weapon.Name.Localized()}");
                 }
@@ -179,7 +177,8 @@ namespace LootingBots.Patch.Components
             }
             catch (Exception e)
             {
-                _log.LogError(e);
+                if (_log.ErrorEnabled)
+                    _log.LogError(e);
             }
 
             return false;
@@ -194,18 +193,21 @@ namespace LootingBots.Patch.Components
                 var ableToEquip = _inventoryController.FindSlotToPickUp(item);
                 if (ableToEquip != null)
                 {
-                    _log.LogWarning(
-                        $"Equipping: {item.Name.Localized()} [place: {ableToEquip.Container.ID.Localized()}]"
-                    );
+                    if (_log.WarningEnabled)
+                        _log.LogWarning(
+                            $"Equipping: {item.Name.Localized()} [place: {ableToEquip.Container.ID.Localized()}]"
+                        );
                     bool success = await MoveItem(new MoveAction(item, ableToEquip));
                     return success;
                 }
 
-                _log.LogDebug($"Cannot equip: {item.Name.Localized()}");
+                if (_log.DebugEnabled)
+                    _log.LogDebug($"Cannot equip: {item.Name.Localized()}");
             }
             catch (Exception e)
             {
-                _log.LogError(e);
+                if (_log.ErrorEnabled)
+                    _log.LogError(e);
             }
 
             return false;
@@ -226,117 +228,24 @@ namespace LootingBots.Patch.Components
                         .Equals("securedcontainer")
                 )
                 {
-                    _log.LogWarning(
-                        $"Picking up: {item.Name.Localized()} [place: {ableToPickUp.GetRootItem().Name.Localized()}]"
-                    );
+                    if (_log.WarningEnabled)
+                        _log.LogWarning(
+                            $"Picking up: {item.Name.Localized()} [place: {ableToPickUp.GetRootItem().Name.Localized()}]"
+                        );
+
                     return await MoveItem(new MoveAction(item, ableToPickUp));
                 }
 
-                _log.LogDebug($"No valid slot found for: {item.Name.Localized()}");
+                if (_log.DebugEnabled)
+                    _log.LogDebug($"No valid slot found for: {item.Name.Localized()}");
             }
             catch (Exception e)
             {
-                _log.LogError(e);
+                if (_log.ErrorEnabled)
+                    _log.LogError(e);
             }
             return false;
         }
-        /*
-        // TraderControllerClass.Class2110.method_0
-        public void method_0_2(IResult result)
-        {
-            Callback callback = callback2;
-            if (callback == null)
-            {
-                return;
-            }
-            callback.Invoke(result);
-        }
-        
-        // TraderControllerClass.Class2110.operation
-        public AbstractInventoryOperation operation2;
-        
-        // TraderControllerClass.Class2110.callback
-        public Callback callback2;
-        
-        // TraderControllerClass.Execute
-        public virtual void Execute(AbstractInventoryOperation operation, [CanBeNull] Callback callback)
-        {
-            operation2 = operation;
-            callback2 = callback;
-            if (_inventoryController.vmethod_0(operation2))
-            {
-                operation2.vmethod_0(new Callback(method_0_2), false);
-                return;
-            }
-            operation2.Dispose();
-            Callback callback3 = callback2;
-            if (callback3 == null)
-            {
-                return;
-            }
-            CallbackExtensions.Fail(callback3, string.Format("Can't execute {0}", operation2), 1);
-        }
-        
-        // TraderControllerClass.CanExecute
-        public bool CanExecute(IOperationResult operationResult)
-        {
-            return operationResult != null && operationResult.CanExecute(_inventoryController);
-        }
-        
-        // TraderControllerClass RunNetworkTransaction
-        public void RunNetTrans(IOperationResult operationResult, Callback callback = null)
-        {
-            if (!CanExecute(operationResult) && callback != null)
-            {
-                CallbackExtensions.Fail(callback, "Execution discarded locally");
-            }
-            AbstractInventoryOperation abstractInventoryOperation = _inventoryController.ConvertOperationResultToOperation(operationResult);
-            Execute(abstractInventoryOperation, callback);
-        }
-        
-        // TraderControllerClass.Class2109.method_0
-        public void method_0_1(IResult result)
-        {
-            callbackTask1.SetResult(result);
-            Callback callback = callback1;
-            if (callback == null)
-            {
-                return;
-            }
-            callback.Invoke(result);
-        }
-        
-        // TraderControllerClass.Class2109.callbackTask
-        public TaskCompletionSource<IResult> callbackTask1;
-        
-        // TraderControllerClass.Class2109.callback
-        public Callback callback1;
-        
-        // TraderControllerClass TryRunNetworkTransaction
-        public virtual Task<IResult> TryRunNetTrans(SOperationResult operationResult, Callback callback = null)
-        {
-            callback1 = callback;
-            callbackTask1 = new TaskCompletionSource<IResult>();
-            if (operationResult.Failed)
-            {
-                AsyncExtensions.Fail(callbackTask1, operationResult.Error.ToString(), 0);
-            }
-            else if (operationResult.Value.CanExecute(_inventoryController))
-            {
-                RunNetTrans(operationResult.Value, new Callback(method_0_1));
-            }
-            else
-            {
-                AsyncExtensions.Fail(callbackTask1, "Can not execute", 0);
-                Callback callback2 = callback1;
-                if (callback2 != null)
-                {
-                    callback2.Invoke(new FailedResult("Can't execute 'operationResult.Value.CanExecute()'", 0));
-                }
-            }
-            return callbackTask1.Task;
-        }
-        */
 
         /** Moves an item to a specified item address. Supports executing a callback */
         public async Task<bool> MoveItem(MoveAction moveAction)
@@ -353,8 +262,12 @@ namespace LootingBots.Patch.Components
                     AddExtraAmmo(weapon);
                 }
 
-                _log.LogDebug($"Moving item to: {moveAction?.Place?.Container?.ID?.Localized()}");
-                var value = InventoryHelperClass.Move(
+                if (_log.DebugEnabled)
+                    _log.LogDebug(
+                        $"Moving item to: {moveAction?.Place?.Container?.ID?.Localized()}"
+                    );
+
+                var value = InteractionsHandlerClass.Move(
                     moveAction.ToMove,
                     moveAction.Place,
                     _inventoryController,
@@ -363,25 +276,23 @@ namespace LootingBots.Patch.Components
 
                 if (value.Failed)
                 {
-                    _log.LogError(
-                        $"Failed to move {moveAction.ToMove.Name.Localized()} to {moveAction.Place.Container.ID.Localized()}"
-                    );
+                    if (_log.ErrorEnabled)
+                        _log.LogError(
+                            $"Failed to move {moveAction.ToMove.Name.Localized()} to {moveAction.Place.Container.ID.Localized()}"
+                        );
                     return false;
                 }
 
                 if (moveAction.Callback == null)
                 {
                     await SimulatePlayerDelay();
-                     await _inventoryController.TryRunNetworkTransaction(value, null);
-                    //await TryRunNetTrans(value, null);
+                    await _inventoryController.TryRunNetworkTransaction(value, null);
                 }
-
                 else
                 {
                     TaskCompletionSource<IResult> promise = new TaskCompletionSource<IResult>();
 
-                    //await TryRunNetTrans(
-                    await TryRunNetworkTransaction(
+                    await _inventoryController.TryRunNetworkTransaction(
                         value,
                         new Callback(
                             async (IResult result) =>
@@ -395,7 +306,7 @@ namespace LootingBots.Patch.Components
                             }
                         )
                     );
-                    
+
                     await promise.Task;
                 }
                 if (moveAction.OnComplete != null)
@@ -406,7 +317,8 @@ namespace LootingBots.Patch.Components
             }
             catch (Exception e)
             {
-                _log.LogError(e);
+                if (_log.ErrorEnabled)
+                    _log.LogError(e);
             }
 
             return true;
@@ -425,7 +337,9 @@ namespace LootingBots.Patch.Components
                 TaskCompletionSource<IResult> promise = new TaskCompletionSource<IResult>();
                 Item toThrow = swapAction.ToThrow;
 
-                _log.LogWarning($"Throwing item: {toThrow.Name.Localized()}");
+                if (_log.WarningEnabled)
+                    _log.LogWarning($"Throwing item: {toThrow.Name.Localized()}");
+
                 _inventoryController.ThrowItem(
                     toThrow,
                     null,
@@ -459,7 +373,8 @@ namespace LootingBots.Patch.Components
             }
             catch (Exception e)
             {
-                _log.LogError(e);
+                if (_log.ErrorEnabled)
+                    _log.LogError(e);
             }
 
             return false;

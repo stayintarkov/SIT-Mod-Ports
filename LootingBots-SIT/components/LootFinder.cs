@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -105,7 +106,7 @@ namespace LootingBots.Patch.Components
             // For each object detected, check to see if it is loot and then calculate its distance from the player
             foreach (Collider collider in colliderList)
             {
-                if (collider == null)
+                if (collider == null || String.IsNullOrEmpty(_botOwner.name))
                 {
                     continue;
                 }
@@ -197,7 +198,9 @@ namespace LootingBots.Patch.Components
 
                     if (rangeCalculations == 3)
                     {
-                        _log.LogDebug("No loot in range");
+                        if (_log.DebugEnabled)
+                            _log.LogDebug("No loot in range");
+
                         break;
                     }
                 }
@@ -219,7 +222,7 @@ namespace LootingBots.Patch.Components
 
             if (destination == Vector3.zero || _botOwner?.Mover == null)
             {
-                if (_botOwner?.Mover == null)
+                if (_botOwner?.Mover == null && _log.WarningEnabled)
                 {
                     _log.LogWarning(
                         "botOwner.BotMover is null! Cannot perform path distance calculations"
