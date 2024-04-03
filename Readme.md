@@ -1,6 +1,6 @@
 # ReadMe
 ## Info
-**NOTE**: The current release is for EFT 29197. To download mods for the old version, EFT 27622, download the [2.1 release](https://github.com/stayintarkov/SIT-Mod-Ports/releases/tag/2.1).
+**NOTE**: The current release is for EFT **29351** / SIT **1.10.8854.18454**. To download mods for the old version, EFT **29197** / SIT **1.10.8839.30073**, download the [2.3 release](https://github.com/stayintarkov/SIT-Mod-Ports/releases/tag/2.3).
 
 This is a pack of all ported mods for [SIT](https://github.com/stayintarkov/StayInTarkov.Client). All credit goes to the original mod creators, these are just modified to work with SIT.
 
