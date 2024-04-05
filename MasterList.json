@@ -336,5 +336,20 @@
       "ThatsLit-Release.dll"
     ],
     "ConfigFiles": []
+  },
+  {
+    "Name": "Remote Plugins",
+    "Author": "caellach",
+    "SupportedVersion": "1.10.8854.18454",
+    "ModVersion": "0.2.2",
+    "PortVersion": "1.0.0",
+    "Description": "Syncs client mods from the AKI Server. If you are running a server then see the READMEs on github for setup.",
+    "ModUrl": "https://github.com/caellach/SIT_RemotePlugins",
+    "RequiresFiles": true,
+    "PluginFiles": [],
+    "ConfigFiles": [],
+    "PatcherFiles": [
+       "RemotePlugins.dll"
+    ]
   }
 ]
