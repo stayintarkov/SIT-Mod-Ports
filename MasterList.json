@@ -351,4 +351,18 @@
     ],
     "ConfigFiles": []
   }
+  {
+    "Name": "Props In-Raid Modding (PIRM)",
+    "Author": "Props",
+    "SupportedVersion": "1.10.8854.18454",
+    "ModVersion": "1.8.0",
+    "PortVersion": "1.0.0",
+    "Description": "Want the weapon frame but not the other crap? Now you can. Also highly compatible with other mods as a client mod.",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/850-props-in-raid-modding-pirm/",
+    "RequiresFiles": true,
+    "PluginFiles": [
+      "dvize.PIRM"
+    ],
+    "ConfigFiles": []
+  }
 ]
