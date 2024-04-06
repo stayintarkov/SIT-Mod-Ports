@@ -337,4 +337,18 @@
     ],
     "ConfigFiles": []
   }
+  {
+    "Name": "Borkel's Realistic Night Vision Goggles (NVGs and T-7)",
+    "Author": "Borkel",
+    "SupportedVersion": "1.10.8854.18454",
+    "ModVersion": "1.5.1",
+    "PortVersion": "1.0.0",
+    "Description": "Realistic NVGs with natural light peripheral vision. Fully customizable in game.",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1303-borkel-s-realistic-night-vision-goggles-nvgs-and-t-7/",
+    "RequiresFiles": true,
+    "PluginFiles": [
+      "BorkelRNVG"
+    ],
+    "ConfigFiles": []
+  }
 ]
