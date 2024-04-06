@@ -336,5 +336,19 @@
       "ThatsLit-Release.dll"
     ],
     "ConfigFiles": []
+  },
+  {
+    "Name": "Borkel's Realistic Night Vision Goggles (NVGs and T-7)",
+    "Author": "Borkel",
+    "SupportedVersion": "1.10.8854.18454",
+    "ModVersion": "1.5.1",
+    "PortVersion": "1.0.0",
+    "Description": "Now with new realistic NVG masks and natural light outside the tubes. I looked at real life NVGs and I tried to imitate them ingame. Customizable ingame (colors and everything).",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1303-borkel-s-realistic-night-vision-goggles-nvgs-and-t-7/",
+    "RequiresFiles": true,
+    "PluginFiles": [
+      "BorkelRNVG.dll"
+    ],
+    "ConfigFiles": []
   }
 ]
