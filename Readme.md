@@ -15,7 +15,7 @@ If any mod in the SIT Manager mods section has "Requires extra files" checked, y
 1. Make sure your SIT is up to date by going to `SIT Manager > tools > Install SIT`
 2. Recommended: Create a backup of your `sit-game/BepInEx/` directory
 3. Click the 'Mod Page' link in the SIT Manager Mods Info section for the mod with "Requires extra files"
-4. Download the latest version of the mod from the mod page on SPT AKI hub
+4. Download the latest version of the mod from the mod page on SPT AKI hub or directly from OriginalDownloadUrl, which usually takes you to the repo where you can select the appropriate release
 5. Open the downloaded mod archive (usually `.zip` or `.rar` or `.7z`)
 6. Take note of the folders in the archive. Here you will need to do a bit of critical thinking. There are two types of mod files, _client_ and _server_. Generally, when you open a mod archive which has _both_ server and client mod files, you will see two folders called `BepInEx` (client files) and `user` (server files).
     - **Server** mod files should be placed in the server folder of SIT under `[server directory]/user/mods`. So if the mod archive you downloaded has a folder called `user` in it, you know you need to click into `user`, click into `mods`, and there you should see a folder with the name of the mod, e.g. `MoreCheckmarksBackend`. You must copy this folder from the mod archive to `[server directory]/user/mods`. Note how the directory structure of the server folder and the mod archive usually matches (`user/mods/[mod name]`)
@@ -33,6 +33,7 @@ Once you start the game open the "LogOutput.log" file in \BepInEx\ and make sure
 
 ## Contributing
 Open a [pull request](https://github.com/stayintarkov/SIT.Manager/pulls) with the source code for the mod modified to work with SIT. Make sure that the original license for the mod allows you to redistribute the mod with modifications, and always include said license in the project folder.
+Take care of `dependencies`, which lists mods that are all recursively also installed. Also add `OriginalDownloadUrl` which links to the zip of the release to download directly or the repo where the appropriate release can be downloaded automatically.
 
 Update the [MasterList.json](https://github.com/stayintarkov/SIT-Mod-Ports/blob/master/MasterList.json) in your pull request so that the **Manager** can automatically detect and install the mods, otherwise your PR will be denied.
 
