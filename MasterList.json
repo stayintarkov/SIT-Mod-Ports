@@ -351,4 +351,18 @@
     ],
     "ConfigFiles": []
   }
+  {
+    "Name": "Watch Animations - Updated",
+    "Author": "FlashMode",
+    "SupportedVersion": "1.10.8854.18454",
+    "ModVersion": "1.1.0",
+    "PortVersion": "1.0.0",
+    "Description": "Check the remaining raid time with animation",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1801-watch-animations-updated/",
+    "RequiresFiles": true,
+    "PluginFiles": [
+      "SamSWAT.WatchAnims.dll"
+    ],
+    "ConfigFiles": []
+  }
 ]
