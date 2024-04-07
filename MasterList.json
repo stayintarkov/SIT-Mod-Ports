@@ -359,7 +359,7 @@
     "PortVersion": "1.0.0",
     "Description": "Want the weapon frame but not the other crap? Now you can. Also highly compatible with other mods as a client mod.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/850-props-in-raid-modding-pirm/",
-    "RequiresFiles": true,
+    "RequiresFiles": false,
     "PluginFiles": [
       "dvize.PIRM"
     ],
