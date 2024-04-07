@@ -351,4 +351,18 @@
     ],
     "ConfigFiles": []
   }
+  {
+    "Name": "USE ITEMS ANYWHERE",
+    "Author": "Dirtbikercj",
+    "SupportedVersion": "1.10.8854.18454",
+    "ModVersion": "1.1.0",
+    "PortVersion": "1.0.0",
+    "Description": "Use and bind from anywhere in your players inventory",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1416-use-items-anywhere/",
+    "RequiresFiles": false,
+    "PluginFiles": [
+      "UseItemsFromAnywhere.dll"
+    ],
+    "ConfigFiles": []
+  }
 ]

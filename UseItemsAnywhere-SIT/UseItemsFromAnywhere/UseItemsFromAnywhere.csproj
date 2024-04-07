@@ -1,0 +1,75 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+	  <AssemblyName>UseItemsFromAnywhere</AssemblyName>
+	  <Description>Use items from anywhere in the inventory</Description>
+	  <Version>1.0.1</Version>
+	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	  <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<Reference Include="0Harmony">
+		  <HintPath>..\..\References\0Harmony.dll</HintPath>
+		</Reference>
+		<Reference Include="Assembly-CSharp">
+		  <HintPath>..\..\References\Assembly-CSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx">
+		  <HintPath>..\..\References\BepInEx.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx.Preloader">
+		  <HintPath>..\..\References\BepInEx.Preloader.dll</HintPath>
+		</Reference>
+		<Reference Include="bsg.console.core">
+		  <HintPath>..\..\References\bsg.console.core.dll</HintPath>
+		</Reference>
+		<Reference Include="Comfort">
+		  <HintPath>..\..\References\Comfort.dll</HintPath>
+		</Reference>
+		<Reference Include="ConfigurationManager">
+		  <HintPath>..\..\References\ConfigurationManager.dll</HintPath>
+		</Reference>
+		<Reference Include="ItemComponent.Types">
+		  <HintPath>..\..\References\ItemComponent.Types.dll</HintPath>
+		</Reference>
+		<Reference Include="Sirenix.Serialization">
+		  <HintPath>..\..\References\Sirenix.Serialization.dll</HintPath>
+		</Reference>
+		<Reference Include="StayInTarkov">
+		  <HintPath>..\..\References\StayInTarkov.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine">
+		  <HintPath>..\..\References\UnityEngine.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
+		  <HintPath>..\..\References\UnityEngine.CoreModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.IMGUIModule">
+		  <HintPath>..\..\References\UnityEngine.IMGUIModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.TextRenderingModule">
+		  <HintPath>..\..\References\UnityEngine.TextRenderingModule.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Properties\Settings.settings">
+			<Generator>SettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
+
+
+
+
+</Project>
