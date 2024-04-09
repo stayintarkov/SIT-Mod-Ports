@@ -46,13 +46,13 @@ namespace DrakiaXYZ.BotDebug.Components
             Logger.LogInfo("BotDebugComponent enabled");
 
             // If DLSS or FSR are enabled, set a screen scale value
-            /*
-            if (CameraClass.Instance.SSAA.isActiveAndEnabled)
+            
+            if (FPSCamera.Instance.SSAA.isActiveAndEnabled)
             {
-                screenScale = (float)CameraClass.Instance.SSAA.GetOutputWidth() / (float)CameraClass.Instance.SSAA.GetInputWidth();
+                screenScale = (float)FPSCamera.Instance.SSAA.GetOutputWidth() / (float)FPSCamera.Instance.SSAA.GetInputWidth();
                 Logger.LogDebug($"DLSS or FSR is enabled, scale screen offsets by {screenScale}");
             }
-            */
+            
 
             Settings.FontSize.SettingChanged += (object sender, EventArgs e) => { CreateGuiStyle(); };
         }
