@@ -15,7 +15,7 @@ If any mod in the SIT Manager mods section has "Requires extra files" checked, y
 1. Make sure your SIT is up to date by going to `SIT Manager > tools > Install SIT`
 2. Recommended: Create a backup of your `sit-game/BepInEx/` directory
 3. Click the 'Mod Page' link in the SIT Manager Mods Info section for the mod with "Requires extra files"
-4. Download the latest version of the mod from the mod page on SPT AKI hub
+4. Download the version from the mod page on SPT AKI hub that matches the release of the SIT port (check the dll or look under [SIT Manager](https://github.com/stayintarkov/SIT.Manager.Avalonia) to see which version to download)
 5. Open the downloaded mod archive (usually `.zip` or `.rar` or `.7z`)
 6. Take note of the folders in the archive. Here you will need to do a bit of critical thinking. There are two types of mod files, _client_ and _server_. Generally, when you open a mod archive which has _both_ server and client mod files, you will see two folders called `BepInEx` (client files) and `user` (server files).
     - **Server** mod files should be placed in the server folder of SIT under `[server directory]/user/mods`. So if the mod archive you downloaded has a folder called `user` in it, you know you need to click into `user`, click into `mods`, and there you should see a folder with the name of the mod, e.g. `MoreCheckmarksBackend`. You must copy this folder from the mod archive to `[server directory]/user/mods`. Note how the directory structure of the server folder and the mod archive usually matches (`user/mods/[mod name]`)
