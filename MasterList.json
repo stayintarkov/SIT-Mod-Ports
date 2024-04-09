@@ -351,4 +351,18 @@
     ],
     "ConfigFiles": []
   }
+  {
+    "Name": "GTFO",
+    "Author": "Props",
+    "SupportedVersion": "1.10.8854.18454",
+    "ModVersion": "1.0.8",
+    "PortVersion": "1.0.0",
+    "Description": "Want to learn maps visually for quests or extracts? Use this visual learning tool that will show extracts and quest objectives that are available to you and the distance from your player's current position.",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1736-gtfo/",
+    "RequiresFiles": false,
+    "PluginFiles": [
+      "dvize.GTFO.dll"
+    ],
+    "ConfigFiles": []
+  }
 ]
