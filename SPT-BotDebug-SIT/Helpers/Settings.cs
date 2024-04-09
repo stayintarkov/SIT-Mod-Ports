@@ -55,7 +55,7 @@ namespace DrakiaXYZ.BotDebug.Helpers
                 _mainSettingsLabel,
                 "FontSize",
                 24,
-                new ConfigDescription("Font Size", new AcceptableValueRange<int>(8, 36)));
+                new ConfigDescription("Font Size", new AcceptableValueRange<int>(12, 36)));
         }
 
         public static void Enable_SettingChanged(object sender, EventArgs e)

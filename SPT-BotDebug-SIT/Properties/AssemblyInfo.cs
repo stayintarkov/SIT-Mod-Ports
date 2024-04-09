@@ -18,6 +18,6 @@ using DrakiaXYZ.BotDebug.VersionChecker;
 [assembly: Guid("8fdfc616-1704-4056-a87e-2783692cc153")]
 
 
-[assembly: AssemblyVersion("1.2.2.0")]
-[assembly: AssemblyFileVersion("1.2.2.0")]
+[assembly: AssemblyVersion("1.3.0.0")]
+[assembly: AssemblyFileVersion("1.3.0.0")]
 [assembly: TarkovVersion()]

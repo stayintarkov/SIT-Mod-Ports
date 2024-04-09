@@ -46,15 +46,17 @@ namespace DrakiaXYZ.BotDebug.Components
             Logger.LogInfo("BotDebugComponent enabled");
 
             // If DLSS or FSR are enabled, set a screen scale value
-            if (FPSCamera.Instance.SSAA.isActiveAndEnabled)
+            /*
+            if (CameraClass.Instance.SSAA.isActiveAndEnabled)
             {
-                screenScale = (float)FPSCamera.Instance.SSAA.GetOutputWidth() / (float)FPSCamera.Instance.SSAA.GetInputWidth();
+                screenScale = (float)CameraClass.Instance.SSAA.GetOutputWidth() / (float)CameraClass.Instance.SSAA.GetInputWidth();
                 Logger.LogDebug($"DLSS or FSR is enabled, scale screen offsets by {screenScale}");
             }
+            */
 
             Settings.FontSize.SettingChanged += (object sender, EventArgs e) => { CreateGuiStyle(); };
         }
-        
+
         public void Dispose()
         {
             Logger.LogInfo("BotDebugComponent disabled");
@@ -148,7 +150,10 @@ namespace DrakiaXYZ.BotDebug.Components
             {
                 var botData = bot.Value.Data;
                 if (!botData.InitedBotData) continue;
-                if (botData.PlayerOwner?.AIData?.BotOwner == null)
+                var playerOwner = FieldHelper.PlayerOwnerField.GetValue(botData);
+                AIData aiData = FieldHelper.Property<AIData>(playerOwner, "AIData");
+
+                if (aiData?.BotOwner == null)
                 {
                     deadList.Add(bot.Key);
                     continue;
@@ -172,7 +177,8 @@ namespace DrakiaXYZ.BotDebug.Components
                 }
 
                 // Only draw the bot data if it's visible on screen
-                Vector3 aboveBotHeadPos = botData.PlayerOwner.iPlayer.Position + (Vector3.up * 1.5f);
+                IPlayer iPlayer = FieldHelper.Property<IPlayer>(playerOwner, "iPlayer");
+                Vector3 aboveBotHeadPos = iPlayer.Position + (Vector3.up * 1.5f);
                 Vector3 screenPos = Camera.main.WorldToScreenPoint(aboveBotHeadPos);
                 if (screenPos.z > 0)
                 {
@@ -189,7 +195,7 @@ namespace DrakiaXYZ.BotDebug.Components
                         }
                     }
 
-                    int dist = Mathf.RoundToInt((botData.PlayerOwner.iPlayer.Position - localPlayer.Transform.position).magnitude);
+                    int dist = Mathf.RoundToInt((iPlayer.Position - localPlayer.Transform.position).magnitude);
                     if (bot.Value.GuiContent.text.Length > 0 && dist < Settings.MaxDrawDistance.Value)
                     {
                         Vector2 guiSize = guiStyle.CalcSize(bot.Value.GuiContent);
@@ -226,7 +232,11 @@ namespace DrakiaXYZ.BotDebug.Components
             if (Singleton<IBotGame>.Instantiated)
             {
                 var gameWorld = Singleton<GameWorld>.Instance;
-                gameWorld.GetOrAddComponent<BotDebugComponent>();
+
+                if (gameWorld.gameObject.GetComponent<BotDebugComponent>() == null)
+                {
+                    gameWorld.gameObject.AddComponent<BotDebugComponent>();
+                }
             }
         }
 
