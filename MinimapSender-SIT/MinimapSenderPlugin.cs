@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace TechHappy.MinimapSender
 {
-    [BepInPlugin("com.techhappy.webminimap", "TechHappy.WebMinimap", "1.0.7")]
+    [BepInPlugin("com.techhappy.webminimap", "TechHappy.WebMinimap", "1.0.9")]
     public class MinimapSenderPlugin : BaseUnityPlugin
     {
         internal static ManualLogSource MinimapSenderLogger { get; private set; }
@@ -56,7 +56,7 @@ namespace TechHappy.MinimapSender
             (
                 configSection,
                 "Refresh Interval (milliseconds)",
-                250,
+                200,
                 new ConfigDescription
                 (
                     "Map position refresh interval in milliseconds (1 second = 1000 milliseconds)",
