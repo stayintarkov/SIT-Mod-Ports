@@ -148,15 +148,26 @@ namespace SAIN.Layers.Combat.Solo
             }
             if (SteerByPriority(false) == false)
             {
-                if (CanSeeDangerOrCorner(out Vector3 point))
+                if (CanSeeDangerOrCorner(out Vector3 point) && SAIN.Enemy != null)
                 {
-                    SAIN.Steering.LookToPoint(point);
+                    Vector3 direction = point - SAIN.Position;
+                    Vector3 enemyDirection = SAIN.Enemy.EnemyDirection;
+                    float dot = Vector3.Dot(direction, enemyDirection);
+                    if (dot > 0f)
+                    {
+                        SAIN.Steering.LookToPoint(point);
+                    }
                 }
                 else
                 {
-                    SAIN.Steering.LookToRandomPosition();
+                    SAIN.Steering.LookToEnemyLastSeenClose();
                 }
             }
+        }
+
+        private void Steer2()
+        {
+
         }
 
         private bool CanSeeDangerOrCorner(out Vector3 point)

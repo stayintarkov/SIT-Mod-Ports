@@ -1,6 +1,5 @@
 using StayInTarkov;
 using BepInEx;
-using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using DrakiaXYZ.VersionChecker;
 using HarmonyLib;
@@ -10,45 +9,15 @@ using SAIN.Helpers;
 using SAIN.Layers;
 using SAIN.Plugin;
 using SAIN.Preset;
+using SAIN.SAINComponent.Classes.Mover;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using SAIN.Plugin.Patches;
 using UnityEngine;
-using static SAIN.AssemblyInfo;
-using static SAIN.Editor.SAINLayout;
+using static SAIN.AssemblyInfoClass;
 
 namespace SAIN
 {
-    public static class AssemblyInfo
-    {
-        public const string Title = SAINName;
-        public const string Description = "Full Revamp of Escape from Tarkov's AI System.";
-        public const string Company = "";
-        public const string Product = SAINName;
-        public const string Copyright = "Copyright � 2023 Solarint";
-        public const string Trademark = "";
-        public const string Culture = "";
-
-        public const int TarkovVersion = 29351;
-
-        public const string EscapeFromTarkov = "EscapeFromTarkov.exe";
-
-        public const string SAINGUID = "me.sol.sain";
-        public const string SAINName = "SAIN";
-        public const string SAINVersion = "2.1.9";
-        public const string SAINPresetVersion = "2.1.6";
-
-        public const string WaypointsGUID = "xyz.drakia.waypoints";
-        public const string WaypointsVersion = "1.3.0";
-
-        public const string BigBrainGUID = "xyz.drakia.bigbrain";
-        public const string BigBrainVersion = "0.3.2.0";
-
-        public const string LootingBots = "me.skwizzy.lootingbots";
-        public const string Realism = "RealismMod";
-    }
-
     [BepInPlugin(SAINGUID, SAINName, SAINVersion)]
     [BepInDependency(BigBrainGUID, BigBrainVersion)]
     [BepInDependency(WaypointsGUID, WaypointsVersion)]
@@ -99,7 +68,8 @@ namespace SAIN
         private void Patches()
         {
             var patches = new List<Type>() {
-                typeof(UpdateEFTSettingsPatch),
+                // Patch does nothing, commenting out
+                //typeof(UpdateEFTSettingsPatch),
                 typeof(Patches.Generic.KickPatch),
                 typeof(Patches.Generic.GetBotController),
                 typeof(Patches.Generic.GetBotSpawner),
@@ -126,9 +96,7 @@ namespace SAIN
                 typeof(Patches.Shoot.EndRecoilPatch),
                 typeof(Patches.Shoot.FullAutoPatch),
                 typeof(Patches.Shoot.SemiAutoPatch),
-                typeof(Patches.Components.AddComponentPatch),
-                typeof(BotOwnerBrainActivatePatch),
-                typeof(BotsControllerStopPatch)
+                typeof(Patches.Components.AddComponentPatch)
             };
 
             // Reflection go brrrrrrrrrrrrrr
@@ -164,7 +132,10 @@ namespace SAIN
             SAINEditor.Update();
             GameWorldHandler.Update();
 
+            //SAINVaultClass.DebugVaultPointCount();
+
             LoadedPreset.GlobalSettings.Personality.Update();
+            BigBrainHandler.CheckLayers();
         }
 
         private void Start() => SAINEditor.Init();
@@ -172,68 +143,5 @@ namespace SAIN
         private void LateUpdate() => SAINEditor.LateUpdate();
 
         private void OnGUI() => SAINEditor.OnGUI();
-    }
-
-    public static class ModDetection
-    {
-        static ModDetection()
-        {
-            ModsCheckTimer = Time.time + 5f;
-        }
-
-        public static void Update()
-        {
-            if (!ModsChecked && ModsCheckTimer < Time.time && ModsCheckTimer > 0)
-            {
-                ModsChecked = true;
-                CheckPlugins();
-            }
-        }
-
-        public static bool LootingBotsLoaded { get; private set; }
-        public static bool RealismLoaded { get; private set; }
-
-        public static void CheckPlugins()
-        {
-            if (Chainloader.PluginInfos.ContainsKey(LootingBots))
-            {
-                LootingBotsLoaded = true;
-                Logger.LogInfo($"SAIN: Looting Bots Detected.");
-            }
-            if (Chainloader.PluginInfos.ContainsKey(Realism))
-            {
-                RealismLoaded = true;
-                Logger.LogInfo($"SAIN: Realism Detected.");
-
-                // If Realism mod is loaded, we need to adjust how powerlevel is calculated to take into account armor class going up to 10 instead of 6
-                // 7 is the default
-                EFTCoreSettings.UpdateArmorClassCoef(4f);
-            }
-            else
-            {
-                EFTCoreSettings.UpdateArmorClassCoef(7f);
-            }
-        }
-
-        public static void ModDetectionGUI()
-        {
-            BeginVertical();
-
-            BeginHorizontal();
-            IsDetected(LootingBotsLoaded, "Looting Bots");
-            IsDetected(RealismLoaded, "Realism Mod");
-            EndHorizontal();
-
-            EndVertical();
-        }
-
-        private static void IsDetected(bool value, string name)
-        {
-            Label(name);
-            Box(value ? "Detected" : "Not Detected");
-        }
-
-        private static readonly float ModsCheckTimer = -1f;
-        private static bool ModsChecked = false;
     }
 }

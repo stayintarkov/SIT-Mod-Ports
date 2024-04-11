@@ -1,5 +1,7 @@
 ﻿using Comfort.Common;
 using EFT;
+using SAIN.SAINComponent.BaseClasses;
+using SAIN.SAINComponent.Classes.Mover;
 using UnityEngine;
 
 namespace SAIN.Components
@@ -8,7 +10,6 @@ namespace SAIN.Components
     {
         public void Awake()
         {
-            MainPlayer = Singleton<GameWorld>.Instance.MainPlayer;
             CamoClass = new SAINCamoClass(this);
         }
 
@@ -21,8 +22,17 @@ namespace SAIN.Components
 
         private void Update()
         {
-            CamoClass.Update();
+            //CamoClass.Update();
+            SAINPerson?.Update();
+
+            if (MainPlayer != null && SAINPerson == null)
+            {
+                SAINPerson = new SAINPersonClass(MainPlayer);
+                //SAINVaultClass.DebugCheckObstacles(MainPlayer);
+            }
         }
+
+        public SAINPersonClass SAINPerson { get; private set; }
 
         private void OnDestroy()
         {
@@ -31,9 +41,9 @@ namespace SAIN.Components
 
         private void OnGUI()
         {
-            CamoClass.OnGUI();
+            //CamoClass.OnGUI();
         }
 
-        public Player MainPlayer { get; private set; }
+        public Player MainPlayer => Singleton<GameWorld>.Instance?.MainPlayer;
     }
 }

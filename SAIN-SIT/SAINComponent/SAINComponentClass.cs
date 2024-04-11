@@ -73,6 +73,8 @@ namespace SAIN.SAINComponent
                 FriendlyFireClass = new SAINFriendlyFireClass(this);
                 Vision = new SAINVisionClass(this);
                 Search = new SAINSearchClass(this);
+                Vault = new SAINVaultClass(this);
+                Suppression = new SAINBotSuppressClass(this);
             }
             catch (Exception ex)
             {
@@ -100,9 +102,13 @@ namespace SAIN.SAINComponent
             SelfActions.Init();
             Grenade.Init();
             Steering.Init();
+            Vault.Init();
+            Suppression.Init();
 
             return true;
         }
+
+        public bool SAINEnabled => Info?.FileSettings?.Core != null ? Info.FileSettings.Core.SAINEnabled : false;
 
         private void Update()
         {
@@ -110,6 +116,11 @@ namespace SAIN.SAINComponent
             {
                 Dispose();
                 return;
+            }
+
+            if (SAINEnabled)
+            {
+                //return;
             }
 
             if (GameIsEnding)
@@ -148,6 +159,8 @@ namespace SAIN.SAINComponent
                 SelfActions.Update();
                 Grenade.Update();
                 Steering.Update();
+                Vault.Update();
+                Suppression.Update();
                 BotOwner.DoorOpener.Update();
 
                 if (Enemy == null && BotOwner.BotLight?.IsEnable == false)
@@ -237,6 +250,8 @@ namespace SAIN.SAINComponent
                 Grenade.Dispose();
                 Steering.Dispose();
                 Enemy?.Dispose();
+                Vault?.Dispose();
+                Suppression?.Dispose();
 
                 Destroy(this);
             }
@@ -285,6 +300,8 @@ namespace SAIN.SAINComponent
             }
         }
 
+        public SAINBotSuppressClass Suppression { get; private set; }
+        public SAINVaultClass Vault { get; private set; }
         public SAINSearchClass Search { get; private set; }
         public SAINEnemyClass Enemy => HasEnemy ? EnemyController.ActiveEnemy : null;
         public SAINPersonTransformClass Transform => Person.Transform;

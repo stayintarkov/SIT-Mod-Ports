@@ -1,9 +1,45 @@
-﻿using SAIN.Attributes;
+﻿using EFT;
+using Newtonsoft.Json;
+using SAIN.Attributes;
+using SAIN.Helpers;
+using SAIN.Preset.GlobalSettings.Categories;
+using System.Collections.Generic;
 
 namespace SAIN.Preset.GlobalSettings
 {
     public class GeneralSettings
     {
+        [Name("SAIN Toggle Options")]
+        [Description("Enable or disable SAIN for specific bot types")]
+        [DefaultDictionary(nameof(SAINEnabledTypesDefault))]
+        [Hidden]
+        public List<Brain> EnabledBrains = new List<Brain>(BotBrains.AllBrainsList);
+
+        [JsonIgnore]
+        [Hidden]
+        private static List<Brain> SAINEnabledTypesDefault = new List<Brain>(BotBrains.AllBrainsList);
+
+        [Description("Requires Restart. Dont touch unless you know what this is")]
+        [Advanced]
+        [Default(24)]
+        [MinMax(0, 100)]
+        [Hidden]
+        public int SAINCombatSquadLayerPriority = 24;
+
+        [Description("Requires Restart. Dont touch unless you know what this is")]
+        [Advanced]
+        [Default(22)]
+        [MinMax(0, 100)]
+        [Hidden]
+        public int SAINExtractLayerPriority = 22;
+
+        [Description("Requires Restart. Dont touch unless you know what this is")]
+        [Advanced]
+        [Default(20)]
+        [MinMax(0, 100)]
+        [Hidden]
+        public int SAINCombatSoloLayerPriority = 20;
+
         [Name("Bot Grenades")]
         [Default(true)]
         public bool BotsUseGrenades = true;

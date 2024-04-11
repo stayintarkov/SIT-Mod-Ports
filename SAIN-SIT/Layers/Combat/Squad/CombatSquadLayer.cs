@@ -37,6 +37,7 @@ namespace SAIN.Layers.Combat.Squad
         public override bool IsActive()
         {
             if (SAIN == null) return false;
+            //if (SAIN.SAINEnabled == false) return false;
 
             return SAIN.Decision.CurrentSquadDecision != SquadDecision.None;
         }
@@ -44,6 +45,8 @@ namespace SAIN.Layers.Combat.Squad
         public override bool IsCurrentActionEnding()
         {
             if (SAIN == null) return true;
+            //if (SAIN.SAINEnabled == false) return true;
+
             return SquadDecision != LastActionDecision;
         }
 
