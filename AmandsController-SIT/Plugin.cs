@@ -19,7 +19,7 @@ using StayInTarkov.Coop;
 
 namespace AmandsController
 {
-    [BepInPlugin("com.Amanda.Controller", "Controller", "0.3.2")]
+    [BepInPlugin("com.Amanda.Controller", "Controller", "0.3.3")]
     public class AmandsControllerPlugin : BaseUnityPlugin
     {
         public static GameObject Hook;
@@ -175,7 +175,7 @@ namespace AmandsController
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(StayInTarkovPlugin).Assembly.GetType("StayInTarkov.Coop.CoopGame").GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
+            return typeof(StayInTarkovPlugin).Assembly.GetType("StayInTarkov.Coop.SITGameModes.CoopSITGame").GetMethod("vmethod_2", BindingFlags.Instance | BindingFlags.Public);
         }
 
         private static void WaitForCoopGame(Task<LocalPlayer> task)
@@ -216,7 +216,7 @@ namespace AmandsController
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(TarkovApplication).GetMethod("Init", BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(TarkovApplication).GetMethod("Init", BindingFlags.Instance | BindingFlags.Public);
         }
         [PatchPostfix]
         private static void PatchPostFix(ref TarkovApplication __instance, InputTree inputTree)
@@ -240,7 +240,7 @@ namespace AmandsController
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(InventoryScreen).GetMethod("Show", BindingFlags.Instance | BindingFlags.Public);
+            return typeof(InventoryScreen).GetMethods(BindingFlags.Instance | BindingFlags.Public).First(x => x.Name == "Show");
         }
         [PatchPostfix]
         private static void PatchPostFix(ref InventoryScreen __instance)
@@ -272,7 +272,7 @@ namespace AmandsController
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(ActionPanel).GetMethod("method_0", BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(ActionPanel).GetMethod("method_0", BindingFlags.Instance | BindingFlags.Public);
         }
         [PatchPostfix]
         private static void PatchPostFix(ref ActionPanel __instance)
@@ -299,7 +299,7 @@ namespace AmandsController
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(TemplatedGridsView).GetMethod("Show", BindingFlags.Instance | BindingFlags.Public);
+            return typeof(TemplatedGridsView).GetMethods(BindingFlags.Instance | BindingFlags.Public).First(x => x.Name == "Show");
         }
         [PatchPostfix]
         private static void PatchPostFix(ref TemplatedGridsView __instance)
@@ -323,7 +323,7 @@ namespace AmandsController
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(GeneratedGridsView).GetMethod("Show", BindingFlags.Instance | BindingFlags.Public);
+            return typeof(GeneratedGridsView).GetMethods(BindingFlags.Instance | BindingFlags.Public).First(x => x.Name == "Show");
         }
         [PatchPostfix]
         private static void PatchPostFix(ref GeneratedGridsView __instance)
@@ -424,7 +424,7 @@ namespace AmandsController
             return typeof(EquipmentTab).GetMethod("Show", BindingFlags.Instance | BindingFlags.Public);
         }
         [PatchPostfix]
-        private static void PatchPostFix(ref EquipmentTab __instance, InventoryController inventoryController)
+        private static void PatchPostFix(ref EquipmentTab __instance, InventoryControllerClass inventoryController)
         {
             if (__instance.gameObject.name == "Gear Panel")
             {
@@ -635,7 +635,7 @@ namespace AmandsController
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(ItemView).GetMethod("Update", BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(ItemView).GetMethod("Update", BindingFlags.Instance | BindingFlags.Public);
         }
         [PatchPrefix]
         private static bool PatchPreFix(ref ItemView __instance)
@@ -648,7 +648,7 @@ namespace AmandsController
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(DraggedItemView).GetMethod("method_3", BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(DraggedItemView).GetMethod("method_3", BindingFlags.Instance | BindingFlags.Public);
         }
         [PatchPrefix]
         private static bool PatchPreFix(ref DraggedItemView __instance)
@@ -669,7 +669,7 @@ namespace AmandsController
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(Tooltip).GetMethod("method_0", BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(Tooltip).GetMethod("method_0", BindingFlags.Instance | BindingFlags.Public);
         }
         [PatchPrefix]
         private static void PatchPreFix(ref ItemView __instance, ref Vector2 position)
@@ -681,7 +681,7 @@ namespace AmandsController
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(ScrollRectNoDrag).GetMethod("OnEnable", BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(ScrollRectNoDrag).GetMethod("OnEnable", BindingFlags.Instance | BindingFlags.Public);
         }
         [PatchPostfix]
         private static void PatchPostFix(ref ScrollRectNoDrag __instance)
