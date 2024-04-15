@@ -1,0 +1,79 @@
+{
+    "lockpick_ammo_mod": {
+        "lockpick_ammo": [
+            {
+                "//Comment": "12/70 lead slug. See https://db.sp-tarkov.com/search",
+                "original_ammo_id": "58820d1224597753c90aeb13",
+                "//Comment2": "id should starts with #Lockpick",
+                "id": "#Lockpick #TIER1 12/70 slug",
+                "short_name": "Lockpick TIER1",
+                "name": "Lockpick 12/70 slug TIER1",
+                "description": "Ammo with high damage against doors. Almost useless against enemies",
+                "price_in_handbook": 15000,
+                "ammo_options": {
+                    "//Comment": "This is damage against enemies. Damage against objects depends on #TIER tag in id",
+                    "damage": 1,
+                    "armor_damage": 1,
+                    "//Comment2": "Not used for now. Will affect damage agains objects in future version.",
+                    "penetration_power": 10,
+                    "penetration_chance": 0.2,
+                    "penetration_power_diviation": 1,
+                    "missfire_chance": 0.3,
+                    "malfunctioning_misfire_chance": 0.3,
+                    "malfunctioning_feed_chance": 0.3,
+                    "durability_burn_modificator": 10,
+                    "backgound_color": "violet"
+                },
+                "traders_options": [
+                    {
+                        "//Comment": "Mechanic. See https://hub.sp-tarkov.com/doc/entry/43-traders-currencies-and-handbook-ids/",
+                        "trader": "5a7c2eca46aef81a7ca2145d",
+                        "count": 10,
+                        "price": {
+                            "value": 25000,
+                            "//Comment": "Roubles. See https://db.sp-tarkov.com/search",
+                            "currencie": "5449016a4bdc2d6f028b456f"
+                        },
+                        "loyalty_level": 1
+                    }
+                ]
+            },
+            {
+                "//Comment": "12/70 AP-20 armor-piercing slug. See https://db.sp-tarkov.com/search",
+                "original_ammo_id": "5d6e68a8a4b9360b6c0d54e2",
+                "id": "#Lockpick #TIER2 12/70 slug",
+                "short_name": "Lockpick TIER2",
+                "name": "Lockpick 12/70 slug TIER2",
+                "description": "Ammo with high damage against doors. Almost useless against enemies",
+                "price_in_handbook": 35000,
+                "ammo_options": {
+                    "//Comment": "This is damage against enemies. Damage against objects depends on #TIER tag in id",
+                    "damage": 1,
+                    "armor_damage": 1,
+                    "//Comment2": "Not used for now. Will affect damage agains objects in future version.",
+                    "penetration_power": 50,
+                    "penetration_chance": 0.5,
+                    "penetration_power_diviation": 1,
+                    "missfire_chance": 0.5,
+                    "malfunctioning_misfire_chance": 0.5,
+                    "malfunctioning_feed_chance": 0.5,
+                    "durability_burn_modificator": 20,
+                    "backgound_color": "violet"
+                },
+                "traders_options": [
+                    {
+                        "//Comment": "Mechanic. See https://hub.sp-tarkov.com/doc/entry/43-traders-currencies-and-handbook-ids/",
+                        "trader": "5a7c2eca46aef81a7ca2145d",
+                        "count": 3,
+                        "price": {
+                            "value": 50000,
+                            "//Comment": "Roubles. See https://db.sp-tarkov.com/search",
+                            "currencie": "5449016a4bdc2d6f028b456f"
+                        },
+                        "loyalty_level": 1
+                    }
+                ]
+            }
+        ]
+    }
+}

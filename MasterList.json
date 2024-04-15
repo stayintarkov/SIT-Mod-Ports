@@ -350,5 +350,19 @@
       "BorkelRNVG.dll"
     ],
     "ConfigFiles": []
+  },
+  {
+    "Name": "Shoot The Door",
+    "Author": "nektonick",
+    "SupportedVersion": "1.10.8869.3183",
+    "ModVersion": "1.3.0",
+    "PortVersion": "SIT-1.3.0",
+    "Description": "Like BackdoorBandit but with more customization! Shoot the door to open it! And even more options inside!",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1554-shoot-the-door/",
+    "RequiresFiles": false,
+    "PluginFiles": [
+      "nektonick.ShootTheDoor.dll"
+    ],
+    "ConfigFiles": []
   }
 ]
