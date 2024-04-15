@@ -14,6 +14,9 @@
 Ref/
 References/
 
+# VCQLC dependencies
+Virtuals-Custom-Quest-Loader-Client/dependencies/
+
 # Idea folder
 .idea/
 
