@@ -350,5 +350,19 @@
       "BorkelRNVG.dll"
     ],
     "ConfigFiles": []
+  },
+  {
+    "Name": "VIRTUAL'S CUSTOM QUEST LOADER - Zones GUI",
+    "Author": "Virtual",
+    "SupportedVersion": "1.10.8854.18454",
+    "ModVersion": "2.0.0",
+    "PortVersion": "1.0.0",
+    "Description": "Client only mod that adds a gui to create zones for custom quests that use Virtual's Custom Quest Loader. See https://github.com/VirtualAE/Virtuals-Custom-Quest-Loader?tab=readme-ov-file#zone-creation-tool for more information",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/885-virtual-s-custom-quest-loader/",
+    "RequiresFiles": true,
+    "PluginFiles": [
+      "VCQLQuestZones.dll"
+    ],
+    "ConfigFiles": []
   }
 ]
