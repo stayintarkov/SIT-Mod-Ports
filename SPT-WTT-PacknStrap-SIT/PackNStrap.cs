@@ -16,7 +16,7 @@ namespace PackNStrap
 
         public static PackNStrap instance;
 
-        public static string modPath = Path.Combine(Environment.CurrentDirectory, "user", "mods", "WTT-PackNStrap");
+        public static string modPath = Path.Combine(Environment.CurrentDirectory, "user", "cache");
 
         #region Proper Armband Slots Info
         public FieldInfo fastAccessSlots { get; set; }
