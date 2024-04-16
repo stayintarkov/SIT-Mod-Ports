@@ -1,0 +1,86 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+	  <AssemblyName>WTT-PackNStrap</AssemblyName>
+	  <Description>Welcome to Tarkov main assembly</Description>
+	  <Version>1.0.0</Version>
+	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	  <LangVersion>latest</LangVersion>
+	  <Configurations>Debug;Release;UNITY_EDITOR</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants);CHEATMODE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);CHEATMODE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Interfaces\**" />
+    <EmbeddedResource Remove="Interfaces\**" />
+    <None Remove="Interfaces\**" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="0Harmony">
+		  <HintPath>..\References\0Harmony.dll</HintPath>
+		</Reference>
+		<Reference Include="Aki.Reflection">
+		  <HintPath>..\References\Aki.Reflection.dll</HintPath>
+		</Reference>
+		<Reference Include="Assembly-CSharp">
+		  <HintPath>..\References\Assembly-CSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx">
+		  <HintPath>..\References\BepInEx.dll</HintPath>
+		</Reference>
+		<Reference Include="Comfort">
+		  <HintPath>..\References\Comfort.dll</HintPath>
+		</Reference>
+		<Reference Include="ItemComponent.Types">
+		  <HintPath>..\References\ItemComponent.Types.dll</HintPath>
+		</Reference>
+		<Reference Include="Sirenix.Serialization">
+		  <HintPath>..\References\Sirenix.Serialization.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine">
+		  <HintPath>..\References\UnityEngine.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.AnimationModule">
+		  <HintPath>..\References\UnityEngine.AnimationModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.AssetBundleModule">
+		  <HintPath>..\References\UnityEngine.AssetBundleModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
+		  <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
+		</Reference>
+		
+		
+
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
+		<PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\Settings.Designer.cs">
+			<DesignTimeSharedInput>True</DesignTimeSharedInput>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Settings.settings</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="Properties\Settings.settings">
+			<Generator>SettingsSingleFileGenerator</Generator>
+			<LastGenOutput>Settings.Designer.cs</LastGenOutput>
+		</None>
+	</ItemGroup>
+
+</Project>
