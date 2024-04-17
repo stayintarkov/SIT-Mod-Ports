@@ -142,7 +142,7 @@ namespace SkillsExtended.Controllers
                 };
 
                 var healthEffectComp = AccessTools.Field(typeof(MedsClass), "HealthEffectsComponent").GetValue(meds);
-                AccessTools.Field(typeof(HealthEffectsComponent), "ginterface292_0").SetValue(healthEffectComp, newGInterface);
+                AccessTools.Field(typeof(HealthEffectsComponent), "ginterface296_0").SetValue(healthEffectComp, newGInterface);
 
                 Plugin.Log.LogDebug($"First Aid: Set instance {item.Id} of type {item.TemplateId} to {_originalHealthEffectValues[meds.TemplateId].UseTime * bonus} seconds");
             }
@@ -191,7 +191,7 @@ namespace SkillsExtended.Controllers
                 }
 
                 var medComp = AccessTools.Field(typeof(MedsClass), "MedKitComponent").GetValue(meds);
-                AccessTools.Field(typeof(MedKitComponent), "ginterface298_0").SetValue(medComp, medKitInterface);
+                AccessTools.Field(typeof(MedKitComponent), "ginterface302_0").SetValue(medComp, medKitInterface);
             }
         }
 
@@ -224,7 +224,7 @@ namespace SkillsExtended.Controllers
                 };
 
                 var healthEffectComp = AccessTools.Field(typeof(MedsClass), "HealthEffectsComponent").GetValue(meds);
-                AccessTools.Field(typeof(HealthEffectsComponent), "ginterface292_0").SetValue(healthEffectComp, newGInterface);
+                AccessTools.Field(typeof(HealthEffectsComponent), "ginterface296_0").SetValue(healthEffectComp, newGInterface);
 
                 Plugin.Log.LogDebug($"Field Medicine: Set instance {item.Id} of type {item.TemplateId} to {_originalHealthEffectValues[meds.TemplateId].UseTime * bonus} seconds");
             }
