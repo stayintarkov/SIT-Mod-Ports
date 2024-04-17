@@ -82,15 +82,15 @@ namespace DynamicExternalResolution
         {
             Type gameSettingsType = typeof(SettingsManager);
 
-            // Singleton<SharedGameSettingsClass>.Instance.Graphics
+            // Singleton<SettingsManager>.Instance.Graphics
             _graphicsField = AccessTools.Field(gameSettingsType, "Graphics");
             Type graphicsFieldType = _graphicsField.FieldType;
 
-            // Singleton<SharedGameSettingsClass>.Instance.Graphics.Settings
+            // Singleton<SettingsManager>.Instance.Graphics.Settings
             _graphicsSettingsField = AccessTools.Field(graphicsFieldType, "Settings");
             Type graphicsSettingsFieldType = _graphicsSettingsField.FieldType;
 
-            // Singleton<SharedGameSettingsClass>.Instance.Graphics.Settings properties
+            // Singleton<SettingsManager>.Instance.Graphics.Settings properties
             _dlssEnabledProperty = AccessTools.Property(graphicsSettingsFieldType, "DLSSEnabled");
             _fsrEnabledProperty = AccessTools.Property(graphicsSettingsFieldType, "FSREnabled");
             _fsr2EnabledProperty = AccessTools.Property(graphicsSettingsFieldType, "FSR2Enabled");

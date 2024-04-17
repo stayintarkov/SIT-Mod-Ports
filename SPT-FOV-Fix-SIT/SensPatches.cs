@@ -1,8 +1,13 @@
-﻿using StayInTarkov;
+﻿using Aki.Reflection.Patching;
 using Comfort.Common;
 using EFT;
+using HarmonyLib;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 using UnityEngine;
+using static MonoMod.Cil.RuntimeILReferenceBag.FastDelegateInvokers;
 
 namespace FOVFix
 {
@@ -21,14 +26,15 @@ namespace FOVFix
 
             if (Plugin.IsAiming)
             {
-                /*  float baseSens = Singleton<SharedGameSettingsClass>.Instance.Control.Settings.MouseAimingSensitivity;
+                /*  float baseSens = Singleton<SettingsManager>.Instance.Control.Settings.MouseAimingSensitivity;
                   float newSens = Mathf.Max(baseSens * (1f - ((Plugin.CurrentZoom - 1f) / Plugin.MouseSensFactor.Value)), Plugin.MouseSensLowerLimit.Value);
   */
                 float newSens = 0.5f;
 
                 if (Plugin.UseBasicSensCalc.Value)
                 {
-                    newSens = Singleton<SettingsManager>.Instance.Control.Settings.MouseAimingSensitivity * Utils.GetZoomSensValue(Plugin.CurrentZoom) * toggleZoomMulti;
+                    float magnificationMulti = Plugin.IsOptic ? Utils.GetZoomSensValue(Plugin.CurrentZoom) : Plugin.NonOpticSensMulti.Value;
+                    newSens = Singleton<SettingsManager>.Instance.Control.Settings.MouseAimingSensitivity * toggleZoomMulti * magnificationMulti;
                     Plugin.AimingSens = newSens;
                 }
                 else 
