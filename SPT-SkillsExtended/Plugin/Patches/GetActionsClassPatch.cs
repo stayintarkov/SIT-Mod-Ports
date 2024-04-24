@@ -19,7 +19,8 @@ namespace SkillsExtended.Patches
                 return;
             }
 
-            worldInteractiveObject.AddGetKeyIdToActionList(__result, owner);
+            worldInteractiveObject.AddLockpickingInteraction(__result, owner);
+            worldInteractiveObject.AddInspectInteraction(__result, owner);
         }
     }
 }

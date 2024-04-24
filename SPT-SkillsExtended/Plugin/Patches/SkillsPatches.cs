@@ -5,21 +5,19 @@ using EFT.UI;
 using EFT.UI.Screens;
 using HarmonyLib;
 using SkillsExtended.Helpers;
+using SkillsExtended.Models;
 using System;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using TMPro;
 using static EFT.SkillManager;
-
-using static SkillsExtended.Helpers.Constants;
 
 namespace SkillsExtended.Patches
 {
     internal class SkillManagerConstructorPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod() =>
-            typeof(SkillManager).GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { typeof(EPlayerSide) }, null);
+            typeof(SkillManager).GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, [typeof(EPlayerSide)], null);
 
         [PatchPostfix]
         public static void Postfix(SkillManager __instance, ref Skill[] ___DisplayList, ref Skill[] ___Skills,
@@ -55,10 +53,18 @@ namespace SkillsExtended.Patches
             ___Skills[___Skills.Length - 3] = ___UsecTactics;
             ___Skills[___Skills.Length - 4] = ___BearRawpower;
 
-            AccessTools.Field(typeof(Skill), "Locked").SetValue(__instance.UsecArsystems, false);
-            AccessTools.Field(typeof(Skill), "Locked").SetValue(__instance.BearAksystems, false);
-            AccessTools.Field(typeof(Skill), "Locked").SetValue(__instance.UsecTactics, true);
-            AccessTools.Field(typeof(Skill), "Locked").SetValue(__instance.BearRawpower, true);
+            // If the skill is not enabled, lock it
+            AccessTools.Field(typeof(Skill), "Locked").SetValue(__instance.UsecArsystems,
+                !Plugin.SkillData.UsecRifleSkill.Enabled);
+
+            AccessTools.Field(typeof(Skill), "Locked").SetValue(__instance.BearAksystems,
+                !Plugin.SkillData.BearRifleSkill.Enabled);
+
+            AccessTools.Field(typeof(Skill), "Locked").SetValue(__instance.UsecTactics,
+                !Plugin.SkillData.UsecTacticsSkill.Enabled);
+
+            AccessTools.Field(typeof(Skill), "Locked").SetValue(__instance.BearRawpower,
+                !Plugin.SkillData.BearRawPowerSkill.Enabled);
         }
     }
 
@@ -72,8 +78,15 @@ namespace SkillsExtended.Patches
         {
             try
             {
-                AccessTools.Field(typeof(Skill), "Locked").SetValue(__instance.FirstAid, false);
-                AccessTools.Field(typeof(Skill), "Locked").SetValue(__instance.FieldMedicine, false);
+                // If the skill is not enabled, lock it
+                AccessTools.Field(typeof(Skill), "Locked").SetValue(__instance.FirstAid,
+                    !Plugin.SkillData.MedicalSkills.EnableFirstAid);
+
+                AccessTools.Field(typeof(Skill), "Locked").SetValue(__instance.FieldMedicine,
+                    !Plugin.SkillData.MedicalSkills.EnableFieldMedicine);
+
+                AccessTools.Field(typeof(Skill), "Locked").SetValue(__instance.Lockpicking,
+                    !Plugin.SkillData.LockPickingSkill.Enabled);
             }
             catch (Exception e)
             {
@@ -87,14 +100,18 @@ namespace SkillsExtended.Patches
         protected override MethodBase GetTargetMethod() =>
             typeof(SimpleTooltip).GetMethods().SingleCustom(x => x.Name == "Show" && x.GetParameters().Length == 5);
 
+        private static SkillDataResponse _skillData => Plugin.SkillData;
+
         [PatchPostfix]
         public static void Postfix(SimpleTooltip __instance, ref string text)
         {
             string firstAid = @"\bFirstAidDescriptionPattern\b";
             string fieldMedicine = @"\bFieldMedicineDescriptionPattern\b";
-            
+
             string usecARSystems = @"\bUsecArsystemsDescription\b";
             string usecTactics = @"\bUsecTacticsDescription\b";
+
+            string lockPicking = @"\bLock picking skill\b";
 
             string bearAKSystems = @"\bBearAksystemsDescription\b";
             string bearRawpower = @"\bBearRawpowerDescription\b";
@@ -104,12 +121,12 @@ namespace SkillsExtended.Patches
                 var firstAidSkill = Plugin.Session.Profile.Skills.FirstAid;
 
                 float speedBonus = firstAidSkill.IsEliteLevel
-                    ? (firstAidSkill.Level * MEDICAL_SPEED_BONUS) - MEDICAL_SPEED_BONUS_ELITE
-                    : (firstAidSkill.Level * MEDICAL_SPEED_BONUS);
+                    ? (firstAidSkill.Level * _skillData.MedicalSkills.MedicalSpeedBonus) - _skillData.MedicalSkills.MedicalSpeedBonusElite
+                    : (firstAidSkill.Level * _skillData.MedicalSkills.MedicalSpeedBonus);
 
                 float hpBonus = firstAidSkill.IsEliteLevel
-                    ? firstAidSkill.Level * MEDKIT_HP_BONUS + MEDKIT_HP_BONUS_ELITE
-                    : firstAidSkill.Level * MEDKIT_HP_BONUS;
+                    ? firstAidSkill.Level * _skillData.MedicalSkills.MedkitHpBonus + _skillData.MedicalSkills.MedkitHpBonusElite
+                    : firstAidSkill.Level * _skillData.MedicalSkills.MedkitHpBonus;
 
                 __instance.SetText(SkillDescriptions.FirstAidDescription(speedBonus, hpBonus));
             }
@@ -119,8 +136,8 @@ namespace SkillsExtended.Patches
                 var fieldMedicineSkill = Plugin.Session.Profile.Skills.FieldMedicine;
 
                 float speedBonus = fieldMedicineSkill.IsEliteLevel
-                    ? (fieldMedicineSkill.Level * MEDICAL_SPEED_BONUS) - MEDICAL_SPEED_BONUS_ELITE
-                    : (fieldMedicineSkill.Level * MEDICAL_SPEED_BONUS);
+                    ? (fieldMedicineSkill.Level * _skillData.MedicalSkills.MedicalSpeedBonus) - _skillData.MedicalSkills.MedicalSpeedBonusElite
+                    : (fieldMedicineSkill.Level * _skillData.MedicalSkills.MedicalSpeedBonus);
 
                 __instance.SetText(SkillDescriptions.FieldMedicineDescription(speedBonus));
             }
@@ -130,12 +147,12 @@ namespace SkillsExtended.Patches
                 var usecSystems = Plugin.Session.Profile.Skills.UsecArsystems;
 
                 float ergoBonus = usecSystems.IsEliteLevel
-                    ? usecSystems.Level * ERGO_MOD + ERGO_MOD_ELITE
-                    : usecSystems.Level * ERGO_MOD;
+                    ? usecSystems.Level * _skillData.UsecRifleSkill.ErgoMod + _skillData.UsecRifleSkill.ErgoModElite
+                    : usecSystems.Level * _skillData.UsecRifleSkill.ErgoMod;
 
                 float recoilReduction = usecSystems.IsEliteLevel
-                    ? usecSystems.Level * RECOIL_REDUCTION + RECOIL_REDUCTION_ELITE
-                    : usecSystems.Level * RECOIL_REDUCTION;
+                    ? usecSystems.Level * _skillData.UsecRifleSkill.RecoilReduction + _skillData.UsecRifleSkill.RecoilReductionElite
+                    : usecSystems.Level * _skillData.UsecRifleSkill.RecoilReduction;
 
                 __instance.SetText(SkillDescriptions.UsecArSystemsDescription(ergoBonus, recoilReduction));
             }
@@ -145,14 +162,25 @@ namespace SkillsExtended.Patches
                 var bearSystems = Plugin.Session.Profile.Skills.BearAksystems;
 
                 float ergoBonus = bearSystems.IsEliteLevel
-                    ? bearSystems.Level * ERGO_MOD + ERGO_MOD_ELITE
-                    : bearSystems.Level * ERGO_MOD;
+                    ? bearSystems.Level * _skillData.BearRifleSkill.ErgoMod + _skillData.BearRifleSkill.ErgoModElite
+                    : bearSystems.Level * _skillData.BearRifleSkill.ErgoMod;
 
                 float recoilReduction = bearSystems.IsEliteLevel
-                    ? bearSystems.Level * RECOIL_REDUCTION + RECOIL_REDUCTION_ELITE
-                    : bearSystems.Level * RECOIL_REDUCTION;
+                    ? bearSystems.Level * _skillData.BearRifleSkill.RecoilReduction + _skillData.BearRifleSkill.RecoilReductionElite
+                    : bearSystems.Level * _skillData.BearRifleSkill.RecoilReduction;
 
                 __instance.SetText(SkillDescriptions.BearAkSystemsDescription(ergoBonus, recoilReduction));
+            }
+
+            if (Regex.IsMatch(text, lockPicking))
+            {
+                var lockPickingSkill = Plugin.Session.Profile.Skills.Lockpicking;
+
+                float timeReduction = lockPickingSkill.IsEliteLevel
+                    ? lockPickingSkill.Level * _skillData.LockPickingSkill.TimeReduction + _skillData.LockPickingSkill.TimeReductionElite
+                    : lockPickingSkill.Level * _skillData.LockPickingSkill.TimeReduction;
+
+                __instance.SetText(SkillDescriptions.LockPickingDescription(timeReduction));
             }
 
             if (Regex.IsMatch(text, usecTactics))
@@ -160,14 +188,10 @@ namespace SkillsExtended.Patches
                 var usecTacticsSkill = Plugin.Session.Profile.Skills.UsecTactics;
 
                 float inertiaReduction = usecTacticsSkill.IsEliteLevel
-                    ? usecTacticsSkill.Level * USEC_INERTIA_RED_BONUS + USEC_INERTIA_RED_BONUS_ELITE
-                    : usecTacticsSkill.Level * USEC_INERTIA_RED_BONUS;
+                    ? usecTacticsSkill.Level * _skillData.UsecTacticsSkill.InertiaRedBonus + _skillData.UsecTacticsSkill.InertiaRedBonusElite
+                    : usecTacticsSkill.Level * _skillData.UsecTacticsSkill.InertiaRedBonus;
 
-                float aimPunchReduction = usecTacticsSkill.IsEliteLevel
-                    ? usecTacticsSkill.Level * USEC_AIMPUNCH_RED_BONUS + USEC_AIMPUNCH_RED_BONUS_ELITE
-                    : usecTacticsSkill.Level * USEC_AIMPUNCH_RED_BONUS;
-
-                __instance.SetText(SkillDescriptions.UsecTacticsDescription(inertiaReduction, aimPunchReduction));
+                __instance.SetText(SkillDescriptions.UsecTacticsDescription(inertiaReduction));
             }
 
             if (Regex.IsMatch(text, bearRawpower))
@@ -175,14 +199,10 @@ namespace SkillsExtended.Patches
                 var bearRawpowerSkill = Plugin.Session.Profile.Skills.BearRawpower;
 
                 float hpBonus = bearRawpowerSkill.IsEliteLevel
-                    ? bearRawpowerSkill.Level * BEAR_POWER_HP_BONUS + BEAR_POWER_HP_BONUS_ELITE
-                    : bearRawpowerSkill.Level * BEAR_POWER_HP_BONUS;
+                    ? bearRawpowerSkill.Level * _skillData.BearRawPowerSkill.HPBonus + _skillData.BearRawPowerSkill.HPBonusElite
+                    : bearRawpowerSkill.Level * _skillData.BearRawPowerSkill.HPBonus;
 
-                float carryWeightBonus = bearRawpowerSkill.IsEliteLevel
-                    ? bearRawpowerSkill.Level * BEAR_POWER_CARRY_BONUS + BEAR_POWER_CARRY_BONUS_ELITE
-                    : bearRawpowerSkill.Level * BEAR_POWER_CARRY_BONUS;
-
-                __instance.SetText(SkillDescriptions.BearRawpowerDescription(hpBonus, carryWeightBonus));
+                __instance.SetText(SkillDescriptions.BearRawpowerDescription(hpBonus));
             }
         }
     }
@@ -207,7 +227,7 @@ namespace SkillsExtended.Patches
             // Usec AR systems
             if (skill.Id == ESkillId.UsecArsystems && side == EPlayerSide.Bear && !skills.BearAksystems.IsEliteLevel)
             {
-                if (SEConfig.disableEliteRequirement.Value)
+                if (Plugin.SkillData.DisableEliteRequirements)
                 {
                     return true;
                 }
@@ -216,19 +236,17 @@ namespace SkillsExtended.Patches
                 return false;
             }
 
-            /*
             // Usec Tactics
             if (skill.Id == ESkillId.UsecTactics && side == EPlayerSide.Bear)
             {
                 // Skip original method and dont show skill
                 return false;
             }
-            */
 
             // Bear AK systems
             if (skill.Id == ESkillId.BearAksystems && side == EPlayerSide.Usec && !skills.UsecArsystems.IsEliteLevel)
             {
-                if (SEConfig.disableEliteRequirement.Value)
+                if (Plugin.SkillData.DisableEliteRequirements)
                 {
                     return true;
                 }
@@ -237,14 +255,12 @@ namespace SkillsExtended.Patches
                 return false;
             }
 
-            /*
             // Bear Raw Power
             if (skill.Id == ESkillId.BearRawpower && side == EPlayerSide.Usec)
             {
                 // Skip original method and dont show skill
                 return false;
             }
-            */
 
             // Show the skill
             return true;
@@ -295,9 +311,26 @@ namespace SkillsExtended.Patches
         {
             if (eftScreenType == EEftScreenType.Inventory)
             {
-                Plugin.MedicalScript.fieldMedicineInstanceIDs.Clear();
-                Plugin.MedicalScript.firstAidInstanceIDs.Clear();
-                Plugin.WeaponsScript.weaponInstanceIds.Clear();
+                if (Plugin.SkillData.MedicalSkills.EnableFieldMedicine)
+                {
+                    Plugin.FieldMedicineScript.fieldMedicineInstanceIDs.Clear();
+                }
+
+                if (Plugin.SkillData.MedicalSkills.EnableFirstAid)
+                {
+                    Plugin.FirstAidScript.firstAidInstanceIDs.Clear();
+                }
+
+                if (Plugin.SkillData.UsecRifleSkill.Enabled)
+                {
+                    Plugin.UsecRifleScript.weaponInstanceIds.Clear();
+                }
+
+                if (Plugin.SkillData.BearRifleSkill.Enabled)
+                {
+                    Plugin.BearRifleScript.weaponInstanceIds.Clear();
+                }
+
                 Utils.CheckServerModExists();
             }
         }

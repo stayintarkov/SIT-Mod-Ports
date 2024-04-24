@@ -1,11 +1,10 @@
-﻿
-using Aki.Common.Http;
+﻿using Aki.Common.Http;
 using Aki.Reflection.Utils;
 using Comfort.Common;
 using EFT;
+using HarmonyLib;
 using Newtonsoft.Json;
 using SkillsExtended.Controllers;
-using SkillsExtended.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +15,10 @@ namespace SkillsExtended.Helpers
 {
     public static class Utils
     {
+        public static Type IdleStateType => _idleStateType;
+
+        private static Type _idleStateType;
+
         public static void CheckServerModExists()
         {
             var dllLoc = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -32,7 +35,7 @@ namespace SkillsExtended.Helpers
         }
 
         // If the player is in the gameworld, use the main players skillmanager
-        public static SkillManager SetActiveSkillManager()
+        public static SkillManager GetActiveSkillManager()
         {
             if (Singleton<GameWorld>.Instance?.MainPlayer != null)
             {
@@ -40,16 +43,11 @@ namespace SkillsExtended.Helpers
             }
             else if (Plugin.Session != null)
             {
-                WeaponProficiencyBehaviors.isSubscribed = false;
-                return ClientAppUtils.GetMainApp()?.GetClientBackEndSession()?.Profile?.Skills;              
+                UsecRifleBehaviour.isSubscribed = false;
+                return ClientAppUtils.GetMainApp()?.GetClientBackEndSession()?.Profile?.Skills;
             }
 
             return null;
-        }
-
-        public static void GetKeysFromServer()
-        {
-            Constants.Keys = Get<KeysResponse>("/skillsExtended/GetKeys");
         }
 
         // Get Json from the server
@@ -63,6 +61,41 @@ namespace SkillsExtended.Helpers
             }
 
             return JsonConvert.DeserializeObject<T>(req);
+        }
+
+        public static bool CanGainXPForLimb(Dictionary<EBodyPart, DateTime> dict, EBodyPart bodypart)
+        {
+            if (!dict.ContainsKey(bodypart))
+            {
+                dict.Add(bodypart, DateTime.Now);
+                return true;
+            }
+            else
+            {
+                TimeSpan elapsed = DateTime.Now - dict[bodypart];
+
+                if (elapsed.TotalSeconds >= Plugin.SkillData.MedicalSkills.CoolDownTimePerLimb)
+                {
+                    dict.Remove(bodypart);
+                    return true;
+                }
+
+                Plugin.Log.LogDebug($"Time until next available xp: {Plugin.SkillData.MedicalSkills.CoolDownTimePerLimb - elapsed.TotalSeconds} seconds");
+                return false;
+            }
+        }
+
+        public static void GetTypes()
+        {
+            _idleStateType = GetIdleStateType();
+        }
+
+        private static Type GetIdleStateType()
+        {
+            return PatchConstants.EftTypes.Single(x =>
+                AccessTools.GetDeclaredMethods(x).Any(method => method.Name == "Plant") &&
+                AccessTools.GetDeclaredFields(x).Count >= 5 &&
+                x.BaseType.Name == "MovementState");
         }
     }
 }

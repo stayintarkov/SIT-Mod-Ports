@@ -350,5 +350,19 @@
       "BorkelRNVG.dll"
     ],
     "ConfigFiles": []
+  },
+  {
+    "Name": "[BETA] Skills Extended",
+    "Author": "Dirtbikercj",
+    "SupportedVersion": "1.10.8869.3183",
+    "ModVersion": "0.5.2",
+    "PortVersion": "1.1.0",
+    "Description": "Expanding the skill catalog, one skill at a time. First Aid Skills and Lockpicking!",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1722-beta-skills-extended/",
+    "RequiresFiles": true,
+    "PluginFiles": [
+      "SkillsExtended.dll"
+    ],
+    "ConfigFiles": []
   }
 ]

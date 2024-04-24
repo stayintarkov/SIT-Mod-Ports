@@ -1,36 +1,13 @@
 ﻿using Comfort.Common;
 using EFT;
 using EFT.Interactive;
-using EFT.InventoryLogic;
-using HarmonyLib;
-using JetBrains.Annotations;
 using System;
-using System.CodeDom;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SkillsExtended.Helpers
 {
     public static class WorldInteractionUtils
     {
-        public static bool IsDoorValidForLockPicking(WorldInteractiveObject interactiveObject)
-        {
-            if (!interactiveObject.Operatable)
-            {
-                return false;
-            }
-
-            if (interactiveObject.DoorState != EDoorState.Locked)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         public static bool IsBotInteraction(GamePlayerOwner owner)
         {
             if (owner == null)
@@ -46,72 +23,110 @@ namespace SkillsExtended.Helpers
             return false;
         }
 
-        public static void AddGetKeyIdToActionList(this WorldInteractiveObject interactiveObject, InteractionStates actionReturn, GamePlayerOwner owner)
+        public static void AddLockpickingInteraction(this WorldInteractiveObject interactiveObject, InteractionStates actionReturn, GamePlayerOwner owner)
         {
-            if (interactiveObject.DoorState != EDoorState.Locked || interactiveObject.KeyId == "")
+            if (!IsDoorValidForLockPicking(interactiveObject))
             {
                 return;
             }
 
-            Action1 action = new Action1();
+            Action1 action = new()
+            {
+                Name = "Pick lock",
+                Disabled = !interactiveObject.Operatable && !LockPickingHelpers.GetLockPicksInInventory().Any()
+            };
 
-            action.Name = "Get key information";
-            action.Disabled = !interactiveObject.Operatable;
-         
-            Interaction keyInfoAction = new Interaction(interactiveObject, owner);
-            
-            action.Action = new Action(keyInfoAction.GetKeyIdAction);
+            LockPickingInteraction pickLockAction = new(interactiveObject, owner);
+
+            action.Action = new Action(pickLockAction.TryPickLock);
             actionReturn.Actions.Add(action);
         }
 
-        public sealed class Interaction
+        public static void AddInspectInteraction(this WorldInteractiveObject interactiveObject, InteractionStates actionReturn, GamePlayerOwner owner)
+        {
+            if (!IsValidDoorForInspect(interactiveObject))
+            {
+                return;
+            }
+
+            Action1 action = new()
+            {
+                Name = "Inspect Lock",
+                Disabled = !interactiveObject.Operatable
+            };
+
+            LockInspectInteraction keyInfoAction = new(interactiveObject, owner);
+
+            action.Action = new Action(keyInfoAction.TryInspectLock);
+            actionReturn.Actions.Add(action);
+        }
+
+        private static bool IsDoorValidForLockPicking(WorldInteractiveObject interactiveObject)
+        {
+            if (interactiveObject.DoorState != EDoorState.Locked || !interactiveObject.Operatable || !Plugin.Keys.KeyLocale.ContainsKey(interactiveObject.KeyId))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool IsValidDoorForInspect(WorldInteractiveObject interactiveObject)
+        {
+            if (interactiveObject.KeyId == null || interactiveObject.KeyId == string.Empty
+                || !interactiveObject.Operatable || interactiveObject.DoorState != EDoorState.Locked
+                || !Plugin.Keys.KeyLocale.ContainsKey(interactiveObject.KeyId))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public sealed class LockPickingInteraction
         {
             public GamePlayerOwner owner;
             public WorldInteractiveObject interactiveObject;
 
-            public Interaction() { }
+            public LockPickingInteraction()
+            { }
 
-            public Interaction(WorldInteractiveObject interactiveObject, GamePlayerOwner owner)
+            public LockPickingInteraction(WorldInteractiveObject interactiveObject, GamePlayerOwner owner)
             {
-                if (interactiveObject == null)
-                {
-                    throw new ArgumentNullException("Interactive Object is Null...");
-                }
-
-                if (owner == null)
-                {
-                    throw new ArgumentNullException("Owner is null...");
-                }
-
-                this.interactiveObject = interactiveObject;
-                this.owner = owner;
+                this.interactiveObject = interactiveObject ?? throw new ArgumentNullException("Interactive Object is Null...");
+                this.owner = owner ?? throw new ArgumentNullException("Owner is null...");
             }
 
-            public void GetKeyIdAction()
+            public void TryPickLock()
             {
-                if (Constants.Keys.KeyLocale.ContainsKey(interactiveObject.KeyId))
-                {
-                    NotificationManagerClass.DisplayMessageNotification($"Key for door is {Constants.Keys.KeyLocale[interactiveObject.KeyId]}");
-                }
-
-                
-                AccessTools.Method(typeof(WorldInteractiveObject), "Unlock").Invoke(interactiveObject, null);
-
-                Plugin.Log.LogDebug($"Key ID for door {interactiveObject.Id} is {interactiveObject.KeyId}");
-            }
-
-            public static bool IsValidBlankKeyInInventory(string Id)
-            {
-                return Plugin.Session.Profile.Inventory.EquippedInSlotsTemplateIds.Where(x => x == Id).Any();
-            }
-
-            public static void SetBlankKeyToDoorKey(Item item, string doorKeyId)
-            {
-                if (item.GetItemComponent<KeyComponent>() != null)
-                {
-                    item.Template._id = doorKeyId;
-                }
+                LockPickingHelpers.PickLock(interactiveObject, owner);
             }
         }
-    }  
+
+        public sealed class LockInspectInteraction
+        {
+            public GamePlayerOwner owner;
+            public WorldInteractiveObject interactiveObject;
+
+            public LockInspectInteraction()
+            { }
+
+            public LockInspectInteraction(WorldInteractiveObject interactiveObject, GamePlayerOwner owner)
+            {
+                this.interactiveObject = interactiveObject ?? throw new ArgumentNullException("Interactive Object is Null...");
+                this.owner = owner ?? throw new ArgumentNullException("Owner is null...");
+            }
+
+            public void TryInspectLock()
+            {
+                if (Plugin.Keys.KeyLocale.ContainsKey(interactiveObject.KeyId))
+                {
+                    LockPickingHelpers.InspectDoor(interactiveObject, owner);
+                    return;
+                }
+
+                Plugin.Log.LogError($"Missing locale data for door {interactiveObject.Id} and key {interactiveObject.KeyId}");
+            }
+        }
+    }
 }

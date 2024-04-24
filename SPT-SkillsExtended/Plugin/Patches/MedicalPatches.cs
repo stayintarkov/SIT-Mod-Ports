@@ -1,9 +1,6 @@
 ﻿using Aki.Reflection.Patching;
 using EFT;
 using EFT.InventoryLogic;
-using EFT.UI;
-using HarmonyLib;
-using SkillsExtended.Helpers;
 using System.Linq;
 using System.Reflection;
 
@@ -31,17 +28,17 @@ namespace SkillsExtended.Patches
                 return;
             }
 
-            if (Constants.FIELD_MEDICINE_ITEM_LIST.Contains(meds.TemplateId))
+            if (Plugin.SkillData.MedicalSkills.FmItemList.Contains(meds.TemplateId) && Plugin.SkillData.MedicalSkills.EnableFieldMedicine)
             {
-                Plugin.MedicalScript.ApplyFieldMedicineExp(bodyPart);
+                Plugin.FieldMedicineScript.ApplyFieldMedicineExp(bodyPart);
                 Plugin.Log.LogDebug("Field Medicine Effect");
                 return;
             }
 
-            if (Constants.FIRST_AID_ITEM_LIST.Contains(meds.TemplateId))
+            if (Plugin.SkillData.MedicalSkills.FaItemList.Contains(meds.TemplateId) && Plugin.SkillData.MedicalSkills.EnableFirstAid)
             {
-                Plugin.MedicalScript.ApplyFirstAidExp(bodyPart);
-            }       
+                Plugin.FirstAidScript.ApplyFirstAidExp(bodyPart);
+            }
         }
     }
 
@@ -66,16 +63,15 @@ namespace SkillsExtended.Patches
                 return;
             }
 
-            if (Constants.FIELD_MEDICINE_ITEM_LIST.Contains(item.TemplateId))
+            if (Plugin.SkillData.MedicalSkills.FmItemList.Contains(item.TemplateId) && Plugin.SkillData.MedicalSkills.EnableFieldMedicine)
             {
-                Plugin.MedicalScript.ApplyFieldMedicineExp(EBodyPart.Common);
-                Plugin.Log.LogDebug("Field Medicine Effect");
+                Plugin.FieldMedicineScript.ApplyFieldMedicineExp(EBodyPart.Common);
                 return;
             }
 
-            if (Constants.FIRST_AID_ITEM_LIST.Contains(item.TemplateId))
+            if (Plugin.SkillData.MedicalSkills.FaItemList.Contains(item.TemplateId) && Plugin.SkillData.MedicalSkills.EnableFirstAid)
             {
-                Plugin.MedicalScript.ApplyFirstAidExp(EBodyPart.Common);
+                Plugin.FirstAidScript.ApplyFirstAidExp(EBodyPart.Common);
             }
         }
     }
