@@ -350,5 +350,19 @@
       "BorkelRNVG.dll"
     ],
     "ConfigFiles": []
+  },
+  {
+    "Name": "WTT - Pack 'n' Strap",
+    "Author": "GrooveypenguinX",
+    "SupportedVersion": "1.10.8869.3183",
+    "ModVersion": "1.0.3",
+    "PortVersion": "1.0.1",
+    "Description": "Gear up with Pack 'n' Strap - the perfect combo of Small Cases and an ALL NEW battle belt module, for all your early-game adventures.",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1790-wtt-pack-n-strap/",
+    "RequiresFiles": true,
+    "PluginFiles": [
+      "WTT-PackNStrap.dll"
+    ],
+    "ConfigFiles": []
   }
 ]
