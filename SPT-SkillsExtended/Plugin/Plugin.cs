@@ -18,7 +18,7 @@ using UnityEngine;
 
 namespace SkillsExtended
 {
-    [BepInPlugin("com.dirtbikercj.SkillsExtended", "Skills Extended", "0.5.2")]
+    [BepInPlugin("com.dirtbikercj.SkillsExtended", "Skills Extended", "0.5.3")]
     public class Plugin : BaseUnityPlugin
     {
         public const int TarkovVersion = 29351;

@@ -25,21 +25,37 @@ namespace SkillsExtended.Helpers
 
         public static void AddLockpickingInteraction(this WorldInteractiveObject interactiveObject, InteractionStates actionReturn, GamePlayerOwner owner)
         {
+            LockPickingInteraction lockPickInteraction = new(interactiveObject, owner);
+
             if (!IsDoorValidForLockPicking(interactiveObject))
             {
+                // Secondary check to prevent action showing on open or closed doors that have
+                // already been picked.
+                if (interactiveObject.DoorState == EDoorState.Open || interactiveObject.DoorState == EDoorState.Shut)
+                {
+                    return;
+                }
+
+                Action1 notValidAction = new()
+                {
+                    Name = "Door cannot be opened",
+                    Disabled = interactiveObject.Operatable
+                };
+
+                notValidAction.Action = new Action(lockPickInteraction.DoorNotValid);
+                actionReturn.Actions.Add(notValidAction);
+
                 return;
             }
 
-            Action1 action = new()
+            Action1 ValidAction = new()
             {
                 Name = "Pick lock",
                 Disabled = !interactiveObject.Operatable && !LockPickingHelpers.GetLockPicksInInventory().Any()
             };
 
-            LockPickingInteraction pickLockAction = new(interactiveObject, owner);
-
-            action.Action = new Action(pickLockAction.TryPickLock);
-            actionReturn.Actions.Add(action);
+            ValidAction.Action = new Action(lockPickInteraction.TryPickLock);
+            actionReturn.Actions.Add(ValidAction);
         }
 
         public static void AddInspectInteraction(this WorldInteractiveObject interactiveObject, InteractionStates actionReturn, GamePlayerOwner owner)
@@ -100,6 +116,11 @@ namespace SkillsExtended.Helpers
             public void TryPickLock()
             {
                 LockPickingHelpers.PickLock(interactiveObject, owner);
+            }
+
+            public void DoorNotValid()
+            {
+                owner.DisplayPreloaderUiNotification("This door is cannot be opened.");
             }
         }
 

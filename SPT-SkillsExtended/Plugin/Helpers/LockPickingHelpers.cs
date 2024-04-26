@@ -7,6 +7,7 @@ using SkillsExtended.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace SkillsExtended.Helpers
 {
@@ -59,11 +60,22 @@ namespace SkillsExtended.Helpers
             {
                 var currentManagedState = owner.Player.CurrentManagedState;
                 var lpTime = CalculateTimeForAction(_lockPicking.PickBaseTime);
+                int level = GetLevelForDoor(owner.Player.Location, interactiveObject.Id);
+
+                // Return out if the door level is not found
+                if (level == -1)
+                {
+                    NotificationManagerClass.DisplayMessageNotification(
+                        $"ERROR: Door {interactiveObject.Id} on map {owner.Player.Location} not found in lookup table, sceenshot and report this error to the developer.",
+                        EFT.Communications.ENotificationDurationType.Long,
+                        EFT.Communications.ENotificationIconType.Alert);
+
+                    return;
+                }
+
+                float chanceForSuccess = CalculateChanceForSuccess(interactiveObject, owner);
 
                 owner.ShowObjectivesPanel("Picking lock {0:F1}", lpTime);
-
-                int level = GetLevelForDoor(owner.Player.Location, interactiveObject.Id);
-                float chanceForSuccess = CalculateChanceForSuccess(interactiveObject, owner);
 
                 if (chanceForSuccess > 80f)
                 {
@@ -95,6 +107,19 @@ namespace SkillsExtended.Helpers
 
         public static void InspectDoor(WorldInteractiveObject interactiveObject, GamePlayerOwner owner)
         {
+            int level = GetLevelForDoor(owner.Player.Location, interactiveObject.Id);
+
+            // Return out if the door level is not found
+            if (level == -1)
+            {
+                NotificationManagerClass.DisplayMessageNotification(
+                    $"ERROR: Door {interactiveObject.Id} on map {owner.Player.Location} not found in lookup table, sceenshot and report this error to the developer.",
+                    EFT.Communications.ENotificationDurationType.Long,
+                    EFT.Communications.ENotificationIconType.Alert);
+
+                return;
+            }
+
             // Only allow inspecting if the player is stationary
             if (Utils.IdleStateType.IsAssignableFrom(owner.Player.CurrentState.GetType()))
             {
@@ -124,11 +149,35 @@ namespace SkillsExtended.Helpers
             }
         }
 
+        /// <summary>
+        /// Get the door level given a location ID and door ID
+        /// </summary>
+        /// <param name="locationId"></param>
+        /// <param name="doorId"></param>
+        /// <returns>Door level if found, -1 if not found</returns>
         public static int GetLevelForDoor(string locationId, string doorId)
         {
-            return GetDoorLevelsForLocation(locationId)[doorId];
+            if (!LocationDoorIdLevels.ContainsKey(locationId))
+            {
+                Plugin.Log.LogError($"Could not find location ID: {locationId}");
+                return -1;
+            }
+
+            var locationLevels = LocationDoorIdLevels[locationId];
+
+            if (!locationLevels.ContainsKey(doorId))
+            {
+                Plugin.Log.LogError($"Could not find Door ID: {doorId} in location {locationId}");
+                return -1;
+            }
+
+            return locationLevels[doorId];
         }
 
+        /// <summary>
+        /// Get any lockpick in the players equipment inventory
+        /// </summary>
+        /// <returns>All lockpick items in the players inventory</returns>
         public static IEnumerable<Item> GetLockPicksInInventory()
         {
             return Plugin.Session.Profile.Inventory.GetPlayerItems(EPlayerItems.Equipment)
@@ -195,14 +244,11 @@ namespace SkillsExtended.Helpers
             int level = _skills.Lockpicking.Level;
             bool isElite = _skills.Lockpicking.IsEliteLevel;
 
-            return isElite
-                ? (baseTime * (1 - (level * _lockPicking.TimeReductionElite)))
-                : (baseTime * (1 - (level * _lockPicking.TimeReduction)));
-        }
+            float accumulatedRecution = isElite
+                ? Mathf.Max(level * _lockPicking.TimeReduction + _lockPicking.TimeReductionElite, 0f)
+                : Mathf.Max(level * _lockPicking.TimeReduction, 0f);
 
-        private static Dictionary<string, int> GetDoorLevelsForLocation(string locationId)
-        {
-            return LocationDoorIdLevels[locationId];
+            return (baseTime * (1 - accumulatedRecution));
         }
 
         private sealed class LockPickActionHandler
@@ -245,12 +291,12 @@ namespace SkillsExtended.Helpers
 
                         // Apply failure xp
                         ApplyLockPickActionXp(InteractiveObject, Owner, false, true);
-                        RemoveUseFromLockpick();
+                        RemoveUseFromLockpick(doorLevel);
 
                         return;
                     }
 
-                    RemoveUseFromLockpick();
+                    RemoveUseFromLockpick(doorLevel);
                     ApplyLockPickActionXp(InteractiveObject, Owner);
                     AccessTools.Method(typeof(WorldInteractiveObject), "Unlock").Invoke(InteractiveObject, null);
                 }
@@ -260,11 +306,14 @@ namespace SkillsExtended.Helpers
                 }
             }
 
-            private void RemoveUseFromLockpick()
+            private void RemoveUseFromLockpick(int doorLevel)
             {
-#if DEBUG
-                return;
-#endif
+                int levelDifference = _skills.Lockpicking.Level - doorLevel;
+
+                if (doorLevel >= 10)
+                {
+                    return;
+                }
 
                 // Remove a use from a lockpick in the inventory
                 var lockPicks = GetLockPicksInInventory();
