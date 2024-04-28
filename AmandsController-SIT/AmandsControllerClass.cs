@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using EFT.UI;
 using EFT;
@@ -20,7 +20,6 @@ using System.IO;
 using Newtonsoft.Json;
 using UnityEngine.Networking;
 using TMPro;
-using UnityEngine.Events;
 using EFT.Interactive;
 using System.Net;
 using UnityEngine.Rendering;
@@ -566,16 +565,16 @@ namespace AmandsController
         }
         public void Start()
         {
-            ItemUIContextMethod_0 = typeof(ItemUiContext).GetMethod("method_0", BindingFlags.Instance | BindingFlags.NonPublic);
-            TranslateInput = typeof(InputTree).GetMethod("TranslateInput", BindingFlags.Instance | BindingFlags.NonPublic);
+            ItemUIContextMethod_0 = typeof(ItemUiContext).GetMethod("method_0", BindingFlags.Instance | BindingFlags.Public);
+            TranslateInput = typeof(InputTree).GetMethod("TranslateInput", BindingFlags.Instance | BindingFlags.Public);
             ButtonPress = typeof(Button).GetMethod("Press", BindingFlags.Instance | BindingFlags.NonPublic);
-            ExecuteMiddleClick = typeof(ItemView).GetMethod("ExecuteMiddleClick", BindingFlags.Instance | BindingFlags.NonPublic);
+            ExecuteMiddleClick = typeof(ItemView).GetMethod("ExecuteMiddleClick", BindingFlags.Instance | BindingFlags.Public);
             QuickFindAppropriatePlace = typeof(ItemUiContext).GetMethod("QuickFindAppropriatePlace", BindingFlags.Instance | BindingFlags.Public);
-            CanExecute = typeof(ItemController).GetMethod("CanExecute", BindingFlags.Instance | BindingFlags.Public);
-            RunNetworkTransaction = typeof(ItemController).GetMethod("RunNetworkTransaction", BindingFlags.Instance | BindingFlags.Public);
-            ShowContextMenu = typeof(ItemView).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
+            CanExecute = typeof(TraderControllerClass).GetMethod("CanExecute", BindingFlags.Instance | BindingFlags.Public);
+            RunNetworkTransaction = typeof(TraderControllerClass).GetMethod("RunNetworkTransaction", BindingFlags.Instance | BindingFlags.Public);
+            ShowContextMenu = typeof(ItemView).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.Public);
             CalculateRotatedSize = typeof(Item).GetMethod("CalculateRotatedSize", BindingFlags.Instance | BindingFlags.Public);
-            DraggedItemViewMethod_2 = typeof(DraggedItemView).GetMethod("method_2", BindingFlags.Instance | BindingFlags.NonPublic);
+            DraggedItemViewMethod_2 = typeof(DraggedItemView).GetMethod("method_2", BindingFlags.Instance | BindingFlags.Public);
 
             onAmandsControllerButtonState += ControllerButtonStateMethod;
 
@@ -1384,7 +1383,7 @@ namespace AmandsController
                     firearmController.AdjustShotVectors(ref AimPosition, ref AimDirection);
                 }
                 colliders = new Collider[100];
-                colliderCount = Physics.OverlapCapsuleNonAlloc(AimPosition, AimPosition + (AimDirection * 100f), AmandsControllerPlugin.Radius.Value, colliders, AimAssistLayerMask, QueryTriggerInteraction.Ignore);
+                colliderCount = Physics.OverlapCapsuleNonAlloc(AimPosition, AimPosition + (AimDirection * 200f), AmandsControllerPlugin.Radius.Value, colliders, AimAssistLayerMask, QueryTriggerInteraction.Ignore);
 
                 ScreenSize = new Vector2(Screen.width, Screen.height);
                 ScreenSizeRatioMultiplier = new Vector2(1f, (float)(Screen.height) / (float)(Screen.width));
@@ -4593,10 +4592,10 @@ namespace AmandsController
                 }
                 if (!onPointerEnterItemView.IsSearched && ExecuteMiddleClick != null && (bool)ExecuteMiddleClick.Invoke(onPointerEnterItemView, null)) return;
                 if (ItemUiContext == null || !onPointerEnterItemView.IsSearched) return;
-                ItemController ItemController = Traverse.Create(onPointerEnterItemView).Field("ItemController").GetValue<ItemController>();
+                TraderControllerClass ItemController = Traverse.Create(onPointerEnterItemView).Field("ItemController").GetValue<TraderControllerClass>();
                 if (ExecuteInteraction != null && IsInteractionAvailable != null)
                 {
-                    if (onPointerEnterItemView.Item is FoodDrink || onPointerEnterItemView.Item is Meds)
+                    if (onPointerEnterItemView.Item is FoodClass || onPointerEnterItemView.Item is MedsClass)
                     {
                         ExecuteInteractionInvokeParameters[0] = EItemInfoButton.Use;
                         if (!(bool)ExecuteInteraction.Invoke(NewContextInteractionsObject, ExecuteInteractionInvokeParameters))
@@ -4651,7 +4650,7 @@ namespace AmandsController
                 pointerEventData.position = globalPosition;
                 ItemUiContext ItemUiContext = ItemUiContext.Instance;
                 if (ItemUiContext == null || !onPointerEnterItemView.IsSearched) return;
-                ItemController ItemController = Traverse.Create(onPointerEnterItemView).Field("ItemController").GetValue<ItemController>();
+                TraderControllerClass ItemController = Traverse.Create(onPointerEnterItemView).Field("ItemController").GetValue<TraderControllerClass>();
                 SimpleTooltip tooltip = ItemUiContext.Tooltip;
                 object ItemContext = Traverse.Create(onPointerEnterItemView).Property("ItemContext").GetValue<object>();
                 if (ItemContext != null)
@@ -4732,7 +4731,7 @@ namespace AmandsController
             }
             if (!Dragging && pointerEventData != null && onPointerEnterItemView != null && onPointerEnterItemView.gameObject.activeSelf)
             {
-                ItemController ItemController = Traverse.Create(onPointerEnterItemView).Field("ItemController").GetValue<ItemController>();
+                TraderControllerClass ItemController = Traverse.Create(onPointerEnterItemView).Field("ItemController").GetValue<TraderControllerClass>();
                 if (ItemController != null)
                 {
                     bool IsBeingLoadedMagazine = Traverse.Create(Traverse.Create(onPointerEnterItemView).Property("IsBeingLoadedMagazine").GetValue<object>()).Field("gparam_0").GetValue<bool>();
@@ -5206,17 +5205,17 @@ namespace AmandsController
                     if ((bool)IsInteractionAvailable.Invoke(NewContextInteractionsObject, IsInteractionAvailableInvokeParameters)) return "Examine";
                 }
                 if (ItemUiContext == null || !onPointerEnterItemView.IsSearched) return "";
-                ItemController ItemController = Traverse.Create(onPointerEnterItemView).Field("ItemController").GetValue<ItemController>();
+                TraderControllerClass ItemController = Traverse.Create(onPointerEnterItemView).Field("ItemController").GetValue<TraderControllerClass>();
                 if (onPointerEnterItemView.Item != null && ExecuteInteraction != null && IsInteractionAvailable != null && !Hold)
                 {
-                    if (onPointerEnterItemView.Item is FoodDrink)
+                    if (onPointerEnterItemView.Item is FoodClass)
                     {
                         IsInteractionAvailableInvokeParameters[0] = EItemInfoButton.Use;
                         if ((bool)IsInteractionAvailable.Invoke(NewContextInteractionsObject, IsInteractionAvailableInvokeParameters)) return "Consume";
                         IsInteractionAvailableInvokeParameters[0] = EItemInfoButton.UseAll;
                         if ((bool)IsInteractionAvailable.Invoke(NewContextInteractionsObject, IsInteractionAvailableInvokeParameters)) return "Consume";
                     }
-                    if (onPointerEnterItemView.Item is Meds)
+                    if (onPointerEnterItemView.Item is MedsClass)
                     {
                         IsInteractionAvailableInvokeParameters[0] = EItemInfoButton.Use;
                         if ((bool)IsInteractionAvailable.Invoke(NewContextInteractionsObject, IsInteractionAvailableInvokeParameters)) return "Use";
