@@ -351,18 +351,4 @@
     ],
     "ConfigFiles": []
   },
-  {
-    "Name": "Fontaine's Always Level Endurance (ALE)",
-    "Author": "Fontaine",
-    "SupportedVersion": "1.10.8882.41069",
-    "ModVersion": "1.1.0",
-    "PortVersion": "1.0.0",
-    "Description": "Let's you level Endurance skill while overweight.",
-    "ModUrl": "https://hub.sp-tarkov.com/files/file/937-fontaine-s-always-level-endurance-ale/",
-    "RequiresFiles": true,
-    "PluginFiles": [
-      "Endurance.dll"
-    ],
-    "ConfigFiles": []
-  }
 ]
