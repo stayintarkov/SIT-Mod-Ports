@@ -27,7 +27,11 @@ namespace SAIN.Helpers
                             float speedFactor = CalcVelocityFactor(weapon);
                             bool subsonic = IsSubsonic(weapon.CurrentAmmoTemplate.InitialSpeed, speedFactor);
                             float supModifier = GetSuppressorMod(subsonic, soundType);
-                            float muzzleLoudness = GetMuzzleLoudness(weapon.Mods);
+
+                            // Not ideal change, need to look into a more performant way to do this most likely.
+                            // float muzzleLoudness = GetMuzzleLoudness(weapon.Mods);
+                            float muzzleLoudness = GetMuzzleLoudness(weapon.Mods.ToArray());
+
                             float baseAudibleRange = AudibleRange(weapon.Template.ammoCaliber);
 
                             float result = (supModifier * muzzleLoudness * baseAudibleRange).Round10();
@@ -65,24 +69,23 @@ namespace SAIN.Helpers
             return 2f - weapon.SpeedFactor;
         }
 
-        private static float GetMuzzleLoudness(IEnumerable<Mod> mods)
+        private static float GetMuzzleLoudness(Mod[] mods)
         {
             if (!ModDetection.RealismLoaded)
             {
                 return 1f;
             }
             float loudness = 0f;
-            var enumerable = mods as Mod[] ?? mods.ToArray();
-            for (int i = 0; i < enumerable.Length; i++)
+            for (int i = 0; i < mods.Length; i++)
             {
                 //if the muzzle device has a silencer attached to it then it shouldn't contribute to the loudness stat.
-                if (enumerable[i].Slots.Length > 0 && enumerable[i].Slots[0].ContainedItem != null && IsSilencer((Mod)enumerable[i].Slots[0].ContainedItem))
+                if (mods[i].Slots.Length > 0 && mods[i].Slots[0].ContainedItem != null && IsSilencer((Mod)mods[i].Slots[0].ContainedItem))
                 {
                     continue;
                 }
                 else
                 {
-                    loudness += enumerable[i].Template.Loudness;
+                    loudness += mods[i].Template.Loudness;
                 }
             }
             return (loudness / 200) + 1f;

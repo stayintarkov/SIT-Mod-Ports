@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -10,49 +10,50 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<Reference Include="0Harmony">
-	  <HintPath>..\References\0Harmony.dll</HintPath>
-	</Reference>
-	<Reference Include="Assembly-CSharp">
-	  <HintPath>..\References\Assembly-CSharp.dll</HintPath>
-	</Reference>
-	<Reference Include="BepInEx">
-	  <HintPath>..\References\BepInEx.dll</HintPath>
-	</Reference>
-	<Reference Include="Comfort">
-	  <HintPath>..\References\Comfort.dll</HintPath>
-	</Reference>
+    <Reference Include="Aki.Reflection">
+	  <HintPath>..\References\Aki.Reflection.dll</HintPath>
+    </Reference>
 	<Reference Include="ItemComponent.Types">
 	  <HintPath>..\References\ItemComponent.Types.dll</HintPath>
-	</Reference>
-	<Reference Include="Sirenix.Serialization">
-	  <HintPath>..\References\Sirenix.Serialization.dll</HintPath>
-	</Reference>
-    <Reference Include="StayInTarkov">
-      <HintPath>..\References\StayInTarkov.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Postprocessing.Runtime">
-      <HintPath>..\References\Unity.Postprocessing.Runtime.dll</HintPath>
+    <Reference Include="Comfort">
+	  <HintPath>..\References\Comfort.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\References\UnityEngine.dll</HintPath>
+    <Reference Include="Assembly-CSharp">
+	  <HintPath>..\References\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
+	<Reference Include="UnityEngine">
+	  <HintPath>..\References\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule">
-      <HintPath>..\References\UnityEngine.InputLegacyModule.dll</HintPath>
+	  <HintPath>..\References\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>..\References\UnityEngine.UI.dll</HintPath>
+    <Reference Include="UnityEngine.CoreModule">
+	  <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+	<Reference Include="UnityEngine.UIModule">
+	  <HintPath>..\References\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+	  <Reference Include="Sirenix.Serialization">
+	  <HintPath>..\References\Sirenix.Serialization.dll</HintPath>
+    </Reference>
+	  <Reference Include="Unity.Postprocessing.Runtime">
+	  <HintPath>..\References\Unity.Postprocessing.Runtime.dll</HintPath>
+    </Reference>
+	  
+    <PackageReference Include="BepInEx.Analyzers" Version="1.0.8" PrivateAssets="all">
+		<ExcludeAssets>runtime</ExcludeAssets>
+		<IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+    <PackageReference Include="BepInEx.Core" Version="5.4.21">
+		<ExcludeAssets>runtime</ExcludeAssets>
+	</PackageReference>
+    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0">
+		<ExcludeAssets>runtime</ExcludeAssets>
+	</PackageReference>
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
-  
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="COPY &quot;$(TargetDir)$(TargetName)$(TargetExt)&quot; &quot;$(SolutionDir)Ref\plugins&quot;" />
-  </Target>
 </Project>

@@ -1,4 +1,5 @@
 ﻿using BepInEx.Logging;
+using Comfort.Common;
 using EFT;
 using SAIN.Components;
 using SAIN.SAINComponent;
@@ -47,6 +48,10 @@ namespace SAIN.SAINComponent.Classes
                 {
                     EnemyIDsToRemove.Add(id);
                 }
+                else
+                {
+                    enemy.UpdateHearStatus();
+                }
             }
 
             foreach (string idToRemove in EnemyIDsToRemove)
@@ -55,6 +60,11 @@ namespace SAIN.SAINComponent.Classes
             }
 
             EnemyIDsToRemove.Clear();
+        }
+
+        public void UpdateHeardEnemy(bool canHear, string id)
+        {
+
         }
 
         public void Update()
@@ -66,6 +76,15 @@ namespace SAIN.SAINComponent.Classes
         public void Dispose()
         {
             Enemies?.Clear();
+        }
+
+        public SAINEnemyClass GetEnemy(string id)
+        {
+            if (Enemies.ContainsKey(id))
+            {
+                return Enemies[id];
+            }
+            return null;
         }
 
         public bool HasEnemy => ActiveEnemy?.EnemyPerson?.IsActive == true;
@@ -114,17 +133,7 @@ namespace SAIN.SAINComponent.Classes
                 }
                 else
                 {
-                    SAINPersonClass enemySAINPerson;
-                    BotOwner botOwner = IPlayer.AIData.BotOwner;
-                    if (botOwner != null && botOwner.TryGetComponent(out SAINComponentClass enemySAIN))
-                    {
-                        enemySAINPerson = enemySAIN.Person;
-                    }
-                    else
-                    {
-                        enemySAINPerson = new SAINPersonClass(IPlayer);
-                    }
-
+                    SAINPersonClass enemySAINPerson = GetSAINPerson(IPlayer);
                     ActiveEnemy = new SAINEnemyClass(SAIN, enemySAINPerson);
                     Enemies.Add(id, ActiveEnemy);
                 }
@@ -133,6 +142,52 @@ namespace SAIN.SAINComponent.Classes
             {
                 ActiveEnemy = null;
             }
+        }
+
+        private static SAINPersonClass GetSAINPerson(IPlayer IPlayer)
+        {
+            SAINPersonClass enemySAINPerson = null;
+            BotOwner botOwner = IPlayer.AIData.BotOwner;
+            if (botOwner != null && botOwner.TryGetComponent(out SAINComponentClass enemySAIN))
+            {
+                //Logger.LogWarning("SAINPerson Found for AI");
+                enemySAINPerson = enemySAIN.Person;
+            }
+            else if (IPlayer.IsYourPlayer)
+            {
+                Player player = Singleton<GameWorld>.Instance?.MainPlayer;
+
+                if (player == null)
+                {
+                    //Logger.LogError("MainPlayer Null");
+                    return new SAINPersonClass(IPlayer);
+                }
+
+                SAINMainPlayerComponent mainPlayerComponent = player.GetComponent<SAINMainPlayerComponent>();
+
+                if (mainPlayerComponent == null)
+                {
+                    //Logger.LogError("mainPlayerComponent Null");
+                    return new SAINPersonClass(IPlayer);
+                }
+
+                if (mainPlayerComponent.SAINPerson != null)
+                {
+                    //Logger.LogWarning("SAINPerson Found for MAIN PLAYER");
+                    enemySAINPerson = mainPlayerComponent.SAINPerson;
+                }
+                else
+                {
+                    //Logger.LogError("SAINPerson Found for MAIN PLAYER but it is NULL");
+                    enemySAINPerson = new SAINPersonClass(IPlayer);
+                }
+            }
+            else
+            {
+                //Logger.LogWarning("No SAINPerson Found");
+                enemySAINPerson = new SAINPersonClass(IPlayer);
+            }
+            return enemySAINPerson;
         }
 
         public readonly Dictionary<string, SAINEnemyClass> Enemies = new Dictionary<string, SAINEnemyClass>();

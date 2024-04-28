@@ -22,7 +22,8 @@ namespace SAIN.Layers.Combat.Solo
 
         public override void Update()
         {
-            if (SAIN.Enemy == null)
+            SAINEnemyClass enemy = SAIN.Enemy;
+            if (enemy == null)
             {
                 return;
             }
@@ -30,18 +31,31 @@ namespace SAIN.Layers.Combat.Solo
             SAIN.Mover.SetTargetPose(1f);
             SAIN.Mover.SetTargetMoveSpeed(1f);
             SAIN.Steering.SteerByPriority(false);
-            bool EnemyVisible = SAIN.Enemy.IsVisible;
-            if (EnemyVisible && BackUp(out var pos))
+            bool EnemyVisible = enemy.IsVisible;
+
+            if (UpdateMovementTimer < Time.time)
             {
-                BotOwner.GoToPoint(pos, false, -1, false, false, false);
-            }
-            else if (!EnemyVisible && (SAIN.Enemy.EnemyPosition - BotOwner.Position).sqrMagnitude > 2f)
-            {
-                BotOwner.MoveToEnemyData.TryMoveToEnemy(SAIN.Enemy.EnemyPosition);
+                UpdateMovementTimer = Time.time + 0.15f;
+                if (EnemyVisible 
+                    && BackUp(out var pos))
+                {
+                    BotOwner.GoToPoint(pos, false, -1, false, false, false);
+                }
+                else if (!EnemyVisible 
+                    && CheckMoveToEnemyTimer < Time.time
+                    && enemy.Path.PathToEnemyStatus == NavMeshPathStatus.PathComplete 
+                    && (enemy.EnemyPosition - BotOwner.Position).sqrMagnitude > 2f)
+                {
+                    CheckMoveToEnemyTimer = Time.time + 1f;
+                    BotOwner.MoveToEnemyData.TryMoveToEnemy(enemy.EnemyPosition);
+                }
             }
 
             Shoot.Update();
         }
+
+        private float UpdateMovementTimer = 0f;
+        private float CheckMoveToEnemyTimer = 0;
 
         private bool BackUp(out Vector3 trgPos)
         {

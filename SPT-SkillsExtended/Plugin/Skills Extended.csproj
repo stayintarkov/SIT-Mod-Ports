@@ -1,0 +1,79 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>SkillsExtended</AssemblyName>
+    <Description>New Skills!</Description>
+    <Version>1.0.0</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>latest</LangVersion>
+	<TargetSptAkiVersion>sptaki376</TargetSptAkiVersion>
+	<Configurations>Debug;Release;BETA</Configurations>
+	<RootNamespace>$(MSBuildProjectName.Replace(" ", ""))</RootNamespace>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<Reference Include="0Harmony">
+			<HintPath>../References\0Harmony.dll</HintPath>
+		</Reference>
+		<Reference Include="Aki.Common">
+			<HintPath>../References\Aki.Common.dll</HintPath>
+		</Reference>
+		<Reference Include="Aki.Reflection">
+			<HintPath>../References\Aki.Reflection.dll</HintPath>
+		</Reference>
+		<Reference Include="AnimationSystem.Types">
+		  <HintPath>../References\AnimationSystem.Types.dll</HintPath>
+		</Reference>
+		<Reference Include="Assembly-CSharp">
+		  <HintPath>../References\Assembly-CSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx">
+			<HintPath>../References\BepInEx.dll</HintPath>
+		</Reference>
+		<Reference Include="bsg.console.core">
+		  <HintPath>../References\bsg.console.core.dll</HintPath>
+		</Reference>
+		<Reference Include="Comfort">
+			<HintPath>../References\Comfort.dll</HintPath>
+		</Reference>
+		<Reference Include="ItemComponent.Types">
+			<HintPath>../References\ItemComponent.Types.dll</HintPath>
+		</Reference>
+		<Reference Include="Newtonsoft.Json">
+			<HintPath>../References\Newtonsoft.Json.dll</HintPath>
+		</Reference>
+		<Reference Include="Sirenix.Serialization">
+			<HintPath>../References\Sirenix.Serialization.dll</HintPath>
+		</Reference>
+		<Reference Include="Unity.TextMeshPro">
+			<HintPath>../References\Unity.TextMeshPro.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine">
+			<HintPath>../References\UnityEngine.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.AnimationModule">
+		  <HintPath>../References\UnityEngine.AnimationModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.AssetBundleModule">
+		  <HintPath>../References\UnityEngine.AssetBundleModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.AudioModule">
+			<HintPath>../References\UnityEngine.AudioModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
+			<HintPath>../References\UnityEngine.CoreModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.IMGUIModule">
+		  <HintPath>../References\UnityEngine.IMGUIModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.TextRenderingModule">
+		  <HintPath>../References\UnityEngine.TextRenderingModule.dll</HintPath>
+		</Reference>
+		<Reference Include="UnityEngine.UI">
+			<HintPath>../References\UnityEngine.UI.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+
+</Project>

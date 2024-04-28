@@ -48,10 +48,6 @@ namespace SAIN.SAINComponent.Classes
 
         protected virtual void ReadyToShoot()
         {
-            // Little fix for now. Can't think of a reason why Reloading is staying as true
-            typeof(BotReload)
-                .GetProperty("Reloading")
-                ?.SetValue(BotOwner.WeaponManager.Reload, false);
         }
 
         protected virtual Vector3? GetTarget()
@@ -110,6 +106,7 @@ namespace SAIN.SAINComponent.Classes
             : base(bot)
         {
         }
+
         public override void Update()
         {
             if (!this.botOwner_0.WeaponManager.HaveBullets)

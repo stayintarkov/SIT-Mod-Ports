@@ -97,7 +97,7 @@ namespace SAIN.SAINComponent.Classes.Info
         public WeaponInfo HolsterWeapon { get; private set; } = new WeaponInfo();
     }
 
-    public class WeaponInfo 
+    public class WeaponInfo
     {
         public void Update(Weapon weapon)
         {
@@ -107,16 +107,19 @@ namespace SAIN.SAINComponent.Classes.Info
 
             WeaponClass = EnumValues.ParseWeaponClass(weapon.Template.weapClass);
 
-            var mods = weapon.Mods;
-            var enumerable = mods as Mod[] ?? mods.ToArray();
-            for (int i = 0; i < enumerable.Length; i++)
+            // Another thing to fix later
+            var mods = weapon.Mods.ToArray();
+            // OLD:
+            // var mods = weapon.Mods;
+
+            for (int i = 0; i < mods.Length; i++)
             {
-                CheckMod(enumerable[i]);
-                if (enumerable[i].Slots.Length > 0)
+                CheckMod(mods[i]);
+                if (mods[i].Slots.Length > 0)
                 {
-                    for (int j = 0; j < enumerable[i].Slots.Length; j++)
+                    for (int j = 0; j < mods[i].Slots.Length; j++)
                     {
-                        Item containedItem = enumerable[i].Slots[j].ContainedItem;
+                        Item containedItem = mods[i].Slots[j].ContainedItem;
                         if (containedItem != null && containedItem is Mod mod)
                         {
                             Type modType = mod.GetType();
@@ -302,8 +305,8 @@ namespace SAIN.SAINComponent.Classes.Info
             {
                 Logger.LogInfo(
                     $" Found GearInfo for [{Player.Profile.Nickname}]:" +
-                    $" Body Armor Class: [{BodyArmorClass}]" + 
-                    $" Helmet Armor Class [{HelmetArmorClass}]" + 
+                    $" Body Armor Class: [{BodyArmorClass}]" +
+                    $" Helmet Armor Class [{HelmetArmorClass}]" +
                     $" Has Heavy Helmet? [{HasHeavyHelmet}]" +
                     $" Has EarPiece? [{HasEarPiece}]" +
                     $" Has Face Shield? [{HasFaceShield}]");

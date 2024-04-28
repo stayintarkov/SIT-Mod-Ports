@@ -8,6 +8,9 @@ namespace SAIN.Preset.BotSettings.SAINSettings.Categories
 {
     public class SAINCoreSettings
     {
+        [Hidden]
+        public bool SAINEnabled = true;
+
         [Default(160f)]
         [MinMax(45f, 180f)]
         public float VisibleAngle = 160f;

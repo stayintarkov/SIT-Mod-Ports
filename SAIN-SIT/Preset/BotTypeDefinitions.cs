@@ -13,25 +13,82 @@ namespace SAIN.Preset
         public string Description;
         public string Section;
         public WildSpawnType WildSpawnType;
+        public string BaseBrain;
     }
 
     public class BotTypeDefinitions
     {
-        public static readonly Dictionary<WildSpawnType, BotType> BotTypes = new Dictionary<WildSpawnType, BotType>();
-        public static readonly List<BotType> BotTypesList = CreateBotTypes();
-        public static readonly List<WildSpawnType> WildSpawnList = new List<WildSpawnType>();
+        public static Dictionary<WildSpawnType, BotType> BotTypes = new Dictionary<WildSpawnType, BotType>();
+        public static List<BotType> BotTypesList;
         public static readonly List<string> BotTypesNames = new List<string>();
 
         static BotTypeDefinitions()
         {
+            BotTypesList = ImportBotTypes();
             for (int i = 0; i < BotTypesList.Count; i++)
             {
-                var botType = BotTypesList[i];
-                var wildSpawn = botType.WildSpawnType;
+                BotType botType = BotTypesList[i];
+                WildSpawnType wildSpawn = botType.WildSpawnType;
 
                 BotTypesNames.Add(botType.Name);
-                WildSpawnList.Add(wildSpawn);
                 BotTypes.Add(wildSpawn, botType);
+            }
+        }
+
+        private static readonly string FileName = "BotTypes";
+
+        public static List<BotType> ImportBotTypes()
+        {
+            List<BotType> tempList = CreateBotTypes();
+
+            if (JsonUtility.Load.LoadObject(out List<BotType> importedList, FileName))
+            {
+                // Check that the imported list contains each entry created, to account for BotTypes being added with newer versions of EFT
+                CheckImportedList(importedList, tempList);
+                return importedList;
+            }
+            else
+            {
+                JsonUtility.SaveObjectToJson(tempList, FileName); 
+                return tempList;
+            }
+        }
+
+        private static void CheckImportedList(List<BotType> importedList, List<BotType> tempList)
+        {
+            for (int i = 0; i < tempList.Count; i++)
+            {
+                bool alreadyExists = false;
+                for (int j = 0; j < importedList.Count; j++)
+                {
+                    if (tempList[i].WildSpawnType == importedList[j].WildSpawnType)
+                    {
+                        alreadyExists = true;
+                        break;
+                    }
+                }
+                if (!alreadyExists)
+                {
+                    importedList.Add(tempList[i]);
+                }
+            }
+        }
+
+        public static void ExportBotTypes()
+        {
+            JsonUtility.SaveObjectToJson(BotTypesList, FileName);
+        }
+
+        public static BotType GetBotType(WildSpawnType wildSpawnType)
+        {
+            if (BotTypes.ContainsKey(wildSpawnType))
+            {
+                return BotTypes[wildSpawnType];
+            }
+            else
+            {
+                Logger.LogError($"WildSpawnType {wildSpawnType} does not exist in BotType Dictionary");
+                return BotTypes[WildSpawnType.assault];
             }
         }
 
@@ -80,6 +137,10 @@ namespace SAIN.Preset
                 new BotType{ WildSpawnType = WildSpawnType.bossBoar,                Name = "Kaban",                    Section = "Bosses" ,      Description = "Streets Boss" },
                 new BotType{ WildSpawnType = WildSpawnType.followerBoar,            Name = "Kaban Guard",              Section = "Followers" ,   Description = "Streets Boss Follower" },
                 new BotType{ WildSpawnType = WildSpawnType.bossBoarSniper,          Name = "Kaban Sniper",             Section = "Followers" ,   Description = "Streets Boss Follower Sniper" },
+
+                new BotType{ WildSpawnType = WildSpawnType.bossKolontay,            Name = "Kolontay",                 Section = "Bosses" ,      Description = "" },
+                new BotType{ WildSpawnType = WildSpawnType.followerKolontayAssault, Name = "Kolontay Assault",         Section = "Followers" ,   Description = "" },
+                new BotType{ WildSpawnType = WildSpawnType.followerKolontaySecurity,Name = "Kolontay Security",        Section = "Followers" ,   Description = "" },
             };
         }
     }

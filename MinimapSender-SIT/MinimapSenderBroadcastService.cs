@@ -17,35 +17,37 @@ namespace TechHappy.MinimapSender
     // This class handles the websocket server and it's events. Has a timer that sends the websocket message every interval (configured in F12 menu).
     public sealed class MinimapSenderBroadcastService : IDisposable
     {
-        
-        private readonly GamePlayerOwner _gamePlayerOwner; // GamePlayerOwner object that is sent from the mod's Controller object.        
-        private readonly Timer _timer; // The timer handles the sending of the map data updates over the websocket.        
-        private List<QuestMarkerInfo> _quests; // Array of quest data objects to be sent each message
-        private GameWorld _gameWorld;
+        private readonly GamePlayerOwner
+            _gamePlayerOwner; // GamePlayerOwner object that is sent from the mod's Controller object.        
+
+        private readonly Timer
+            _timer; // The timer handles the sending of the map data updates over the websocket.        
 
         public MinimapSenderBroadcastService(GamePlayerOwner gamePlayerOwner)
         {
-            _gameWorld = Singleton<GameWorld>.Instance;
             _gamePlayerOwner = gamePlayerOwner;
-
+            MinimapSenderPlugin.lastQuestUpdateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+            
             _timer = new Timer
             {
                 AutoReset = true,
                 Interval = 250, // Initial value that isn't used. Configured in StartBroadcastingPosition().
             };
+            _timer.Elapsed += HandleTimer;
+        }
 
-            _timer.Elapsed += (sender, args) =>
+        private void HandleTimer(object sender, ElapsedEventArgs args)
+        {
+            try
             {
-                try
-                {
-                    // Send a new map update message over the websocket.
-                    SendData();
-                }
-                catch (Exception e)
-                {
-                    MinimapSenderPlugin.MinimapSenderLogger.LogError($"Exception {e.GetType()} occured. Message: {e.Message}. StackTrace: {e.StackTrace}");
-                }
-            };
+                // Send a new map update message over the websocket.
+                SendData();
+            }
+            catch (Exception e)
+            {
+                MinimapSenderPlugin.MinimapSenderLogger.LogError(
+                    $"Exception {e.GetType()} occured. Message: {e.Message}. StackTrace: {e.StackTrace}");
+            }
         }
 
         public void StartBroadcastingPosition(double interval = 250)
@@ -59,7 +61,8 @@ namespace TechHappy.MinimapSender
             }
             catch (Exception e)
             {
-                MinimapSenderPlugin.MinimapSenderLogger.LogError($"Exception {e.GetType()} occured. Message: {e.Message}. StackTrace: {e.StackTrace}");
+                MinimapSenderPlugin.MinimapSenderLogger.LogError(
+                    $"Exception {e.GetType()} occured. Message: {e.Message}. StackTrace: {e.StackTrace}");
             }
         }
 
@@ -88,42 +91,93 @@ namespace TechHappy.MinimapSender
             {
                 if (_gamePlayerOwner.Player != null)
                 {
-                    string msgType = "mapData";
-                    string mapName = _gamePlayerOwner.Player.Location;
-                    Vector3 playerPosition = _gamePlayerOwner.Player.Position;
-                    Vector2 playerRotation = _gamePlayerOwner.Player.Rotation;
-                    Vector3[] airdrops = { };
-
-                    if (MinimapSenderPlugin.ShowAirdrops.Value == true)
-                    {
-                        airdrops = MinimapSenderPlugin.airdrops.ToArray();
-                    }
-
-                    MinimapSenderPlugin._server.MulticastText(JsonConvert.SerializeObject(new
-                    {
-                        msgType = msgType,
-                        raidCounter = MinimapSenderPlugin.raidCounter,
-                        mapName = mapName,
-                        playerRotationX = playerRotation.x,
-                        playerPositionX = playerPosition.x,
-                        playerPositionZ = playerPosition.z,
-                        playerPositionY = playerPosition.y,
-                        airdrops = airdrops,
-                        quests = MinimapSenderPlugin.ShowQuestMarkers.Value ? _quests : new List<QuestMarkerInfo>() { }
-                    }));
+                    var msg = ConstructMapDataUpdateMessage();
+                    MinimapSenderPlugin._server.MulticastText(msg);
                 }
             }
             catch (Exception e)
             {
-                MinimapSenderPlugin.MinimapSenderLogger.LogError($"Exception {e.GetType()} occured. Message: {e.Message}. StackTrace: {e.StackTrace}");
+                MinimapSenderPlugin.MinimapSenderLogger.LogError(
+                    $"Exception {e.GetType()} occured. Message: {e.Message}. StackTrace: {e.StackTrace}");
             }
         }
 
-        public void UpdateQuestData(List<QuestMarkerInfo> questData)
+        private string ConstructMapDataUpdateMessage()
         {
-            _quests = questData;
-        }
+            string msgType = "mapData";
+            string mapName = _gamePlayerOwner.Player.Location;
+            Vector3[] airdrops = MinimapSenderPlugin.ShowAirdrops.Value
+                ? MinimapSenderPlugin.airdrops.ToArray()
+                : new Vector3[] { };
+            Vector3 playerPosition = _gamePlayerOwner.Player.Position;
+            Vector2 playerRotation = _gamePlayerOwner.Player.Rotation;
             
+            return JsonConvert.SerializeObject(new
+            {
+                msgType = msgType,
+                raidCounter = MinimapSenderPlugin.raidCounter,
+                mapName = mapName,
+                playerRotationX = playerRotation.x,
+                playerPositionX = playerPosition.x,
+                playerPositionZ = playerPosition.z,
+                playerPositionY = playerPosition.y,
+                airdrops = airdrops,
+                lastQuestChangeTime = MinimapSenderPlugin.lastQuestUpdateTime
+            });
+        }
+
+        private string ConstructSettingsResponseMessage()
+        {
+            return JsonConvert.SerializeObject(new
+            {
+                msgType = "settingsData",
+                showQuests = MinimapSenderPlugin.ShowQuestMarkers.Value,
+                showAirdrops = MinimapSenderPlugin.ShowAirdrops.Value
+            });
+        }
+
+        private string ConstructNewRaidMessage()
+        {
+            return JsonConvert.SerializeObject(new
+            {
+                msgType = "newRaid", 
+                raidCounter = MinimapSenderPlugin.raidCounter
+            });
+        }
+
+        private string ConstructAirdropMessage()
+        {
+            return JsonConvert.SerializeObject(new
+            {
+                msgType = "airdropData",
+                airdrop = MinimapSenderPlugin.airdrops.ToArray()
+            });
+        }
+
+        private string ConstructQuestDataMessage()
+        {
+            return JsonConvert.SerializeObject(new
+            {
+                msgType = "questData",
+                quests = MinimapSenderPlugin.quests.ToArray(),
+                newQuestChangeTime = MinimapSenderPlugin.lastQuestUpdateTime
+            });
+        }
+
+        private string ConstructBotPositionsMessage()
+        {
+            return JsonConvert.SerializeObject(new
+            {
+                msgType = "botPositions",
+            });
+        }
+
+        public void UpdateQuestData(List<QuestData> questData)
+        {
+            MinimapSenderPlugin.quests = questData;
+            MinimapSenderPlugin.lastQuestUpdateTime = DateTimeOffset.Now.ToUnixTimeSeconds();
+        }
+
 
         public void Dispose()
         {
@@ -135,7 +189,9 @@ namespace TechHappy.MinimapSender
 
 class WebsocketSession : WsSession
 {
-    public WebsocketSession(WsServer server) : base(server) { }
+    public WebsocketSession(WsServer server) : base(server)
+    {
+    }
 
     public override void OnWsConnected(HttpRequest request)
     {
@@ -147,40 +203,49 @@ class WebsocketSession : WsSession
         MinimapSenderPlugin.MinimapSenderLogger.LogInfo($"Minimap WebSocket session with Id {Id} disconnected!");
     }
 
+    /// <summary>
+    /// Called when a WebSocket session receives data.
+    /// When a "get_connect_address" event is received, it sends back a "connectAddress" message with the game's local IP
+    /// </summary>
+    /// <param name="buffer">The received data buffer.</param>
+    /// <param name="offset">The offset in the buffer where the received data starts.</param>
+    /// <param name="size">The size of the received data in bytes.</param>
     public override void OnWsReceived(byte[] buffer, long offset, long size)
     {
         string message = Encoding.UTF8.GetString(buffer, (int)offset, (int)size);
-        //MinimapSenderPlugin.MinimapSenderLogger.LogInfo("Incoming: " + message);
 
         var values = JsonConvert.DeserializeObject<Dictionary<string, string>>(message);
 
-        //MinimapSenderPlugin.MinimapSenderLogger.LogInfo(values["type"]);
-
-        if (values["type"] != null && values["type"] == "get_connect_address")
+        if (values["type"] != null)
         {
-            //string hostName = Dns.GetHostName(); // Retrive the Name of HOST
-            //var addressList = Dns.GetHostEntry(hostName);
-
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
+            if (values["type"] == "getConnectAddress")
             {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                var host = Dns.GetHostEntry(Dns.GetHostName());
+                foreach (var ip in host.AddressList)
                 {
-                    //MinimapSenderPlugin.MinimapSenderLogger.LogInfo("IP Address = " + ip.ToString());
-
-                    string msgType = "connectAddress";
-
-                    MinimapSenderPlugin._server.MulticastText(JsonConvert.SerializeObject(new
+                    if (ip.AddressFamily == AddressFamily.InterNetwork)
                     {
-                        msgType = msgType,
-                        ipAddress = ip.ToString(),
-                    }));
+                        MinimapSenderPlugin._server.MulticastText(JsonConvert.SerializeObject(new
+                        {
+                            msgType = "connectAddress",
+                            ipAddress = ip.ToString(),
+                        }));
 
-                    break;
+                        break;
+                    }
                 }
             }
+            else if (values["type"] == "getQuestData")
+            {
+                var quests = MinimapSenderPlugin.ShowQuestMarkers.Value ? MinimapSenderPlugin.quests : new List<QuestData>();
 
-            
+                MinimapSenderPlugin._server.MulticastText(JsonConvert.SerializeObject(new
+                {
+                    msgType = "questData",
+                    quests = quests,
+                    newQuestUpdateTime = MinimapSenderPlugin.lastQuestUpdateTime
+                }));
+            }
         }
     }
 
@@ -192,9 +257,14 @@ class WebsocketSession : WsSession
 
 class MinimapServer : WsServer
 {
-    public MinimapServer(IPAddress address, int port) : base(address, port) { }
+    public MinimapServer(IPAddress address, int port) : base(address, port)
+    {
+    }
 
-    protected override TcpSession CreateSession() { return new WebsocketSession(this); }
+    protected override TcpSession CreateSession()
+    {
+        return new WebsocketSession(this);
+    }
 
     protected override void OnError(SocketError error)
     {

@@ -134,7 +134,7 @@ namespace SAIN.SAINComponent.Classes.Sense
         static float MaxDazzleRange => SAINPlugin.LoadedPreset.GlobalSettings.Flashlight.MaxDazzleRange;
         static float Effectiveness => SAINPlugin.LoadedPreset.GlobalSettings.Flashlight.DazzleEffectiveness;
 
-        private void ApplyDazzle(float dazzleModif, float gainSightModif)
+        public void ApplyDazzle(float dazzleModif, float gainSightModif)
         {
             // If modifier is already applied, don't re-apply it
             if (Modifiers.Modifiers.IsApplyed)

@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net472</TargetFramework>
-		<Version>1.0.6</Version>
+		<Version>1.0.7</Version>
 		<Authors>TechHappy</Authors>
 		<AssemblyName>TechHappy.$(MSBuildProjectName)</AssemblyName>
 		<RootNamespace>TechHappy.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
@@ -15,8 +15,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Reference Include="0Harmony">
+			<HintPath>..\References\0Harmony.dll</HintPath>
+		</Reference>
+		<Reference Include="Aki.Reflection">
+			<HintPath>..\References\Aki.Reflection.dll</HintPath>
+		</Reference>
 		<Reference Include="Assembly-CSharp">
 			<HintPath>..\References\Assembly-CSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="BepInEx">
+			<HintPath>..\References\BepInEx.dll</HintPath>
 		</Reference>
 		<Reference Include="Comfort">
 			<HintPath>..\References\Comfort.dll</HintPath>

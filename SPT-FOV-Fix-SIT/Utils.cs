@@ -1,41 +1,46 @@
 ﻿using Comfort.Common;
 using EFT;
 using EFT.InventoryLogic;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Text;
+using UnityEngine;
 
 namespace FOVFix
 {
   public static class Utils
   {
-
         public static string CompactCollimator = "55818acf4bdc2dde698b456b";
         public static string Collimator = "55818ad54bdc2ddc698b4569";
         public static string AssaultScope = "55818add4bdc2d5b648b456f";
         public static string Scope = "55818ae44bdc2dde698b456c";
         public static string IronSight = "55818ac54bdc2d5b648b456e";
         public static string SpecialScope = "55818aeb4bdc2ddc698b456a";
-        public static Player ClientPlayer;
 
         public static string[] scopeTypes = new string[] { "55818acf4bdc2dde698b456b", "55818ad54bdc2ddc698b4569", "55818add4bdc2d5b648b456f", "55818ae44bdc2dde698b456c", "55818ac54bdc2d5b648b456e", "55818aeb4bdc2ddc698b456a" };
 
-        public static void CheckIsReady()
+        public static bool IsReady = false;
+        public static bool WeaponReady = false;
+
+        public static bool CheckIsReady()
         {
             GameWorld gameWorld = Singleton<GameWorld>.Instance;
             SessionResultPanel sessionResultPanel = Singleton<SessionResultPanel>.Instance;
 
-            if (ClientPlayer && ClientPlayer?.HandsController != null)
+            Player player = gameWorld?.MainPlayer;
+            if (player != null)
             {
-                Plugin.player = ClientPlayer;
-                if (ClientPlayer?.HandsController?.Item != null && ClientPlayer?.HandsController?.Item is Weapon)
-                {
-                    Plugin.WeaponReady = true;
-                }
+                Utils.WeaponReady = player?.HandsController != null && player?.HandsController?.Item != null && player?.HandsController?.Item is Weapon ? true : false;
             }
 
             if (gameWorld == null || gameWorld.AllAlivePlayersList == null || gameWorld.MainPlayer == null || sessionResultPanel != null)
             {
-                Plugin.IsReady = false;
+                Utils.IsReady = false;
+                return false;
             }
-            Plugin.IsReady = true;
+            Utils.IsReady = true;
+            return true;
         }
 
         public static bool IsSight(Mod mod)
@@ -44,7 +49,7 @@ namespace FOVFix
 
             foreach (string id in scopeTypes) 
             {
-                isScope = mod.GetType() == GClass2606.TypeTable[id] ? true : false;
+                isScope = mod.GetType() == GClass2752.TypeTable[id] ? true : false;
             }
 
             return isScope;
@@ -62,11 +67,13 @@ namespace FOVFix
                     return Plugin.ThreeADSMulti.Value;
                 case <= 4:
                     return Plugin.FourADSMulti.Value;
+                case <= 5:
+                    return Plugin.FiveADSMulti.Value;
                 case <= 6:
                     return Plugin.SixADSMulti.Value;
                 case <= 8:
                     return Plugin.EightADSMulti.Value;
-                case <=12:
+                case <= 12:
                     return Plugin.TwelveADSMulti.Value;
                 case <= 14:
                     return Plugin.FourteenADSMulti.Value;
