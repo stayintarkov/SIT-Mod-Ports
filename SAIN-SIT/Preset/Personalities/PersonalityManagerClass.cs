@@ -105,6 +105,7 @@ namespace SAIN.Preset.Personalities
                         CanRushEnemyReloadHeal = true,
                         ConstantTaunt = true,
                         AggressionMultiplier = 4f,
+                        ShiftCoverTimeMultiplier = 0.5f
                     }
                 };
 
@@ -165,6 +166,7 @@ namespace SAIN.Preset.Personalities
                         AggressionMultiplier = 0.65f,
                         Sneaky = true,
                         BaseSearchMoveSpeed = 0.2f,
+                        CanShiftCoverPosition = false
                     }
                 };
 
@@ -191,6 +193,7 @@ namespace SAIN.Preset.Personalities
                         SearchBaseTime = 120f,
                         AggressionMultiplier = 0.75f,
                         BaseSearchMoveSpeed = 0.65f,
+                        ShiftCoverTimeMultiplier = 0.66f
                     }
                 };
 
@@ -214,6 +217,7 @@ namespace SAIN.Preset.Personalities
                         SearchBaseTime = 65f,
                         AggressionMultiplier = 0.45f,
                         BaseSearchMoveSpeed = 0.35f,
+                        CanShiftCoverPosition = false
                     }
                 };
                 AddAllBotTypes(settings.Variables.AllowedTypes);

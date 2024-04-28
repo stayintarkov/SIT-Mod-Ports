@@ -4,12 +4,14 @@ using BepInEx.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
+using TechHappy.MinimapSender.Patches;
 using UnityEngine;
 
 namespace TechHappy.MinimapSender
 {
-    [BepInPlugin("com.techhappy.webminimap", "TechHappy.WebMinimap", "1.0.6")]
+    [BepInPlugin("com.techhappy.webminimap", "TechHappy.WebMinimap", "1.0.9")]
     public class MinimapSenderPlugin : BaseUnityPlugin
     {
         internal static ManualLogSource MinimapSenderLogger { get; private set; }
@@ -21,9 +23,11 @@ namespace TechHappy.MinimapSender
         internal static MinimapServer _server;
         internal static int raidCounter = 0;
 
-        // TODO: Move this to a better spot than a global
+        // TODO: Move these to a better spot than a global
         internal static List<Vector3> airdrops;
-
+        internal static List<QuestData> quests; // Array of quest data objects to be sent on quest data request
+        internal static long lastQuestUpdateTime = 0;
+        
         private void Awake()
         {
             MinimapSenderLogger = Logger;
@@ -52,7 +56,7 @@ namespace TechHappy.MinimapSender
             (
                 configSection,
                 "Refresh Interval (milliseconds)",
-                250,
+                200,
                 new ConfigDescription
                 (
                     "Map position refresh interval in milliseconds (1 second = 1000 milliseconds)",
@@ -100,6 +104,14 @@ namespace TechHappy.MinimapSender
                 int port = DestinationPort.Value;
                 // WebSocket server content path
                 string www = "BepInEx/plugins/TechHappy-MinimapSender/www";
+                
+                // Check if mod is installed in the correct location
+                if (!Directory.Exists(www))
+                {
+                    MinimapSenderLogger.LogError(
+                        "TechHappy-MinimapSender/www folder not found. Make sure the mod is installed in the correct location!");
+                    return;
+                }
 
                 MinimapSenderLogger.LogInfo($"WebSocket server port: {port}");
                 MinimapSenderLogger.LogInfo($"WebSocket server static content path: {www}");
@@ -126,8 +138,7 @@ namespace TechHappy.MinimapSender
             try
             {
                 // Enable patches
-                new MinimapSenderPatchCoop().Enable();
-                new MinimapSenderPatchLocal().Enable();
+                new OnGameStartedPatch().Enable();
                 new AirdropOnBoxLandPatch().Enable();
                 new TryNotifyConditionChangedPatch().Enable();
             }

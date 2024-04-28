@@ -13,6 +13,12 @@ namespace SAIN.SAINComponent.Classes.Decision
         {
         }
 
+        private static readonly float StartFirstAid_Injury_SeenRecentTime = 4f;
+        private static readonly float StartFirstAid_HeavyInjury_SeenRecentTime = 2f;
+        private static readonly float StartFirstAid_FatalInjury_SeenRecentTime = 1f;
+        private static readonly float StartReload_LowAmmo_SeenRecentTime = 3f;
+        private static readonly float StartSurgery_SeenRecentTime = 10f;
+
         public void Init()
         {
         }
@@ -192,6 +198,7 @@ namespace SAIN.SAINComponent.Classes.Decision
             return takeStims;
         }
 
+
         private bool StartFirstAid()
         {
             bool useFirstAid = false;
@@ -205,7 +212,7 @@ namespace SAIN.SAINComponent.Classes.Decision
                 else
                 {
                     var pathStatus = EnemyDistance;
-                    bool SeenRecent = enemy.TimeSinceSeen < 4f;
+                    bool SeenRecent = enemy.TimeSinceSeen < StartFirstAid_Injury_SeenRecentTime;
                     var status = SAIN;
                     if (status.Memory.Injured)
                     {
@@ -216,7 +223,7 @@ namespace SAIN.SAINComponent.Classes.Decision
                     }
                     else if (status.Memory.BadlyInjured)
                     {
-                        if (!enemy.InLineOfSight && pathStatus != EnemyPathDistance.VeryClose && enemy.TimeSinceSeen < 2f)
+                        if (!enemy.InLineOfSight && pathStatus != EnemyPathDistance.VeryClose && enemy.TimeSinceSeen < StartFirstAid_HeavyInjury_SeenRecentTime)
                         {
                             useFirstAid = true;
                         }
@@ -228,7 +235,7 @@ namespace SAIN.SAINComponent.Classes.Decision
                     }
                     else if (status.Memory.Dying)
                     {
-                        if (!enemy.InLineOfSight && enemy.TimeSinceSeen < 1f)
+                        if (!enemy.InLineOfSight && enemy.TimeSinceSeen < StartFirstAid_FatalInjury_SeenRecentTime)
                         {
                             useFirstAid = true;
                         }
@@ -278,6 +285,7 @@ namespace SAIN.SAINComponent.Classes.Decision
             return false;
         }
 
+
         private bool StartBotReload()
         {
             // Only allow reloading every 5 seconds to avoid spamming reload when the weapon data is bad
@@ -300,7 +308,7 @@ namespace SAIN.SAINComponent.Classes.Decision
                     {
                         needToReload = true;
                     }
-                    else if (enemy.TimeSinceSeen > 3f)
+                    else if (enemy.TimeSinceSeen > StartReload_LowAmmo_SeenRecentTime)
                     {
                         needToReload = true;
                     }
@@ -319,6 +327,7 @@ namespace SAIN.SAINComponent.Classes.Decision
             return needToReload;
         }
 
+
         private bool StartSurgery()
         {
             bool useSurgery = false;
@@ -333,7 +342,7 @@ namespace SAIN.SAINComponent.Classes.Decision
                 else
                 {
                     var pathStatus = enemy.CheckPathDistance();
-                    bool SeenRecent = enemy.TimeSinceSeen < 10f;
+                    bool SeenRecent = enemy.TimeSinceSeen < StartSurgery_SeenRecentTime;
 
                     if (!SeenRecent && pathStatus != EnemyPathDistance.VeryClose && pathStatus != EnemyPathDistance.Close)
                     {

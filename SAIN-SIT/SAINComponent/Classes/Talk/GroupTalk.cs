@@ -266,6 +266,10 @@ namespace SAIN.SAINComponent.Classes.Talk
             {
                 trigger = EPhraseTrigger.NeedHelp;
             }
+            else if (SAIN.Suppression.IsSuppressed)
+            {
+                trigger = EPhraseTrigger.UnderFire;
+            }
             else if (!HearNoise(out trigger, out var mask))
             {
                 if (SAIN.Enemy != null)

@@ -566,7 +566,6 @@ namespace SAIN.Preset.GlobalSettings.Categories
                 }
             },
             {
-                
                 Brain.Gifter, new BrainInfoClass()
                 {
                     Layers = new Dictionary<Layer, int>

@@ -26,86 +26,90 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>SAIN</RootNamespace>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '3.5.5|x86'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\3.5.5\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '3.5.7|x86'">
-    <DebugSymbols>false</DebugSymbols>
-    <OutputPath>bin\x86\3.5.7\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <DebugType>none</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
-    <ErrorReport>prompt</ErrorReport>
-    <Optimize>true</Optimize>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '3.5.8|x86'">
-    <OutputPath>bin\x86\3.5.8\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
-    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '3.6.0|x86'">
-    <OutputPath>bin\x86\3.6.0\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '3.5.5|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\3.5.5\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '3.7.0|x86'">
-    <OutputPath>bin\x86\3.7.0\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '3.5.7|AnyCPU'">
+    <OutputPath>bin\3.5.7\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '3.7.1|x86'">
-    <OutputPath>bin\x86\3.7.1\</OutputPath>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '3.5.8|AnyCPU'">
+    <OutputPath>bin\3.5.8\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '3.6.0|AnyCPU'">
+    <OutputPath>bin\3.6.0\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '3.7.0|AnyCPU'">
+    <OutputPath>bin\3.7.0\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '3.7.1|AnyCPU'">
+    <OutputPath>bin\3.7.1\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == '3.8.0|AnyCPU'">
+    <OutputPath>bin\3.8.0\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony">
+   <Reference Include="0Harmony">
       <HintPath>..\References\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Aki.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -235,9 +239,7 @@
     <Compile Include="Attributes\AttributesInfoClass.cs" />
     <Compile Include="Attributes\GUIEntryConfig.cs" />
     <Compile Include="BotController\Classes\BotSquads.cs" />
-    <Compile Include="Components\DebugData.cs" />
     <Compile Include="Components\Extract\ExtractFinderComponent.cs" />
-    <Compile Include="Components\Extract\ExtractPositionFinder.cs" />
     <Compile Include="Components\MainPlayer\BaseMainPlayer.cs" />
     <Compile Include="Components\MainPlayer\SAINCamoClass.cs" />
     <Compile Include="Components\MainPlayer\SAINMainPlayerComponent.cs" />
@@ -248,18 +250,18 @@
     <Compile Include="Editor\IEditorCache.cs" />
     <Compile Include="Editor\Util\ModifyLists.cs" />
     <Compile Include="Helpers\ComponentHelpers.cs" />
-    <Compile Include="Helpers\DebugHelpers.cs" />
     <Compile Include="Helpers\Extensions.cs" />
+    <Compile Include="Components\Extract\ExtractPositionFinder.cs" />
     <Compile Include="Helpers\ListHelpers.cs" />
     <Compile Include="Helpers\NavMeshHelpers.cs" />
     <Compile Include="Helpers\UpdateSettingClass.cs" />
     <Compile Include="Layers\DebugOverlay.cs" />
     <Compile Include="Layers\SAINAction.cs" />
     <Compile Include="Layers\SAINLayer.cs" />
+    <Compile Include="Plugin\AssemblyInfoClass.cs" />
     <Compile Include="Plugin\DependencyChecker.cs" />
     <Compile Include="Plugin\External.cs" />
-    <Compile Include="Plugin\Patches\BotOwnerBrainActivatePatch.cs" />
-    <Compile Include="Plugin\Patches\BotsControllerStopPatch.cs" />
+    <Compile Include="Plugin\ModDetection.cs" />
     <Compile Include="Plugin\SAINInterop.cs" />
     <Compile Include="Preset\BotSettings\SAINSettings\Categories\SAINBossSettings.cs" />
     <Compile Include="Preset\GlobalSettings\Categories\BigBrain\BotBrains.cs" />
@@ -268,6 +270,9 @@
     <Compile Include="Preset\GlobalSettings\Categories\BigBrain\DefaultBrainsClass.cs" />
     <Compile Include="Preset\GlobalSettings\Categories\BigBrain\Layer.cs" />
     <Compile Include="Preset\GlobalSettings\Categories\BigBrain\LayerInfoClass.cs" />
+    <Compile Include="Preset\GlobalSettings\Categories\BotBrainDefinition.cs" />
+    <Compile Include="Preset\GlobalSettings\Categories\BotBrainDefinitionInfoClass.cs" />
+    <Compile Include="Preset\Personalities\PersonalityVariablesClass.cs" />
     <Compile Include="Preset\SAINPresetDefinition.cs" />
     <Compile Include="SAINComponent\Classes\Decision\DecisionWrapper.cs" />
     <Compile Include="Layers\Extract\LootingBotsIntegration.cs" />
@@ -275,10 +280,12 @@
     <Compile Include="Editor\PresetSelection.cs" />
     <Compile Include="SAINComponent\Classes\ESearchMove.cs" />
     <Compile Include="Helpers\SealedClass\PointDirection.cs" />
+    <Compile Include="SAINComponent\Classes\Mover\SAINVaultClass.cs" />
     <Compile Include="SAINComponent\Classes\SAINBotUnstuckClass.cs" />
     <Compile Include="SAINComponent\Classes\SAINNotLooking.cs" />
     <Compile Include="SAINComponent\Classes\SAINSearchClass.cs" />
     <Compile Include="SAINComponent\Classes\Sense\SAINConcealment.cs" />
+    <Compile Include="SAINComponent\Classes\Sense\SAINBotSpaceAwareness.cs" />
     <Compile Include="SAINComponent\PersonBase\AIInfoClass.cs" />
     <Compile Include="SAINComponent\PersonBase\ISAINPerson.cs" />
     <Compile Include="SAINComponent\PersonBase\SAINPersonClass.cs" />
@@ -322,6 +329,7 @@
     <Compile Include="Helpers\Reflection.cs" />
     <Compile Include="Helpers\MathHelpers.cs" />
     <Compile Include="Layers\Combat\Solo\MoveToEngageAction.cs" />
+    <Compile Include="SAINComponent\Classes\SAINBotSuppressClass.cs" />
     <Compile Include="SAINComponent\SubComponents\CoverFinder\ColliderFinder.cs" />
     <Compile Include="SAINComponent\SubComponents\CoverFinder\CoverAnalyzer.cs" />
     <Compile Include="SAINComponent\SubComponents\CoverFinder\SpottedCoverPoint.cs" />
@@ -462,10 +470,9 @@
     <VisualStudio AllowExistingFolder="true" />
   </ProjectExtensions>
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PostBuildEvent>copy "$(TargetPath)" "$(ProjectDir)\..\..\BepInEx\plugins\$(TargetName).dll"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy "SAIN.dll" "$(SolutionDir)- Plugins\" /y </PostBuildEvent>
+    <PreBuildEvent>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File "$(ProjectDir)\Plugin\VersionChecker\setbuild.ps1"</PreBuildEvent>
   </PropertyGroup>
 </Project>

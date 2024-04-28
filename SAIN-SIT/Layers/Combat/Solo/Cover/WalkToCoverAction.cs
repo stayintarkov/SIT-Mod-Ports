@@ -36,17 +36,22 @@ namespace SAIN.Layers.Combat.Solo.Cover
 
             if (CoverDestination == null)
             {
-                if (FindTargetCover())
+                if (FindTargetCoverTimer < Time.time)
                 {
-                    if (SAIN.Mover.Prone.ShallProne(CoverDestination, true) || SAIN.Mover.Prone.IsProne)
+                    FindTargetCoverTimer = Time.time + 0.5f;
+
+                    if (FindTargetCover())
                     {
-                        SAIN.Mover.Prone.SetProne(true);
-                        SAIN.Mover.StopMove();
-                    }
-                    else
-                    {
-                        RecalcPathTimer = Time.time + 2f;
-                        MoveTo(DestinationPosition);
+                        if (SAIN.Mover.Prone.ShallProne(CoverDestination, true) || SAIN.Mover.Prone.IsProne)
+                        {
+                            SAIN.Mover.Prone.SetProne(true);
+                            SAIN.Mover.StopMove();
+                        }
+                        else
+                        {
+                            RecalcPathTimer = Time.time + 2f;
+                            MoveTo(DestinationPosition);
+                        }
                     }
                 }
             }
@@ -59,6 +64,7 @@ namespace SAIN.Layers.Combat.Solo.Cover
             EngageEnemy();
         }
 
+        private float FindTargetCoverTimer = 0f;
         private float RecalcPathTimer = 0f;
 
         private bool FindTargetCover()

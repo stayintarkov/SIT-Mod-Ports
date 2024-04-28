@@ -25,7 +25,7 @@ namespace SAIN.SAINComponent.Classes.Mover
         {
             var CurrentDecision = SAIN.Memory.Decisions.Main.Current;
             var enemy = SAIN.Enemy;
-            if (enemy == null || SAIN.Mover.IsSprinting || DontLean.Contains(CurrentDecision))
+            if (enemy == null || SAIN.Mover.IsSprinting || DontLean.Contains(CurrentDecision) || SAIN.Suppression.IsSuppressed)
             {
                 ResetLean();
                 return;

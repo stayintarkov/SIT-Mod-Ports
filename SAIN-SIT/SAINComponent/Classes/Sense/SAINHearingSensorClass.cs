@@ -60,7 +60,7 @@ namespace SAIN.SAINComponent.Classes
 
                     if (gunsound || IsSoundClose(distance))
                     {
-                        if (distance < 5f)
+                        if (distance < 15f)
                         {
                             try
                             {
@@ -106,7 +106,7 @@ namespace SAIN.SAINComponent.Classes
                 }
                 else
                 {
-                    range *= 0.9f;
+                    range *= 1.0f;
                 }
                 if (SAIN.Equipment.HasHeavyHelmet)
                 {
@@ -160,8 +160,12 @@ namespace SAIN.SAINComponent.Classes
             float dispNum = EFTMath.Random(-dispersion, dispersion);
             Vector3 vector = new Vector3(pos.x + dispNum, pos.y, pos.z + dispNum);
 
+            SAINEnemyClass enemy = SAIN.EnemyController?.GetEnemy(person.AccountId);
+
             if (wasHeard)
             {
+                enemy?.SetHeardStatus(wasHeard, pos);
+
                 try
                 {
                     BotOwner.BotsGroup.AddPointToSearch(vector, power, BotOwner);
@@ -178,48 +182,59 @@ namespace SAIN.SAINComponent.Classes
                     Vector3 to = vector + person.LookDirection;
                     bool soundclose = IsSoundClose(out var firedAtMe, vector, to, 10f);
 
-                    if (soundclose && firedAtMe)
+                    if (soundclose)
+                    {
+                        SAIN?.Suppression?.AddSuppression();
+                        if (firedAtMe)
+                        {
+                            try
+                            {
+                                SAIN.Memory.UnderFireFromPosition = vector;
+                                BotOwner.Memory.SetUnderFire(person);
+                            }
+                            catch (System.Exception) { }
+
+                            if (shooterDistance > 50f)
+                            {
+                                SAIN.Talk.Say(EPhraseTrigger.SniperPhrase);
+                            }
+                        }
+                    }
+
+                    if (!BotOwner.Memory.GoalTarget.HavePlaceTarget() && BotOwner.Memory.GoalEnemy == null)
                     {
                         try
                         {
-                            SAIN.Memory.UnderFireFromPosition = vector;
-                            BotOwner.Memory.SetUnderFire(person);
+                            BotOwner.BotsGroup.CalcGoalForBot(BotOwner);
                         }
-                        catch (System.Exception) { }
+                        catch { }
+                        return;
+                    }
+                }
+                else if (person != null && isGunSound && bulletfelt)
+                {
+                    Vector3 to = vector + person.LookDirection;
+                    bool soundclose = IsSoundClose(out var firedAtMe, vector, to, 10f);
 
-                        if (shooterDistance > 50f)
+                    if (soundclose)
+                    {
+                        SAIN?.Suppression?.AddSuppression();
+
+                        if (firedAtMe)
                         {
-                            SAIN.Talk.Say(EPhraseTrigger.SniperPhrase);
+                            Vector3 estimate = GetEstimatedPoint(vector);
+
+                            SAIN.Memory.UnderFireFromPosition = estimate;
+
+                            enemy?.SetHeardStatus(true, estimate);
+
+                            try
+                            {
+                                BotOwner.BotsGroup.AddPointToSearch(estimate, 50f, BotOwner);
+                            }
+                            catch (System.Exception) { }
                         }
                     }
-                }
-
-                if (!BotOwner.Memory.GoalTarget.HavePlaceTarget() && BotOwner.Memory.GoalEnemy == null)
-                {
-                    try
-                    {
-                        BotOwner.BotsGroup.CalcGoalForBot(BotOwner);
-                    }
-                    catch { }
-                    return;
-                }
-            }
-            else if (person != null && isGunSound && bulletfelt)
-            {
-                Vector3 to = vector + person.LookDirection;
-                bool soundclose = IsSoundClose(out var firedAtMe, vector, to, 10f);
-
-                if (firedAtMe && soundclose)
-                {
-                    var estimate = GetEstimatedPoint(vector);
-
-                    SAIN.Memory.UnderFireFromPosition = estimate;
-
-                    try
-                    {
-                        BotOwner.BotsGroup.AddPointToSearch(estimate, 50f, BotOwner);
-                    }
-                    catch (System.Exception) { }
                 }
             }
         }
@@ -236,12 +251,17 @@ namespace SAIN.SAINComponent.Classes
         private bool IsSoundClose(out bool firedAtMe, Vector3 from, Vector3 to, float maxDist)
         {
             var projectionPoint = GetProjectionPoint(BotOwner.Position + Vector3.up, from, to);
-
             bool closeSound = (projectionPoint - BotOwner.Position).magnitude < maxDist;
-
             var direction = projectionPoint - from;
 
-            firedAtMe = !Physics.Raycast(from, direction, direction.magnitude, LayerMaskClass.HighPolyWithTerrainMask);
+            firedAtMe = Vector3.Dot(direction, SAIN.Position - from) > 0.5f;
+            //firedAtMe = !Physics.Raycast(from, direction, direction.magnitude, LayerMaskClass.HighPolyWithTerrainMask);
+
+            if (SAINPlugin.DebugMode && SAINPlugin.EditorDefaults.DebugDrawProjectionPoints && closeSound)
+            {
+                DebugGizmos.Sphere(projectionPoint, 0.1f, Color.red, true, 3f);
+                DebugGizmos.Ray(projectionPoint, -direction, Color.red, 5f, 0.05f, true, 3f, true);
+            }
 
             return closeSound;
         }

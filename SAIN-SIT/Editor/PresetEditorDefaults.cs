@@ -37,5 +37,22 @@ namespace SAIN.Editor
         [Default(1f)]
         [MinMax(1f, 2f, 100f)]
         public float ConfigScaling = 1f;
+
+        [Name("Collect and Export Bot Layer and Brain Info")]
+        [Default(false)]
+        public bool CollectBotLayerBrainInfo = false;
+
+        [Name("Draw Debug Suppression Points")]
+        [Default(false)]
+        public bool DebugDrawProjectionPoints = false;
+
+        [Name("Path Safety Tester")]
+        [Default(false)]
+        public bool DebugEnablePathTester = false;
+
+        [Name("Draw Debug Path Safety Tester")]
+        [Default(false)]
+        public bool DebugDrawSafePaths = false;
+
     }
 }

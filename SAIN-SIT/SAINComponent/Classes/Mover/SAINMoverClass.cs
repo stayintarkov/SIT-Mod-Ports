@@ -53,21 +53,33 @@ namespace SAIN.SAINComponent.Classes.Mover
                 {
                     Prone.SetProne(true);
                 }
-                BotOwner.DoorOpener.Update();
+                BotOwner.DoorOpener?.Update();
                 return true;
             }
             return false;
         }
 
-        public bool CanGoToPoint(Vector3 point, out Vector3 pointToGo, bool mustHaveCompletePath = false, float navSampleRange = 10f)
+        public bool CanGoToPoint(Vector3 point, out Vector3 pointToGo, bool mustHaveCompletePath = false, float navSampleRange = 5f)
         {
             pointToGo = point;
-            if (NavMesh.SamplePosition(point, out var navHit, navSampleRange, -1))
+            if (NavMesh.SamplePosition(point, out NavMeshHit navHit, navSampleRange, -1))
             {
-                NavMeshPath Path = new NavMeshPath();
-                if (NavMesh.CalculatePath(SAIN.Transform.Position, navHit.position, -1, Path) && Path.corners.Length > 1)
+                if (CurrentPath == null)
                 {
-                    if (mustHaveCompletePath && Path.status != NavMeshPathStatus.PathComplete)
+                    CurrentPath = new NavMeshPath();
+                }
+                else
+                {
+                    CurrentPath.ClearCorners();
+                }
+                if (NavMesh.CalculatePath(SAIN.Transform.Position, navHit.position, -1, CurrentPath) && CurrentPath.corners.Length > 1)
+                {
+                    if (SAIN.HasEnemy)
+                    {
+                        SAINBotSpaceAwareness.CheckPathSafety(CurrentPath, SAIN.Enemy.EnemyHeadPosition);
+                    }
+                    
+                    if (mustHaveCompletePath && CurrentPath.status != NavMeshPathStatus.PathComplete)
                     {
                         return false;
                     }
@@ -77,6 +89,80 @@ namespace SAIN.SAINComponent.Classes.Mover
             }
             return false;
         }
+
+        public bool GoToPointNew(Vector3 point, float reachDist = -1f, bool crawl = false, bool mustHaveCompletePath = false, float navSampleRange = 3f)
+        {
+            if (FindPathToPoint(CurrentPath, point, mustHaveCompletePath, navSampleRange))
+            {
+                if (reachDist < 0f)
+                {
+                    reachDist = BotOwner.Settings.FileSettings.Move.REACH_DIST;
+                }
+                BotOwner.Mover.GoToByWay(CurrentPath.corners, reachDist);
+                if (crawl)
+                {
+                    Prone.SetProne(true);
+                }
+                BotOwner.DoorOpener.Update();
+                return true;
+            }
+            return false;
+        }
+
+        public bool CanGoToPointNew(Vector3 point, out Vector3 pointToGo, bool mustHaveCompletePath = false, float navSampleRange = 3f)
+        {
+            pointToGo = Vector3.zero;
+
+            if (NavMesh.SamplePosition(point, out var navHit, navSampleRange, -1))
+            {
+                if (CurrentPath == null)
+                {
+                    CurrentPath = new NavMeshPath();
+                }
+                else
+                {
+                    CurrentPath.ClearCorners();
+                }
+                if (NavMesh.CalculatePath(SAIN.Transform.Position, navHit.position, -1, CurrentPath) && CurrentPath.corners.Length > 1)
+                {
+                    if (mustHaveCompletePath && CurrentPath.status != NavMeshPathStatus.PathComplete)
+                    {
+                        return false;
+                    }
+                    pointToGo = navHit.position;
+
+                    //SAINVaultClass.FindVaultPoint(Player, Path, out SAINVaultPoint vaultPoint);
+
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public bool FindPathToPoint(NavMeshPath path, Vector3 pointToGo, bool mustHaveCompletePath = false, float navSampleRange = 3f)
+        {
+            if (path == null)
+            {
+                path = new NavMeshPath();
+            }
+
+            if (NavMesh.SamplePosition(pointToGo, out var navHit, navSampleRange, -1))
+            {
+                path.ClearCorners();
+                if (NavMesh.CalculatePath(SAIN.Transform.Position, navHit.position, -1, path) && path.corners.Length > 1)
+                {
+                    if (mustHaveCompletePath && path.status != NavMeshPathStatus.PathComplete)
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public NavMeshPath CurrentPath { get; private set; }
 
         private void SetStamina()
         {

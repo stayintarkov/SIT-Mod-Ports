@@ -66,7 +66,8 @@ namespace SAIN.Layers
                 var info = sain.Info;
                 var decisions = sain.Memory.Decisions;
                 stringBuilder.AppendLine($"Name: [{sain.Person.Name}] Personality: [{info.Personality}] Type: [{info.Profile.WildSpawnType}]");
-                stringBuilder.AppendLine($"Steering: [{sain.Steering.SteerPriority}]");
+                stringBuilder.AppendLine($"Steering: [{sain.Steering.CurrentSteerPriority}]");
+                stringBuilder.AppendLine($"Suppression Status: Num: [{sain.Suppression?.SuppressionNumber}] IsSuppressed: [{sain.Suppression?.IsSuppressed}] IsHeavySuppressed: [{sain.Suppression?.IsHeavySuppressed}] Stat Modifier: [{sain.Suppression?.SuppressionStatModifier}]");
 
                 stringBuilder.AppendLine();
                 stringBuilder.AppendLine("Decisions");
@@ -83,10 +84,10 @@ namespace SAIN.Layers
                 stringBuilder.AppendLabeledValue("Start Search + Hold Ground Time", $"{info.TimeBeforeSearch} + {info.HoldGroundDelay}", Color.white, Color.yellow, true);
                 stringBuilder.AppendLabeledValue("Difficulty + Modifier", $"{info.Profile.BotDifficulty} + {info.Profile.DifficultyModifier}", Color.white, Color.yellow, true);
 
-                stringBuilder.AppendLine();
-                stringBuilder.AppendLine("Aim Info");
-                stringBuilder.AppendLabeledValue("Shoot Modifier", $"{info.WeaponInfo.FinalModifier}", Color.white, Color.yellow, true);
-                AddAimData(botOwner, stringBuilder);
+                //stringBuilder.AppendLine();
+                //stringBuilder.AppendLine("Aim Info");
+                //stringBuilder.AppendLabeledValue("Shoot Modifier", $"{info.WeaponInfo.FinalModifier}", Color.white, Color.yellow, true);
+                //AddAimData(botOwner, stringBuilder);
             }
             catch (Exception ex)
             {

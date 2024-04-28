@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Donuts", "Donuts.csproj", "{967E5737-8917-4C2B-A0A4-B2B553498462}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{967E5737-8917-4C2B-A0A4-B2B553498462}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{967E5737-8917-4C2B-A0A4-B2B553498462}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{967E5737-8917-4C2B-A0A4-B2B553498462}.Debug|x64.ActiveCfg = Debug|x64
+		{967E5737-8917-4C2B-A0A4-B2B553498462}.Debug|x64.Build.0 = Debug|x64
+		{967E5737-8917-4C2B-A0A4-B2B553498462}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{967E5737-8917-4C2B-A0A4-B2B553498462}.Release|Any CPU.Build.0 = Release|Any CPU
+		{967E5737-8917-4C2B-A0A4-B2B553498462}.Release|x64.ActiveCfg = Release|x64
+		{967E5737-8917-4C2B-A0A4-B2B553498462}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A22BA89D-F884-4F59-9D1D-A5C72E1CD38D}
+	EndGlobalSection
+EndGlobal

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Reflection;
+﻿using Aki.Reflection.Patching;
 using EFT;
 using HarmonyLib;
-using StayInTarkov;
+using System;
+using System.Reflection;
 
-namespace dvize.Donuts
+namespace Donuts
 {
     internal class PatchStandbyTeleport : ModulePatch
     {
