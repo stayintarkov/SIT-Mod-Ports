@@ -29,6 +29,8 @@ namespace SAIN.SAINComponent.Classes.Decision
 
         private SAINSquadClass Squad => SAIN.Squad;
 
+        float SquaDDecision_DontDoSquadDecision_EnemySeenRecentTime = 3f;
+
         public bool GetDecision(out SquadDecision Decision)
         {
             Decision = SquadDecision.None;
@@ -36,7 +38,7 @@ namespace SAIN.SAINComponent.Classes.Decision
             {
                 return false;
             }
-            if (SAIN.Enemy?.IsVisible == true || SAIN.Enemy?.TimeSinceSeen < 3f)
+            if (SAIN.Enemy?.IsVisible == true || SAIN.Enemy?.TimeSinceSeen < SquaDDecision_DontDoSquadDecision_EnemySeenRecentTime)
             {
                 return false;
             }
@@ -54,6 +56,9 @@ namespace SAIN.SAINComponent.Classes.Decision
             return false;
         }
 
+        float SquaDecision_RadioCom_MaxDistSq = 1200f;
+        float SquadDecision_MyEnemySeenRecentTime = 5f;
+
         private bool EnemyDecision(out SquadDecision Decision)
         {
             Decision = SquadDecision.None;
@@ -63,7 +68,7 @@ namespace SAIN.SAINComponent.Classes.Decision
                 {
                     continue;
                 }
-                if (!HasRadioComms && (SAIN.Transform.Position - member.Transform.Position).sqrMagnitude > 1200f)
+                if (!HasRadioComms && (SAIN.Transform.Position - member.Transform.Position).sqrMagnitude > SquaDecision_RadioCom_MaxDistSq)
                 {
                     continue;
                 }
@@ -77,7 +82,7 @@ namespace SAIN.SAINComponent.Classes.Decision
                             Decision = SquadDecision.Suppress;
                             return true;
                         }
-                        if (myEnemy.IsVisible || myEnemy.TimeSinceSeen < 5f)
+                        if (myEnemy.IsVisible || myEnemy.TimeSinceSeen < SquadDecision_MyEnemySeenRecentTime)
                         {
                             return false;
                         }
@@ -99,12 +104,15 @@ namespace SAIN.SAINComponent.Classes.Decision
 
         private bool HasRadioComms => SAIN.Equipment.HasEarPiece;
 
+        float SquadDecision_SuppressFriendlyDistStart = 30f;
+        float SquadDecision_SuppressFriendlyDistEnd = 50f;
+
         private bool StartSuppression(SAINComponentClass member)
         {
             bool memberRetreat = member.Memory.Decisions.Main.Current == SoloDecision.Retreat;
             float memberDistance = (member.Transform.Position - BotOwner.Position).magnitude;
             float ammo = SAIN.Decision.SelfActionDecisions.AmmoRatio;
-            if (memberRetreat && memberDistance < 30f && ammo > 0.5f)
+            if (memberRetreat && memberDistance < SquadDecision_SuppressFriendlyDistStart && ammo > 0.5f)
             {
                 return true;
             }
@@ -117,7 +125,7 @@ namespace SAIN.SAINComponent.Classes.Decision
 
         private bool EndSuppresion(float memberDistance, bool memberRetreat, float ammoRatio)
         {
-            if (!memberRetreat || memberDistance >= 50f || ammoRatio <= 0.1f)
+            if (!memberRetreat || memberDistance >= SquadDecision_SuppressFriendlyDistEnd || ammoRatio <= 0.1f)
             {
                 return true;
             }
@@ -134,11 +142,15 @@ namespace SAIN.SAINComponent.Classes.Decision
             return false;
         }
 
+        float SquadDecision_StartHelpFriendDist = 15f;
+        float SquadDecision_EndHelpFriendDist = 25f;
+        float SquadDecision_EndHelp_FriendsEnemySeenRecentTime = 5f;
+
         private bool StartHelp(SAINComponentClass member)
         {
             float distance = member.Enemy.PathDistance;
             bool visible = member.Enemy.IsVisible;
-            if (distance < 15f && visible)
+            if (distance < SquadDecision_StartHelpFriendDist && visible)
             {
                 return true;
             }
@@ -151,12 +163,18 @@ namespace SAIN.SAINComponent.Classes.Decision
 
         private bool EndHelp(SAINComponentClass member, float distance)
         {
-            if (distance > 25 || member.Enemy.TimeSinceSeen > 5f)
+            if (distance > SquadDecision_EndHelpFriendDist || member.Enemy.TimeSinceSeen > SquadDecision_EndHelp_FriendsEnemySeenRecentTime)
             {
                 return true;
             }
             return false;
         }
+
+        float SquadDecision_Regroup_NoEnemy_StartDist = 125f;
+        float SquadDecision_Regroup_NoEnemy_EndDistance = 50f;
+        float SquadDecision_Regroup_Enemy_StartDist = 50f;
+        float SquadDecision_Regroup_Enemy_EndDistance = 15f;
+        float SquadDecision_Regroup_EnemySeenRecentTime = 60f;
 
         public bool StartRegroup()
         {
@@ -166,18 +184,18 @@ namespace SAIN.SAINComponent.Classes.Decision
                 return false;
             }
 
-            float maxDist = 125f;
-            float minDist = 50f;
+            float maxDist = SquadDecision_Regroup_NoEnemy_StartDist;
+            float minDist = SquadDecision_Regroup_NoEnemy_EndDistance;
 
             var enemy = SAIN.Enemy;
             if (enemy != null)
             {
-                if (enemy.IsVisible || (enemy.Seen && enemy.TimeSinceSeen < 60f))
+                if (enemy.IsVisible || (enemy.Seen && enemy.TimeSinceSeen < SquadDecision_Regroup_EnemySeenRecentTime))
                 {
                     return false;
                 }
-                maxDist = 50f;
-                minDist = 15f;
+                maxDist = SquadDecision_Regroup_Enemy_StartDist;
+                minDist = SquadDecision_Regroup_Enemy_EndDistance;
             }
 
             var lead = squad.LeaderComponent;

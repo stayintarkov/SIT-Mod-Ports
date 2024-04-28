@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>dvize.Donuts</RootNamespace>
     <AssemblyName>dvize.Donuts</AssemblyName>
-    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -53,11 +53,8 @@
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>copy "dvize.Donuts.dll" "$(SolutionDir)- Plugins\" /y </PostBuildEvent>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony">
+     <Reference Include="0Harmony">
       <HintPath>..\References\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Aki.Common">
@@ -127,20 +124,48 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DependencyChecker.cs" />
-    <Compile Include="patches\PatchBodySound.cs" />
-    <Compile Include="patches\PatchStandbyTeleport.cs" />
-    <Compile Include="patches\MatchEndPlayerDisposePatch.cs" />
-    <Compile Include="Component.cs" />
-    <Compile Include="ConfigurationManagerAttributes.cs" />
+    <Compile Include="Bots\BotSpawn.cs" />
+    <Compile Include="Models\CreateBotCallbackWrapper.cs" />
+    <Compile Include="Models\GetGroupWrapper.cs" />
+    <Compile Include="Patches\AddEnemyPatch.cs" />
+    <Compile Include="Patches\BotGroupAddEnemyPatch.cs" />
+    <Compile Include="Patches\BotMemoryAddEnemyPatch.cs" />
+    <Compile Include="Patches\BotProfilePreparationHook.cs" />
+    <Compile Include="Patches\MatchEndPlayerDisposePatch.cs" />
+    <Compile Include="Patches\PatchStandbyTeleport.cs" />
+    <Compile Include="Tools\DependencyChecker.cs" />
+    <Compile Include="Tools\Gizmos.cs" />
+    <Compile Include="Bots\Initialization.cs" />
+    <Compile Include="Models\Entry.cs" />
+    <Compile Include="Models\FightLocations.cs" />
+    <Compile Include="Models\Folder.cs" />
+    <Compile Include="Models\HotspotTimer.cs" />
+    <Compile Include="Models\PMCBotLimitPresets.cs" />
+    <Compile Include="Models\Position.cs" />
+    <Compile Include="Models\Presets.cs" />
+    <Compile Include="Models\SCAVBotLimitPresets.cs" />
+    <Compile Include="DonutComponent.cs" />
+    <Compile Include="Tools\ConfigurationManagerAttributes.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="ProfilePreparationComponent.cs" />
+    <Compile Include="Bots\ProfilePreparationComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools\EditorFunctions.cs" />
+    <Compile Include="Bots\SpawnChecks.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="patterns\CustomsPMC.json" />
-    <None Include="patterns\CustomsScav.json" />
-    <None Include="patterns\ReservePMC.json" />
+    <None Include="Patterns\CustomsPMC.json" />
+    <None Include="Patterns\CustomsScav.json" />
+    <None Include="Patterns\ReservePMC.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetPath)" "F:\SPT-AKI-DEV\BepInEx\plugins\dvize.Donuts\$(TargetName).dll"
+
+if $(ConfigurationName) == Debug (
+    copy "$(TargetDir)$(TargetName).pdb" "F:\SPT-AKI-DEV\BepInEx\plugins\dvize.Donuts\$(TargetName).pdb"
+) else (
+    del "F:\SPT-AKI-DEV\BepInEx\plugins\dvize.Donuts\$(TargetName).pdb"
+)
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>

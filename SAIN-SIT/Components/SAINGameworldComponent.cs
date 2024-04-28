@@ -22,7 +22,10 @@ namespace SAIN.Components
 
         private void Update()
         {
-            //SAINMainPlayer = ComponentHelpers.AddOrDestroyComponent(SAINMainPlayer, GameWorld?.MainPlayer);
+            if (SAINMainPlayer == null)
+            {
+                SAINMainPlayer = ComponentHelpers.AddOrDestroyComponent(SAINMainPlayer, GameWorld?.MainPlayer);
+            }
 
             findSpawnPointMarkers();
         }
@@ -70,10 +73,10 @@ namespace SAIN.Components
         }
 
         public GameWorld GameWorld => Singleton<GameWorld>.Instance;
-        public SAINMainPlayerComponent SAINMainPlayer { get; private set; } = null;
-        public SAINBotControllerComponent SAINBotController { get; private set; } = null;
-        public Extract.ExtractFinderComponent ExtractFinder { get; private set; } = null;
-        public SpawnPointMarker[] SpawnPointMarkers { get; private set; } = null;
+        public SAINMainPlayerComponent SAINMainPlayer { get; private set; }
+        public SAINBotControllerComponent SAINBotController { get; private set; }
+        public Extract.ExtractFinderComponent ExtractFinder { get; private set; }
+        public SpawnPointMarker[] SpawnPointMarkers { get; private set; }
     }
 
 }

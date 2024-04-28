@@ -19,6 +19,7 @@ namespace SAIN.Layers
         public override bool IsActive()
         {
             if (SAIN == null) return false;
+            //if (SAIN.SAINEnabled == false) return false;
 
             if (!SAIN.Info.FileSettings.Mind.EnableExtracts || !SAIN.Info.GlobalSettings.Extract.EnableExtractsGlobal)
             {

@@ -54,7 +54,6 @@ namespace SAIN.Components
             Singleton<EFTSoundPlayer>.Instance.OnGrenadeExplosive += GrenadeExplosion;
             AISoundPlayed += SoundPlayed;
             PlayerTalk += PlayerTalked;
-            Singleton<GameWorld>.Instance.gameObject.AddComponent<DebugData>();
         }
 
         private void Update()

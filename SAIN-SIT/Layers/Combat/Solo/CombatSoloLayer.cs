@@ -85,6 +85,7 @@ namespace SAIN.Layers.Combat.Solo
         public override bool IsActive()
         {
             if (SAIN == null) return false;
+            //if (SAIN.SAINEnabled == false) return false;
 
             return CurrentDecision != SoloDecision.None;
         }
@@ -92,6 +93,8 @@ namespace SAIN.Layers.Combat.Solo
         public override bool IsCurrentActionEnding()
         {
             if (SAIN == null) return true;
+            //if (SAIN.SAINEnabled == false) return true;
+
             return CurrentDecision != LastActionDecision;
         }
 

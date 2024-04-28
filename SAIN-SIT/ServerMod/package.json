@@ -1,0 +1,26 @@
+{
+    "name": "SAIN",
+    "version": "2.1.12",
+    "main": "src/mod.js",
+    "license": "MIT",
+    "author": "zSolarint",
+    "akiVersion": "~3.8",
+    "scripts": {
+        "setup": "npm i",
+        "build": "node ./build.mjs",
+        "buildinfo": "node ./build.mjs --verbose"
+    },
+    "devDependencies": {
+        "@types/node": "20.11",
+        "@typescript-eslint/eslint-plugin": "7.2",
+        "@typescript-eslint/parser": "7.2",
+        "archiver": "^6.0",
+        "eslint": "8.57",
+        "fs-extra": "11.2",
+        "ignore": "^5.2",
+        "os": "^0.1",
+        "tsyringe": "4.8.0",
+        "typescript": "5.4",
+        "winston": "3.12"
+    }
+}

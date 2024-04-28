@@ -38,7 +38,33 @@ namespace SAIN.SAINComponent.Classes
             bool isCurrent = IsCurrentEnemy;
             Vision.Update(isCurrent);
             Path.Update(isCurrent);
+
+            UpdateHearStatus();
         }
+
+        public void UpdateHearStatus()
+        {
+            if (CanBeHeard && TimeSinceHeard < Time.time)
+            {
+                SetHeardStatus(false, Vector3.zero);
+            }
+        }
+
+        private readonly float TimeSinceHeardTimeAdd = 10f;
+
+        public void SetHeardStatus(bool value, Vector3 pos)
+        {
+            CanBeHeard = value;
+            if (value)
+            {
+                LastHeardPosition = pos;
+                TimeSinceHeard = Time.time + TimeSinceHeardTimeAdd;
+            }
+        }
+
+        public bool CanBeHeard { get; set; }
+        public float TimeSinceHeard { get; set; }
+        public Vector3 LastHeardPosition { get; private set; }
 
         public void Dispose()
         {
@@ -78,6 +104,7 @@ namespace SAIN.SAINComponent.Classes
 
         // PathToEnemy Properties
         public bool ArrivedAtLastSeenPosition => Path.HasArrivedAtLastSeen;
+
 
         public float RealDistance => Path.EnemyDistance;
         public bool CanSeeLastCornerToEnemy => Path.CanSeeLastCornerToEnemy;
