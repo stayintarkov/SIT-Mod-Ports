@@ -8,9 +8,9 @@ namespace InventoryOrganizingFeatures.Reflections.Extensions
 {
     internal static class LootItemClassReflector
     {
-        public static Type ReflectedType = typeof(CompoundItem);
+        public static Type ReflectedType = typeof(LootItemClass);
 
-        public static Grid[] RGrids(this CompoundItem item)
+        public static Grid[] RGrids(this LootItemClass item)
         {
             var grids = item.GetFieldValue<object[]>("Grids");
             var reflectedGrids = new Grid[grids.Length];

@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy "SPTQuestingBots.dll" "$(SolutionDir)- Plugins\" /y </PostBuildEvent>
+    <PostBuildEvent>copy "$(OutDir)SPTQuestingBots.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -232,6 +232,11 @@
     <Compile Include="QuestingBotsPlugin.cs" />
     <Compile Include="QuestingBotsPluginConfig.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\SPT-BigBrain-SIT\DrakiaXYZ-BigBrain.csproj">
+      <Project>{c3c9ebdf-af8a-4e59-b18f-e76fae66001c}</Project>
+      <Name>DrakiaXYZ-BigBrain</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -8,7 +8,7 @@ namespace SamSWAT.FOV
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(Settings17.Class1502).GetMethod("method_0", BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic);
+            return typeof(Settings16.Class1559).GetMethod("method_0", BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic);
         }
 
         [PatchPostfix]

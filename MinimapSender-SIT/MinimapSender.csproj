@@ -50,9 +50,8 @@
 		</Reference>
 	</ItemGroup>
 
-
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="COPY &quot;$(TargetDir)$(TargetName)$(TargetExt)&quot; &quot;$(SolutionDir)Ref\plugins&quot;" />
+	  <Exec Command="copy &quot;$(OutDir)TechHappy.MinimapSender.dll&quot; &quot;$(SolutionDir)!Plugins\&quot; /y &amp;&amp; copy &quot;$(OutDir)NetCoreServer.dll&quot; &quot;$(SolutionDir)!Plugins\&quot; /y" />
 	</Target>
 
 </Project>

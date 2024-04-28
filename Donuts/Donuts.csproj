@@ -53,6 +53,9 @@
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(OutDir)dvize.Donuts.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
      <Reference Include="0Harmony">
       <HintPath>..\References\0Harmony.dll</HintPath>
@@ -158,14 +161,4 @@
     <None Include="Patterns\ReservePMC.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy "$(TargetPath)" "F:\SPT-AKI-DEV\BepInEx\plugins\dvize.Donuts\$(TargetName).dll"
-
-if $(ConfigurationName) == Debug (
-    copy "$(TargetDir)$(TargetName).pdb" "F:\SPT-AKI-DEV\BepInEx\plugins\dvize.Donuts\$(TargetName).pdb"
-) else (
-    del "F:\SPT-AKI-DEV\BepInEx\plugins\dvize.Donuts\$(TargetName).pdb"
-)
-</PostBuildEvent>
-  </PropertyGroup>
 </Project>

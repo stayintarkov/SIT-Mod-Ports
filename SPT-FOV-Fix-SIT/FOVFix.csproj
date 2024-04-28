@@ -48,12 +48,13 @@
     <PackageReference Include="BepInEx.Core" Version="5.4.21">
 		<ExcludeAssets>runtime</ExcludeAssets>
 	</PackageReference>
-    <PackageReference Include="BepInEx.PluginInfoProps" Version="2.1.0">
-		<ExcludeAssets>runtime</ExcludeAssets>
-	</PackageReference>
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
+  
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy &quot;$(OutDir)FOVFix.dll&quot; &quot;$(SolutionDir)!Plugins\&quot; /y" />
+  </Target>
 </Project>

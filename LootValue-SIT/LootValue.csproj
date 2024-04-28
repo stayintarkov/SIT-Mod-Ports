@@ -41,7 +41,7 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-	  <Exec Command="copy &quot;$(SolutionDir)\LootValue-SIT\bin\release\net472\LootValue.dll&quot; &quot;$(SolutionDir)- Plugins\&quot; /y " />
+	  <Exec Command="copy &quot;$(OutDir)LootValue.dll&quot; &quot;$(SolutionDir)!Plugins\&quot; /y" />
 	</Target>
 
 </Project>

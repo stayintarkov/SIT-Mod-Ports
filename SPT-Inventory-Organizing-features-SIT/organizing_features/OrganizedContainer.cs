@@ -25,16 +25,16 @@ namespace InventoryOrganizingFeatures
         public const string OrderParamPrefix = "#:";
 
         public string[] Params { get; }
-        public CompoundItem TargetItem { get; }
+        public LootItemClass TargetItem { get; }
         public InventoryController Controller { get; }
-        public CompoundItem SourceItem { get; }
+        public LootItemClass SourceItem { get; }
         public List<Item> ValidItems
         {
             get
             {
                 LogNotif($"Parent name: {SourceItem.RLocalizedName()}");
                 List<Item> result = new List<Item>();
-                foreach (var grid in SourceItem.RGrids())
+                foreach (var grid in SourceItem.Grids)
                 {
                     // ToList is important, since when organizing we can accidentally affect the iterated enumerable.
                     result.AddRange(grid.Items.Where(ItemFitsParams).ToList());
@@ -48,7 +48,7 @@ namespace InventoryOrganizingFeatures
             get
             {
                 List<Item> result = new List<Item>();
-                foreach (var grid in SourceItem.RGrids())
+                foreach (var grid in SourceItem.Grids)
                 {
                     // ToList is important, since when organizing we can accidentally affect the iterated enumerable.
                     result.AddRange(grid.Items.ToList());
@@ -57,7 +57,7 @@ namespace InventoryOrganizingFeatures
             }
         }
 
-        public OrganizedContainer(CompoundItem targetItem, CompoundItem sourceItem, InventoryController controller)
+        public OrganizedContainer(LootItemClass targetItem, LootItemClass sourceItem, InventoryController controller)
         {
             TargetItem = targetItem;
             Controller = controller;
@@ -80,7 +80,7 @@ namespace InventoryOrganizingFeatures
             var validItems = ignoreParams ? AllItems : ValidItems;
             LogNotif($"Valid items: {validItems.Count}");
             //GClass2463 inventoryChanges = new GClass2463(TopLevelItem, Controller);
-            var targetGrids = TargetItem.RGrids(); // take it out of the loop 
+            var targetGrids = TargetItem.Grids; // take it out of the loop 
             foreach (var validItem in validItems)
             {
                 foreach (var grid in targetGrids)
@@ -150,7 +150,7 @@ namespace InventoryOrganizingFeatures
         // Reference GClass2174.CanAccept or just IContainer.CheckItemFilter
         public bool CanAccept(Item item)
         {
-            return TargetItem.RGrids().Any(grid => grid.CanAccept(item));
+            return TargetItem.Grids.Any(grid => grid.CanAccept(item));
         }
 
         private bool ItemPassesCategoryConditions(Item item)

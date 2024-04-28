@@ -292,7 +292,7 @@ namespace InventoryOrganizingFeatures
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(GridSortPanel __instance, InventoryController controller, CompoundItem item, Button ____button)
+        private static void PatchPostfix(GridSortPanel __instance, InventoryController controller, LootItemClass item, Button ____button)
         {
             try
             {
@@ -328,14 +328,14 @@ namespace InventoryOrganizingFeatures
             }
         }
 
-        private static void PatchForSimpleStashPanel(GridSortPanel __instance, InventoryController controller, CompoundItem item, Button ____button)
+        private static void PatchForSimpleStashPanel(GridSortPanel __instance, InventoryController controller, LootItemClass item, Button ____button)
         {
             if (OrganizeButtonStash != null)
                 if (!OrganizeButtonStash.IsDestroyed()) return;
             OrganizeButtonStash = SetupOrganizeButton(____button, item, controller);
         }
 
-        private static void PatchForTraderDealScreen(GridSortPanel __instance, InventoryController controller, CompoundItem item, Button ____button)
+        private static void PatchForTraderDealScreen(GridSortPanel __instance, InventoryController controller, LootItemClass item, Button ____button)
         {
             if (OrganizeButtonTrader != null)
                 if (!OrganizeButtonTrader.IsDestroyed()) return;
@@ -343,7 +343,7 @@ namespace InventoryOrganizingFeatures
         }
 
         // Hopefully the "other" cases are only GridViewPanels(if I remember the name correctly)
-        private static void PatchForOtherCases(GridSortPanel __instance, InventoryController controller, CompoundItem item, Button ____button)
+        private static void PatchForOtherCases(GridSortPanel __instance, InventoryController controller, LootItemClass item, Button ____button)
         {
             // Setup Organize button
             var orgbtn = SetupOrganizeButton(____button, item, controller);

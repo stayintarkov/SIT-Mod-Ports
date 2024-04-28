@@ -22,11 +22,11 @@ namespace CactusPie.ContainerQuickLoot
 
         [PatchPrefix]
         public static bool PatchPrefix(
-            ref SOperationResult2<IPopNewAmmoResult> __result,
+            ref SOperationResult12<IPopNewAmmoResult> __result,
             object __instance,
             Item item,
-            ItemController controller,
-            IEnumerable<CompoundItem> targets,
+            TraderControllerClass controller,
+            IEnumerable<LootItemClass> targets,
             ItemMovementHandler.EMoveItemOrder order,
             bool simulate)
         {
@@ -84,7 +84,7 @@ namespace CactusPie.ContainerQuickLoot
                 }
                     
                 // ReSharper disable once PossibleMultipleEnumeration
-                if (!(targets.SingleOrDefaultWithoutException() is Equipment))
+                if (!(targets.SingleOrDefaultWithoutException() is EquipmentClass))
                 {
                     continue;
                 }
@@ -103,8 +103,8 @@ namespace CactusPie.ContainerQuickLoot
                             continue;
                         }
 
-                        SOperationResult2<PopNewAmmoResult> mergeResult = ItemMovementHandler.Merge(item, containedItem.Key, controller, simulate);
-                        __result = new SOperationResult2<IPopNewAmmoResult>(mergeResult.Value);
+                        SOperationResult12<PopNewAmmoResult> mergeResult = ItemMovementHandler.Merge(item, containedItem.Key, controller, simulate);
+                        __result = new SOperationResult12<IPopNewAmmoResult>(mergeResult.Value);
                         return false;
                     }
                 }
@@ -116,7 +116,7 @@ namespace CactusPie.ContainerQuickLoot
                     continue;
                 }
 
-                SOperationResult2<MoveOldMagResult> moveResult = ItemMovementHandler.Move(item, location, controller, simulate);
+                SOperationResult12<MoveOldMagResult> moveResult = ItemMovementHandler.Move(item, location, controller, simulate);
                 if (moveResult.Failed)
                 {
                     return true;

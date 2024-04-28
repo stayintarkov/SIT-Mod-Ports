@@ -54,12 +54,9 @@
 		<LangVersion>7.3</LangVersion>
 	</PropertyGroup>
 	<PropertyGroup>
-	  <PostBuildEvent>copy "DrakiaXYZ-BotDebug.dll" "$(SolutionDir)- Plugins\" /y </PostBuildEvent>
+	  <PostBuildEvent>copy "$(OutDir)DrakiaXYZ-BotDebug.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
 	</PropertyGroup>
 	<ItemGroup>
-		<Reference Include="DrakiaXYZ-BigBrain">
-		  <HintPath>..\References\DrakiaXYZ-BigBrain.dll</HintPath>
-		</Reference>
 		<Reference Include="StayInTarkov">
 			<HintPath>..\References\StayInTarkov.dll</HintPath>
 		</Reference>
@@ -142,6 +139,12 @@
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="VersionChecker\setbuild.ps1" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\SPT-BigBrain-SIT\DrakiaXYZ-BigBrain.csproj">
+	    <Project>{c3c9ebdf-af8a-4e59-b18f-e76fae66001c}</Project>
+	    <Name>DrakiaXYZ-BigBrain</Name>
+	  </ProjectReference>
 	</ItemGroup>
 	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -82,9 +82,6 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
-    <Reference Include="DrakiaXYZ-BigBrain">
-      <HintPath>..\References\DrakiaXYZ-BigBrain.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine.PhysicsModule" HintPath="..\References\UnityEngine.PhysicsModule.dll" Private="False" />
     <Reference Include="UnityEngine.AIModule" HintPath="..\References\UnityEngine.AIModule.dll" Private="False" />
   </ItemGroup>
@@ -99,12 +96,18 @@
     <Compile Include="components\*.cs" />
     <Compile Include="logics\*.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SPT-BigBrain-SIT\DrakiaXYZ-BigBrain.csproj">
+      <Project>{c3c9ebdf-af8a-4e59-b18f-e76fae66001c}</Project>
+      <Name>DrakiaXYZ-BigBrain</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy "skwizzy.LootingBots.dll" "$(SolutionDir)- Plugins\" /y </PostBuildEvent>
+    <PostBuildEvent>copy "skwizzy.LootingBots.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
   </PropertyGroup>
 </Project>

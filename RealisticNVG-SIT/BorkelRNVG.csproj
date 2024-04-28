@@ -44,4 +44,8 @@
       <HintPath>..\References\StayInTarkov.dll</HintPath>
     </Reference>
   </ItemGroup>
+  
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy &quot;$(OutDir)BorkelRNVG.dll&quot; &quot;$(SolutionDir)!Plugins\&quot; /y" />
+  </Target>
 </Project>

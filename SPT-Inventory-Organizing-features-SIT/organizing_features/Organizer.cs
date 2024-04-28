@@ -24,14 +24,14 @@ namespace InventoryOrganizingFeatures
 
         public static IOFHandbook Handbook { get; set; } = null;
         
-        public static void Organize(CompoundItem topLevelItem, InventoryController controller)
+        public static void Organize(LootItemClass topLevelItem, InventoryController controller)
         {
             //foreach (var grid in topLevelItem.Grids) - needs reflection since Grids is a GClass2163 (per SPT-AKI 3.5.3)
             //foreach (var grid in ReflectionHelper.GetFieldValue<object[]>(topLevelItem, "Grids"))
-            foreach (var grid in topLevelItem.RGrids())
+            foreach (var grid in topLevelItem.Grids)
             {
                 // reflect grid.Items 
-                var organizedContainers = grid.Items.Where(IsOrganized).Select(item => new OrganizedContainer((CompoundItem)item, topLevelItem, controller)).ToList();
+                var organizedContainers = grid.Items.Where(IsOrganized).Select(item => new OrganizedContainer((LootItemClass)item, topLevelItem, controller)).ToList();
                 organizedContainers.Sort();
                 //var inc = 0;
                 foreach (var container in organizedContainers)
