@@ -9,14 +9,15 @@ using HarmonyLib;
 
 namespace PackNStrap
 {
-    [BepInPlugin("com.aaaWTT-PacknStrap.Core", "WTT-PackNStrap", "1.0.0")]
+    [BepInPlugin("com.aaaWTT-PacknStrap.Core", "WTT-PackNStrap", "1.0.4")]
 
     internal class PackNStrap : BaseUnityPlugin
     {
 
         public static PackNStrap instance;
 
-        public static string modPath = Path.Combine(Environment.CurrentDirectory, "user", "cache");
+        public static string modPath = Path.Combine(Environment.CurrentDirectory, "user", "mods", "WTT-PackNStrap");
+        public static string pluginPath = Path.Combine(Environment.CurrentDirectory, "BepInEx", "plugins");
 
         #region Proper Armband Slots Info
         public FieldInfo fastAccessSlots { get; set; }

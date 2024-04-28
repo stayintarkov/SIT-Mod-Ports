@@ -4,7 +4,7 @@
     <TargetFramework>net472</TargetFramework>
 	  <AssemblyName>WTT-PackNStrap</AssemblyName>
 	  <Description>Welcome to Tarkov main assembly</Description>
-	  <Version>1.0.0</Version>
+	  <Version>1.0.4</Version>
 	  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	  <LangVersion>latest</LangVersion>
 	  <Configurations>Debug;Release;UNITY_EDITOR</Configurations>

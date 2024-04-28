@@ -15,7 +15,7 @@ namespace PackNStrap.Core.UI
     {
         public static void LoadRigLayouts()
         {
-            string rigLayoutsDirectory = Path.Combine(PackNStrap.modPath, "bundles", "Layouts");
+            string rigLayoutsDirectory = Path.Combine(PackNStrap.pluginPath, "WTT-PackNStrap", "Layouts");
 
 
             if (!Directory.Exists(rigLayoutsDirectory))
