@@ -1,0 +1,3 @@
+[submodule "SIT_RemotePlugins"]
+	path = SIT_RemotePlugins
+	url = https://github.com/caellach/SIT_RemotePlugins.git
