@@ -69,7 +69,7 @@ namespace FOVFix
         protected override MethodBase GetTargetMethod()
         {
             fAnimatorField = AccessTools.Field(typeof(FCSubClass), "firearmsAnimator_0");
-            weaponStateField = AccessTools.Field(typeof(FCSubClass), "gclass1668_0");
+            weaponStateField = AccessTools.Field(typeof(FCSubClass), "gclass1678_0");
 
             return typeof(FCSubClass).GetMethod("SetScopeMode", BindingFlags.Instance | BindingFlags.Public);
         }
