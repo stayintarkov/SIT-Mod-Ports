@@ -7,17 +7,31 @@
 		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	  <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+	  <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
 		<PackageReference Include="UnityEngine.Modules" Version="2019.4.39" IncludeAssets="compile" />
 	</ItemGroup>
 
 	<ItemGroup>
+		<Reference Include="0Harmony">
+		  <HintPath>..\References\0Harmony.dll</HintPath>
+		</Reference>
 		<Reference Include="BepInEx">
 		  <HintPath>..\References\BepInEx.dll</HintPath>
 		</Reference>
 		<Reference Include="Microsoft.CSharp">
 		  <HintPath>..\References\Microsoft.CSharp.dll</HintPath>
+		</Reference>
+		<Reference Include="Sirenix.Serialization">
+		  <HintPath>..\References\Sirenix.Serialization.dll</HintPath>
 		</Reference>
 		<Reference Include="StayInTarkov">
 			<HintPath>..\References\StayInTarkov.dll</HintPath>
