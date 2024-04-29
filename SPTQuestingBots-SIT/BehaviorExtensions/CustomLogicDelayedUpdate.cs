@@ -11,17 +11,19 @@ using EFT;
 using EFT.Interactive;
 using HarmonyLib;
 using SPTQuestingBots.Controllers;
+using SPTQuestingBots.Helpers;
 using UnityEngine;
+
+ using GClass134 = AbstractCreateNode;
 
 namespace SPTQuestingBots.BehaviorExtensions
 {
     public abstract class CustomLogicDelayedUpdate : CustomLogic
     {
         protected BotLogic.Objective.BotObjectiveManager ObjectiveManager { get; private set; }
-        protected AbstractCreateNode baseAction { get; private set; } = null;
+        protected GClass134 baseAction { get; private set; } = null;
         protected static int updateInterval { get; private set; } = 100;
 
-        private PropertyInfo cornerIndexField = null;
         private Stopwatch updateTimer = Stopwatch.StartNew();
         private Stopwatch actionElapsedTime = new Stopwatch();
 
@@ -32,7 +34,6 @@ namespace SPTQuestingBots.BehaviorExtensions
 
         public CustomLogicDelayedUpdate(BotOwner botOwner) : base(botOwner)
         {
-            cornerIndexField = AccessTools.Property(typeof(BotMover), "_cornerIndex");
             ObjectiveManager = BotLogic.Objective.BotObjectiveManager.GetObjectiveManagerForBot(botOwner);
         }
 
@@ -68,7 +69,7 @@ namespace SPTQuestingBots.BehaviorExtensions
             actionElapsedTime.Restart();
         }
 
-        public void SetBaseAction(AbstractCreateNode _baseAction)
+        public void SetBaseAction(GClass134 _baseAction)
         {
             baseAction = _baseAction;
             baseAction.Awake();
@@ -150,7 +151,8 @@ namespace SPTQuestingBots.BehaviorExtensions
 
         public bool IsNearPathCorner(Configuration.DistanceAngleConfig maxDistanceMinAngle)
         {
-            if (!BotOwner.Mover.HavePath)
+            Vector3[] currentPath = BotOwner?.Mover?.GetCurrentPath();
+            if (currentPath == null)
             {
                 return false;
             }
@@ -160,22 +162,23 @@ namespace SPTQuestingBots.BehaviorExtensions
             {
                 return false;
             }
-            
-            var mover = BotOwner.Mover;
-            var pathControllerField = typeof(BotMover).GetField("_pathController", BindingFlags.NonPublic | BindingFlags.Instance);
-            var pathController = (PathController)pathControllerField.GetValue(mover);
-            var curPath = pathController.CurPath;
 
-            // Assuming CurPath is of type AbstractPath and has a way to get the current corner index and path points
-            int currentCornerIndex = curPath.CurIndex; // Use CurIndex from AbstractPath
-            if (currentCornerIndex >= curPath.Length - 1) // Use Length from AbstractPath
+            // Check if the bot is approaching the end of its path
+            int? currentCornerIndexNullable = BotOwner.Mover.GetCurrentCornerIndex();
+            if (!currentCornerIndexNullable.HasValue)
+            {
+                return false;
+            }
+
+            int currentCornerIndex = currentCornerIndexNullable.Value;
+            if ((currentCornerIndex == 0) || (currentCornerIndex >= currentPath.Length - 1))
             {
                 return true;
             }
 
-            ObjectiveManager.LastCorner = curPath.GetPoint(currentCornerIndex); // Use GetPoint method
-            Vector3 currentSegment = curPath.GetPoint(currentCornerIndex) - curPath.GetPoint(currentCornerIndex - 1);
-            Vector3 nextSegment = curPath.GetPoint(currentCornerIndex + 1) - curPath.GetPoint(currentCornerIndex);
+            ObjectiveManager.LastCorner = currentPath[currentCornerIndex];
+            Vector3 currentSegment = currentPath[currentCornerIndex] - currentPath[currentCornerIndex - 1];
+            Vector3 nextSegment = currentPath[currentCornerIndex + 1] - currentPath[currentCornerIndex];
 
             // Check a large enough angle exists between the bot's current path segment and its next one
             float cornerAngle = Vector3.Angle(currentSegment, nextSegment);

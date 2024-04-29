@@ -296,12 +296,12 @@
     "ConfigFiles": []
   },
   {
-    "Name": "Questing Bots",
+    "Name": "SPTQuestingBots ",
     "Author": "DanW",
     "SupportedVersion": "1.10.8882.41069",
-    "ModVersion": "0.4.2",
-    "PortVersion": "1.4.0",
-    "Description": "This mod aims to add more life to the bots by enhancing some EFT looting behaviors letting bots loot items, containers, and corpses during patrols. More features to come!",
+    "ModVersion": "0.5.0",
+    "PortVersion": "0.5.0",
+    "Description": "This port requires the DanW-SPTQuestingBots from user/mods/ folder to be also replaced into the BepInEx/plugins folder in order to function.",
     "ModUrl": "https://hub.sp-tarkov.com/files/file/1534-questing-bots/",
     "RequiresFiles": true,
     "PluginFiles": [

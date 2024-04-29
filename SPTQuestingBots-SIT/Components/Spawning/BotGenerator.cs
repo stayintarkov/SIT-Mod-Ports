@@ -442,6 +442,8 @@ namespace SPTQuestingBots.Components.Spawning
             {
                 try
                 {
+                    await Task.Delay(20);
+
                     Data8 botProfileData = new Data8(spawnSide, spawnType, botdifficulty, 0f, null);
                     Data1 botSpawnData = await Data1.Create(botProfileData, ibotCreator, bots, botSpawnerClass);
 
@@ -554,7 +556,7 @@ namespace SPTQuestingBots.Components.Spawning
             BotZone closestBotZone = botSpawnerClass.GetClosestZone(positions[0], out float dist);
             foreach (Vector3 position in positions)
             {
-                botSpawnInfo.Data.AddPosition(position, 1);
+                botSpawnInfo.Data.AddPosition(position, GetClosestCorePoint(position).Id);
             }
 
             // In SPT-AKI 3.7.1, this is GClass732
@@ -565,6 +567,12 @@ namespace SPTQuestingBots.Components.Spawning
             Action<BotOwner> callback = new Action<BotOwner>(groupActionsWrapper.CreateBotCallback);
 
             ibotCreator.ActivateBot(botSpawnInfo.Data, closestBotZone, false, getGroupFunction, callback, botSpawnerClass.GetCancelToken());
+        }
+
+        private static AICorePoint GetClosestCorePoint(Vector3 position)
+        {
+            GroupPoint groupPoint = Singleton<IBotGame>.Instance.BotsController.CoversData.GetClosest(position);
+            return groupPoint.CorePointInGame;
         }
 
         internal class GroupActionsWrapper
@@ -596,8 +604,7 @@ namespace SPTQuestingBots.Components.Spawning
                 // I have no idea why BSG passes a stopwatch into this call...
                 stopWatch.Start();
 
-                MethodInfo method = AccessTools.Method(typeof(BotSpawner), "method_10");
-                method.Invoke(botSpawnerClass, new object[] { bot, botSpawnInfo.Data, null, false, stopWatch });
+                botSpawnerClass.method_10(bot, botSpawnInfo.Data, null, false, stopWatch);
 
                 if (botSpawnInfo.ShouldBotBeBoss(bot))
                 {

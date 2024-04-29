@@ -13,7 +13,8 @@ using SPTQuestingBots.BotLogic.Objective;
 using SPTQuestingBots.Controllers;
 using SPTQuestingBots.Helpers;
 using UnityEngine;
-using EFTSoundPlayer = GClass603;
+
+using BotEventHandler = GClass603;
 
 namespace SPTQuestingBots.BotLogic
 {
@@ -24,7 +25,7 @@ namespace SPTQuestingBots.BotLogic
         private BotOwner botOwner;
         private LogicLayerMonitor lootingLayerMonitor;
         private LogicLayerMonitor extractLayerMonitor;
-        //private LogicLayerMonitor stationaryWSLayerMonitor;
+        private LogicLayerMonitor stationaryWSLayerMonitor;
         private Stopwatch lootSearchTimer = new Stopwatch();
         private bool wasLooting = false;
         private bool hasFoundLoot = false;
@@ -40,8 +41,8 @@ namespace SPTQuestingBots.BotLogic
 
             if (ConfigController.Config.Questing.BotQuestingRequirements.HearingSensor.Enabled)
             {
-                Singleton<EFTSoundPlayer>.Instance.OnSoundPlayed += enemySoundHeard;
-                botOwner.GetPlayer.OnIPlayerDeadOrUnspawn += (player) => { Singleton<EFTSoundPlayer>.Instance.OnSoundPlayed -= enemySoundHeard; };
+                Singleton<BotEventHandler>.Instance.OnSoundPlayed += enemySoundHeard;
+                botOwner.GetPlayer.OnIPlayerDeadOrUnspawn += (player) => { Singleton<BotEventHandler>.Instance.OnSoundPlayed -= enemySoundHeard; };
             }
 
             lootingLayerMonitor = botOwner.GetPlayer.gameObject.AddComponent<LogicLayerMonitor>();
@@ -51,8 +52,8 @@ namespace SPTQuestingBots.BotLogic
             extractLayerMonitor.Init(botOwner, "SAIN ExtractLayer");
 
             // This is for using mounted guns, but questing bots aren't allowed to use them right now
-            //stationaryWSLayerMonitor = botOwner.GetPlayer.gameObject.AddComponent<LogicLayerMonitor>();
-            //stationaryWSLayerMonitor.Init(botOwner, "StationaryWS");
+            stationaryWSLayerMonitor = botOwner.GetPlayer.gameObject.AddComponent<LogicLayerMonitor>();
+            stationaryWSLayerMonitor.Init(botOwner, "StationaryWS");
 
             if (SAIN.Plugin.SAINInterop.Init())
             {
@@ -111,12 +112,10 @@ namespace SPTQuestingBots.BotLogic
 
         public bool WantsToUseStationaryWeapon()
         {
-            /*
             if (stationaryWSLayerMonitor.CanLayerBeUsed && stationaryWSLayerMonitor.IsLayerRequested())
             {
                 return true;
             }
-            */
 
             return false;
         }
@@ -248,14 +247,14 @@ namespace SPTQuestingBots.BotLogic
             }
 
             // Ensure enough time has elapsed in the raid to prevent players from getting run-throughs
-            int minRaidET = Singleton<BackendConfigSettingsClass>.Instance.Experience.MatchEnd.SurvivedTimeRequirement;
-            if (StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil.GetElapsedRaidSeconds() < (minRaidET - StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidChangesUtil.SurvivalTimeReductionSeconds))
+            int minSurviveTime = StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidChangesUtil.NewSurvivalTimeSeconds;
+            if (StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil.GetElapsedRaidSeconds() < minSurviveTime)
             {
                 return false;
             }
 
             System.Random random = new System.Random();
-            float initialRaidTimeFraction = (float)StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidChangesUtil.NewEscapeTimeMinutes / StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidChangesUtil.OriginalEscapeTimeMinutes;
+            float initialRaidTimeFraction = StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidChangesUtil.RaidTimeRemainingFraction;
 
             // Select a random number of total quests the bot must complete before it's allowed to extract
             if (minTotalQuestsForExtract == int.MaxValue)
@@ -396,13 +395,25 @@ namespace SPTQuestingBots.BotLogic
         public bool IsSearchingForLoot()
         {
             string activeLayerName = botOwner.Brain.ActiveLayerName() ?? "null";
-            return activeLayerName.Contains(lootingLayerMonitor.LayerName);
+            return activeLayerName.Equals(lootingLayerMonitor.LayerName);
         }
 
         public bool IsQuesting()
         {
             string activeLayerName = botOwner.Brain.ActiveLayerName() ?? "null";
-            return activeLayerName.Contains(nameof(BotObjectiveLayer)) || activeLayerName.Contains(nameof(BotFollowerLayer));
+            return activeLayerName.Equals(nameof(BotObjectiveLayer));
+        }
+
+        public bool IsFollowing()
+        {
+            string activeLayerName = botOwner.Brain.ActiveLayerName() ?? "null";
+            return activeLayerName.Equals(nameof(BotFollowerLayer));
+        }
+
+        public bool IsRegrouping()
+        {
+            string activeLogicName = BrainManager.GetActiveLogic(botOwner)?.GetType()?.Name ?? "null";
+            return activeLogicName.Equals(nameof(RegroupAction));
         }
 
         public bool ShouldCheckForLoot(float minTimeBetweenLooting)
@@ -435,8 +446,6 @@ namespace SPTQuestingBots.BotLogic
                 && (isLooting || isSearchingForLoot || lootingLayerMonitor.CanUseLayer(minTimeBetweenLooting))
             )
             {
-                //LoggingController.LogInfo("Layer for bot " + BotOwner.GetText() + ": " + activeLayerName + ". Logic: " + activeLogicName);
-
                 if (isLooting)
                 {
                     if (!hasFoundLoot)

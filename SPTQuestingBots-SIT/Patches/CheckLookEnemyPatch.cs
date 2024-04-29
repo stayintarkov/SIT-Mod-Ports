@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Aki.Reflection.Patching;
+using StayInTarkov;
 using SPTQuestingBots.Controllers;
 
 namespace SPTQuestingBots.Patches
@@ -17,7 +17,7 @@ namespace SPTQuestingBots.Patches
         }
 
         [PatchPrefix]
-        private static bool PatchPrefix(EnemyInfo __instance, GClass453 lookAll)
+        private static bool PatchPrefix(EnemyInfo __instance, AbstractPath lookAll)
         {
             if (!QuestingBotsPluginConfig.SleepingEnabled.Value)
             {

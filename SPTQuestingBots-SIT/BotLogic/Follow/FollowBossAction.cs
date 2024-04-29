@@ -51,7 +51,8 @@ namespace SPTQuestingBots.BotLogic.Follow
             {
                 if (!wasStuck)
                 {
-                    LoggingController.LogInfo("Follower " + BotOwner.GetText() + " is stuck and will take a break from following.");
+                    ObjectiveManager.StuckCount++;
+                    LoggingController.LogWarning("Follower " + BotOwner.GetText() + " is stuck and will take a break from following.");
                 }
                 wasStuck = true;
 
@@ -60,6 +61,7 @@ namespace SPTQuestingBots.BotLogic.Follow
             }
             else
             {
+                ObjectiveManager.StuckCount = 0;
                 wasStuck = false;
             }
         }

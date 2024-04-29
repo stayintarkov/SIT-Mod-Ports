@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx.Configuration;
-using Comfort.Common;
+using UnityEngine;
 
 namespace SPTQuestingBots
 {
@@ -20,8 +20,9 @@ namespace SPTQuestingBots
         Shoreline = 64,
         Streets = 128,
         Woods = 256,
+        GroundZero = 512,
 
-        All = Customs | Factory | Interchange | Labs | Lighthouse | Reserve | Shoreline | Streets | Woods,
+        All = Customs | Factory | Interchange | Labs | Lighthouse | Reserve | Shoreline | Streets | Woods | GroundZero,
     }
 
     public static class QuestingBotsPluginConfig
@@ -38,10 +39,15 @@ namespace SPTQuestingBots
         public static ConfigEntry<TarkovMaps> MapsToAllowSleepingForQuestingBots;
 
         public static ConfigEntry<bool> ShowBotInfoOverlays;
+        public static ConfigEntry<bool> ShowBotPathOverlays;
         public static ConfigEntry<bool> ShowQuestInfoOverlays;
         public static ConfigEntry<bool> ShowQuestInfoForSpawnSearchQuests;
         public static ConfigEntry<int> QuestOverlayFontSize;
         public static ConfigEntry<int> QuestOverlayMaxDistance;
+
+        public static ConfigEntry<bool> CreateQuestLocations;
+        public static ConfigEntry<string> QuestLocationName;
+        public static ConfigEntry<KeyboardShortcut> StoreQuestLocationKey;
 
         public static void BuildConfigOptions(ConfigFile Config)
         {
@@ -55,6 +61,7 @@ namespace SPTQuestingBots
             TarkovMapIDToEnum.Add("Shoreline", TarkovMaps.Shoreline);
             TarkovMapIDToEnum.Add("TarkovStreets", TarkovMaps.Streets);
             TarkovMapIDToEnum.Add("Woods", TarkovMaps.Woods);
+            TarkovMapIDToEnum.Add("Sandbox", TarkovMaps.GroundZero);
 
             QuestingEnabled = Config.Bind("Main", "Enable Questing",
                 true, "Allow bots to quest");
@@ -74,14 +81,23 @@ namespace SPTQuestingBots
 
             ShowBotInfoOverlays = Config.Bind("Debug", "Show Bot Info Overlays",
                 false, "Show information about what each bot is doing");
+            ShowBotPathOverlays = Config.Bind("Debug", "Show Bot Path Overlays",
+                false, new ConfigDescription("Show the target position for each bot that is questing", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
             ShowQuestInfoOverlays = Config.Bind("Debug", "Show Quest Info Overlays",
                 false, "Show information about every nearby quest objective location");
             ShowQuestInfoForSpawnSearchQuests = Config.Bind("Debug", "Show Quest Info for Spawn-Search Quests",
-                false, "Include quest markers and information for spawn-search quests like 'Spawn Point Wander' and 'Boss Hunter' quests");
+                false, new ConfigDescription("Include quest markers and information for spawn-search quests like 'Spawn Point Wander' and 'Boss Hunter' quests", null, new ConfigurationManagerAttributes { IsAdvanced = true }));
             QuestOverlayMaxDistance = Config.Bind("Debug", "Max Distance (m) to Show Quest Info",
                 100, new ConfigDescription("Quest markers and info overlays will only be shown if the objective location is within this distance from you", new AcceptableValueRange<int>(10, 300)));
             QuestOverlayFontSize = Config.Bind("Debug", "Font Size for Quest Info",
                 16, new ConfigDescription("Font Size for Quest Overlays", new AcceptableValueRange<int>(12, 36)));
+
+            CreateQuestLocations = Config.Bind("Custom Quest Locations", "Enable Quest Location Saving",
+                false, new ConfigDescription("Allow custom quest locations to be saved", null, new ConfigurationManagerAttributes { Order = 3, IsAdvanced = true }));
+            QuestLocationName = Config.Bind("Custom Quest Locations", "Quest Location Name",
+                "Custom Quest Location", new ConfigDescription("Name of the next quest location that will be stored", null, new ConfigurationManagerAttributes { Order = 2, IsAdvanced = true }));
+            StoreQuestLocationKey = Config.Bind("Custom Quest Locations", "Store New Quest Location",
+                new KeyboardShortcut(KeyCode.KeypadEnter), new ConfigDescription("Store your current location as a quest location", null, new ConfigurationManagerAttributes { Order = 1, IsAdvanced = true }));
         }
     }
 }

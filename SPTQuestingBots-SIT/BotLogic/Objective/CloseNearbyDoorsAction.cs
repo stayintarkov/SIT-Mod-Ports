@@ -69,7 +69,7 @@ namespace SPTQuestingBots.BotLogic.Objective
                 if (!wasStuck)
                 {
                     ObjectiveManager.StuckCount++;
-                    LoggingController.LogInfo("Bot " + BotOwner.GetText() + " is stuck and will get a new objective.");
+                    LoggingController.LogWarning("Bot " + BotOwner.GetText() + " is stuck and will get a new objective.");
                 }
                 wasStuck = true;
 
@@ -135,7 +135,8 @@ namespace SPTQuestingBots.BotLogic.Objective
 
             // If the bot cannot find a complete path to the door, it will be close to open it
             NavMeshPathStatus? pathStatus = RecalculatePath(position);
-            if (!pathStatus.HasValue || (pathStatus.Value != NavMeshPathStatus.PathComplete))
+            //if (!pathStatus.HasValue || (pathStatus.Value != NavMeshPathStatus.PathComplete))
+            if (!pathStatus.HasValue || (BotOwner.Mover?.IsPathComplete(position, 0.5f) != true))
             {
                 LoggingController.LogWarning(BotOwner.GetText() + " cannot find a complete path to " + position.ToString());
 

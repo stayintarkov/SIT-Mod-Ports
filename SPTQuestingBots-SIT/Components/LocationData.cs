@@ -12,9 +12,11 @@ using HarmonyLib;
 using SPTQuestingBots.Components.Spawning;
 using SPTQuestingBots.Controllers;
 using SPTQuestingBots.Helpers;
-using StayInTarkov.Coop.Matchmaker;
+using SPTQuestingBots.Models;
 using UnityEngine;
 using UnityEngine.AI;
+
+using ActionsReturnClass = InteractionStates;
 
 namespace SPTQuestingBots.Components
 {
@@ -23,7 +25,8 @@ namespace SPTQuestingBots.Components
         public int MaxTotalBots { get; private set; } = 15;
         public LocationSettingsClass.Location CurrentLocation { get; private set; } = null;
         public RaidSettings CurrentRaidSettings { get; private set; } = null;
-        
+
+        private readonly DateTime awakeTime = DateTime.Now;
         private TarkovApplication tarkovApplication = null;
         private GamePlayerOwner gamePlayerOwner = null;
         private Dictionary<Vector3, Vector3> nearestNavMeshPoint = new Dictionary<Vector3, Vector3>();
@@ -43,33 +46,39 @@ namespace SPTQuestingBots.Components
 
             UpdateMaxTotalBots();
 
-            if (ConfigController.Config.Questing.Enabled && (SITMatchmaking.IsServer || SITMatchmaking.IsSinglePlayer))
+            Singleton<GameWorld>.Instance.gameObject.GetOrAddComponent<BotLogic.HiveMind.BotHiveMindMonitor>();
+
+            if (ConfigController.Config.Questing.Enabled)
             {
                 QuestHelpers.ClearCache();
-                Singleton<GameWorld>.Instance.gameObject.AddComponent<BotQuestBuilder>();
-                Singleton<GameWorld>.Instance.gameObject.AddComponent<DebugData>();
+                Singleton<GameWorld>.Instance.gameObject.GetOrAddComponent<BotQuestBuilder>();
+                Singleton<GameWorld>.Instance.gameObject.GetOrAddComponent<DebugData>();
             }
 
-            if (ConfigController.Config.BotSpawns.Enabled && (SITMatchmaking.IsServer || SITMatchmaking.IsSinglePlayer))
+            if (ConfigController.Config.BotSpawns.Enabled)
             {
                 if (ConfigController.Config.BotSpawns.PMCs.Enabled)
                 {
-                    Singleton<GameWorld>.Instance.gameObject.AddComponent<Spawning.PMCGenerator>();
+                    Singleton<GameWorld>.Instance.gameObject.GetOrAddComponent<Spawning.PMCGenerator>();
                 }
 
                 if (ConfigController.Config.BotSpawns.PScavs.Enabled && !CurrentLocation.DisabledForScav)
                 {
-                    Singleton<GameWorld>.Instance.gameObject.AddComponent<Spawning.PScavGenerator>();
+                    Singleton<GameWorld>.Instance.gameObject.GetOrAddComponent<Spawning.PScavGenerator>();
                 }
 
-                if (SITMatchmaking.IsServer || SITMatchmaking.IsSinglePlayer)
-                    BotGenerator.RunBotGenerationTasks();
+                BotGenerator.RunBotGenerationTasks();
+            }
+
+            if (ConfigController.Config.Debug.Enabled)
+            {
+                Singleton<GameWorld>.Instance.gameObject.GetOrAddComponent<PathRender>();
             }
         }
 
         private void Update()
         {
-            
+            handleCustomQuestKeypress();
         }
 
         public void UpdateMaxTotalBots()
@@ -372,15 +381,31 @@ namespace SPTQuestingBots.Components
             SpawnPointParams[] allSpawnPoints = GetAllValidSpawnPointParams();
 
             // Enumerate all valid spawn points
-            SpawnPointParams[] validSpawnPoints = allSpawnPoints
-                    .Where(s => !excludedSpawnPoints.Contains(s))
-                    .Where(s => s.Categories.Any(allowedCategories))
-                    .Where(s => s.Sides.Any(allowedSides))
-                    .Where(s => allPlayerPositions.All(p => Vector3.Distance(s.Position, p) > distanceFromAllPlayers))
-                    .ToArray();
+            IEnumerable<SpawnPointParams> validSpawnPoints = allSpawnPoints
+                .Where(s => !excludedSpawnPoints.Contains(s))
+                .Where(s => s.Categories.Any(allowedCategories))
+                .Where(s => s.Sides.Any(allowedSides));
+            
+            // Remove spawn points that are too close to other bots or you
+            SpawnPointParams[] eligibleSpawnPoints = validSpawnPoints
+                .Where(s => allPlayerPositions.All(p => Vector3.Distance(s.Position, p) > distanceFromAllPlayers))
+                .ToArray();
 
-            if (validSpawnPoints.Length == 0)
+            if (eligibleSpawnPoints.Length == 0)
             {
+                if (validSpawnPoints.Any())
+                {
+                    float maxDistance = validSpawnPoints
+                        .Select(s => allPlayerPositions.Min(p => Vector3.Distance(s.Position, p)))
+                        .Max();
+
+                    LoggingController.LogWarning("Maximum distance from other players using " + validSpawnPoints.Count() + " spawn points: " + maxDistance);
+                }
+                else
+                {
+                    LoggingController.LogWarning("No valid spawn points");
+                }
+
                 return null;
             }
 
@@ -388,12 +413,13 @@ namespace SPTQuestingBots.Components
             Vector3[] playerPositions = players.Select(s => s.Position).ToArray();
             if (playerPositions.Length == 0)
             {
+                LoggingController.LogWarning("No player positions");
                 return null;
             }
 
             //LoggingController.LogInfo("Alive players: " + string.Join(", ", Singleton<GameWorld>.Instance.AllAlivePlayersList.Select(s => s.Profile.Nickname)));
 
-            return GetFurthestSpawnPoint(playerPositions, validSpawnPoints);
+            return GetFurthestSpawnPoint(playerPositions, eligibleSpawnPoints);
         }
 
         public SpawnPointParams GetFurthestSpawnPoint(Vector3[] referencePositions, SpawnPointParams[] allSpawnPoints)
@@ -470,6 +496,16 @@ namespace SPTQuestingBots.Components
             }
 
             return spawnPoints;
+        }
+
+        public IEnumerable<SpawnPointParams> GetNearbySpawnPoints(Vector3 position, float distance)
+        {
+            return GetNearbySpawnPoints(position, distance, GetAllValidSpawnPointParams());
+        }
+
+        public IEnumerable<SpawnPointParams> GetNearbySpawnPoints(Vector3 position, float distance, SpawnPointParams[] allSpawnPoints)
+        {
+            return allSpawnPoints.Where(s => Vector3.Distance(position, s.Position) < distance);
         }
 
         public SpawnPointParams GetNearestSpawnPoint(Vector3 postition, SpawnPointParams[] excludedSpawnPoints, SpawnPointParams[] allSpawnPoints)
@@ -609,7 +645,7 @@ namespace SPTQuestingBots.Components
             foreach (Door door in doors)
             {
                 // Ensure a player can interact with the door
-                InteractionStates availableActions = GetActionsClass.GetAvailableActions(gamePlayerOwner, door);
+                ActionsReturnClass availableActions = GetActionsClass.GetAvailableActions(gamePlayerOwner, door);
                 if ((availableActions == null) || (availableActions.Actions.Count == 0))
                 {
                     continue;
@@ -677,6 +713,46 @@ namespace SPTQuestingBots.Components
             FieldInfo raidSettingsField = typeof(TarkovApplication).GetField("_raidSettings", BindingFlags.NonPublic | BindingFlags.Instance);
             RaidSettings raidSettings = raidSettingsField.GetValue(tarkovApplication) as RaidSettings;
             return raidSettings;
+        }
+
+        private void handleCustomQuestKeypress()
+        {
+            if (!QuestingBotsPluginConfig.CreateQuestLocations.Value)
+            {
+                return;
+            }
+
+            if (!QuestingBotsPluginConfig.StoreQuestLocationKey.Value.IsDown())
+            {
+                return;
+            }
+
+            if (QuestingBotsPluginConfig.QuestLocationName.Value.Length == 0)
+            {
+                LoggingController.LogErrorToServerConsole("The name of custom quest locations cannot be an empty string. Please create a name in the F12 advanced menu.");
+                return;
+            }
+
+            if (!StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil.HasRaidStarted())
+            {
+                return;
+            }
+
+            Player mainPlayer = Singleton<GameWorld>.Instance.MainPlayer;
+            if (!mainPlayer.isActiveAndEnabled || !mainPlayer.HealthController.IsAlive)
+            {
+                return;
+            }
+
+            StoredQuestLocation location = new StoredQuestLocation(QuestingBotsPluginConfig.QuestLocationName.Value, mainPlayer.Position);
+
+            string filename = ConfigController.GetLoggingPath()
+                + CurrentLocation.Id.Replace(" ", "")
+                + "_"
+                + awakeTime.ToFileTimeUtc()
+                + "_customQuestLocations.json";
+
+            LoggingController.AppendQuestLocation(filename, location);
         }
     }
 }

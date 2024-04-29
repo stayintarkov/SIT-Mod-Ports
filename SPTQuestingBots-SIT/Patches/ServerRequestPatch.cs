@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Aki.Reflection.Patching;
+using StayInTarkov;
 using SPTQuestingBots.Controllers;
 
 namespace SPTQuestingBots.Patches
@@ -54,8 +54,6 @@ namespace SPTQuestingBots.Patches
 
                 legacyParams.Url = originalUrl.Replace(generateBotUrl, "/QuestingBots/GenerateBot/" + pScavChance);
                 ForcePScavCount = Math.Max(0, ForcePScavCount - 1);
-
-                //LoggingController.LogInfo("Generating a bot with " + pScavChance + "% of becoming a PScav...");
             }
         }
 
@@ -80,7 +78,7 @@ namespace SPTQuestingBots.Patches
                 return StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil.GetRaidTimeRemainingFraction();
             }
 
-            return (float)StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidChangesUtil.NewEscapeTimeMinutes / StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidChangesUtil.OriginalEscapeTimeMinutes;
+            return (float)StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidChangesUtil.RaidTimeRemainingFraction;
         }
     }
 }

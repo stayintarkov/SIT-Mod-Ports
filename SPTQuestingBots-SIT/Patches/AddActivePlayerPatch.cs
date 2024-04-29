@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Aki.Reflection.Patching;
+using StayInTarkov;
 using Comfort.Common;
 using EFT;
 using SPTQuestingBots.Controllers;
@@ -19,14 +19,16 @@ namespace SPTQuestingBots.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(Player player)
+        private static void PatchPostfix()
         {
-            if (!player.IsYourPlayer)
+			/*
+			  if (Singleton<GameWorld>.Instance.gameObject.TryGetComponent(out Components.LocationData oldLocationData))
             {
-                return;
+                LoggingController.LogInfo("Destroying previous location data...");
+                UnityEngine.GameObject.Destroy(oldLocationData);
             }
-            
-            Singleton<GameWorld>.Instance.gameObject.AddComponent<Components.LocationData>();
+			*/
+            Singleton<GameWorld>.Instance.gameObject.GetOrAddComponent<Components.LocationData>();
 
             if (ConfigController.Config.BotSpawns.DelayGameStartUntilBotGenFinishes)
             {

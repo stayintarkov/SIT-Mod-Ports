@@ -21,6 +21,7 @@ namespace SPTQuestingBots.BotLogic.Objective
         QuestsNotReady,
         Pause,
         IsDead,
+        IsStuck,
         CannotQuest,
         WaitForNextQuest,
         Regroup,
@@ -41,6 +42,7 @@ namespace SPTQuestingBots.BotLogic.Objective
         public int StuckCount { get; set; } = 0;
         public float PauseRequest { get; set; } = 0;
         public BotMonitor BotMonitor { get; private set; } = null;
+        public BotPathData BotPath { get; private set; } = null;
         public EFT.Interactive.Door DoorToOpen { get; set; } = null;
         public Vector3? LastCorner { get; set; } = null;
         public NotQuestingReason NotQuestingReason { get; set; } = NotQuestingReason.None;
@@ -126,6 +128,11 @@ namespace SPTQuestingBots.BotLogic.Objective
             if (BotMonitor == null)
             {
                 BotMonitor = new BotMonitor(botOwner);
+            }
+
+            if (BotPath == null)
+            {
+                BotPath = new BotPathData(botOwner);
             }
 
             if (exfiltrationPoint == null)
