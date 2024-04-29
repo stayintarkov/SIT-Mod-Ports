@@ -12,7 +12,6 @@
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
-    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,55 +30,53 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
+    <PropertyGroup>
     <PostBuildEvent>copy "$(OutDir)SPTQuestingBots.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManagedAssembliesPath>..\..\SIT-Mod-Ports\References\</ManagedAssembliesPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\References\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="aki-singleplayer">
-      <HintPath>..\References\aki-singleplayer.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Aki.Common">
-      <HintPath>..\References\Aki.Common.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Aki.Common.dll</HintPath>
     </Reference>
     <Reference Include="Aki.Reflection">
-      <HintPath>..\References\Aki.Reflection.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Aki.Reflection.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\References\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\References\BepInEx.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="com.unity.multiplayer-hlapi.Runtime">
-      <HintPath>..\References\com.unity.multiplayer-hlapi.Runtime.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\com.unity.multiplayer-hlapi.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="Comfort">
-      <HintPath>..\References\Comfort.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Comfort.dll</HintPath>
     </Reference>
     <Reference Include="Comfort.Unity">
-      <HintPath>..\References\Comfort.Unity.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Comfort.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="DissonanceVoip, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\DissonanceVoip.dll</HintPath>
+    <Reference Include="DissonanceVoip">
+      <HintPath>$(ManagedAssembliesPath)\DissonanceVoip.dll</HintPath>
     </Reference>
-    <Reference Include="ItemComponent.Types, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="DrakiaXYZ-BigBrain, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\ItemComponent.Types.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\DrakiaXYZ-BigBrain.dll</HintPath>
+    </Reference>
+    <Reference Include="ItemComponent.Types">
+      <HintPath>$(ManagedAssembliesPath)\ItemComponent.Types.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="StayInTarkov, Version=1.9.8742.36855, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\StayInTarkov.dll</HintPath>
-    </Reference>
-    <Reference Include="DrakiaXYZ-BigBrain">
-      <HintPath>..\References\DrakiaXYZ-BigBrain.dll</HintPath>
+    <Reference Include="StayInTarkov">
+      <HintPath>$(ManagedAssembliesPath)\StayInTarkov.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -89,32 +86,32 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Unity.Postprocessing.Runtime">
+      <HintPath>$(ManagedAssembliesPath)\Unity.Postprocessing.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>..\References\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\References\UnityEngine.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
-      <HintPath>..\References\UnityEngine.AIModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.AIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>..\References\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\References\UnityEngine.PhysicsModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.TextCoreModule">
-      <HintPath>..\References\UnityEngine.TextCoreModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>..\References\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>..\References\UnityEngine.UI.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -138,9 +135,12 @@
     <Compile Include="BotLogic\Objective\ToggleSwitchAction.cs" />
     <Compile Include="BotLogic\Objective\UnlockDoorAction.cs" />
     <Compile Include="BotLogic\SAINInterop.cs" />
+    <Compile Include="Components\QuestPathFinder.cs" />
     <Compile Include="Components\Spawning\PScavGenerator.cs" />
+    <Compile Include="ConfigurationManagerAttributes.cs" />
     <Compile Include="Configuration\AdjustPScavChanceConfig.cs" />
     <Compile Include="Configuration\BotCapAdjustmentsConfig.cs" />
+    <Compile Include="Configuration\BotPathingConfig.cs" />
     <Compile Include="Configuration\BotSpawnTypeConfig.cs" />
     <Compile Include="Configuration\BotTypeValueConfig.cs" />
     <Compile Include="Configuration\DistanceAngleConfig.cs" />
@@ -159,6 +159,7 @@
     <Compile Include="Controllers\BotRegistrationManager.cs" />
     <Compile Include="Components\Spawning\BotGenerator.cs" />
     <Compile Include="Components\DebugData.cs" />
+    <Compile Include="Helpers\BotPathingHelpers.cs" />
     <Compile Include="Helpers\DebugHelpers.cs" />
     <Compile Include="Helpers\InteractiveObjectHelpers.cs" />
     <Compile Include="Helpers\ItemHelpers.cs" />
@@ -195,13 +196,14 @@
     <Compile Include="Components\LocationData.cs" />
     <Compile Include="Controllers\LoggingController.cs" />
     <Compile Include="BehaviorExtensions\MonoBehaviourDelayedUpdate.cs" />
-    <Compile Include="Controllers\PathRender.cs" />
+    <Compile Include="Components\PathRender.cs" />
     <Compile Include="CoroutineExtensions\EnumeratorWithTimeLimit.cs" />
     <Compile Include="CoroutineExtensions\MethodWithTimeLimit.cs" />
     <Compile Include="Models\BotJobAssignment.cs" />
+    <Compile Include="Models\BotPathData.cs" />
     <Compile Include="Models\BotSpawnInfo.cs" />
     <Compile Include="Models\PathVisualizationData.cs" />
-    <Compile Include="Models\Quest0.cs" />
+    <Compile Include="Models\Quest.cs" />
     <Compile Include="Models\JobAssignment.cs" />
     <Compile Include="Models\QuestItemObjective.cs" />
     <Compile Include="Models\QuestObjective.cs" />
@@ -209,11 +211,15 @@
     <Compile Include="Models\QuestSpawnPointObjective.cs" />
     <Compile Include="Models\QuestZoneObjective.cs" />
     <Compile Include="Models\SerializableVector3.cs" />
+    <Compile Include="Models\StaticPathData.cs" />
+    <Compile Include="Models\StoredQuestLocation.cs" />
+    <Compile Include="Patches\ActivateBotsByWavePatch2.cs" />
     <Compile Include="Patches\ActivateBotsByWavePatch.cs" />
     <Compile Include="Patches\AddEnemyPatch.cs" />
     <Compile Include="Patches\BossLocationSpawnActivatePatch.cs" />
     <Compile Include="Patches\BotDiedPatch.cs" />
     <Compile Include="Patches\BotOwnerBrainActivatePatch.cs" />
+    <Compile Include="Patches\CheckSPTVersionPatch.cs" />
     <Compile Include="Patches\AddActivePlayerPatch.cs" />
     <Compile Include="Patches\BotsControllerStopPatch.cs" />
     <Compile Include="Patches\ExceptAIPatch.cs" />
@@ -232,11 +238,6 @@
     <Compile Include="QuestingBotsPlugin.cs" />
     <Compile Include="QuestingBotsPluginConfig.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SPT-BigBrain-SIT\DrakiaXYZ-BigBrain.csproj">
-      <Project>{c3c9ebdf-af8a-4e59-b18f-e76fae66001c}</Project>
-      <Name>DrakiaXYZ-BigBrain</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

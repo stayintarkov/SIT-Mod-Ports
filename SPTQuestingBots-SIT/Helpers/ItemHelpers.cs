@@ -10,6 +10,10 @@ using EFT.InventoryLogic;
 using EFT;
 using SPTQuestingBots.Controllers;
 
+using InteractionsHandlerClass = ItemMovementHandler;
+using GClass2536 = GClass2547;
+using StashGridClass = StashGrid;
+
 namespace SPTQuestingBots.Helpers
 {
     public static class ItemHelpers
@@ -37,7 +41,7 @@ namespace SPTQuestingBots.Helpers
                 multiplier *= ConfigController.Config.Questing.BotQuestingRequirements.HearingSensor.LoudnessMultiplierHeadset;
             }
 
-            GClass2547 helmetTemplate = helmet?.Template as GClass2547;
+            GClass2536 helmetTemplate = helmet?.Template as GClass2536;
             switch (helmetTemplate?.DeafStrength)
             {
                 case EDeafStrength.Low:
@@ -76,7 +80,7 @@ namespace SPTQuestingBots.Helpers
                 }
 
                 // Initialize the transation to transfer the key to the bot
-                SOperationResult12<AddResult> moveResult = ItemMovementHandler.Add(item, locationForItem, inventoryControllerClass, true);
+                SOperationResult12<AddResult> moveResult = InteractionsHandlerClass.Add(item, locationForItem, inventoryControllerClass, true);
                 if (!moveResult.Succeeded)
                 {
                     LoggingController.LogError("Cannot move key " + item.LocalizedName() + " to inventory of " + botOwner.GetText());
@@ -119,7 +123,7 @@ namespace SPTQuestingBots.Helpers
 
                 // Search through all grids in the equipment slot
                 SearchableItemClass equipmentSlot = botInventoryController.Inventory.Equipment.GetSlot(slot).ContainedItem as SearchableItemClass;
-                foreach (StashGrid grid in (equipmentSlot?.Grids ?? (new StashGrid[0])))
+                foreach (StashGridClass grid in (equipmentSlot?.Grids ?? (new StashGridClass[0])))
                 {
                     //LoggingController.LogInfo("Checking grid " + grid.ID + " (" + grid.GridWidth.Value + "x" + grid.GridHeight.Value + ") in " + slot.ToString() + " for " + BotOwner.GetText() + "...");
 

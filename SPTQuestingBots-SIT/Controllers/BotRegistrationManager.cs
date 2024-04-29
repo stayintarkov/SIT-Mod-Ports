@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Comfort.Common;
@@ -190,6 +189,11 @@ namespace SPTQuestingBots.Controllers
             foreach (BotOwner boss in registeredBosses)
             {
                 if ((boss == null) || boss.IsDead)
+                {
+                    continue;
+                }
+
+                if (ConfigController.Config.Questing.BotQuests.BlacklistedBossHunterBosses.Contains(boss.Brain?.BaseBrain?.ShortName()))
                 {
                     continue;
                 }

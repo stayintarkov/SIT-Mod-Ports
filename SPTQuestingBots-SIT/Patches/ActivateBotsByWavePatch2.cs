@@ -7,9 +7,11 @@ using System.Threading.Tasks;
 using StayInTarkov;
 using EFT;
 
+using BotWaveDataClass = BotSpawnWave;
+
 namespace SPTQuestingBots.Patches
 {
-    public class ActivateBotsByWavePatch : ModulePatch
+    public class ActivateBotsByWavePatch2 : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
@@ -17,21 +19,21 @@ namespace SPTQuestingBots.Patches
                 "ActivateBotsByWave",
                 BindingFlags.Public | BindingFlags.Instance,
                 null,
-                new Type[] { typeof(BossLocationSpawn) },
+                new Type[] { typeof(BotWaveDataClass) },
                 null);
         }
 
         [PatchPrefix]
-        private static bool PatchPrefix(BossLocationSpawn wave)
+        private static bool PatchPrefix(BotWaveDataClass wave)
         {
             if (!GameStartPatch.IsDelayingGameStart)
             {
-                //LoggingController.LogInfo("Allowing spawn of boss wave " + wave.BossName + "...");
+                //LoggingController.LogInfo("Allowing spawn of " + wave.WildSpawnType + " bot wave...");
                 return true;
             }
 
-            GameStartPatch.AddMissedBossWave(wave);
-            //LoggingController.LogInfo("Delaying spawn of boss wave " + wave.BossName + "...");
+            GameStartPatch.AddMissedBotWave(wave);
+            //LoggingController.LogInfo("Delaying spawn of " + wave.WildSpawnType + " bot wave...");
 
             return false;
         }

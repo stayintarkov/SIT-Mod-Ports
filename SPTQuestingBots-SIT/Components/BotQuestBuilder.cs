@@ -22,6 +22,7 @@ namespace SPTQuestingBots.Components
         public bool HaveQuestsBeenBuilt { get; private set; } = false;
 
         private CoroutineExtensions.EnumeratorWithTimeLimit enumeratorWithTimeLimit = new CoroutineExtensions.EnumeratorWithTimeLimit(ConfigController.Config.MaxCalcTimePerFrame);
+        private QuestPathFinder questPathFinder = new QuestPathFinder();
         private List<string> zoneIDsInLocation = new List<string>();
         
         private void Awake()
@@ -33,6 +34,11 @@ namespace SPTQuestingBots.Components
         private void Update()
         {
             
+        }
+
+        public IList<StaticPathData> GetStaticPaths(Vector3 target)
+        {
+            return questPathFinder.GetStaticPaths(target);
         }
 
         public void AddAirdropChaserQuest(Vector3 airdropPosition)
@@ -150,7 +156,10 @@ namespace SPTQuestingBots.Components
                 }
                 else
                 {
-                    LoggingController.LogWarning("Could not add quest for hunting bosses. This is normal if bosses do not spawn on this map.");
+                    if (LocationScene.GetAllObjects<BotZone>(false).Count() > 1)
+                    {
+                        LoggingController.LogWarning("Could not add quest for hunting bosses. This is normal if bosses do not spawn on this map. Boss zones: " + string.Join(", ", bossZones));
+                    }
                 }
 
                 LoadCustomQuests();
@@ -162,6 +171,8 @@ namespace SPTQuestingBots.Components
 
                 HaveQuestsBeenBuilt = true;
                 LoggingController.LogInfo("Finished loading quest data.");
+
+                StartCoroutine(questPathFinder.FindStaticPathsForAllQuests());
             }
             finally
             {
@@ -172,7 +183,7 @@ namespace SPTQuestingBots.Components
         private void LoadCustomQuests()
         {
             // Load all JSON files for custom quests
-            IEnumerable<Quest0> customQuests = ConfigController.GetCustomQuests(Singleton<GameWorld>.Instance.GetComponent<LocationData>().CurrentLocation.Id);
+            IEnumerable<Quest0> customQuests = ConfigController.GetCustomQuestsLocal(Singleton<GameWorld>.Instance.GetComponent<LocationData>().CurrentLocation.Id);
             if (!customQuests.Any())
             {
                 return;
@@ -320,11 +331,11 @@ namespace SPTQuestingBots.Components
             {
                 Vector3[] triggerColliderBounds = DebugHelpers.GetBoundingBoxPoints(triggerCollider.bounds);
                 PathVisualizationData triggerBoundingBox = new PathVisualizationData("Trigger_" + trigger.Id, triggerColliderBounds, Color.cyan);
-                PathRender.AddOrUpdatePath(triggerBoundingBox);
+                Singleton<GameWorld>.Instance.GetComponent<PathRender>().AddOrUpdatePath(triggerBoundingBox);
 
                 Vector3[] triggerTargetPoint = DebugHelpers.GetSpherePoints(navMeshTargetPoint.Value, 0.5f, 10);
                 PathVisualizationData triggerTargetPosSphere = new PathVisualizationData("TriggerTargetPos_" + trigger.Id, triggerTargetPoint, Color.cyan);
-                PathRender.AddOrUpdatePath(triggerTargetPosSphere);
+                Singleton<GameWorld>.Instance.GetComponent<PathRender>().AddOrUpdatePath(triggerTargetPosSphere);
             }
         }
 
@@ -454,8 +465,6 @@ namespace SPTQuestingBots.Components
 
         private IEnumerable<string> getBossSpawnZones()
         {
-            // TODO: This seems to only return zones in which bosses will definitely spawn, not all possible spawn zones. Need to investigate.
-
             List<string> bossZones = new List<string>();
             foreach (BossLocationSpawn bossLocationSpawn in Singleton<GameWorld>.Instance.GetComponent<LocationData>().CurrentLocation.BossLocationSpawn)
             {

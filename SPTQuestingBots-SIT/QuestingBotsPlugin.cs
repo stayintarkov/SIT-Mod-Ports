@@ -14,15 +14,18 @@ namespace SPTQuestingBots
 {
     [BepInIncompatibility("com.pandahhcorp.aidisabler")]
     [BepInIncompatibility("com.dvize.AILimit")]
-    [BepInDependency("xyz.drakia.waypoints", "1.3.0")]
-    [BepInDependency("xyz.drakia.bigbrain", "0.3.2.0")]
-    [BepInPlugin("com.DanW.QuestingBots", "DanW-QuestingBots", "0.4.2")]
+    [BepInDependency("xyz.drakia.waypoints", "1.4.1")]
+    [BepInDependency("xyz.drakia.bigbrain", "0.4.0")]
+    [BepInPlugin("com.DanW.QuestingBots", "DanW-QuestingBots", "0.5.0")]
     public class QuestingBotsPlugin : BaseUnityPlugin
     {
         public static string ModName { get; private set; } = "???";
 
         private void Awake()
         {
+            Patches.CheckSPTVersionPatch.MinVersion = "3.8.0.0";
+            Patches.CheckSPTVersionPatch.MaxVersion = "3.8.99.0";
+
             Logger.LogInfo("Loading QuestingBots...");
             LoggingController.Logger = Logger;
             ModName = Info.Metadata.Name;
@@ -36,8 +39,9 @@ namespace SPTQuestingBots
             
             if (ConfigController.Config.Enabled)
             {
-                LoggingController.LogInfo("Loading QuestingBots...enabling patches and controllers...");
-                
+                LoggingController.LogInfo("Loading QuestingBots...enabling patches...");
+
+                new Patches.CheckSPTVersionPatch().Enable();
                 new Patches.AddActivePlayerPatch().Enable();
                 new Patches.BotsControllerStopPatch().Enable();
                 new Patches.OnGameStartedPatch().Enable();
@@ -53,6 +57,7 @@ namespace SPTQuestingBots
                     new Patches.GameStartPatch().Enable();
                     new Patches.MatchmakerFinalCountdownUpdatePatch().Enable();
                     new Patches.ActivateBotsByWavePatch().Enable();
+                    new Patches.ActivateBotsByWavePatch2().Enable();
                     new Patches.AddEnemyPatch().Enable();
 
                     if (ConfigController.Config.BotSpawns.SpawnInitialBossesFirst)
@@ -77,14 +82,6 @@ namespace SPTQuestingBots
                     ConfigController.AdjustPMCConversionChances(0, false);
                 }
                 
-                if (ConfigController.Config.Debug.Enabled)
-                {
-                    if (ConfigController.Config.Debug.ShowZoneOutlines || ConfigController.Config.Debug.ShowFailedPaths)
-                    {
-                        this.GetOrAddComponent<PathRender>();
-                    }
-                }
-
                 // Add options to the F12 menu
                 QuestingBotsPluginConfig.BuildConfigOptions(Config);
                 

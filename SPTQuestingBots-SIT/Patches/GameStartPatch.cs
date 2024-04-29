@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Aki.Reflection.Patching;
+using StayInTarkov;
 using Comfort.Common;
 using EFT;
 using HarmonyLib;
@@ -13,13 +13,15 @@ using SPTQuestingBots.Components.Spawning;
 using SPTQuestingBots.Controllers;
 using UnityEngine;
 
+using BotWaveDataClass = BotSpawnWave;
+
 namespace SPTQuestingBots.Patches
 {
     public class GameStartPatch : ModulePatch
     {
         public static bool IsDelayingGameStart { get; set; } = false;
 
-        private static readonly List<BotSpawnWave> missedBotWaves = new List<BotSpawnWave>();
+        private static readonly List<BotWaveDataClass> missedBotWaves = new List<BotWaveDataClass>();
         private static readonly List<BossLocationSpawn> missedBossWaves = new List<BossLocationSpawn>();
         private static object localGameObj = null;
 
@@ -49,7 +51,7 @@ namespace SPTQuestingBots.Patches
             missedBossWaves.Clear();
         }
 
-        public static void AddMissedBotWave(BotSpawnWave wave)
+        public static void AddMissedBotWave(BotWaveDataClass wave)
         {
             missedBotWaves.Add(wave);
         }
@@ -89,7 +91,7 @@ namespace SPTQuestingBots.Patches
             {
                 LoggingController.LogInfo("Spawning missed bot waves...");
 
-                foreach (BotSpawnWave missedBotWave in missedBotWaves)
+                foreach (BotWaveDataClass missedBotWave in missedBotWaves)
                 {
                     Singleton<IBotGame>.Instance.BotsController.ActivateBotsByWave(missedBotWave);
                 }

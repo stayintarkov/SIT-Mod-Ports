@@ -82,8 +82,7 @@ namespace SPTQuestingBots.Helpers
 
                 Type doorOpenerType = typeof(BotDoorOpener);
 
-                PropertyInfo interactingProperty = doorOpenerType.GetProperty("Interacting", BindingFlags.Public | BindingFlags.Instance);
-                interactingProperty.SetValue(botOwner.DoorOpener, true);
+                botOwner.DoorOpener.Interacting = true;
 
                 float _traversingEnd = Time.time + botOwner.Settings.FileSettings.Move.WAIT_DOOR_OPEN_SEC;
 
@@ -91,7 +90,11 @@ namespace SPTQuestingBots.Helpers
                 traversingEndField.SetValue(botOwner.DoorOpener, _traversingEnd);
 
                 LoggingController.LogInfo(botOwner.GetText() + " is unlocking door " + door.Id + "...");
+
+                // StartDoorInteraction worked by itself in SPT-AKI 3.7.6, but starting in 3.8.0, doors would "break" without also running
+                // ExecuteDoorInteraction
                 botOwner.GetPlayer.CurrentManagedState.StartDoorInteraction(door, interactionResult, null);
+                botOwner.GetPlayer.CurrentManagedState.ExecuteDoorInteraction(door, interactionResult, null, botOwner.GetPlayer);
             }
             catch (Exception e)
             {

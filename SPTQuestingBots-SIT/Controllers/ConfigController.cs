@@ -97,6 +97,54 @@ namespace SPTQuestingBots.Controllers
             return _templates.Templates;
         }
 
+        public static IEnumerable<Quest0> GetCustomQuestsLocal(string locationID)
+        {
+            Quest0[] standardQuests = new Quest0[0];
+
+            string dllPath = Assembly.GetExecutingAssembly().Location;
+            string directoryPath = Path.GetDirectoryName(dllPath);
+            string pluginFolderPath = Path.Combine(directoryPath, "DanW-SPTQuestingBots");
+
+            string filename = pluginFolderPath + "\\quests\\standard\\" + locationID + ".json";
+            LoggingController.LogInfo("Local Standard Quest Load Path: " + filename);
+            if (File.Exists(filename))
+            {
+                string errorMessage = "Cannot read standard quests for " + locationID;
+                try
+                {
+                    string json = File.ReadAllText(filename);
+                    TryDeserializeObject(json, errorMessage, out standardQuests);
+                }
+                catch (Exception e)
+                {
+                    LoggingController.LogError(e.Message);
+                    LoggingController.LogError(e.StackTrace);
+                    LoggingController.LogErrorToServerConsole(errorMessage);
+                }
+            }
+
+            Quest0[] customQuests = new Quest0[0];
+            filename = pluginFolderPath + "\\quests\\custom\\" + locationID + ".json";
+            LoggingController.LogInfo("Local Custom Quest Load Path: " + filename);
+            if (File.Exists(filename))
+            {
+                string errorMessage = "Cannot read custom quests for " + locationID;
+                try
+                {
+                    string json = File.ReadAllText(filename);
+                    TryDeserializeObject(json, errorMessage, out customQuests);
+                }
+                catch (Exception e)
+                {
+                    LoggingController.LogError(e.Message);
+                    LoggingController.LogError(e.StackTrace);
+                    LoggingController.LogErrorToServerConsole(errorMessage);
+                }
+            }
+
+            return standardQuests.Concat(customQuests);
+        }
+
         public static IEnumerable<Quest0> GetCustomQuests(string locationID)
         {
             Quest0[] standardQuests = new Quest0[0];
@@ -137,7 +185,7 @@ namespace SPTQuestingBots.Controllers
 
             return standardQuests.Concat(customQuests);
         }
-        
+
         private static string GetBackendUrl()
         {
             string[] args = Environment.GetCommandLineArgs();
@@ -145,19 +193,19 @@ namespace SPTQuestingBots.Controllers
                 return null;
 
             var beUrl = string.Empty;
-            
+
             foreach (string arg in args)
             {
                 if (arg.Contains("BackendUrl"))
                 {
                     string json = arg.Replace("-config=", string.Empty);
                     dynamic result = JsonConvert.DeserializeObject(json);
-                    if(result != null)
+                    if (result != null)
                         beUrl = result.BackendUrl;
                     break;
                 }
             }
-            
+
             return beUrl;
         }
 
@@ -165,7 +213,7 @@ namespace SPTQuestingBots.Controllers
         {
             string json = null;
             Exception lastException = null;
-            
+
             string backendUrl = GetBackendUrl();
             bool backendHasTrailing = backendUrl.EndsWith(@"/");
             bool endpointHasLeading = endpoint.StartsWith(@"/");

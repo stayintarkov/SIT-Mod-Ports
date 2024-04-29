@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Comfort.Common;
 using EFT;
-using SPTQuestingBots.BotLogic.HiveMind;
 using SPTQuestingBots.BotLogic.Objective;
 using SPTQuestingBots.Models;
 using UnityEngine;
@@ -22,7 +21,7 @@ namespace SPTQuestingBots.Controllers
 
         public static int QuestCount => allQuests.Count;
 
-        public static SPTQuestingBots.Models.Quest0[] FindQuestsWithZone(string zoneId) => allQuests.Where(q => q.GetObjectiveForZoneID(zoneId) != null).ToArray();
+        public static Quest0[] FindQuestsWithZone(string zoneId) => allQuests.Where(q => q.GetObjectiveForZoneID(zoneId) != null).ToArray();
         public static bool CanMoreBotsDoQuest(this Quest0 quest) => quest.NumberOfActiveBots() < quest.MaxBots;
 
         public static void Clear()
@@ -208,7 +207,7 @@ namespace SPTQuestingBots.Controllers
 
             if (quest == null)
             {
-                throw new ArgumentNullException("Quest0 is null", nameof(quest));
+                throw new ArgumentNullException("Quest is null", nameof(quest));
             }
 
             if (!botJobAssignments.ContainsKey(bot.Profile.Id))
@@ -318,7 +317,7 @@ namespace SPTQuestingBots.Controllers
 
             if (quest == null)
             {
-                throw new ArgumentNullException("Quest0 is null", nameof(quest));
+                throw new ArgumentNullException("Quest is null", nameof(quest));
             }
 
             // Check if the bot is eligible to do the quest
@@ -745,7 +744,7 @@ namespace SPTQuestingBots.Controllers
 
             // Write the header row
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Quest0 Name,Objective,Steps,Min Level,Max Level,First Step Position");
+            sb.AppendLine("Quest Name,Objective,Steps,Min Level,Max Level,First Step Position");
 
             // Write a row for every objective in every quest
             foreach (Quest0 quest in allQuests)
@@ -795,7 +794,7 @@ namespace SPTQuestingBots.Controllers
 
             // Write the header row
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine("Bot Name,Bot Nickname,Bot Level,Assignment Status,Quest0 Name,Objective Name,Step Number,Start Time,End Time");
+            sb.AppendLine("Bot Name,Bot Nickname,Bot Level,Assignment Status,Quest Name,Objective Name,Step Number,Start Time,End Time");
 
             // Write a row for every quest, objective, and step that each bot was assigned to perform
             foreach (string botID in botJobAssignments.Keys)
@@ -871,7 +870,7 @@ namespace SPTQuestingBots.Controllers
 
         public static void CheckBotJobAssignmentValidity(BotOwner bot)
         {
-            BotJobAssignment botJobAssignment = BotJobAssignmentFactory.GetCurrentJobAssignment(bot, false);
+            BotJobAssignment botJobAssignment = GetCurrentJobAssignment(bot, false);
             if (botJobAssignment?.QuestAssignment == null)
             {
                 return;
