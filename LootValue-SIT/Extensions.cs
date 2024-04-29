@@ -1,8 +1,7 @@
-﻿//using Aki.Reflection.Utils;
+﻿using StayInTarkov;
 using Comfort.Common;
 using EFT;
 using EFT.InventoryLogic;
-using StayInTarkov;
 using System.Reflection;
 
 namespace LootValue
@@ -26,10 +25,9 @@ namespace LootValue
 
 	internal static class TraderClassExtensions
 	{
-        //private static ISession Session => ClientAppUtils.GetMainApp().GetClientBackEndSession();
-        private static ISession Session => StayInTarkovHelperConstants.GetMainApp().GetClientBackEndSession();
+		private static ISession Session => StayInTarkovHelperConstants.GetMainApp().GetClientBackEndSession();
 
-        private static readonly FieldInfo SupplyDataField =
+		private static readonly FieldInfo SupplyDataField =
 			typeof(TraderClass).GetField("supplyData_0", BindingFlags.NonPublic | BindingFlags.Instance);
 
 		public static SupplyData GetSupplyData(this TraderClass trader) =>
