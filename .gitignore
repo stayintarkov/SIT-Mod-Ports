@@ -17,10 +17,7 @@ References/
 # Idea folder
 .idea/
 
-- Plugins/*
-
-# Unfinished mods
-Donuts-SIT/
+!Plugins/*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
