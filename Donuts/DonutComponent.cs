@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using Aki.Reflection.Utils;
+using StayInTarkov;
 using BepInEx.Logging;
 using Comfort.Common;
 using EFT;
@@ -9,13 +11,13 @@ using HarmonyLib;
 using Systems.Effects;
 using UnityEngine;
 
+using PatchConstants = StayInTarkov.StayInTarkovHelperConstants;
+
 #pragma warning disable IDE0007, IDE0044
 namespace Donuts
 {
     public class DonutComponent : MonoBehaviour
     {
-        public static WildSpawnType SPTUsec = (WildSpawnType)47;
-        public static WildSpawnType SPTBear = (WildSpawnType)48;
 
         internal static FightLocations fightLocations;
         internal static FightLocations sessionLocations;
@@ -25,8 +27,8 @@ namespace Donuts
 
         internal List<WildSpawnType> validDespawnListPMC = new List<WildSpawnType>()
         {
-            SPTUsec,
-            SPTBear
+            WildSpawnType.sptUsec,
+            WildSpawnType.sptBear
         };
 
         internal List<WildSpawnType> validDespawnListScav = new List<WildSpawnType>()
@@ -46,12 +48,13 @@ namespace Donuts
         internal static GameWorld gameWorld;
         internal static BotSpawner botSpawnerClass;
         internal static IBotCreator botCreator;
+        internal static List<Player> playerList = new List<Player>();
 
         internal float PMCdespawnCooldown = 0f;
-        internal float PMCdespawnCooldownDuration = 10f;
+        internal float PMCdespawnCooldownDuration = DonutsPlugin.despawnInterval.Value;
 
         internal float SCAVdespawnCooldown = 0f;
-        internal float SCAVdespawnCooldownDuration = 10f;
+        internal float SCAVdespawnCooldownDuration = DonutsPlugin.despawnInterval.Value;
 
         internal static List<HotspotTimer> hotspotTimers;
         internal static Dictionary<string, MethodInfo> methodCache;
@@ -72,6 +75,17 @@ namespace Donuts
                 Logger = BepInEx.Logging.Logger.CreateLogSource(nameof(DonutComponent));
             }
 
+        }
+        public static void Enable()
+        {
+            if (Singleton<IBotGame>.Instantiated)
+            {
+                gameWorld = Singleton<GameWorld>.Instance;
+                gameWorld.GetOrAddComponent<DonutComponent>();
+
+                Logger.LogDebug("Donuts Enabled");
+
+            }
         }
 
         public void Awake()
@@ -101,11 +115,27 @@ namespace Donuts
                 methodCache[methodInfo.Name] = methodInfo;
             }
 
+            if (gameWorld.RegisteredPlayers.Count > 0)
+            {
+                foreach (var player in gameWorld.AllPlayersEverExisted)
+                {
+                    // Only add humans
+                    if (!player.IsAI)
+                    {
+                        playerList.Add(player);
+                    }
+                }
+            }
+
             // Remove despawned bots from bot EnemyInfos list.
             botSpawnerClass.OnBotRemoved += removedBot =>
             {
                 // Clear the enemy list, and memory about the main player
-                removedBot.Memory.DeleteInfoAboutEnemy(gameWorld.MainPlayer);
+                foreach (var player in playerList)
+                {
+                    // Remove each player from enemy
+                    removedBot.Memory.DeleteInfoAboutEnemy(player);
+                }
                 removedBot.EnemiesController.EnemyInfos.Clear();
 
                 // Loop through the rest of the bots on the map, andd clear this bot from its memory/group info
@@ -127,6 +157,9 @@ namespace Donuts
             };
         }
 
+        private readonly Stopwatch spawnCheckTimer = new Stopwatch();
+        private const int SpawnCheckInterval = 1000;
+
         private void Start()
         {
             // setup the rest of donuts for the selected folder
@@ -141,156 +174,107 @@ namespace Donuts
 
             Logger.LogDebug("Setup PMC Bot limit: " + PMCBotLimit);
             Logger.LogDebug("Setup SCAV Bot limit: " + SCAVBotLimit);
-        }
 
-        public static void Enable()
-        {
-            if (Singleton<IBotGame>.Instantiated)
-            {
-                gameWorld = Singleton<GameWorld>.Instance;
-                gameWorld.GetOrAddComponent<DonutComponent>();
-
-                Logger.LogDebug("Donuts Enabled");
-            }
+            spawnCheckTimer.Start();
         }
 
         private void Update()
         {
-            if (DonutsPlugin.PluginEnabled.Value && fileLoaded)
+            if (!DonutsPlugin.PluginEnabled.Value || !fileLoaded)
+                return;
+
+            foreach (var hotspotTimer in hotspotTimers)
             {
-                //every hotspottimer should be updated every frame
-                foreach (var hotspotTimer in hotspotTimers)
-                {
-                    hotspotTimer.UpdateTimer();
-                }
+                hotspotTimer.UpdateTimer();
+            }
 
-                if (groupedHotspotTimers.Count > 0)
+            if (spawnCheckTimer.ElapsedMilliseconds >= SpawnCheckInterval)
+            {
+                spawnCheckTimer.Restart();
+                StartCoroutine(StartSpawnProcess());
+            }
+        }
+
+        private IEnumerator StartSpawnProcess()
+        {
+            Gizmos.DisplayMarkerInformation();
+
+            if (DonutsPlugin.DespawnEnabledPMC.Value)
+            {
+                DespawnFurthestBot("pmc");
+            }
+
+            if (DonutsPlugin.DespawnEnabledSCAV.Value)
+            {
+                DespawnFurthestBot("scav");
+            }
+
+            if (groupedHotspotTimers.Count > 0)
+            {
+                foreach (var groupHotspotTimers in groupedHotspotTimers.Values)
                 {
-                    foreach (var groupHotspotTimers in groupedHotspotTimers.Values)
+                    //check if randomIndex is possible
+                    if (!(groupHotspotTimers.Count > 0))
                     {
-                        //check if randomIndex is possible
-                        if (!(groupHotspotTimers.Count > 0))
+                        continue;
+                    }
+
+                    // Get a random hotspotTimer from the group (grouped by groupNum}
+                    var randomIndex = UnityEngine.Random.Range(0, groupHotspotTimers.Count);
+                    var hotspotTimer = groupHotspotTimers[randomIndex];
+
+                    if (hotspotTimer.ShouldSpawn())
+                    {
+                        Vector3 coordinate = new Vector3(hotspotTimer.Hotspot.Position.x, hotspotTimer.Hotspot.Position.y, hotspotTimer.Hotspot.Position.z);
+
+                        if (CanSpawn(hotspotTimer, coordinate))
                         {
-                            continue;
-                        }
-
-                        // Get a random hotspotTimer from the group (grouped by groupNum}
-                        var randomIndex = UnityEngine.Random.Range(0, groupHotspotTimers.Count);
-                        var hotspotTimer = groupHotspotTimers[randomIndex];
-
-                        if (hotspotTimer.ShouldSpawn())
-                        {
-                            var hotspot = hotspotTimer.Hotspot;
-                            var coordinate = new Vector3(hotspot.Position.x, hotspot.Position.y, hotspot.Position.z);
-                            bool hotspotBoostPMC = DonutsPlugin.hotspotBoostPMC.Value;
-                            bool hotspotBoostSCAV = DonutsPlugin.hotspotBoostSCAV.Value;
-
-                            if (BotSpawn.IsWithinBotActivationDistance(hotspot, coordinate) && maplocation == hotspot.MapName)
-                            {
-
-                                // hotspot check here?
-                                if (hotspotBoostPMC && hotspot.Name.ToLower().Contains("hotspot_pmc"))
-                                {
-#if DEBUG
-                                    Logger.LogDebug($"Hotspot boost enabled for PMCs - juicing up spawns");
-#endif
-                                    hotspot.SpawnChance = 100;
-                                }
-                                else if (hotspotBoostSCAV && hotspot.Name.ToLower().Contains("hotspot_scav"))
-                                {
-#if DEBUG
-                                    Logger.LogDebug($"Hotspot boost enabled for SCAVs - juicing up spawns");
-#endif
-                                    hotspot.SpawnChance = 100;
-                                }
-
-                                // Check if passes hotspot.spawnChance
-                                if (UnityEngine.Random.Range(0, 100) >= hotspot.SpawnChance)
-                                {
-#if DEBUG
-                                    Logger.LogDebug("SpawnChance of " + hotspot.SpawnChance + "% Failed for hotspot: " + hotspot.Name);
-#endif
-
-                                    //reset timer if spawn chance fails for all hotspots with same groupNum
-                                    foreach (var timer in groupedHotspotTimers[hotspot.GroupNum])
-                                    {
-                                        timer.ResetTimer();
-
-                                        if (timer.Hotspot.IgnoreTimerFirstSpawn)
-                                        {
-                                            timer.Hotspot.IgnoreTimerFirstSpawn = false;
-                                        }
-
-#if DEBUG
-                                        Logger.LogDebug($"Resetting all grouped timers for groupNum: {hotspot.GroupNum} for hotspot: {timer.Hotspot.Name} at time: {timer.GetTimer()}");
-#endif
-                                    }
-                                    continue;
-                                }
-
-                                // if hotspot boost is enabled then skip the cooldown
-                                if (hotspotTimer.inCooldown && (!hotspotBoostPMC || !hotspotBoostSCAV))
-                                {
-#if DEBUG
-                                    Logger.LogDebug("Hotspot: " + hotspot.Name + " is in cooldown, skipping spawn");
-#endif
-                                    continue;
-                                }
-
-#if DEBUG
-                                Logger.LogWarning("SpawnChance of " + hotspot.SpawnChance + "% Passed for hotspot: " + hotspot.Name);
-#endif
-
-                                BotSpawn.SpawnBots(hotspotTimer, coordinate);
-                                hotspotTimer.timesSpawned++;
-
-                                // Make sure to check the times spawned in hotspotTimer and set cooldown bool if needed
-                                if (hotspotTimer.timesSpawned >= hotspot.MaxSpawnsBeforeCoolDown)
-                                {
-                                    hotspotTimer.inCooldown = true;
-#if DEBUG
-                                    Logger.LogDebug("Hotspot: " + hotspot.Name + " is now in cooldown");
-#endif
-                                }
-
-#if DEBUG
-                                Logger.LogDebug("Resetting Regular Spawn Timer (after successful spawn): " + hotspotTimer.GetTimer() + " for hotspot: " + hotspot.Name);
-#endif
-
-                                //reset timer if spawn chance passes for all hotspots with same groupNum
-                                foreach (var timer in groupedHotspotTimers[hotspot.GroupNum])
-                                {
-                                    timer.ResetTimer();
-
-                                    if (timer.Hotspot.IgnoreTimerFirstSpawn)
-                                    {
-                                        timer.Hotspot.IgnoreTimerFirstSpawn = false;
-                                    }
-
-#if DEBUG
-                                    Logger.LogDebug($"Resetting all grouped timers for groupNum: {hotspot.GroupNum} for hotspot: {timer.Hotspot.Name} at time: {timer.GetTimer()}");
-#endif
-                                }
-                            }
+                            TriggerSpawn(hotspotTimer, coordinate);
+                            yield return null;
                         }
                     }
-                }
-
-                Gizmos.DisplayMarkerInformation();
-
-                if (DonutsPlugin.DespawnEnabledPMC.Value)
-                {
-                    DespawnFurthestBot("pmc");
-                }
-
-                if (DonutsPlugin.DespawnEnabledSCAV.Value)
-                {
-                    DespawnFurthestBot("scav");
                 }
             }
         }
 
+        private bool CanSpawn(HotspotTimer hotspotTimer, Vector3 coordinate)
+        {
+            // Check if the timer trigger is greater than the threshold and conditions are met
+            if (BotSpawn.IsWithinBotActivationDistance(hotspotTimer.Hotspot, coordinate) && maplocation == hotspotTimer.Hotspot.MapName)
+            {
+                if ((hotspotTimer.Hotspot.WildSpawnType == "pmc" && DonutsPlugin.hotspotBoostPMC.Value) ||
+                    (hotspotTimer.Hotspot.WildSpawnType == "scav" && DonutsPlugin.hotspotBoostSCAV.Value))
+                {
+                    hotspotTimer.Hotspot.SpawnChance = 100;  // Boosting spawn chance
+                }
 
+                return UnityEngine.Random.Range(0, 100) < hotspotTimer.Hotspot.SpawnChance;
+            }
+            return false;
+        }
+
+        private void TriggerSpawn(HotspotTimer hotspotTimer, Vector3 coordinate)
+        {
+            BotSpawn.SpawnBots(hotspotTimer, coordinate);
+            hotspotTimer.timesSpawned++;
+
+            if (hotspotTimer.timesSpawned >= hotspotTimer.Hotspot.MaxSpawnsBeforeCoolDown)
+            {
+                hotspotTimer.inCooldown = true;
+            }
+
+            ResetGroupTimers(hotspotTimer.Hotspot.GroupNum);
+        }
+
+        private void ResetGroupTimers(int groupNum)
+        {
+            foreach (var timer in groupedHotspotTimers[groupNum])
+            {
+                timer.ResetTimer();
+                if (timer.Hotspot.IgnoreTimerFirstSpawn)
+                    timer.Hotspot.IgnoreTimerFirstSpawn = false;
+            }
+        }
 
         private void DespawnFurthestBot(string bottype)
         {
@@ -298,6 +282,7 @@ namespace Donuts
             float maxDistance = -1f;
             Player furthestBot = null;
             var tempBotCount = 0;
+            Dictionary<Player, float> botClosestDistanceToAnyPlayerDict = new Dictionary<Player, float>();
 
             if (bottype == "pmc")
             {
@@ -313,12 +298,12 @@ namespace Donuts
                     {
                         continue;
                     }
+
                     // Ignore bots on the invalid despawn list, and the player
-                    if (bot.IsYourPlayer || !validDespawnListPMC.Contains(bot.Profile.Info.Settings.Role) || bot.AIData.BotOwner.BotState != EBotState.Active)
+                    if (!bot.IsAI || bot.IsYourPlayer || !validDespawnListPMC.Contains(bot.Profile.Info.Settings.Role) || bot.AIData.BotOwner.BotState != EBotState.Active)
                     {
                         continue;
                     }
-
 
                     // Don't include bots that have spawned within the last 10 seconds
                     if (Time.time - 10 < bot.AIData.BotOwner.ActivateTime)
@@ -326,18 +311,22 @@ namespace Donuts
                         continue;
                     }
 
+                    // Hydrate dictionary of bot with its shortest distance to a player
+                    GetShortestDistanceBetweenBotAndPlayers(bot, botClosestDistanceToAnyPlayerDict);
+
+                    // Get the bot that is furthest away from any player
+                    var furthestAwayBotKvp = botClosestDistanceToAnyPlayerDict.FirstOrDefault(botDistKvp => botDistKvp.Value == botClosestDistanceToAnyPlayerDict.Values.Max());
+
+                    // Flag furthest away bot if it's beyond the desired range for later removal
                     float distance = (bot.Position - gameWorld.MainPlayer.Position).sqrMagnitude;
                     if (distance > maxDistance)
                     {
-                        maxDistance = distance;
-                        furthestBot = bot;
+                        maxDistance = furthestAwayBotKvp.Value;
+                        furthestBot = furthestAwayBotKvp.Key;
                     }
-
-                    //add bots that match criteria but distance doesn't matter
-                    tempBotCount++;
                 }
 
-
+                tempBotCount = botClosestDistanceToAnyPlayerDict.Count;
             }
             else if (bottype == "scav")
             {
@@ -354,7 +343,7 @@ namespace Donuts
                         continue;
                     }
                     // Ignore bots on the invalid despawn list, and the player
-                    if (bot.IsYourPlayer || !validDespawnListScav.Contains(bot.Profile.Info.Settings.Role) || bot.AIData.BotOwner.BotState != EBotState.Active)
+                    if (!bot.IsAI || bot.IsYourPlayer || !validDespawnListScav.Contains(bot.Profile.Info.Settings.Role) || bot.AIData.BotOwner.BotState != EBotState.Active)
                     {
                         continue;
                     }
@@ -365,16 +354,21 @@ namespace Donuts
                         continue;
                     }
 
-                    float distance = (bot.Position - gameWorld.MainPlayer.Position).sqrMagnitude;
-                    if (distance > maxDistance)
-                    {
-                        maxDistance = distance;
-                        furthestBot = bot;
-                    }
+                    // Hydrate dict with bot + shortest distance to any player
+                    GetShortestDistanceBetweenBotAndPlayers(bot, botClosestDistanceToAnyPlayerDict);
 
-                    //add bots that match criteria but distance doesn't matter
-                    tempBotCount++;
+                    // Get the bot that is furthest away from any player
+                    var furthestAwayBotKvp = botClosestDistanceToAnyPlayerDict.FirstOrDefault(botDistKvp => botDistKvp.Value == botClosestDistanceToAnyPlayerDict.Values.Max());
+
+                    // Flag furthest away bot if its beyond the desired range for later removal
+                    if (furthestAwayBotKvp.Value > maxDistance)
+                    {
+                        // Found a bot further than allowed distance, flag them
+                        maxDistance = furthestAwayBotKvp.Value;
+                        furthestBot = furthestAwayBotKvp.Key;
+                    }
                 }
+                tempBotCount = botClosestDistanceToAnyPlayerDict.Count;
             }
 
             if (furthestBot != null)
@@ -416,18 +410,51 @@ namespace Donuts
                     SCAVdespawnCooldown = Time.time;
                 }
             }
-
         }
 
+        /// <summary>
+        /// Hydrate passed in dictionary with a bot + their shortest distance to a living player
+        /// </summary>
+        /// <param name="bot">AI bot to add to dictionary</param>
+        /// <param name="botClosestDistanceToAnyPlayerDict">Dictionary of bots and the shortest distance to a living player</param>
+        private void GetShortestDistanceBetweenBotAndPlayers(Player bot, Dictionary<Player, float> botClosestDistanceToAnyPlayerDict)
+        {
+            // Check each player against each bot
+            foreach (var player in playerList)
+            {
+                // Skip errored players
+                if (player == null || player.HealthController == null)
+                {
+                    continue;
+                }
 
+                // Skip dead players
+                if (!player.HealthController.IsAlive)
+                {
+                    continue;
+                }
 
+                // Get distance from player to bot
+                float currentBotDistance = (bot.Position - player.Position).sqrMagnitude;
+                if (botClosestDistanceToAnyPlayerDict.ContainsKey(bot))
+                {
+                    if (botClosestDistanceToAnyPlayerDict[bot] > currentBotDistance)
+                    {
+                        // Bot is closer to a player than current closest distance, update
+                        botClosestDistanceToAnyPlayerDict[bot] = currentBotDistance;
+                    }
+                }
+                else
+                {
+                    // First time processing bot, store distance from player to bot
+                    botClosestDistanceToAnyPlayerDict[bot] = currentBotDistance;
+                }
+            }
+        }
 
         private void OnGUI()
         {
             gizmos.ToggleGizmoDisplay(DonutsPlugin.DebugGizmos.Value);
         }
-
     }
-
 }
-

@@ -1,10 +1,12 @@
-﻿using EFT.Communications;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using StayInTarkov;
+using EFT;
+using EFT.Communications;
+using Newtonsoft.Json;
 using UnityEngine;
 using static Donuts.DonutComponent;
 using static Donuts.Gizmos;
@@ -39,7 +41,8 @@ namespace Donuts
             Gizmos.drawnCoordinates = new HashSet<Vector3>();
             gizmoSpheres = new List<GameObject>();
 
-
+            sptUsec = WildSpawnType.sptUsec;
+            sptBear = WildSpawnType.sptBear;
         }
         internal static void SetupBotLimit(string folderName)
         {

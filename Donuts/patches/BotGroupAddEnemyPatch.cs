@@ -1,6 +1,6 @@
-﻿using Aki.Reflection.Patching;
+﻿using System.Reflection;
+using StayInTarkov;
 using EFT;
-using System.Reflection;
 
 namespace Donuts
 {
