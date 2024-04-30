@@ -1,4 +1,4 @@
-﻿using Aki.Reflection.Patching;
+﻿using StayInTarkov;
 using DrakiaXYZ.BigBrain.Brains;
 using DrakiaXYZ.BigBrain.Internal;
 using EFT;
