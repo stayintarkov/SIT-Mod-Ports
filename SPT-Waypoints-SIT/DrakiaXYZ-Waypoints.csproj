@@ -31,37 +31,37 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy "$(OutDir)DrakiaXYZ-Waypoints.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
+    <ManagedAssembliesPath>..\..\SIT-Mod-Ports\References\</ManagedAssembliesPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Aki.Reflection">
-      <HintPath>..\References\Aki.Reflection.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\References\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\References\BepInEx.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="Comfort, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Comfort.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Comfort.dll</HintPath>
     </Reference>
     <Reference Include="Comfort.Unity, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Comfort.Unity.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Comfort.Unity.dll</HintPath>
     </Reference>
     <Reference Include="DrakiaXYZ-BigBrain, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\DrakiaXYZ-BigBrain.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\DrakiaXYZ-BigBrain.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="StayInTarkov">
+      <HintPath>..\SIT-Mod-Ports\References\StayInTarkov.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -73,67 +73,61 @@
     <Reference Include="System.Xml" />
     <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.AIModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.AIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.AssetBundleModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.AssetBundleModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.InputLegacyModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="StayInTarkov">
-      <HintPath>..\References\StayInTarkov.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BrainLogic\RoamingLayer.cs" />
-    <Compile Include="BrainLogic\RoamingLogic.cs" />
     <Compile Include="Components\BotZoneDebugComponent.cs" />
-    <Compile Include="Components\DoorBlockAdderComponent.cs" />
     <Compile Include="Components\NavMeshDebugComponent.cs" />
     <Compile Include="ConfigurationManagerAttributes.cs" />
-    <Compile Include="CustomWaypoint.cs" />
-    <Compile Include="CustomWaypointLoader.cs" />
     <Compile Include="Helpers\DependencyChecker.cs" />
-    <Compile Include="Helpers\PatrolWayCustom.cs" />
-    <Compile Include="Helpers\ExportModel.cs" />
     <Compile Include="Helpers\GameObjectHelper.cs" />
     <Compile Include="Helpers\Settings.cs" />
-    <Compile Include="Patches\AICellDataGetCellPatch.cs" />
+    <Compile Include="Patches\BotVoxelesPersonalActivatePatch.cs" />
+    <Compile Include="Patches\FindPathPatch.cs" />
+    <Compile Include="Patches\GroupPointCachePatch.cs" />
+    <Compile Include="Patches\GroupPointGetByIdPatch.cs" />
+    <Compile Include="Patches\SwitchDoorBlockerPatch.cs" />
     <Compile Include="Patches\DebugPatch.cs" />
-    <Compile Include="Patches\DoorBlockerPatch.cs" />
     <Compile Include="Patches\DoorLinkPatch.cs" />
-    <Compile Include="Patches\EditorPatch.cs" />
+    <Compile Include="Patches\DoorLinkStateChangePatch.cs" />
+    <Compile Include="Patches\ExfilDoorBlockerPatch.cs" />
     <Compile Include="Patches\WaypointPatch.cs" />
     <Compile Include="VersionChecker\TarkovVersion.cs" />
     <Compile Include="WaypointsPlugin.cs" />
@@ -142,17 +136,15 @@
   <ItemGroup>
     <None Include="LICENSE" />
     <None Include="VersionChecker\setbuild.ps1" />
-    <None Include="Waypoints\Solarint\bigmap.json" />
-    <None Include="Waypoints\Solarint\factory4_day.json" />
-    <None Include="Waypoints\Solarint\factory4_night.json" />
-    <None Include="Waypoints\Solarint\interchange.json" />
-    <None Include="Waypoints\Solarint\laboratory.json" />
-    <None Include="Waypoints\Solarint\lighthouse.json" />
-    <None Include="Waypoints\Solarint\rezervbase.json" />
-    <None Include="Waypoints\Solarint\shoreline.json" />
-    <None Include="Waypoints\Solarint\tarkovstreets.json" />
-    <None Include="Waypoints\Solarint\woods.json" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>
