@@ -93,6 +93,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(OutDir)MoreCheckmarks.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetDir)MoreCheckmarks.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
   </PropertyGroup>
 </Project>
