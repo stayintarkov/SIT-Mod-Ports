@@ -99,10 +99,10 @@ namespace SAIN
                 typeof(Patches.Shoot.SemiAutoPatch),
                 typeof(Patches.Components.AddComponentPatch),
                 //typeof(Patches.Generic.MultiThreadBotTick),
-                typeof(Patches.Generic.MultiThreadAITaskManTickM0),
-                typeof(Patches.Generic.MultiThreadAITaskManTickM1),
-                typeof(Patches.Generic.BotMover3Fix),
-                typeof(Patches.Generic.SuppressExceptionUpdateManual)
+                //typeof(Patches.Generic.MultiThreadAITaskManTickM0),
+                //typeof(Patches.Generic.MultiThreadAITaskManTickM1),
+                //typeof(Patches.Generic.BotMover3Fix),
+                //typeof(Patches.Generic.SuppressExceptionUpdateManual)
                 //typeof(Patches.Generic.MultiThreadAICoreConTick)
             };
 

@@ -20,6 +20,7 @@ namespace SAIN.Patches.Components
         {
             try
             {
+                if(__instance == null) SAIN.Logger.LogError("INSTANCE NULL");
                 BotSpawnController.Instance.AddBot(__instance);
             }
             catch (Exception ex)

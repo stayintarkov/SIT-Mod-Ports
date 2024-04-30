@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net471</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>10</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="Mono.Cecil">
+        <HintPath>I:\Tarkov Stuff\SITDev\Mono.Cecil.dll</HintPath>
+      </Reference>
+      <Reference Include="Mono.Cecil.Pdb">
+        <HintPath>I:\Tarkov Stuff\SITDev\Mono.Cecil.Pdb.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+      <Exec Command="copy &quot;$(OutDir)BotPerformancePrepatcher.dll&quot; &quot;$(SolutionDir)!Plugins\&quot; /y &amp;&amp; copy &quot;$(OutDir)BotPerformancePrepatcher.dll&quot; &quot;I:\Tarkov Stuff\Escape from Tarkov\BepInEx\patchers&quot; /y" />
+    </Target>
+
+</Project>
