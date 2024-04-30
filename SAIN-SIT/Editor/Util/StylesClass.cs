@@ -66,39 +66,61 @@ namespace SAIN.Editor
 
         private static void CreateStyles()
         {
+            GUIStyle LabelStyle =
+                new GUIStyle(GUI.skin.label)
+                {
+                    padding = new RectOffset(5, 5, 0, 0),
+                    margin = new RectOffset(5, 5, 5, 5),
+                    border = new RectOffset(5, 5, 0, 0),
+                    alignment = TextAnchor.MiddleLeft,
+                    fontStyle = FontStyle.Normal
+                };
+
             GUIStyle ButtonStyle =
                 new GUIStyle(GUI.skin.button)
                 {
-                    alignment = TextAnchor.MiddleCenter,
-                    fontStyle = FontStyle.Bold
+                    padding = LabelStyle.padding,
+                    margin = LabelStyle.margin,
+                    border = LabelStyle.border,
+                    overflow = LabelStyle.overflow,
+                    contentOffset = LabelStyle.contentOffset,
+                    alignment = TextAnchor.MiddleLeft,
+                    fontStyle = FontStyle.Normal
                 };
 
             GUIStyle BoxStyle =
                 new GUIStyle(GUI.skin.box)
                 {
-                    alignment = TextAnchor.MiddleCenter,
-                    fontStyle = FontStyle.Bold
+                    padding = LabelStyle.padding,
+                    margin = LabelStyle.margin,
+                    border = LabelStyle.border,
+                    overflow = LabelStyle.overflow,
+                    contentOffset = LabelStyle.contentOffset,
+                    alignment = TextAnchor.MiddleLeft,
+                    fontStyle = FontStyle.Normal
                 };
 
             GUIStyle ToggleStyle =
                 new GUIStyle(GUI.skin.toggle)
                 {
-                    alignment = TextAnchor.MiddleCenter,
-                    fontStyle = FontStyle.Bold,
+                    padding = LabelStyle.padding,
+                    margin = LabelStyle.margin,
+                    border = LabelStyle.border,
+                    overflow = LabelStyle.overflow,
+                    contentOffset = LabelStyle.contentOffset,
+                    alignment = TextAnchor.MiddleLeft,
+                    fontStyle = FontStyle.Normal,
                 };
 
-            GUIStyle LabelStyle =
-                new GUIStyle(GUI.skin.label)
-                {
-                    alignment = TextAnchor.MiddleLeft,
-                    fontStyle = FontStyle.Bold
-                };
 
             GUIStyle TextAreaStyle =
                 new GUIStyle(GUI.skin.textArea)
                 {
-                    padding = new RectOffset(5, 5, 5, 5),
-                    border = new RectOffset(3, 3, 3, 3),
+                    padding = LabelStyle.padding,
+                    margin = LabelStyle.margin,
+                    border = LabelStyle.border,
+                    overflow = LabelStyle.overflow,
+                    contentOffset = LabelStyle.contentOffset,
                     alignment = TextAnchor.MiddleLeft,
                     fontStyle = FontStyle.Normal,
                 };
@@ -106,8 +128,11 @@ namespace SAIN.Editor
             GUIStyle TextFieldStyle =
                 new GUIStyle(GUI.skin.textField)
                 {
-                    padding = new RectOffset(5, 5, 5, 5),
-                    border = new RectOffset(3, 3, 3, 3),
+                    padding = LabelStyle.padding,
+                    margin = LabelStyle.margin,
+                    border = LabelStyle.border,
+                    overflow = LabelStyle.overflow,
+                    contentOffset = LabelStyle.contentOffset,
                     alignment = TextAnchor.MiddleLeft,
                     fontStyle = FontStyle.Normal,
                 };
@@ -115,8 +140,11 @@ namespace SAIN.Editor
             GUIStyle ScrollViewStyle =
                 new GUIStyle(GUI.skin.scrollView)
                 {
-                    padding = new RectOffset(0, 0, 0, 0),
-                    border = new RectOffset(0, 0, 0, 0),
+                    padding = LabelStyle.padding,
+                    margin = LabelStyle.margin,
+                    border = LabelStyle.border,
+                    overflow = LabelStyle.overflow,
+                    contentOffset = LabelStyle.contentOffset,
                 };
 
             GUIStyle WindowStyle =
@@ -149,6 +177,11 @@ namespace SAIN.Editor
             GUIStyle ListStyle =
                 new GUIStyle(GUI.skin.toggle)
                 {
+                    padding = LabelStyle.padding,
+                    margin = LabelStyle.margin,
+                    border = LabelStyle.border,
+                    overflow = LabelStyle.overflow,
+                    contentOffset = LabelStyle.contentOffset,
                     alignment = TextAnchor.MiddleLeft,
                     fontStyle = FontStyle.Normal
                 };
@@ -165,15 +198,20 @@ namespace SAIN.Editor
                 };
 
             GUIStyle BlankBackgroundStyle =
-                new GUIStyle(GUI.skin.box)
+                new GUIStyle(LabelStyle)
                 {
-                    alignment = TextAnchor.MiddleCenter,
-                    fontStyle = FontStyle.Bold
+                    alignment = TextAnchor.MiddleLeft,
+                    fontStyle = FontStyle.Normal
                 };
 
             GUIStyle AlertStyle =
                 new GUIStyle(GUI.skin.box)
                 {
+                    padding = LabelStyle.padding,
+                    margin = LabelStyle.margin,
+                    border = LabelStyle.border,
+                    overflow = LabelStyle.overflow,
+                    contentOffset = LabelStyle.contentOffset,
                     alignment = TextAnchor.MiddleCenter,
                     fontStyle = FontStyle.Bold,
                 };
@@ -284,11 +322,8 @@ namespace SAIN.Editor
             GUIStyle selectGridStyle =
                 new GUIStyle(ToggleStyle)
                 {
-                    padding = new RectOffset(0, 0, 0, 0),
-                    border = new RectOffset(3, 3, 3, 3),
-                    margin = new RectOffset(0,0,0,0),
                     alignment = TextAnchor.MiddleCenter,
-                    fontStyle = FontStyle.Bold,
+                    fontStyle = FontStyle.Normal,
                 };
 
             LabelStyle.margin = BoxStyle.margin;
@@ -304,27 +339,21 @@ namespace SAIN.Editor
             GUIStyle botTypeGridStyle =
                 new GUIStyle(ToggleStyle)
                 {
-                    padding = new RectOffset(5, 5, 5, 5),
-                    border = new RectOffset(3, 3, 3, 3),
                     fontStyle = FontStyle.Normal,
-                    alignment = TextAnchor.MiddleCenter
+                    alignment = TextAnchor.MiddleLeft
                 };
 
             GUIStyle SelectionListStyle =
                 new GUIStyle(ToggleStyle)
                 {
-                    padding = new RectOffset(5, 5, 5, 5),
-                    border = new RectOffset(3, 3, 3, 3),
                     fontStyle = FontStyle.Normal,
-                    alignment = TextAnchor.MiddleCenter
+                    alignment = TextAnchor.MiddleLeft
                 };
 
             GUIStyle botTypeSectionStyle = new GUIStyle(ToggleStyle)
             {
                 alignment = TextAnchor.MiddleLeft,
-                margin = new RectOffset(5, 5, 0, 0),
-                border = new RectOffset(5, 5, 0, 0),
-                fontStyle = FontStyle.Bold
+                fontStyle = FontStyle.Normal
             };
 
             Styles.Add(Style.botTypeSection, botTypeSectionStyle);

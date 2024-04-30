@@ -141,6 +141,7 @@ namespace SAIN.Preset
                 new BotType{ WildSpawnType = WildSpawnType.bossKolontay,            Name = "Kolontay",                 Section = "Bosses" ,      Description = "" },
                 new BotType{ WildSpawnType = WildSpawnType.followerKolontayAssault, Name = "Kolontay Assault",         Section = "Followers" ,   Description = "" },
                 new BotType{ WildSpawnType = WildSpawnType.followerKolontaySecurity,Name = "Kolontay Security",        Section = "Followers" ,   Description = "" },
+                new BotType{ WildSpawnType = WildSpawnType.shooterBTR,              Name = "BTR",                      Section = "Other" ,       Description = "Zoom. Zoom. Bang. Bang." },
             };
         }
     }

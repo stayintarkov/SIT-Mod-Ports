@@ -74,7 +74,8 @@ namespace SAIN.Components
                 {
                     Vector3 target = BodyPos(Players[j]);
                     Vector3 direction = target - head;
-                    float max = bot.BotOwner.Settings.Current.CurrentVisibleDistance;
+                    float max = 300f;
+                    //float max = bot.BotOwner.Settings.Current.CurrentVisibleDistance;
                     float rayDistance = Mathf.Clamp(direction.magnitude, 0f, max);
 
                     allSpherecastCommands[total] = new SpherecastCommand(

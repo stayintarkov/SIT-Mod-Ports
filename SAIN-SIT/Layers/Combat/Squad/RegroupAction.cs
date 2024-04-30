@@ -43,12 +43,11 @@ namespace SAIN.Layers.Combat.Squad
 
         private void MoveToLead()
         {
-            var SquadLeadPos = SAIN.Squad.LeaderComponent?.BotOwner.Position;
-            if (SquadLeadPos != null)
+            var SquadLeadPos = SAIN.Squad.LeaderComponent?.BotOwner?.Position;
+            if (SquadLeadPos != null && SAIN.Mover.GoToPoint(SquadLeadPos.Value, out _))
             {
                 SAIN.Mover.SetTargetPose(1f);
                 SAIN.Mover.SetTargetMoveSpeed(1f);
-                SAIN.Mover.GoToPoint(SquadLeadPos.Value);
                 CheckShouldSprint(SquadLeadPos.Value);
                 BotOwner.DoorOpener.Update();
             }

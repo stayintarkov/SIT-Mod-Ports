@@ -38,7 +38,7 @@ namespace SAIN.Preset.BotSettings.SAINSettings.Categories
         [MinMax(1f, 5f, 10f)]
         [Advanced]
         [CopyValue]
-        public float AUTOMATIC_FIRE_SCATTERING_COEF = 1.5f;
+        public float AUTOMATIC_FIRE_SCATTERING_COEF = 1.35f;
 
         [Default(0.5f)]
         [MinMax(0.1f, 2f, 10f)]

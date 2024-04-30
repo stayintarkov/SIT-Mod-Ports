@@ -13,9 +13,6 @@ namespace SAIN.Components
         public LightDetectionClass()
         {
             Logger = BepInEx.Logging.Logger.CreateLogSource(GetType().Name);
-
-            LocalPlayer = Singleton<GameWorld>.Instance.RegisteredPlayers.Find(p => p.IsYourPlayer) as Player;
-            PlayerFlashComponent = LocalPlayer.GetComponent<SAINFlashLightComponent>();
         }
 
         public void CreateDetectionPoints(Player player, bool visibleLight)
@@ -150,6 +147,7 @@ namespace SAIN.Components
 
                     debugHitPos = hit.position;
 
+                    
                     bot.BotsGroup.AddPointToSearch(hit.position, 20f, bot, true);
                 }
             }
@@ -223,8 +221,6 @@ namespace SAIN.Components
         public static Vector3 FlashLightPoint { get; private set; }
         public static bool VisibleLight { get; private set; }
         public static bool IRLight { get; private set; }
-        public static SAINFlashLightComponent PlayerFlashComponent { get; private set; }
-        private static Player LocalPlayer { get; set; }
         protected static ManualLogSource Logger { get; private set; }
 
         private float SearchTime;

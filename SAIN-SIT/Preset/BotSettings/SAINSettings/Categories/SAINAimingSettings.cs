@@ -1,4 +1,5 @@
-﻿using SAIN.Attributes;
+﻿using Newtonsoft.Json;
+using SAIN.Attributes;
 using System.ComponentModel;
 using Description = SAIN.Attributes.DescriptionAttribute;
 
@@ -6,8 +7,14 @@ namespace SAIN.Preset.BotSettings.SAINSettings.Categories
 {
     public class SAINAimingSettings
     {
+        [Name("Distance Aim Time Multiplier")]
+        [Description("Multiplies the time a bot takes to aim based on distance. So higher values will cause bots to take longer to aim depending on distance.")]
+        [Default(1f)]
+        [MinMax(0.1f, 5f, 100f)]
+        public float DistanceAimTimeMultiplier = 1f;
+
         [Name("Faster CQB Reactions")]
-        [Description("Sets whether this bot reacts faster at close ranges")]
+        [Description("Sets whether this bot reacts and aims faster before being able to shoot at close ranges")]
         [Default(true)]
         public bool FasterCQBReactions = true;
 
@@ -40,21 +47,27 @@ namespace SAIN.Preset.BotSettings.SAINSettings.Categories
         [MinMax(0.1f, 0.95f, 100f)]
         [Advanced]
         [CopyValue]
-        public float MAX_AIMING_UPGRADE_BY_TIME = 0.8f;
+        public float MAX_AIMING_UPGRADE_BY_TIME = 0.5f;
+
+        [Default(2f)]
+        [MinMax(0.1f, 6f, 100f)]
+        [Advanced]
+        public float COEF_IF_MOVE = 1.5f;
+
+        [Hidden]
+        [JsonIgnore]
+        public float TIME_COEF_IF_MOVE = 1.5f;
 
         [Name("Max Aim Time")]
         [Description(null)]
-        [Default(2f)]
-        [MinMax(0.1f, 5f, 10f)]
+        [Default(1f)]
+        [MinMax(0.01f, 4f, 1000f)]
         [Advanced]
         [CopyValue]
-        public float MAX_AIM_TIME = 2f;
+        public float MAX_AIM_TIME = 1f;
 
-        [Name("Aim Type")]
-        [Description(null)]
-        [Default(4)]
-        [MinMax(1, 6)]
-        [Advanced]
+        [Hidden]
+        [JsonIgnore]
         public int AIMING_TYPE = 4;
 
         [Name("Friendly Fire Spherecast Size")]
@@ -73,13 +86,16 @@ namespace SAIN.Preset.BotSettings.SAINSettings.Categories
         [Hidden]
         public int RECALC_MUST_TIME_MAX = 2;
 
+        [Hidden]
+        public float DAMAGE_TO_DISCARD_AIM_0_100 = 100;
+
         [NameAndDescription(
             "Hit Reaction Recovery Time",
             "How much time it takes to recover a bot's aim when they get hit by a bullet")]
         [Default(0.5f)]
         [MinMax(0.1f, 0.99f, 100f)]
         [Advanced]
-        public float BASE_HIT_AFFECTION_DELAY_SEC = 0.5f;
+        public float BASE_HIT_AFFECTION_DELAY_SEC = 0.77f;
 
         [NameAndDescription(
             "Minimum Hit Reaction Angle",
@@ -96,5 +112,13 @@ namespace SAIN.Preset.BotSettings.SAINSettings.Categories
         [MinMax(0f, 25f, 10f)]
         [Advanced]
         public float BASE_HIT_AFFECTION_MAX_ANG = 5f;
+
+        [Hidden]
+        [JsonIgnore]
+        public float FIRST_CONTACT_ADD_SEC = 0.1f;
+
+        [Hidden]
+        [JsonIgnore]
+        public float FIRST_CONTACT_ADD_CHANCE_100 = 100f;
     }
 }

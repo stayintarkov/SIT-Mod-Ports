@@ -49,14 +49,6 @@ namespace SAIN.Components
 
             CanShootByState = AccessTools.PropertySetter(
                 shootDataType, PropertyNames.CanShootByState);
-            try
-            {
-            }
-            catch (Exception e)
-            {
-                Logger.LogError(e);
-                return;
-            }
         }
 
         private static readonly PropertyInfo GoalEnemyProp;
@@ -76,12 +68,12 @@ namespace SAIN.Components
             SAIN = sain;
         }
 
-        private static GeneralSettings GeneralSettings => SAINPlugin.LoadedPreset?.GlobalSettings?.General;
-        private static bool UserToggle => GeneralSettings?.NoBushESPToggle == true;
-        private static bool EnhancedChecks => GeneralSettings?.NoBushESPEnhanced == true;
-        private static float EnhancedRatio => GeneralSettings == null ? 0.5f : GeneralSettings.NoBushESPEnhancedRatio;
-        private static float Frequency => GeneralSettings == null ? 0.1f : GeneralSettings.NoBushESPFrequency;
-        private static bool DebugMode => GeneralSettings?.NoBushESPDebugMode == true;
+        private static NoBushESPSettings Settings => SAINPlugin.LoadedPreset?.GlobalSettings?.NoBushESP;
+        private static bool UserToggle => Settings?.NoBushESPToggle == true;
+        private static bool EnhancedChecks => Settings?.NoBushESPEnhanced == true;
+        private static float EnhancedRatio => Settings == null ? 0.5f : Settings.NoBushESPEnhancedRatio;
+        private static float Frequency => Settings == null ? 0.1f : Settings.NoBushESPFrequency;
+        private static bool DebugMode => Settings?.NoBushESPDebugMode == true;
 
         private static readonly ManualLogSource Logger;
 

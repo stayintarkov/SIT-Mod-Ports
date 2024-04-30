@@ -109,57 +109,72 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy "$(OutDir)SAIN.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
+    <ManagedAssembliesPath>..\..\SIT-Mod-Ports\References\</ManagedAssembliesPath>
   </PropertyGroup>
   <ItemGroup>
-   <Reference Include="0Harmony">
-      <HintPath>..\References\0Harmony.dll</HintPath>
+    <Reference Include="0Harmony">
+      <HintPath>$(ManagedAssembliesPath)\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="aki-singleplayer">
+      <HintPath>..\..\BepInEx\plugins\spt\aki-singleplayer.dll</HintPath>
+    </Reference>
+    <Reference Include="Aki.Build, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(ManagedAssembliesPath)\Aki.Build.dll</HintPath>
     </Reference>
     <Reference Include="Aki.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Aki.Common.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Aki.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Aki.Reflection, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(ManagedAssembliesPath)\Aki.Reflection.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\References\BepInEx.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="bsg.console.core, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\bsg.console.core.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\bsg.console.core.dll</HintPath>
     </Reference>
     <Reference Include="Comfort, Version=1.0.0.4, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Comfort.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Comfort.dll</HintPath>
     </Reference>
     <Reference Include="DissonanceVoip, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\DissonanceVoip.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\DissonanceVoip.dll</HintPath>
+    </Reference>
+    <Reference Include="DrakiaXYZ-BigBrain">
+      <HintPath>..\!Plugins\DrakiaXYZ-BigBrain.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Data.Sqlite, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Mono.Data.Sqlite.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Mono.Data.Sqlite.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Posix, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Mono.Posix.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Mono.Posix.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Mono.Security.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Mono.Security.dll</HintPath>
     </Reference>
     <Reference Include="Mono.WebBrowser, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Mono.WebBrowser.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Mono.WebBrowser.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="StayInTarkov">
-      <HintPath>..\References\StayInTarkov.dll</HintPath>
+    <Reference Include="StayInTarkov, Version=1.10.8869.3183, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(ManagedAssembliesPath)\StayInTarkov.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -169,61 +184,65 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="Unity.Postprocessing.Runtime, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(ManagedAssembliesPath)\Unity.Postprocessing.Runtime.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.AIModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.AIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AudioModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.AudioModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.AudioModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.ImageConversionModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.ImageConversionModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.ImageConversionModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.InputLegacyModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.InputLegacyModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.InputLegacyModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.UI.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIElementsModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.UIElementsModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.UIElementsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestAudioModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.UnityWebRequestAudioModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.UnityWebRequestModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.UnityWebRequestModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UnityWebRequestWWWModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -238,24 +257,36 @@
     <Compile Include="Attributes\AttributesGUI.cs" />
     <Compile Include="Attributes\AttributesInfoClass.cs" />
     <Compile Include="Attributes\GUIEntryConfig.cs" />
+    <Compile Include="BotController\Classes\BotCoverController.cs" />
     <Compile Include="BotController\Classes\BotSquads.cs" />
+    <Compile Include="BotController\Classes\MemberInfo.cs" />
+    <Compile Include="BotController\Classes\Squad.cs" />
     <Compile Include="Components\Extract\ExtractFinderComponent.cs" />
     <Compile Include="Components\MainPlayer\BaseMainPlayer.cs" />
     <Compile Include="Components\MainPlayer\SAINCamoClass.cs" />
     <Compile Include="Components\MainPlayer\SAINMainPlayerComponent.cs" />
     <Compile Include="Components\SAINGameworldComponent.cs" />
+    <Compile Include="Editor\Category.cs" />
     <Compile Include="Editor\EditTabsClass.cs" />
     <Compile Include="Editor\PresetEditorDefaults.cs" />
     <Compile Include="Editor\GUITabs.cs" />
     <Compile Include="Editor\IEditorCache.cs" />
+    <Compile Include="Editor\SettingsContainer.cs" />
+    <Compile Include="Editor\SettingsContainers.cs" />
     <Compile Include="Editor\Util\ModifyLists.cs" />
     <Compile Include="Helpers\ComponentHelpers.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Components\Extract\ExtractPositionFinder.cs" />
     <Compile Include="Helpers\ListHelpers.cs" />
     <Compile Include="Helpers\NavMeshHelpers.cs" />
+    <Compile Include="Helpers\PlayerWeaponInfoContainer.cs" />
+    <Compile Include="Helpers\SAINWeaponInfo.cs" />
+    <Compile Include="Helpers\SAINWeaponInfoHandler.cs" />
     <Compile Include="Helpers\UpdateSettingClass.cs" />
+    <Compile Include="Layers\Combat\Solo\FlankAction.cs" />
     <Compile Include="Layers\DebugOverlay.cs" />
+    <Compile Include="Layers\Extract\LootingBotsInterop.cs" />
+    <Compile Include="Layers\Extract\SAINLootingBotsIntegration.cs" />
     <Compile Include="Layers\SAINAction.cs" />
     <Compile Include="Layers\SAINLayer.cs" />
     <Compile Include="Plugin\AssemblyInfoClass.cs" />
@@ -270,30 +301,42 @@
     <Compile Include="Preset\GlobalSettings\Categories\BigBrain\DefaultBrainsClass.cs" />
     <Compile Include="Preset\GlobalSettings\Categories\BigBrain\Layer.cs" />
     <Compile Include="Preset\GlobalSettings\Categories\BigBrain\LayerInfoClass.cs" />
-    <Compile Include="Preset\GlobalSettings\Categories\BotBrainDefinition.cs" />
-    <Compile Include="Preset\GlobalSettings\Categories\BotBrainDefinitionInfoClass.cs" />
+    <Compile Include="Preset\GlobalSettings\Categories\DebugSettings.cs" />
+    <Compile Include="Preset\GlobalSettings\Categories\NoBushESPSettings.cs" />
+    <Compile Include="Preset\GlobalSettings\Categories\LootingBotsSettings.cs" />
     <Compile Include="Preset\Personalities\PersonalityVariablesClass.cs" />
     <Compile Include="Preset\SAINPresetDefinition.cs" />
+    <Compile Include="SAINComponent\Classes\AimDownSightsController.cs" />
     <Compile Include="SAINComponent\Classes\Decision\DecisionWrapper.cs" />
-    <Compile Include="Layers\Extract\LootingBotsIntegration.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="Editor\PresetSelection.cs" />
+    <Compile Include="SAINComponent\Classes\EnemyBase.cs" />
+    <Compile Include="SAINComponent\Classes\EnemyKnownPlaces.cs" />
+    <Compile Include="SAINComponent\Classes\EnemyPlace.cs" />
     <Compile Include="SAINComponent\Classes\ESearchMove.cs" />
-    <Compile Include="Helpers\SealedClass\PointDirection.cs" />
+    <Compile Include="SAINComponent\Classes\Mover\SAINMovementPlanController.cs" />
+    <Compile Include="SAINComponent\Classes\Mover\SprintController.cs" />
     <Compile Include="SAINComponent\Classes\Mover\SAINVaultClass.cs" />
+    <Compile Include="SAINComponent\Classes\SAINAILimit.cs" />
+    <Compile Include="SAINComponent\Classes\SAINBotMedicine.cs" />
+    <Compile Include="SAINComponent\Classes\SAINBotHitReaction.cs" />
     <Compile Include="SAINComponent\Classes\SAINBotUnstuckClass.cs" />
+    <Compile Include="SAINComponent\Classes\SAINEnemyPath.cs" />
+    <Compile Include="SAINComponent\Classes\SAINEnemyStatus.cs" />
+    <Compile Include="SAINComponent\Classes\SAINEnemyVision.cs" />
     <Compile Include="SAINComponent\Classes\SAINNotLooking.cs" />
     <Compile Include="SAINComponent\Classes\SAINSearchClass.cs" />
     <Compile Include="SAINComponent\Classes\Sense\SAINConcealment.cs" />
     <Compile Include="SAINComponent\Classes\Sense\SAINBotSpaceAwareness.cs" />
-    <Compile Include="SAINComponent\PersonBase\AIInfoClass.cs" />
+    <Compile Include="SAINComponent\Classes\Sense\SAINSound.cs" />
+    <Compile Include="SAINComponent\Classes\Sense\SAINSoundCollection.cs" />
     <Compile Include="SAINComponent\PersonBase\ISAINPerson.cs" />
+    <Compile Include="SAINComponent\PersonBase\SAINPersonComponent.cs" />
     <Compile Include="SAINComponent\PersonBase\SAINPersonClass.cs" />
     <Compile Include="SAINComponent\PersonBase\SAINPersonTransformClass.cs" />
     <Compile Include="SAINComponent\Classes\SAINMemoryClass.cs" />
     <Compile Include="SAINComponent\Classes\Info\ProfileClass.cs" />
     <Compile Include="SAINComponent\PersonBase\PersonBaseClass.cs" />
-    <Compile Include="SAINComponent\Classes\OldTransformClass.cs" />
     <Compile Include="Preset\BotSettings\SAINSettings\SAINSettingsGroupClass.cs" />
     <Compile Include="Preset\BotTypeDefinitions.cs" />
     <Compile Include="Helpers\EnumValues.cs" />
@@ -312,7 +355,7 @@
     <Compile Include="Preset\Personalities\PersonalityManagerClass.cs" />
     <Compile Include="Preset\SAINPresetClass.cs" />
     <Compile Include="Preset\GlobalSettings\Categories\PersonalitySettings.cs" />
-    <Compile Include="Preset\BotSettings\BotSettingsClass.cs" />
+    <Compile Include="Preset\BotSettings\SAINBotSettingsClass.cs" />
     <Compile Include="Preset\BotSettings\SAINSettings\Categories\SAINLookSettings.cs" />
     <Compile Include="Preset\BotSettings\SAINSettings\Categories\SAINAimingSettings.cs" />
     <Compile Include="Preset\BotSettings\SAINSettings\Categories\SAINGrenadeSettings.cs" />
@@ -332,15 +375,15 @@
     <Compile Include="SAINComponent\Classes\SAINBotSuppressClass.cs" />
     <Compile Include="SAINComponent\SubComponents\CoverFinder\ColliderFinder.cs" />
     <Compile Include="SAINComponent\SubComponents\CoverFinder\CoverAnalyzer.cs" />
+    <Compile Include="BotController\Classes\SquadCoverFinder.cs" />
     <Compile Include="SAINComponent\SubComponents\CoverFinder\SpottedCoverPoint.cs" />
-    <Compile Include="SAINComponent\SubComponents\CoverFinder\FrameWait.cs" />
     <Compile Include="SAINComponent\Classes\SAINEnemyController.cs" />
     <Compile Include="SAINComponent\Classes\WeaponFunction\Firerate.cs" />
     <Compile Include="SAINComponent\Classes\WeaponFunction\Firemode.cs" />
     <Compile Include="SAINComponent\Classes\WeaponFunction\Recoil.cs" />
     <Compile Include="Components\SAINNoBushESP.cs" />
     <Compile Include="SAINComponent\Classes\Mover\SideStepClass.cs" />
-    <Compile Include="SAINComponent\Classes\Mover\BlindFireClass.cs" />
+    <Compile Include="SAINComponent\Classes\Mover\BlindFireController.cs" />
     <Compile Include="SAINComponent\Classes\Mover\PoseClass.cs" />
     <Compile Include="SAINComponent\Classes\Mover\ProneClass.cs" />
     <Compile Include="Helpers\SAINSoundTypeHandler.cs" />
@@ -366,10 +409,6 @@
     <Compile Include="Editor\Util\Sounds.cs" />
     <Compile Include="Helpers\EFTInfo.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="Helpers\Util\Textures\ModifyTexture.cs" />
-    <Compile Include="Helpers\Util\Textures\SaveTexture.cs" />
-    <Compile Include="Helpers\Util\Textures\LoadTexture.cs" />
-    <Compile Include="Helpers\Util\Utility.cs" />
     <Compile Include="Plugin\BigBrainHandler.cs" />
     <Compile Include="Plugin\GameWorldHandler.cs" />
     <Compile Include="SAINComponent\Classes\ShootClass.cs" />
@@ -393,7 +432,6 @@
     <Compile Include="SAINComponent\SubComponents\CoverFinder\CoverPointClass.cs" />
     <Compile Include="SAINComponent\Classes\Decision\SAINDecisionClass.cs" />
     <Compile Include="SAINComponent\Classes\Sense\SAINHearingSensorClass.cs" />
-    <Compile Include="SAINComponent\Classes\Sense\LastHeardSoundClass.cs" />
     <Compile Include="SAINComponent\Classes\MoveDangerPoint.cs" />
     <Compile Include="SAINComponent\Classes\Decision\SquadDecisionClass.cs" />
     <Compile Include="SAINComponent\Classes\Talk\SquadLeaderClass.cs" />
@@ -403,11 +441,10 @@
     <Compile Include="Editor\Util\RectLayout.cs" />
     <Compile Include="Editor\Util\StylesClass.cs" />
     <Compile Include="Helpers\AudioHelpers.cs" />
-    <Compile Include="Helpers\CoverPointHelpers.cs" />
     <Compile Include="Helpers\DebugGizmos.cs" />
     <Compile Include="Helpers\EFTMath.cs" />
     <Compile Include="SAINComponent\Classes\Sense\DazzleClass.cs" />
-    <Compile Include="Helpers\Util\JsonUtility.cs" />
+    <Compile Include="Helpers\JsonUtility.cs" />
     <Compile Include="Helpers\ShootHelpers.cs" />
     <Compile Include="Helpers\Vector.cs" />
     <Compile Include="Layers\Combat\Squad\RegroupAction.cs" />
@@ -421,7 +458,6 @@
     <Compile Include="Plugin\Patches\MovementPatches.cs" />
     <Compile Include="Plugin\Patches\Shoot\RateofFirePatch.cs" />
     <Compile Include="Plugin\Patches\Shoot\RecoilPatch.cs" />
-    <Compile Include="Plugin\Patches\Audio\StepSoundPatch.cs" />
     <Compile Include="Plugin\Patches\TalkPatches.cs" />
     <Compile Include="Components\MainPlayer\SAINFlashLightComponent.cs" />
     <Compile Include="SAINComponent\Classes\Decision\SAINSelfActionClass.cs" />
@@ -432,7 +468,7 @@
     <Compile Include="SAINComponent\Classes\Talk\EnemyTalkObject.cs" />
     <Compile Include="SAINComponent\Classes\Talk\GroupTalk.cs" />
     <Compile Include="SAINComponent\Classes\Info\BotSquadClass.cs" />
-    <Compile Include="SAINComponent\Classes\SAINEnemyClass.cs" />
+    <Compile Include="SAINComponent\Classes\SAINEnemy.cs" />
     <Compile Include="SAINComponent\Classes\Info\SAINBotInfoClass.cs" />
     <Compile Include="SAINEnum.cs" />
     <Compile Include="SAINComponent\SubComponents\GrenadeTrackerComponent.cs" />
@@ -440,7 +476,6 @@
     <Compile Include="Layers\Combat\Solo\SearchAction.cs" />
     <Compile Include="Layers\Combat\Solo\Cover\HoldinCoverAction.cs" />
     <Compile Include="Layers\Combat\Squad\SuppressAction.cs" />
-    <Compile Include="Plugin\Patches\Shoot\GrenadeSound.cs" />
     <Compile Include="SAINComponent\Classes\SAINBotGrenadeClass.cs" />
     <Compile Include="SAINComponent\SAINComponentClass.cs" />
     <Compile Include="Layers\Combat\Solo\CombatSoloLayer.cs" />
@@ -464,14 +499,16 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SPT-BigBrain-SIT\DrakiaXYZ-BigBrain.csproj">
-      <Project>{c3c9ebdf-af8a-4e59-b18f-e76fae66001c}</Project>
-      <Name>DrakiaXYZ-BigBrain</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
   </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetDir)SAIN.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
 </Project>

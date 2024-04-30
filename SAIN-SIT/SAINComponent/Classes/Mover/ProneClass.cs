@@ -19,7 +19,17 @@ namespace SAIN.SAINComponent.Classes.Mover
 
         public void Update()
         {
+            if (_updatePoseTimer < Time.time)
+            {
+                _updatePoseTimer = Time.time + 0.25f;
+                if (SAIN.Mover.CurrentStamina > 0.25f)
+                {
+
+                }
+            }
         }
+
+        private float _updatePoseTimer;
 
         public void Dispose()
         {
@@ -27,21 +37,21 @@ namespace SAIN.SAINComponent.Classes.Mover
 
         static ProneClass()
         {
-            BotLayProperty = AccessTools.Property(typeof(BotOwner), "BotLay").PropertyType.GetProperty("IsLay");
+            _isProneProperty = AccessTools.Property(typeof(BotOwner), "BotLay").PropertyType.GetProperty("IsLay");
         }
 
-        private static readonly PropertyInfo BotLayProperty;
+        private static readonly PropertyInfo _isProneProperty;
 
         public bool IsProne => BotOwner.BotLay.IsLay;
 
         public void SetProne(bool value)
         {
-            BotLayProperty.SetValue(BotLay, value);
+            _isProneProperty.SetValue(BotLay, value);
         }
 
         public bool ShallProne(CoverPoint point, bool withShoot)
         {
-            var status = point.CoverStatus;
+            var status = point.GetCoverStatus(SAIN);
             if (status == CoverStatus.FarFromCover || status == CoverStatus.None)
             {
                 if (Player.MovementContext.CanProne)
@@ -64,15 +74,15 @@ namespace SAIN.SAINComponent.Classes.Mover
             return false;
         }
 
-        public bool ShallProne(bool withShoot, float mindist = 30f)
+        public bool ShallProne(bool withShoot, float mindist = 25f)
         {
             if (Player.MovementContext.CanProne)
             {
                 var enemy = SAIN.Enemy;
                 if (enemy != null)
                 {
-                    float distance = (enemy.EnemyPosition - SAIN.Transform.Position).magnitude;
-                    if (distance > mindist)
+                    float distance = (enemy.EnemyPosition - SAIN.Position).sqrMagnitude;
+                    if (distance > mindist * mindist)
                     {
                         if (withShoot)
                         {
@@ -85,17 +95,24 @@ namespace SAIN.SAINComponent.Classes.Mover
             return false;
         }
 
-        public bool ShallProneHide(float mindist = 30f)
+        public bool ShallProneHide(float mindist = 10f)
         {
             if (Player.MovementContext.CanProne)
             {
-                var enemy = SAIN.Enemy;
-                if (enemy != null)
+                Vector3? targetPos = SAIN.CurrentTargetPosition;
+                if (targetPos != null)
                 {
-                    float distance = (enemy.EnemyPosition - SAIN.Transform.Position).magnitude;
+                    float distance = (targetPos.Value - SAIN.Transform.Position).magnitude;
                     if (distance > mindist)
                     {
-                        return !CanShootFromProne(enemy.EnemyPosition);
+                        if (SAIN.Decision.CurrentSelfDecision == SelfDecision.None && !SAIN.Suppression.IsHeavySuppressed)
+                        {
+                            return !CanShootFromProne(targetPos.Value);
+                        }
+                        else
+                        {
+                            return true;
+                        }
                     }
                 }
             }

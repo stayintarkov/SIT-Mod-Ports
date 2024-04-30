@@ -10,7 +10,7 @@ namespace SAIN.Preset.GlobalSettings
             "Higher is further visible distance, so 1.5 would result in bots seeing 1.5 times further. " +
             "Or if their visible distance is set to 100 meters, they will see at 150 meters instead.")]
         [Default(1f)]
-        [MinMax(0.1f, 5f, 10f)]
+        [MinMax(0.1f, 5f, 100f)]
         public float GlobalVisionDistanceMultiplier = 1;
 
         [Name("Global Vision Speed Multiplier")]
@@ -27,10 +27,20 @@ namespace SAIN.Preset.GlobalSettings
             "By how much to lower visible distance at nighttime. " +
             "at the default value of 0.2, bots will see 0.2 times as far, or 20% of " +
             "their base vision distance at night-time.")]
-        [Default(0.2f)]
+        [Default(0.3f)]
         [MinMax(0.01f, 1f, 100f)]
         [Advanced]
-        public float NightTimeVisionModifier = 0.2f;
+        public float NightTimeVisionModifier = 0.3f;
+
+        [Name("Snow Nighttime Vision Modifier")]
+        [Description(
+            "By how much to lower visible distance at nighttime in the snow. " +
+            "at the default value of 0.2, bots will see 0.2 times as far, or 20% of " +
+            "their base vision distance at night-time.")]
+        [Default(0.40f)]
+        [MinMax(0.01f, 1f, 100f)]
+        [Advanced]
+        public float NightTimeVisionModifierSnow = 0.40f;
 
         [Name("Dawn Start Hour")]
         [Default(6f)]

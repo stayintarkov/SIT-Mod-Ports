@@ -4,19 +4,19 @@ namespace SAIN.SAINComponent.SubComponents.CoverFinder
 {
     public class SpottedCoverPoint
     {
-        public SpottedCoverPoint(Vector3 position, float expireTime = 2f)
+        public SpottedCoverPoint(CoverPoint coverPoint, float expireTime = 2f)
         {
+            CoverPoint = coverPoint;
             ExpireTime = expireTime;
-            Position = position;
             TimeCreated = Time.time;
         }
 
-        public bool TooClose(Vector3 newPos, float sqrdist = 3f)
+        public bool TooClose(Vector3 coverInfoPosition, Vector3 newPos, float sqrdist = 3f)
         {
-            return (Position - newPos).sqrMagnitude > sqrdist;
+            return (coverInfoPosition - newPos).sqrMagnitude > sqrdist;
         }
 
-        public Vector3 Position { get; private set; }
+        public CoverPoint CoverPoint { get; private set; }
         public float TimeCreated { get; private set; }
         public float TimeSinceCreated => Time.time - TimeCreated;
 

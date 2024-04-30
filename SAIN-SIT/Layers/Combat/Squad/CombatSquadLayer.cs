@@ -29,6 +29,9 @@ namespace SAIN.Layers.Combat.Squad
                 case SquadDecision.Help:
                     return new Action(typeof(SearchAction), $"{Decision}");
 
+                case SquadDecision.PushSuppressedEnemy:
+                    return new Action(typeof(RushEnemyAction), $"{Decision}");
+
                 default:
                     return new Action(typeof(RegroupAction), $"DEFAULT!");
             }

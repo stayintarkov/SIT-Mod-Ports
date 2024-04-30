@@ -1,8 +1,11 @@
 ﻿using BepInEx.Logging;
 using EFT;
+using EFT.InventoryLogic;
+using HarmonyLib;
 using SAIN.Components;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace SAIN.SAINComponent.Classes.Decision
@@ -15,51 +18,71 @@ namespace SAIN.SAINComponent.Classes.Decision
 
         public void Init()
         {
-            BotOwner.Medecine.RefreshCurMeds();
         }
+
+        private float _handsBusyTimer;
 
         public void Update()
         {
-            if (!UsingMeds)
+            RefreshMeds();
+
+            if (!UsingMeds && Player != null)
             {
-                if (WasUsingMeds)
+                if (SAIN.Memory.Decisions.Self.Current == SelfDecision.Reload)
                 {
-                    BotOwner.Medecine.RefreshCurMeds();
+                    TryReload();
+                    return;
                 }
-                switch (SAIN.Memory.Decisions.Self.Current)
+                if (_handsBusyTimer < Time.time)
                 {
-                    case SelfDecision.Reload:
-                        TryReload();
-                        break;
+                    var handsController = Player.HandsController;
+                    if (handsController.IsInInteractionStrictCheck())
+                    {
+                        _handsBusyTimer = Time.time + 1f;
+                        return;
+                    }
 
-                    case SelfDecision.Surgery:
-                        DoSurgery();
-                        break;
+                    switch (SAIN.Memory.Decisions.Self.Current)
+                    {
+                        case SelfDecision.Reload:
+                            TryReload();
+                            break;
 
-                    case SelfDecision.FirstAid:
-                        DoFirstAid();
-                        break;
+                        case SelfDecision.Surgery:
+                            DoSurgery();
+                            break;
 
-                    case SelfDecision.Stims:
-                        DoStims();
-                        break;
+                        case SelfDecision.FirstAid:
+                            DoFirstAid();
+                            break;
 
-                    default:
-                        break;
+                        case SelfDecision.Stims:
+                            DoStims();
+                            break;
+
+                        default:
+                            break;
+                    }
                 }
-                WasUsingMeds = UsingMeds;
             }
         }
+
+        private void RefreshMeds()
+        {
+            if (_refreshMedsTimer < Time.time)
+            {
+                _refreshMedsTimer = Time.time + 5f;
+                BotOwner.Medecine.RefreshCurMeds();
+            }
+        }
+
+        private float _refreshMedsTimer;
 
         public void Dispose()
         {
         }
 
-
-        private bool WasUsingMeds = false;
-
         private bool UsingMeds => BotOwner.Medecine?.Using == true;
-
 
         public void DoFirstAid()
         {
@@ -74,7 +97,7 @@ namespace SAIN.SAINComponent.Classes.Decision
         public void DoSurgery()
         {
             var surgery = BotOwner.Medecine.SurgicalKit;
-            if (HealTimer < Time.time && surgery.ShallStartUse())
+            if (HealTimer < Time.time && !BotOwner.Mover.IsMoving && SAIN.Cover.BotIsAtCoverInUse() && surgery.ShallStartUse())
             {
                 HealTimer = Time.time + 5f;
                 surgery.ApplyToCurrentPart();
@@ -84,13 +107,39 @@ namespace SAIN.SAINComponent.Classes.Decision
         public void DoStims()
         {
             var stims = BotOwner.Medecine.Stimulators;
-            if (StimTimer < Time.time && stims.CanUseNow())
+            if (HealTimer < Time.time && stims.CanUseNow())
             {
-                StimTimer = Time.time + 5f;
+                HealTimer = Time.time + 5f;
                 try { stims.TryApply(); }
                 catch { }
             }
         }
+
+        private bool HaveStimsToHelp()
+        {
+            return false;
+        }
+
+        private void Refresh()
+        {
+            Player getPlayer = Player;
+            MedicalItems.Clear();
+
+            // getPlayer._inventoryController.GetAcceptableItemsNonAlloc<MedsClass>(anySlots, MedicalItems, null);
+            foreach (var item in MedicalItems)
+            {
+            }
+        }
+
+        public static readonly EquipmentSlot[] anySlots = new EquipmentSlot[]
+        {
+            EquipmentSlot.Pockets,
+            EquipmentSlot.TacticalVest,
+            EquipmentSlot.Backpack,
+            EquipmentSlot.SecuredContainer,
+        };
+
+        private readonly List<MedsClass> MedicalItems = new List<MedsClass>();
 
         public void TryReload()
         {
@@ -99,7 +148,6 @@ namespace SAIN.SAINComponent.Classes.Decision
                 BotOwner.WeaponManager.Reload.TryReload();
                 if (BotOwner.WeaponManager.Reload.NoAmmoForReloadCached)
                 {
-                    //System.Console.WriteLine("NoAmmoForReloadCached");
                     BotOwner.WeaponManager.Reload.TryFillMagazines();
                 }
             }

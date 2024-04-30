@@ -1,4 +1,5 @@
-﻿using SAIN.Attributes;
+﻿using Newtonsoft.Json;
+using SAIN.Attributes;
 using SAIN.Helpers;
 using SAIN.Preset.GlobalSettings.Categories;
 using static SAIN.Helpers.JsonUtility;
@@ -30,35 +31,41 @@ namespace SAIN.Preset.GlobalSettings
             return result;
         }
 
-        [Name("Global Aiming Settings")]
-        public AimSettings Aiming = new AimSettings();
-
-        [Name("Global Cover Settings")]
-        public CoverSettings Cover = new CoverSettings();
-
-        [Name("Global Extract Settings")]
-        public ExtractSettings Extract = new ExtractSettings();
-
-        [Name("Global Flashlight Settings")]
-        public FlashlightSettings Flashlight = new FlashlightSettings();
-
-        [Name("Global General Settings")]
+        [Name("General")]
         public GeneralSettings General = new GeneralSettings();
 
-        [Name("Global Personality Settings")]
+        [Name("Aiming")]
+        public AimSettings Aiming = new AimSettings();
+
+        [Name("Cover")]
+        public CoverSettings Cover = new CoverSettings();
+
+        [Name("Extract")]
+        public ExtractSettings Extract = new ExtractSettings();
+
+        [Name("Flashlight")]
+        public FlashlightSettings Flashlight = new FlashlightSettings();
+
+        [Name("Force Personality")]
         public PersonalitySettings Personality = new PersonalitySettings();
 
-        [Name("Global Mind Settings")]
-        public MindSettings Mind = new MindSettings();
-
-        [Name("Global Hearing Settings")]
+        [Name("Hearing")]
         public HearingSettings Hearing = new HearingSettings();
 
-        [Name("Global Shoot Settings")]
-        public ShootSettings Shoot = new ShootSettings();
-
-        [Name("Global Look Settings")]
+        [Name("Look")]
         public LookSettings Look = new LookSettings();
+
+        [Name("Looting Bots")]
+        public LootingBotsSettings LootingBots = new LootingBotsSettings();
+
+        [Name("Mind")]
+        public MindSettings Mind = new MindSettings();
+
+        [Name("No Bush ESP")]
+        public NoBushESPSettings NoBushESP = new NoBushESPSettings();
+
+        [Name("Shoot")]
+        public ShootSettings Shoot = new ShootSettings();
 
         [Hidden]
         public EFTCoreSettings EFTCoreSettings = new EFTCoreSettings();

@@ -5,6 +5,7 @@ using EFT.Console.Core;
 using EFT.UI;
 using SAIN.Attributes;
 using SAIN.Plugin;
+using SAIN.Preset;
 using System;
 using UnityEngine;
 using static SAIN.Editor.RectLayout;
@@ -157,7 +158,19 @@ namespace SAIN.Editor
             if (GUI.Button(SaveAllRect, SaveContent, GetStyle(Style.button)))
             {
                 PlaySound(EUISoundType.InsuranceInsured);
-                SAINPlugin.LoadedPreset.ExportAll();
+                if (SAINPlugin.LoadedPreset.Info.IsCustom == false)
+                {
+                    SAINPresetDefinition newPreset = SAINPlugin.LoadedPreset.Info.Clone();
+
+                    newPreset.IsCustom = true;
+                    newPreset.Creator = "user";
+                    newPreset.Description = "[Modified] " + newPreset.Description;
+                    newPreset.DateCreated = DateTime.Today.ToString();
+
+                    PresetHandler.SavePresetDefinition(newPreset);
+                    PresetHandler.InitPresetFromDefinition(newPreset, true);
+                }
+                SAINPresetClass.ExportAll(SAINPlugin.LoadedPreset);
             }
 
             if (GUI.Button(ExitRect, "X", style))

@@ -13,6 +13,8 @@ using System.Reflection;
 using UnityEngine;
 using static EFT.Player;
 
+using TemplateIdToObjectMappingsClass = GClass2752;
+
 namespace SAIN.SAINComponent.Classes.Info
 {
     public class SAINBotEquipmentClass : SAINBase, ISAINClass
@@ -181,7 +183,7 @@ namespace SAIN.SAINComponent.Classes.Info
 
         private static bool IsSilencer(Type modType)
         {
-            return modType == GClass2752.TypeTable[SuppressorTypeId];
+            return modType == TemplateIdToObjectMappingsClass.TypeTable[SuppressorTypeId];
         }
 
         private static bool IsOptic(Type modType)
@@ -208,14 +210,14 @@ namespace SAIN.SAINComponent.Classes.Info
 
         private static bool CheckTemplateType(Type modType, string id)
         {
-            if (GClass2752.TypeTable.TryGetValue(id, out Type result))
+            if (TemplateIdToObjectMappingsClass.TypeTable.TryGetValue(id, out Type result))
             {
                 if (result == modType)
                 {
                     return true;
                 }
             }
-            if (GClass2752.TemplateTypeTable.TryGetValue(id, out result))
+            if (TemplateIdToObjectMappingsClass.TemplateTypeTable.TryGetValue(id, out result))
             {
                 if (result == modType)
                 {

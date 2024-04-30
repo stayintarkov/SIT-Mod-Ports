@@ -82,6 +82,10 @@ namespace SAIN.SAINComponent.Classes.Decision
                             Decision = SquadDecision.Suppress;
                             return true;
                         }
+                        if (StartPushSuppressedEnemy(myEnemy))
+                        {
+                            Decision = SquadDecision.PushSuppressedEnemy;
+                        }
                         if (myEnemy.IsVisible || myEnemy.TimeSinceSeen < SquadDecision_MyEnemySeenRecentTime)
                         {
                             return false;
@@ -96,6 +100,50 @@ namespace SAIN.SAINComponent.Classes.Decision
                             Decision = SquadDecision.Help;
                             return true;
                         }
+                    }
+                }
+            }
+            return false;
+        }
+
+        private static readonly float PushSuppressedEnemyMaxPathDistance = 10f;
+        private static readonly float PushSuppressedEnemyMaxPathDistanceSprint = 25f;
+        private static readonly float PushSuppressedEnemyLowAmmoRatio = 0.5f;
+
+        private bool StartPushSuppressedEnemy(SAINEnemy enemy)
+        {
+            if (enemy != null
+                && !SAIN.Decision.SelfActionDecisions.LowOnAmmo(PushSuppressedEnemyLowAmmoRatio))
+            {
+                bool inRange = false;
+                if (enemy.Path.PathDistance < PushSuppressedEnemyMaxPathDistanceSprint
+                    && BotOwner?.CanSprintPlayer == true)
+                {
+                    inRange = true;
+                }
+                else if (enemy.Path.PathDistance < PushSuppressedEnemyMaxPathDistance)
+                {
+                    inRange = true;
+                }
+
+                if (inRange
+                    && SAIN.Memory.HealthStatus == ETagStatus.Healthy
+                    && SAIN.Squad.SquadInfo.SquadIsSuppressEnemy(enemy.EnemyPlayer.ProfileId, out var suppressingMember) 
+                    && suppressingMember != SAIN)
+                {
+                    var enemyStatus = enemy.EnemyStatus;
+                    if (enemyStatus.EnemyIsReloading || enemyStatus.EnemyIsHealing || enemyStatus.EnemyHasGrenadeOut)
+                    {
+                        return true;
+                    }
+                    ETagStatus enemyHealth = enemy.EnemyPlayer.HealthStatus;
+                    if (enemyHealth == ETagStatus.Dying || enemyHealth == ETagStatus.BadlyInjured)
+                    {
+                        return true;
+                    }
+                    else if (enemy.EnemyPlayer.IsInPronePose)
+                    {
+                        return true;
                     }
                 }
             }
@@ -148,7 +196,7 @@ namespace SAIN.SAINComponent.Classes.Decision
 
         private bool StartHelp(SAINComponentClass member)
         {
-            float distance = member.Enemy.PathDistance;
+            float distance = member.Enemy.Path.PathDistance;
             bool visible = member.Enemy.IsVisible;
             if (distance < SquadDecision_StartHelpFriendDist && visible)
             {

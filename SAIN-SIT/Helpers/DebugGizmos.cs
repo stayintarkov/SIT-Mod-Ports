@@ -1,12 +1,25 @@
 ﻿using BepInEx.Logging;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Net;
+using System.Text;
 using UnityEngine;
 using UnityEngine.AI;
 using Color = UnityEngine.Color;
 
+using CameraClass = FPSCamera;
+
 namespace SAIN.Helpers
 {
+    public sealed class GUIObject
+    {
+        public Vector3 WorldPos;
+        public string Text;
+        public GUIStyle Style;
+        public StringBuilder StringBuilder = new StringBuilder();
+    }
+
     public class DebugGizmos
     {
         public static void Update()
@@ -20,6 +33,23 @@ namespace SAIN.Helpers
                         if (DrawnGizmos[i] != null)
                             Object.Destroy(DrawnGizmos[i]);
                     }
+                    DrawnGizmos.Clear();
+                }
+            }
+        }
+
+        public static void OnGUI()
+        {
+            if (!SAINPlugin.EditorDefaults.DrawDebugLabels)
+            {
+                GUIObjects.Clear();
+            }
+            else
+            {
+                foreach (var obj in GUIObjects)
+                {
+                    string text = obj.Text.IsNullOrEmpty() ? obj.StringBuilder.ToString() : obj.Text;
+                    OnGUIDrawLabel(obj.WorldPos, text, obj.Style);
                 }
             }
         }
@@ -27,6 +57,74 @@ namespace SAIN.Helpers
         private static readonly List<GameObject> DrawnGizmos = new List<GameObject>();
 
         public static bool DrawGizmos => SAINPlugin.DrawDebugGizmos;
+
+        private static GUIStyle DefaultStyle;
+
+        public static GUIObject CreateLabel(Vector3 worldPos, string text, GUIStyle guiStyle = null)
+        {
+            GUIObject obj = new GUIObject { WorldPos = worldPos, Text = text, Style = guiStyle };
+            AddGUIObject(obj);
+            return obj;
+        }
+
+        public static void AddGUIObject(GUIObject obj)
+        {
+            if (GUIObjects.Contains(obj))
+            {
+                return;
+            }
+            GUIObjects.Add(obj);
+        }
+
+        public static void DestroyLabel(GUIObject obj)
+        {
+            GUIObjects.Remove(obj);
+        }
+
+        public static void OnGUIDrawLabel(Vector3 worldPos, string text, GUIStyle guiStyle = null)
+        {
+            Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
+            if (screenPos.z <= 0)
+            {
+                return;
+            }
+
+            if (guiStyle == null)
+            {
+                if (DefaultStyle == null)
+                {
+                    DefaultStyle = new GUIStyle(GUI.skin.box);
+                    DefaultStyle.alignment = TextAnchor.MiddleLeft;
+                    DefaultStyle.fontSize = 14;
+                    DefaultStyle.margin = new RectOffset(3, 3, 3, 3);
+                }
+                guiStyle = DefaultStyle;
+            }
+
+            GUIContent content = new GUIContent(text);
+
+            float screenScale = GetScreenScale();
+            Vector2 guiSize = guiStyle.CalcSize(content);
+            float x = (screenPos.x * screenScale) - (guiSize.x / 2);
+            float y = Screen.height - ((screenPos.y * screenScale) + guiSize.y);
+            Rect rect = new Rect(new Vector2(x, y), guiSize);
+            GUI.Label(rect, content);
+        }
+
+        private static readonly List<GUIObject> GUIObjects = new List<GUIObject>();
+
+        private static float GetScreenScale()
+        {
+            if (_nextCheckScreenTime < Time.time && CameraClass.Instance.SSAA.isActiveAndEnabled)
+            {
+                _nextCheckScreenTime = Time.time + 10f;
+                _screenScale = (float)CameraClass.Instance.SSAA.GetOutputWidth() / (float)CameraClass.Instance.SSAA.GetInputWidth();
+            }
+            return _screenScale;
+        }
+
+        private static float _screenScale = 1.0f;
+        private static float _nextCheckScreenTime;
 
         public static GameObject Sphere(Vector3 position, float size, Color color, bool temporary = false, float expiretime = 1f)
         {
@@ -36,7 +134,6 @@ namespace SAIN.Helpers
             }
             if (!SAINPlugin.DebugMode)
             {
-                Logger.LogWarning("Debug Gizmos are on, but Global Debug Mode is off");
                 return null;
             }
 
@@ -49,6 +146,28 @@ namespace SAIN.Helpers
             AddGizmo(sphere, expiretime);
 
             return sphere;
+        }
+
+        public static GameObject Box(Vector3 position, float length, float height, Color color, float expiretime = -1f)
+        {
+            if (!DrawGizmos)
+            {
+                return null;
+            }
+            if (!SAINPlugin.DebugMode)
+            {
+                return null;
+            }
+
+            var box = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+            box.GetComponent<Renderer>().material.color = color;
+            box.GetComponent<Collider>().enabled = false;
+            box.transform.position = position;
+            box.transform.localScale = new Vector3(length * 2, height * 2, length * 2);
+            AddGizmo(box, expiretime);
+
+            return box;
         }
 
         private static void AddGizmo(GameObject obj, float expireTime)
@@ -81,7 +200,6 @@ namespace SAIN.Helpers
             }
             if (!SAINPlugin.DebugMode)
             {
-                Logger.LogWarning("Debug Gizmos are on, but Global Debug Mode is off");
                 return null;
             }
 
@@ -100,6 +218,13 @@ namespace SAIN.Helpers
             AddGizmo(lineObject, expiretime);
 
             return lineObject;
+        }
+
+        public static void UpdatePositionLine(Vector3 a, Vector3 b, GameObject gameObject)
+        {
+            var lineRenderer = gameObject.GetComponent<LineRenderer>();
+            lineRenderer?.SetPosition(0, a);
+            lineRenderer?.SetPosition(1, b);
         }
 
         public static GameObject Line(Vector3 startPoint, Vector3 endPoint, float lineWidth = 0.1f, float expiretime = 1f, bool taperLine = false)
@@ -213,6 +338,28 @@ namespace SAIN.Helpers
             return list;
         }
 
+        public static List<GameObject> DrawLinesBetweenPoints(float lineSize, float expireTime, float raisePoints, Color color, params Vector3[] points)
+        {
+            if (!DrawGizmos)
+            {
+                return null;
+            }
+
+            List<GameObject> list = new List<GameObject>();
+            for (int i = 0; i < points.Length; i++)
+            {
+                Vector3 pointA = points[i];
+                pointA.y += raisePoints;
+
+                float sphereSize = Mathf.Clamp(lineSize * sphereMulti, minSphere, maxSphere);
+                GameObject sphere = Sphere(pointA, sphereSize, color, expireTime > 0, expireTime);
+                list.Add(sphere);
+
+                DrawLinesToPoint(list, pointA, color, lineSize, expireTime, raisePoints, points);
+            }
+            return list;
+        }
+
         private static float RandomFloat => Random.Range(0.2f, 1f);
         public static Color RandomColor => new Color(RandomFloat, RandomFloat, RandomFloat);
 
@@ -249,8 +396,8 @@ namespace SAIN.Helpers
 
                 for (int i = 0; i < Path.corners.Length - 1; i++)
                 {
-                    Vector3 corner1 = Path.corners[i];
-                    Vector3 corner2 = Path.corners[i + 1];
+                    Vector3 corner1 = Path.corners[i] + Vector3.up;
+                    Vector3 corner2 = Path.corners[i + 1] + Vector3.up;
 
                     Color color;
                     if (useDrawerSetColors)
@@ -439,7 +586,7 @@ namespace SAIN.Helpers
                 if (obj != null)
                 {
                     var runner = new GameObject("TempCoroutineRunner").AddComponent<TempCoroutineRunner>();
-                    runner.StartCoroutine(RunDestroyAfterDelay(obj, delay));
+                    runner?.StartCoroutine(RunDestroyAfterDelay(obj, delay));
                 }
             }
 
@@ -454,12 +601,12 @@ namespace SAIN.Helpers
                 yield return new WaitForSeconds(delay);
                 if (obj != null)
                 {
+                    TempCoroutineRunner runner = obj.GetComponentInParent<TempCoroutineRunner>();
+                    if (runner != null)
+                    {
+                        Destroy(runner.gameObject);
+                    }
                     Destroy(obj);
-                }
-                TempCoroutineRunner runner = obj?.GetComponentInParent<TempCoroutineRunner>();
-                if (runner != null)
-                {
-                    Destroy(runner.gameObject);
                 }
             }
 

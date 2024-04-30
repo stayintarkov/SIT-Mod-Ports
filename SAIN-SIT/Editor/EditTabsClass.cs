@@ -15,14 +15,7 @@ namespace SAIN.Editor
                     EEditorTab.Home, new TabClass
                     {
                         Name = "Home",
-                        ToolTip = "Select Presets and check which mods are detected that can affect SAIN.",
-                    }
-                },
-                {
-                    EEditorTab.GlobalSettings, new TabClass
-                    {
-                        Name = "Global Settings",
-                        ToolTip = "Modify settings that are the same between all bots.",
+                        ToolTip = "Select preset and modify global SAIN settings.",
                     }
                 },
                 {
@@ -87,7 +80,7 @@ namespace SAIN.Editor
 
         public static void BeginScrollView()
         {
-            TabClasses[SelectedTab].Scroll = SAINLayout.BeginScrollView(TabClasses[SelectedTab].Scroll, MainWindow.width);
+            TabClasses[SelectedTab].Scroll = SAINLayout.BeginScrollView(TabClasses[SelectedTab].Scroll, MainWindow.width - 20f);
             BeginVertical();
         }
 
@@ -118,7 +111,6 @@ namespace SAIN.Editor
     public enum EEditorTab
     {
         Home,
-        GlobalSettings,
         BotSettings,
         Personalities,
         Advanced

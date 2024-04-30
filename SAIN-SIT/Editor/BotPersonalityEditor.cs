@@ -1,6 +1,8 @@
 ﻿using SAIN.Helpers;
+using SAIN.Preset;
 using System.Collections.Generic;
 using UnityEngine;
+using static HBAO_Core;
 using static SAIN.Attributes.AttributesGUI;
 using static SAIN.Editor.SAINLayout;
 
@@ -20,7 +22,7 @@ namespace SAIN.Editor.GUISections
 
             if (BuilderClass.SaveChanges(PersonalitiesWereEdited, toolTip, 35))
             {
-                SAINPlugin.LoadedPreset.ExportPersonalities();
+                SAINPresetClass.ExportPersonalities(SAINPlugin.LoadedPreset.PersonalityManager, SAINPlugin.LoadedPreset.Info.Name);
             }
 
             foreach (var personality in SAINPlugin.LoadedPreset.PersonalityManager.Personalities.Values)

@@ -13,11 +13,11 @@ namespace SAIN.SAINComponent.Classes.Decision
         {
         }
 
-        private static readonly float StartFirstAid_Injury_SeenRecentTime = 4f;
-        private static readonly float StartFirstAid_HeavyInjury_SeenRecentTime = 2f;
-        private static readonly float StartFirstAid_FatalInjury_SeenRecentTime = 1f;
-        private static readonly float StartReload_LowAmmo_SeenRecentTime = 3f;
-        private static readonly float StartSurgery_SeenRecentTime = 10f;
+        private static readonly float StartFirstAid_Injury_SeenRecentTime = 8f;
+        private static readonly float StartFirstAid_HeavyInjury_SeenRecentTime = 6f;
+        private static readonly float StartFirstAid_FatalInjury_SeenRecentTime = 4f;
+        private static readonly float StartReload_LowAmmo_SeenRecentTime = 5f;
+        private static readonly float StartSurgery_SeenRecentTime = 90f;
 
         public void Init()
         {
@@ -155,7 +155,7 @@ namespace SAIN.SAINComponent.Classes.Decision
 
         private bool ContinueRunGrenade => CurrentSelfAction == SelfDecision.RunAwayGrenade && SAIN.Grenade.GrenadeDangerPoint != null;
         public bool UsingMeds => BotOwner.Medecine.Using;
-        private bool ContinueReload => BotOwner.WeaponManager.Reload?.Reloading == true && !StartCancelReload();
+        private bool ContinueReload => BotOwner.WeaponManager.Reload?.Reloading == true; //  && !StartCancelReload()
         public bool CanUseStims
         {
             get
@@ -330,6 +330,7 @@ namespace SAIN.SAINComponent.Classes.Decision
 
         private bool StartSurgery()
         {
+            const float useSurgDist = 50f;
             bool useSurgery = false;
 
             if (CanUseSurgery)
@@ -337,16 +338,38 @@ namespace SAIN.SAINComponent.Classes.Decision
                 var enemy = SAIN.Enemy;
                 if (enemy == null)
                 {
-                    useSurgery = true;
+                    if (SAIN.CurrentTargetPosition == null)
+                    {
+                        useSurgery = true;
+                    }
+                    else if ((SAIN.CurrentTargetPosition.Value - SAIN.Position).sqrMagnitude > useSurgDist * useSurgDist)
+                    {
+                        useSurgery = true;
+                    }
                 }
                 else
                 {
                     var pathStatus = enemy.CheckPathDistance();
                     bool SeenRecent = enemy.TimeSinceSeen < StartSurgery_SeenRecentTime;
 
-                    if (!SeenRecent && pathStatus != EnemyPathDistance.VeryClose && pathStatus != EnemyPathDistance.Close)
+                    if (!SeenRecent && pathStatus != EnemyPathDistance.Far && pathStatus != EnemyPathDistance.Close && pathStatus != EnemyPathDistance.VeryClose)
                     {
                         useSurgery = true;
+                    }
+                }
+
+                if (SAIN.HasEnemy)
+                {
+                    foreach (var enemyInfo in SAIN.EnemyController.Enemies)
+                    {
+                        if (enemyInfo.Value.InLineOfSight)
+                        {
+                            useSurgery = false;
+                        }
+                        else if (enemyInfo.Value.TimeSinceSeen < StartSurgery_SeenRecentTime)
+                        {
+                            useSurgery = false;
+                        }
                     }
                 }
             }

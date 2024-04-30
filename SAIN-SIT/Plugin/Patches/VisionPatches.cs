@@ -1,4 +1,4 @@
-﻿using StayInTarkov;
+﻿using Aki.Reflection.Patching;
 using EFT;
 using HarmonyLib;
 using SAIN.Preset;
@@ -10,6 +10,9 @@ using System.Reflection;
 using UnityEngine;
 using Comfort.Common;
 using SAIN.SAINComponent.Classes;
+using SAIN.Helpers;
+using System.Collections.Generic;
+using static UnityEngine.EventSystems.EventTrigger;
 
 namespace SAIN.Patches.Vision
 {
@@ -32,7 +35,7 @@ namespace SAIN.Patches.Vision
         }
     }
 
-    public class VisibleDistancePatch : ModulePatch
+    public class WeatherTimeVisibleDistancePatch : ModulePatch
     {
         private static PropertyInfo _clearVisibleDistProperty;
         private static PropertyInfo _visibleDistProperty;
@@ -85,6 +88,8 @@ namespace SAIN.Patches.Vision
 
                 ____nextUpdateVisibleDist = Time.time + (____botOwner.FlashGrenade.IsFlashed ? 3 : 20);
             }
+            // Not sure what this does, but its new, so adding it here since this patch replaces the old.
+            ____botOwner.BotLight.UpdateStrope();
             return false;
         }
     }
@@ -129,13 +134,59 @@ namespace SAIN.Patches.Vision
                 __result *= inverseWeatherModifier;
             }
 
+            Player player = EFTInfo.GetPlayer(__instance?.Person?.ProfileId);
+            if (player != null && !player.IsAI)
+            {
+                float visibility = SAINVisionClass.GetVisibilityModifier(player);
+                __result /= visibility;
+
+                float elevationDifference = enemy.position.y - BotTransform.position.y;
+
+                if (elevationDifference > 2f)
+                {
+                    __result *= 1.15f;
+                }
+                if (elevationDifference < -2f)
+                {
+                    __result *= 0.85f;
+                }
+                //Logger.LogDebug($"Elevation Difference: {elevationDifference}");
+            }
+
             // Not Looking Implementation
-            if (__instance?.Person?.IsYourPlayer == true)
+            if (__instance?.Person?.IsYourPlayer == true && !__instance.IsVisible)
             {
                 __result *= SAINNotLooking.GetVisionSpeedIncrease(__instance.Owner);
             }
 
             __result = Mathf.Round(__result * 100f) / 100f; ;
+        }
+    }
+
+    public class VisionDistancePosePatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(typeof(EnemyInfo), "CheckVisibility");
+        }
+
+        [PatchPrefix]
+        public static void PatchPrefix(ref float addVisibility, EnemyInfo __instance)
+        {
+            Player player = EFTInfo.GetPlayer(__instance?.Person?.ProfileId);
+            if (player != null)
+            {
+                float visibility = SAINVisionClass.GetVisibilityModifier(player);
+                float defaultVisDist = __instance.Owner.LookSensor.VisibleDist;
+                float visionDist = (defaultVisDist * visibility) - defaultVisDist;
+
+                Vector3 botLookDir = __instance.Owner.LookDirection.normalized;
+                addVisibility = visionDist;
+                if (player.IsYourPlayer)
+                {
+                    //Logger.LogWarning(addVisibility);
+                }
+            }
         }
     }
 

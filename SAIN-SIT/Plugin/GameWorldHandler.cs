@@ -19,6 +19,8 @@ namespace SAIN
             {
                 SAINGameWorld = gameWorld.GetOrAddComponent<SAINGameworldComponent>();
             }
+
+            SAINWeaponInfoHandler.Update();
         }
 
         public static SAINGameworldComponent SAINGameWorld { get; private set; }

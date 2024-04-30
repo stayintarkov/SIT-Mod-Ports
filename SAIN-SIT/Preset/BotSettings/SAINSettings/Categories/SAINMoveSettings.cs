@@ -1,30 +1,55 @@
-﻿using SAIN.Attributes;
+﻿using Newtonsoft.Json;
+using SAIN.Attributes;
 
 namespace SAIN.Preset.BotSettings.SAINSettings.Categories
 {
     public class SAINMoveSettings
     {
-        [Name("Turn Speed Base")]
-        [Default(265f)]
-        [MinMax(100f, 500f)]
-        public float BASE_ROTATE_SPEED = 265f;
+        [Hidden]
+        [JsonIgnore]
+        public float BASE_ROTATE_SPEED = 350;
 
-        [Default(275f)]
-        [Advanced]
-        public float FIRST_TURN_SPEED = 275f;
+        [Hidden]
+        [JsonIgnore]
+        public float FIRST_TURN_SPEED = 500;
+        // 160 default
 
-        [Default(300f)]
-        [Advanced]
-        public float FIRST_TURN_BIG_SPEED = 300f;
+        [Hidden]
+        [JsonIgnore]
+        public float FIRST_TURN_BIG_SPEED = 500;
+        // 320 default
 
-        [Name("Turn Speed Sprint")]
-        [Default(320f)]
-        [MinMax(100f, 500f)]
-        public float TURN_SPEED_ON_SPRINT = 320f;
+        [Hidden]
+        [JsonIgnore]
+        public float TURN_SPEED_ON_SPRINT = 350;
+        // 200 default
 
-        [Hidden] public float RUN_IF_GAOL_FAR_THEN = 0f;
-        [Hidden] public float CHANCE_TO_RUN_IF_NO_AMMO_0_100 = 100f;
-        [Hidden] public float SEC_TO_CHANGE_TO_RUN = 0f;
-        [Hidden] public float RUN_TO_COVER_MIN = 0f;
+        [Hidden]
+        [JsonIgnore]
+        public float RUN_TO_COVER_MIN = 0f;
+
+        // [Hidden]
+        // [JsonIgnore]
+        // public float BOT_MOVE_IF_DELTA = 0.025f;
+
+        //[Hidden]
+        //[JsonIgnore]
+        //public float REACH_DIST = 0.4f;
+        //
+        //[Hidden]
+        //[JsonIgnore]
+        //public float REACH_DIST_RUN = 0.8f;
+
+        [Hidden]
+        [JsonIgnore]
+        public float BASESTART_SLOW_DIST = 0.5f;
+
+        [Hidden]
+        [JsonIgnore]
+        public float START_SLOW_DIST = 0.75f;
+
+        [Hidden]
+        [JsonIgnore]
+        public float SLOW_COEF = 12;
     }
 }

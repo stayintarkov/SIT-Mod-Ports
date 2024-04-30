@@ -10,13 +10,15 @@ using SAIN.SAINComponent.Classes.Info;
 using SAIN.SAINComponent.Classes.Mover;
 using SAIN.SAINComponent.Classes.Talk;
 using System;
+using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace SAIN.SAINComponent
 {
     public class SAINComponentClass : MonoBehaviour, IBotComponent
     {
-        public static bool TryAddSAINToBot(BotOwner botOwner, out SAINComponentClass component)
+        public static bool TryAddSAINToBot(BotOwner botOwner, out SAINComponentClass sainComponent)
         {
             Player player = EFTInfo.GetPlayer(botOwner?.ProfileId);
             GameObject gameObject = botOwner?.gameObject;
@@ -24,28 +26,47 @@ namespace SAIN.SAINComponent
             if (gameObject != null && player != null)
             {
                 // If Somehow this bot already has SAIN attached, destroy it.
-                if (gameObject.TryGetComponent(out component))
+                if (gameObject.TryGetComponent(out sainComponent))
                 {
-                    component.Dispose();
+                    sainComponent.Dispose();
                 }
 
                 // Create a new Component
-                component = gameObject.AddComponent<SAINComponentClass>();
+                sainComponent = gameObject.AddComponent<SAINComponentClass>();
 
-                // Check is component is successfully initialized
-                if (component?.Init(new SAINPersonClass(player)) == true)
+                if (SAINPersonComponent.TryAddSAINPersonToPlayer(player, out SAINPersonComponent personComponent)
+                    && sainComponent?.Init(personComponent?.SAINPerson) == true)
                 {
                     return true;
                 }
             }
-            component = null;
+            sainComponent = null;
             return false;
         }
 
+        private void PlayerKilled(EDamageType damageType)
+        {
+            if (damageType == EDamageType.Bullet)
+            {
+                IFirearmHandsController firearmHandsController = Player?.HandsController as IFirearmHandsController;
+                if (firearmHandsController != null)
+                {
+                    // firearmHandsController.SetTriggerPressed(true);
+                }
+            }
+        }
+
+        public Action<string, BotOwner> OnSAINDisposed { get; set; }
         public SAINPersonClass Person { get; private set; }
 
         public bool Init(SAINPersonClass person)
         {
+            if (person == null)
+            {
+                Logger.LogAndNotifyError("Person is Null in SAINComponent Init");
+                return false;
+            }
+
             Person = person;
 
             try
@@ -75,6 +96,16 @@ namespace SAIN.SAINComponent
                 Search = new SAINSearchClass(this);
                 Vault = new SAINVaultClass(this);
                 Suppression = new SAINBotSuppressClass(this);
+                AILimit = new SAINAILimit(this);
+                AimDownSightsController = new AimDownSightsController(this);
+                BotHitReaction = new SAINBotHitReaction(this);
+                SpaceAwareness = new SAINBotSpaceAwareness(this);
+
+                NavMeshAgent = this.GetComponent<NavMeshAgent>();
+                if (NavMeshAgent == null)
+                {
+                    Logger.LogError("Agent Null");
+                }
             }
             catch (Exception ex)
             {
@@ -104,11 +135,29 @@ namespace SAIN.SAINComponent
             Steering.Init();
             Vault.Init();
             Suppression.Init();
+            AILimit.Init();
+            AimDownSightsController.Init();
+            BotHitReaction.Init();
+            SpaceAwareness.Init();
+
+            try
+            {
+                Player.HealthController.DiedEvent += PlayerKilled;
+            }
+            catch
+            {
+
+            }
+
+            TimeBotCreated = Time.time;
 
             return true;
         }
 
-        public bool SAINEnabled => Info?.FileSettings?.Core != null ? Info.FileSettings.Core.SAINEnabled : false;
+        public NavMeshAgent NavMeshAgent { get; private set; }
+
+        public float TimeBotCreated { get; private set; }
+
 
         private void Update()
         {
@@ -118,11 +167,6 @@ namespace SAIN.SAINComponent
                 return;
             }
 
-            if (SAINEnabled)
-            {
-                //return;
-            }
-
             if (GameIsEnding)
             {
                 return;
@@ -130,16 +174,14 @@ namespace SAIN.SAINComponent
 
             if (BotActive)
             {
-                if (LayersActive)
-                {
-                    BotOwner.PatrollingData?.Pause();
-                }
-                else if (Enemy == null)
-                {
-                    BotOwner.PatrollingData?.Unpause();
-                }
+                HandlePatrolData();
 
-                Person.Update();
+                AILimit.UpdateAILimit();
+
+                if (AILimit.LimitAIThisFrame)
+                {
+                    return;
+                }
 
                 Search.Update();
                 Memory.Update();
@@ -161,14 +203,62 @@ namespace SAIN.SAINComponent
                 Steering.Update();
                 Vault.Update();
                 Suppression.Update();
-                BotOwner.DoorOpener.Update();
+                AimDownSightsController.Update();
+                BotHitReaction.Update();
+                SpaceAwareness.Update();
 
-                if (Enemy == null && BotOwner.BotLight?.IsEnable == false)
-                {
-                    BotOwner.BotLight?.TurnOn();
-                }
+                BotOwner.DoorOpener.Update(); 
+                UpdateGoalTarget();
             }
         }
+
+        private Stopwatch Stopwatch = new Stopwatch();
+
+        private void LateUpdate()
+        {
+        }
+
+        private static float LogTimer;
+
+        public bool IsHumanACareEnemy
+        {
+            get
+            {
+                if (HasEnemy && !Enemy.IsAI)
+                {
+                    return true;
+                }
+                var closestHeard = EnemyController.ClosestHeardEnemy;
+                if (closestHeard != null && !closestHeard.IsAI)
+                {
+                    return true;
+                }
+
+                foreach (var player in Memory.VisiblePlayers)
+                {
+                    if (!player.IsAI)
+                    {
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+        }
+
+        private void HandlePatrolData()
+        {
+            if (CurrentTargetPosition == null)
+            {
+                BotOwner.PatrollingData?.Unpause();
+            }
+            else
+            {
+                BotOwner.PatrollingData?.Pause();
+            }
+        }
+
+        public AILimitSetting CurrentAILimit => AILimit.CurrentAILimit;
 
         public bool BotIsAlive => Player?.HealthController?.IsAlive == true;
 
@@ -176,27 +266,49 @@ namespace SAIN.SAINComponent
         {
             get
             {
+                if (BotOwner.AimingData != null)
+                {
+                    return BotOwner.AimingData.LastDist2Target;
+                }
                 if (Enemy != null)
                 {
                     return Enemy.RealDistance;
                 }
-                else if (BotOwner.Memory.GoalEnemy != null)
+                else if (CurrentTargetPosition != null)
                 {
-                    return BotOwner.Memory.GoalEnemy.Distance;
+                    return (CurrentTargetPosition.Value - Position).magnitude;
                 }
-                return 10f;
+                return 200f;
             }
         }
 
-        public void Shoot(bool checkFF = true)
+        public bool Shoot(bool value, bool checkFF = true, EShootReason reason = EShootReason.None)
         {
-            if (checkFF && !FriendlyFireClass.ClearShot)
-            {
-                BotOwner.ShootData.EndShoot();
-                return;
-            }
+            ManualShootReason = value ? reason : EShootReason.None;
 
-            BotOwner.ShootData.Shoot();
+            if (value)
+            {
+                if (checkFF && !FriendlyFireClass.ClearShot)
+                {
+                    BotOwner.ShootData.EndShoot();
+                    return false;
+                }
+                else
+                {
+                    return BotOwner.ShootData.Shoot();
+                }
+            }
+            return false;
+        }
+
+        public EShootReason ManualShootReason { get; private set; }
+
+        public enum EShootReason
+        {
+            None = 0,
+            SquadSuppressing = 1,
+            Blindfire = 2,
+            WalkToCoverSuppress = 3,
         }
 
         private bool SAINActive => BigBrainHandler.IsBotUsingSAINLayer(BotOwner);
@@ -207,6 +319,7 @@ namespace SAIN.SAINComponent
             {
                 if (RecheckTimer < Time.time)
                 {
+                    CombatLayersActive = BigBrainHandler.IsBotUsingSAINCombatLayer(BotOwner);
                     if (SAINActive)
                     {
                         RecheckTimer = Time.time + 0.5f;
@@ -221,6 +334,7 @@ namespace SAIN.SAINComponent
                 return Active;
             }
         }
+        public bool CombatLayersActive { get; private set; }
 
         private bool Active;
         private float RecheckTimer = 0f;
@@ -229,6 +343,14 @@ namespace SAIN.SAINComponent
         {
             try
             {
+                OnSAINDisposed?.Invoke(ProfileId, BotOwner);
+
+                try
+                {
+                    Player.HealthController.DiedEvent -= PlayerKilled;
+                }
+                catch { }
+
                 StopAllCoroutines();
 
                 Search.Dispose();
@@ -252,47 +374,100 @@ namespace SAIN.SAINComponent
                 Enemy?.Dispose();
                 Vault?.Dispose();
                 Suppression?.Dispose();
+                AILimit?.Dispose();
+                AimDownSightsController?.Dispose();
+                BotHitReaction?.Dispose();
+                SpaceAwareness?.Dispose();
+
+                try
+                {
+                    GameObject.Destroy(SteeringController);
+                    GameObject.Destroy(NoBushESP);
+                    GameObject.Destroy(FlashLight);
+                }
+                catch { }
 
                 Destroy(this);
             }
             catch { }
         }
 
+        private void UpdateGoalTarget()
+        {
+            if (updateGoalTargetTimer < Time.time)
+            {
+                updateGoalTargetTimer = Time.time + 0.5f;
+                var Target = GoalTargetPosition;
+                if (Target != null)
+                {
+                    if ((Target.Value - Position).sqrMagnitude < 2f)
+                    {
+                        if (EFTMath.RandomBool(33))
+                        {
+                            Talk.Say(EFTMath.RandomBool() ? EPhraseTrigger.Clear : EPhraseTrigger.LostVisual, null, true);
+                        }
+                        BotOwner.Memory.GoalTarget.Clear();
+                        BotOwner.CalcGoal();
+                    }
+                }
+            }
+            var placesForCheck = Squad.SquadInfo?.GroupPlacesForCheck;
+            if (placesForCheck != null)
+            {
+                foreach (var place in placesForCheck)
+                {
+                    if (place != null)
+                    {
+                        DebugGizmos.Line(place.Position, Position, 0.025f, Time.deltaTime, true);
+                    }
+                }
+            }
+        }
+
+        private float updateGoalTargetTimer;
+
+        public Vector3? GoalTargetPosition => BotOwner.Memory.GoalTarget.Position;
+
         public Vector3? CurrentTargetPosition
         {
             get
             {
-                if (HasEnemy)
+                if (HasEnemy && Enemy.IsVisible)
                 {
                     return Enemy.EnemyPosition;
                 }
-                var Target = BotOwner.Memory.GoalTarget;
-                if (Target != null && Target?.Position != null)
+                if (BotOwner.Memory.IsUnderFire)
                 {
-                    if ((Target.Position.Value - BotOwner.Position).sqrMagnitude < 2f)
-                    {
-                        Target.Clear();
-                        BotOwner.CalcGoal();
-                    }
-                    else
-                    {
-                        return Target.Position;
-                    }
+                    return Memory.UnderFireFromPosition;
                 }
-                var sound = BotOwner.BotsGroup.YoungestPlace(BotOwner, 200f, true);
-                if (sound != null && !sound.IsCome)
+
+                    // This is incredibly inefficient, need to limit the times this is called per frame.
+                if (HasEnemy)
                 {
-                    if ((sound.Position - Position).sqrMagnitude < 2f)
+                    Vector3? lastPlaceHaventSeen = Enemy.KnownPlaces.GetPlaceHaventSeen()?.Position;
+                    if (lastPlaceHaventSeen != null)
                     {
-                        sound.IsCome = true;
-                        BotOwner.CalcGoal();
+                        return lastPlaceHaventSeen;
                     }
-                    else
+
+                    lastPlaceHaventSeen = Enemy.KnownPlaces.GetPlaceHaventArrived()?.Position;
+                    if (lastPlaceHaventSeen != null)
                     {
-                        return Target.Position;
+                        return lastPlaceHaventSeen;
                     }
+
+                    if (Enemy.LastKnownPosition != null)
+                    {
+                        return Enemy.LastKnownPosition;
+                    }
+                    return Enemy.EnemyPosition;
                 }
-                if (Time.time - BotOwner.Memory.LastTimeHit < 3f)
+                var placeForCheck = BotOwner.Memory.GoalTarget?.GoalTarget;
+                if (placeForCheck != null)
+                {
+                    return placeForCheck.Position;
+                }
+                if (Time.time - BotOwner.Memory.LastTimeHit < 10f)
                 {
                     return BotOwner.Memory.LastHitPos;
                 }
@@ -300,10 +475,14 @@ namespace SAIN.SAINComponent
             }
         }
 
+        public SAINBotSpaceAwareness SpaceAwareness { get; private set; }
+        public SAINBotHitReaction BotHitReaction { get; private set; }
+        public AimDownSightsController AimDownSightsController { get; private set; }
+        public SAINAILimit AILimit { get; private set; }
         public SAINBotSuppressClass Suppression { get; private set; }
         public SAINVaultClass Vault { get; private set; }
         public SAINSearchClass Search { get; private set; }
-        public SAINEnemyClass Enemy => HasEnemy ? EnemyController.ActiveEnemy : null;
+        public SAINEnemy Enemy => HasEnemy ? EnemyController.ActiveEnemy : null;
         public SAINPersonTransformClass Transform => Person.Transform;
         public SAINMemoryClass Memory { get; private set; }
         public SAINEnemyController EnemyController { get; private set; }
@@ -324,15 +503,16 @@ namespace SAIN.SAINComponent
         public SAINSelfActionClass SelfActions { get; private set; }
         public SAINBotGrenadeClass Grenade { get; private set; }
         public SAINSteeringClass Steering { get; private set; }
+        public SAINSteeringController SteeringController { get; private set; }
 
         public bool IsDead => BotOwner == null || BotOwner.IsDead == true || Player == null || Player.HealthController.IsAlive == false;
-        public bool BotActive => IsDead == false && BotOwner.enabled && Player.enabled && BotOwner.BotState == EBotState.Active;
+        public bool BotActive => IsDead == false && BotOwner.enabled && Player.enabled && BotOwner.BotState == EBotState.Active && BotOwner.StandBy.StandByType == BotStandByType.active;
         public bool GameIsEnding => Singleton<IBotGame>.Instance == null || Singleton<IBotGame>.Instance.Status == GameStatus.Stopping;
 
         public Vector3 Position => Person.Position;
-        public BotOwner BotOwner => Person.BotOwner;
-        public string ProfileId => Person.ProfileId;
-        public Player Player => Person.Player;
+        public BotOwner BotOwner => Person?.BotOwner;
+        public string ProfileId => Person?.ProfileId;
+        public Player Player => Person?.Player;
         public bool HasEnemy => EnemyController.HasEnemy;
     }
 }

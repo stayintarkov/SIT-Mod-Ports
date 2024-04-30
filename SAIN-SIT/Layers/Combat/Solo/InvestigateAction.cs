@@ -18,6 +18,14 @@ namespace SAIN.Layers.Combat.Solo
 
         public override void Update()
         {
+            Shoot.Update();
+
+            if (PlaceForCheck == null)
+            {
+                SAIN.Decision.ResetDecisions();
+                return;
+            }
+
             if (SAIN.Enemy?.IsVisible == false && SAIN.Decision.SelfActionDecisions.LowOnAmmo(0.66f))
             {
                 SAIN.SelfActions.TryReload();
@@ -26,46 +34,52 @@ namespace SAIN.Layers.Combat.Solo
             SAIN.Mover.SetTargetMoveSpeed(0.7f);
             SAIN.Mover.SetTargetPose(1f);
 
-            Shoot.Update();
-
-            if (SearchPoint == null)
-            {
-                SAIN.Decision.ResetDecisions();
-                return;
-            }
-
             SAIN.Steering.SteerByPriority();
 
             if (RecalcPathtimer < Time.time)
             {
-                RecalcPathtimer = Time.time + 4f;
-                SAIN.Mover.GoToPoint(SearchPoint.Point.Position);
+                bool moving = SAIN.Mover.GoToPoint(PlaceForCheck.Position, out bool calculating);
+                float timeAdd = moving ? 4f : 0.5f;
+                RecalcPathtimer = Time.time + timeAdd;
             }
-            if ((BotOwner.Position - SearchPoint.Point.Position).sqrMagnitude < 10f)
+            const float MinDistance = 10;
+            if ((BotOwner.Position - PlaceForCheck.Position).sqrMagnitude < MinDistance * MinDistance)
             {
                 Vector3 headPos = SAIN.Transform.Head;
-                Vector3 searchPoint = SearchPoint.Point.Position;
+                Vector3 searchPoint = PlaceForCheck.Position + Vector3.up;
                 Vector3 direction = searchPoint - headPos;
                 if (!Physics.SphereCast(headPos, 0.1f, direction, out var hit, LayerMaskClass.HighPolyWithTerrainMaskAI))
                 {
-                    SearchPoint.Point.IsCome = true;
-                    SearchPoint.Point = null;
-                    return;
+                    HasSeenPlace = true;
+                    if (!HaveArrived)
+                    {
+                        HaveArrived = true;
+                        PlaceForCheck.IsCome = true;
+                        BotOwner.BotsGroup.PointChecked(PlaceForCheck);
+                    }
                 }
             }
         }
 
         private float RecalcPathtimer = 0f;
 
-        private readonly SearchPoint SearchPoint = new SearchPoint();
+        private bool HasSeenPlace;
+        private bool HaveArrived;
+
+        private PlaceForCheck PlaceForCheck;
 
         public override void Start()
         {
-            SearchPoint.Point = BotOwner.BotsGroup.YoungestFastPlace(BotOwner, 200f, 60f);
+            PlaceForCheck = BotOwner.BotsGroup.YoungestPlace(BotOwner, 200f, true);
         }
 
         public override void Stop()
         {
+        }
+
+        private PlaceForCheck GetNextPlace()
+        {
+            return null;
         }
     }
 }

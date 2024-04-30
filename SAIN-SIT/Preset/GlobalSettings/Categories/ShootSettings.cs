@@ -20,10 +20,10 @@ namespace SAIN.Preset.GlobalSettings
 
         [Name("Max Recoil Per Shot")]
         [Description("Maximum Impulse force from a single shot for a bot.")]
-        [Default(1.5f)]
+        [Default(2f)]
         [MinMax(0.1f, 10f, 100f)]
         [Advanced]
-        public float MaxRecoil = 1.5f;
+        public float MaxRecoil = 2f;
 
         [Name("Add or Subtract Recoil")]
         [Description("Linearly add or subtract from the final recoil result")]
@@ -34,10 +34,10 @@ namespace SAIN.Preset.GlobalSettings
 
         [Name("Recoil Decay p/frame")]
         [Description("How much to decay the recoil impulse per frame. 0.75 means 25% of the recoil will be removed per frame.")]
-        [Default(0.75f)]
+        [Default(0.5f)]
         [Percentage01to99]
         [Advanced]
-        public float RecoilDecay = 0.75f;
+        public float RecoilDecay = 0.5f;
 
         [Name("Ammo Shootability" )]
         [Description(
@@ -104,9 +104,9 @@ namespace SAIN.Preset.GlobalSettings
         public static readonly Dictionary<IWeaponClass, float> WeaponClassShootabilityDefaults = new Dictionary<IWeaponClass, float>()
         {
             { IWeaponClass.Default, 0.425f },
-            { IWeaponClass.assaultCarbine, 0.375f },
-            { IWeaponClass.assaultRifle, 0.425f },
-            { IWeaponClass.machinegun, 0.35f },
+            { IWeaponClass.assaultCarbine, 0.5f },
+            { IWeaponClass.assaultRifle, 0.5f },
+            { IWeaponClass.machinegun, 0.15f },
             { IWeaponClass.smg, 0.25f },
             { IWeaponClass.pistol, 0.4f },
             { IWeaponClass.marksmanRifle, 0.75f },
@@ -161,17 +161,17 @@ namespace SAIN.Preset.GlobalSettings
         [Hidden]
         public static readonly Dictionary<IWeaponClass, float> EngagementDistanceDefaults = new Dictionary<IWeaponClass, float>()
         {
-            { IWeaponClass.Default, 75f },
-            { IWeaponClass.assaultCarbine, 75f },
-            { IWeaponClass.assaultRifle, 100f },
-            { IWeaponClass.machinegun, 85f },
-            { IWeaponClass.smg, 40f },
-            { IWeaponClass.pistol, 25f },
-            { IWeaponClass.marksmanRifle, 110f },
-            { IWeaponClass.sniperRifle, 175f },
-            { IWeaponClass.shotgun, 25f },
-            { IWeaponClass.grenadeLauncher, 65f },
-            { IWeaponClass.specialWeapon, 50f },
+            { IWeaponClass.Default, 125f },
+            { IWeaponClass.assaultCarbine, 125f },
+            { IWeaponClass.assaultRifle, 150f },
+            { IWeaponClass.machinegun, 125f },
+            { IWeaponClass.smg, 70f },
+            { IWeaponClass.pistol, 50f },
+            { IWeaponClass.marksmanRifle, 175f },
+            { IWeaponClass.sniperRifle, 300f },
+            { IWeaponClass.shotgun, 50f },
+            { IWeaponClass.grenadeLauncher, 100f },
+            { IWeaponClass.specialWeapon, 100f },
         };
 
         [JsonIgnore]
@@ -180,15 +180,15 @@ namespace SAIN.Preset.GlobalSettings
 
         [Description(Shootability)]
         [Advanced]
-        [Default(0.3f)]
+        [Default(0.35f)]
         [Percentage01to99]
-        public float WeaponClassScaling = 0.3f;
+        public float WeaponClassScaling = 0.35f;
 
         [Description(Shootability)]
         [Advanced]
-        [Default(0.2f)]
+        [Default(0.35f)]
         [Percentage01to99]
-        public float RecoilScaling = 0.2f;
+        public float RecoilScaling = 0.35f;
 
         [Description(Shootability)]
         [Advanced]
@@ -198,20 +198,20 @@ namespace SAIN.Preset.GlobalSettings
 
         [Description(Shootability)]
         [Advanced]
+        [Default(0.4f)]
+        [Percentage01to99]
+        public float AmmoCaliberScaling = 0.4f;
+
+        [Description(Shootability)]
+        [Advanced]
+        [Default(0.15f)]
+        [Percentage01to99]
+        public float WeaponProficiencyScaling = 0.15f;
+
+        [Description(Shootability)]
+        [Advanced]
         [Default(0.2f)]
         [Percentage01to99]
-        public float AmmoCaliberScaling = 0.2f;
-
-        [Description(Shootability)]
-        [Advanced]
-        [Default(0.325f)]
-        [Percentage01to99]
-        public float WeaponProficiencyScaling = 0.325f;
-
-        [Description(Shootability)]
-        [Advanced]
-        [Default(0.3f)]
-        [Percentage01to99]
-        public float DifficultyScaling = 0.3f;
+        public float DifficultyScaling = 0.2f;
     }
 }

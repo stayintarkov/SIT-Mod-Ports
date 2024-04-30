@@ -139,6 +139,13 @@ namespace SAIN.Attributes
         }
     }
 
+    public sealed class DebugAttribute : BoolAttribute
+    {
+        public DebugAttribute() : base(true)
+        {
+        }
+    }
+
     public sealed class ExperimentalAttribute : BoolAttribute
     {
         public ExperimentalAttribute() : base(true)

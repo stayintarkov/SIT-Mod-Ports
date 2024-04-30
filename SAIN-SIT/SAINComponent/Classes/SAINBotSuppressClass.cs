@@ -39,10 +39,10 @@ namespace SAIN.SAINComponent.Classes
         public bool IsHeavySuppressed => SuppressionNumber > SuppressionHeavyThreshold;
 
         public readonly float SuppressionSpreadMultiPerPoint = 0.15f;
-        private readonly float SuppressionThreshold = 4f;
+        private readonly float SuppressionThreshold = 5f;
         private readonly float SuppressionHeavyThreshold = 10f;
-        private readonly float SuppressionDecayAmount = 0.5f;
-        private readonly float SuppressionDecayUpdateFreq = 0.5f;
+        private readonly float SuppressionDecayAmount = 0.25f;
+        private readonly float SuppressionDecayUpdateFreq = 0.25f;
         private readonly float SuppressionAddDefault = 2f;
         private float SuppressionDecayTimer;
 

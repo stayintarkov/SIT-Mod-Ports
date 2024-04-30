@@ -19,7 +19,7 @@ namespace SAIN.SAINComponent.Classes
 
         public static float GetSpreadIncrease(BotOwner bot)
         {
-            if (CheckIfPlayerNotLooking(bot))
+            if (Settings.NotLookingToggle && CheckIfPlayerNotLooking(bot))
             {
                 return Settings.NotLookingAccuracyAmount;
             }
@@ -67,7 +67,7 @@ namespace SAIN.SAINComponent.Classes
                         if (SAINPlugin.DebugMode && DebugTimer < Time.time)
                         {
                             DebugTimer = Time.time + 1f;
-                            Logger.LogDebug($"Player Not Looking at Bot");
+                            //Logger.LogDebug($"Player Not Looking at Bot");
                         }
                         return true;
                     }

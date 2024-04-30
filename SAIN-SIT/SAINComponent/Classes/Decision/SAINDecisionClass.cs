@@ -16,7 +16,10 @@ namespace SAIN.SAINComponent.Classes.Decision
             SquadDecisions = new SquadDecisionClass(sain);
         }
 
-        public Action<SoloDecision, SquadDecision, SelfDecision, float> NewDecision { get; set; }
+        public event Action<SoloDecision, SquadDecision, SelfDecision, float> OnDecisionMade;
+        public event Action<SoloDecision, SquadDecision, SelfDecision, float> OnSAINStart;
+        public event Action<float> OnSAINEnd;
+        public bool SAINActive { get; private set; }
 
         public void Init()
         {
@@ -47,12 +50,16 @@ namespace SAIN.SAINComponent.Classes.Decision
                 CheckDecisionFrameCount = 0;
                 GetDecision();
             }
+
+            SAINActive = CurrentSoloDecision != SoloDecision.None 
+                || CurrentSelfDecision != SelfDecision.None 
+                || CurrentSquadDecision != SquadDecision.None;
         }
 
-        private const int CheckDecisionFrameTarget = 4;
+        private const int CheckDecisionFrameTarget = 6;
         private int CheckDecisionFrameCount = 0;
 
-        private const int CheckEnemyFrameTarget = 2;
+        private const int CheckEnemyFrameTarget = 6;
         private int CheckEnemyFrameCount = 0;
 
         public void Dispose()
@@ -142,27 +149,43 @@ namespace SAIN.SAINComponent.Classes.Decision
         private void CheckForNewDecisions()
         {
             bool newDecision = false;
-            float newDecisionTime = Time.time;
+            float time = Time.time;
 
             if (CurrentSoloDecision != OldSoloDecision)
             {
-                ChangeDecisionTime = newDecisionTime;
+                ChangeDecisionTime = time;
                 newDecision = true;
             }
             if (CurrentSelfDecision != OldSelfDecision)
             {
-                ChangeSelfDecisionTime = newDecisionTime;
+                ChangeSelfDecisionTime = time;
                 newDecision = true;
             }
             if (CurrentSquadDecision != OldSquadDecision)
             {
-                ChangeSquadDecisionTime = newDecisionTime;
+                ChangeSquadDecisionTime = time;
                 newDecision = true;
             }
 
             if (newDecision)
             {
-                NewDecision?.Invoke(CurrentSoloDecision, CurrentSquadDecision, CurrentSelfDecision, newDecisionTime);
+                OnDecisionMade?.Invoke(CurrentSoloDecision, CurrentSquadDecision, CurrentSelfDecision, time);
+
+                // If previously all decisions were none, sain has now started.
+                if (OldSoloDecision == SoloDecision.None 
+                    && OldSelfDecision == SelfDecision.None
+                    && OldSquadDecision == SquadDecision.None)
+                {
+                    OnSAINStart?.Invoke(CurrentSoloDecision, CurrentSquadDecision, CurrentSelfDecision, time);
+                }
+
+                // Are all decisions None? Then SAIN is no longer active.
+                if (CurrentSoloDecision == SoloDecision.None
+                    && CurrentSelfDecision == SelfDecision.None
+                    && CurrentSquadDecision == SquadDecision.None)
+                {
+                    OnSAINEnd?.Invoke(time);
+                }
             }
         }
 
@@ -173,20 +196,20 @@ namespace SAIN.SAINComponent.Classes.Decision
         {
             float timeChangeDec = SAIN.Decision.TimeSinceChangeDecision;
             bool Running = CurrentSoloDecision == SoloDecision.Retreat || CurrentSoloDecision == SoloDecision.RunToCover;
-            if (Running && !SAIN.BotStuck.BotIsMoving && SAIN.BotStuck.TimeSpentNotMoving > 1f && timeChangeDec > 0.5f)
+            if (Running && !SAIN.BotStuck.BotHasChangedPosition && SAIN.BotStuck.TimeSpentNotMoving > 1f && timeChangeDec > 0.5f)
             {
                 return false;
             }
             CoverPoint pointInUse = SAIN.Cover.CoverInUse;
-            if (pointInUse != null && pointInUse.BotIsHere)
+            if (pointInUse != null && pointInUse.BotInThisCover(SAIN))
             {
                 return false;
             }
 
-            bool CheckTime = timeChangeDec < 5f; 
-            bool Moving = BotOwner.Mover?.RealDestPoint != Vector3.one && BotOwner.Mover?.DistDestination > 2f;
-
-            return Running && Moving && CheckTime;
+            bool CheckTime = timeChangeDec < 30f; 
+            bool Moving = BotOwner.Mover.HasPathAndNoComplete;
+             
+            return Running && BotOwner.Mover.HasPathAndNoComplete && CheckTime;
         }
 
         private bool CheckStuckDecision(out SoloDecision Decision)
