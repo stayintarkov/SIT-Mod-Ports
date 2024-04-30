@@ -30,6 +30,14 @@ namespace SAIN.SAINComponent.Classes.WeaponFunction
 
         public void CheckSwap()
         {
+            if (SAIN.ManualShootReason != SAINComponentClass.EShootReason.None && SAIN.Info.WeaponInfo.IWeaponClass == IWeaponClass.machinegun)
+            {
+                if (SAIN.Info.WeaponInfo.HasFullAuto() && CanSetMode(EFireMode.fullauto))
+                {
+                    SetFireMode(EFireMode.fullauto);
+                }
+                return;
+            }
             if (BotOwner?.WeaponManager?.Stationary?.Taken == false)
             {
                 float distance = SAIN.DistanceToAimTarget;

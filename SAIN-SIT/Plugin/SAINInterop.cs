@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine.AI;
 
 namespace SAIN.Plugin
 {
@@ -21,6 +22,8 @@ namespace SAIN.Plugin
         private static MethodInfo _ExtractBotMethod;
         private static MethodInfo _SetExfilForBotMethod;
         private static MethodInfo _ResetDecisionsForBotMethod;
+        private static MethodInfo _IsPathTowardEnemyMethod;
+        private static MethodInfo _TimeSinceSenseEnemyMethod;
 
         /**
          * Return true if SAIN is loaded in the client
@@ -57,6 +60,8 @@ namespace SAIN.Plugin
                     _ExtractBotMethod = AccessTools.Method(_SAINExternalType, "ExtractBot");
                     _SetExfilForBotMethod = AccessTools.Method(_SAINExternalType, "TrySetExfilForBot");
                     _ResetDecisionsForBotMethod = AccessTools.Method(_SAINExternalType, "ResetDecisionsForBot");
+                    _IsPathTowardEnemyMethod = AccessTools.Method(_SAINExternalType, "IsPathTowardEnemy");
+                    _TimeSinceSenseEnemyMethod = AccessTools.Method(_SAINExternalType, "TimeSinceSenseEnemy");
                 }
             }
 
@@ -95,6 +100,30 @@ namespace SAIN.Plugin
             if (_ResetDecisionsForBotMethod == null) return false;
 
             return (bool)_ResetDecisionsForBotMethod.Invoke(null, new object[] { botOwner });
+        }
+
+        /// <summary>
+        /// Compare a NavMeshPath to the pre-calculated NavMeshPath that leads directly to a bot's Active Enemy.
+        /// </summary>
+        /// <param name="path">The Path To Test</param>
+        /// <param name="botOwner">The Bot in Question</param>
+        /// <param name="ratioSameOverAll">How many nodes along a path are allowed to be the same divided by the total nodes in the Path To Test. Example: 3 nodes are the same, with 10 total nodes = 0.3 ratio, so if the input value is 0.25, this will return false.</param>
+        /// <param name="sqrDistCheck">How Close a node can be to be considered the same.</param>
+        /// <returns>True if the path leads in the same direction as their active enemy.</returns>
+        public static bool IsPathTowardEnemy(NavMeshPath path, BotOwner botOwner, float ratioSameOverAll = 0.25f, float sqrDistCheck = 0.05f)
+        {
+            if (!Init()) return false;
+            if (_IsPathTowardEnemyMethod == null) return false;
+
+            return (bool)_IsPathTowardEnemyMethod.Invoke(null, new object[] { path, botOwner, ratioSameOverAll, sqrDistCheck });
+        }
+
+        public static float TimeSinceSenseEnemy(BotOwner botOwner)
+        {
+            if (!Init()) return float.MaxValue;
+            if (_TimeSinceSenseEnemyMethod == null) return float.MaxValue;
+
+            return (float)_TimeSinceSenseEnemyMethod.Invoke(null, new object[] { botOwner });
         }
     }
 }

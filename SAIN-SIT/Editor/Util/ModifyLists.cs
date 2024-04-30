@@ -30,8 +30,13 @@ namespace SAIN.Editor.Util
             }
         }
 
-        public static void AddOrRemove(SettingsContainer container, out bool wasEdited, string search = null, int optionsPerLine = 5)
+        public static void AddOrRemoveConfigOptions(SettingsContainer container, out bool wasEdited, string search = null)
         {
+            var dimensions = new GUILayoutOption[]
+            {
+                Height(25f), Width(500f),
+            };
+
             wasEdited = false;
             foreach (var category in container.Categories)
             {
@@ -41,7 +46,7 @@ namespace SAIN.Editor.Util
                 // Display the value of the category. And make it a openable dropdown menu
                 if (string.IsNullOrEmpty(search))
                 {
-                    category.Open = BuilderClass.ExpandableMenu(categoryName, category.Open, categoryDesciption);
+                    category.Open = BuilderClass.ExpandableMenu(categoryName, category.Open, categoryDesciption, 30f);
                     if (!category.Open)
                     {
                         continue;
@@ -49,10 +54,10 @@ namespace SAIN.Editor.Util
                 }
                 else
                 {
-                    Label(categoryName, categoryDesciption);
+                    Label(categoryName, categoryDesciption, Height(30f));
                 }
+
                 bool newEdit;
-                int i = StartListEdit(optionsPerLine, out var options);
                 // Get the fields in this category
                 foreach (var fieldAtt in category.FieldAttributesList)
                 {
@@ -63,16 +68,12 @@ namespace SAIN.Editor.Util
                     }
 
                     // Add or remove this field from the list
-                    AddOrRemove(fieldAtt, category.SelectedList, out newEdit, fieldAtt.Name, fieldAtt.Description, options);
+                    AddOrRemove(fieldAtt, category.SelectedList, out newEdit, fieldAtt.Name, fieldAtt.Description, dimensions);
                     if (newEdit)
                     {
                         wasEdited = true;
                     }
-                    // Send interation count to our spacing function
-                    i = ListSpacing(i++, optionsPerLine);
                 }
-                // PeekEnd this list edit.
-                EndListEdit();
 
                 AddOrRemove(category, container.SelectedCategories, category.SelectedList.Count > 0, out newEdit);
                 if (newEdit)
@@ -101,20 +102,24 @@ namespace SAIN.Editor.Util
             }
         }
 
-        public static void AddOrRemove(List<BotDifficulty> list, out bool wasEdited, int optionsPerLine = 4)
+        public static void AddOrRemove(List<BotDifficulty> list, out bool wasEdited, int optionsPerLine = 4, float width = 1200f, float height = 20f)
         {
             wasEdited = false;
-            int i = StartListEdit(optionsPerLine, out var options);
+
+            float optionWidth = (width / optionsPerLine).Round10();
+            var dimensions = new GUILayoutOption[]
+            {
+                Height(height), Width(optionWidth),
+            };
+
             foreach (var dificulty in EnumValues.Difficulties)
             {
-                AddOrRemove(dificulty, list, out bool newEdit, null, null, options);
+                AddOrRemove(dificulty, list, out bool newEdit, null, null, dimensions);
                 if (newEdit)
                 {
                     wasEdited = true;
                 }
-                i = ListSpacing(i, optionsPerLine);
             }
-            EndListEdit();
         }
 
         public static void AddOrRemove(List<BotType> list, out bool wasEdited, int optionsPerLine = 5)
@@ -203,7 +208,7 @@ namespace SAIN.Editor.Util
             float width = (gridWidth / optionsPerLine).Round10();
             dimensions = new GUILayoutOption[]
             {
-                Height(27.5f), Width(width),
+                Height(25f), Width(width),
             };
             return 0;
         }

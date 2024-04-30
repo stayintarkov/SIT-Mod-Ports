@@ -1,10 +1,18 @@
-﻿using StayInTarkov;
+﻿using Aki.Reflection.Patching;
+using Comfort.Common;
 using EFT;
 using HarmonyLib;
+using Interpolation;
 using SAIN.Components.Helpers;
 using SAIN.Helpers;
+using SAIN.Preset.GlobalSettings.Categories;
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using static EFT.Interactive.BetterPropagationGroups;
+
+using GClass2869 = Operation1;
 
 namespace SAIN.Patches.Hearing
 {
@@ -21,7 +29,7 @@ namespace SAIN.Patches.Hearing
         [PatchPrefix]
         public static bool PatchPrefix(ref BotOwner ____botOwner)
         {
-            if (SAINPlugin.BotController.Bots.ContainsKey(____botOwner.ProfileId))
+            if (SAINPlugin.BotController?.GetSAIN(____botOwner, out _) == true)
             {
                 return false;
             }
@@ -40,17 +48,24 @@ namespace SAIN.Patches.Hearing
         }
 
         [PatchPrefix]
-        public static bool PatchPrefix(AIData __instance, Player getPlayer, AISoundType soundType, ref float ____nextShootTime)
+        public static bool PatchPrefix(AIData __instance)
         {
             AIFlareEnabled.SetValue(__instance, true);
-
-            // Limits how many sounds are played from each player for the AI
-            if (____nextShootTime < Time.time)
-            {
-                ____nextShootTime = Time.time + 0.65f; // default 1f
-                AudioHelpers.TryPlayShootSound(getPlayer, soundType);
-            }
             return false;
+        }
+    }
+
+    public class OnMakingShotPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(typeof(Player), "OnMakingShot");
+        }
+
+        [PatchPrefix]
+        public static void PatchPrefix(Player __instance)
+        {
+            AudioHelpers.TryPlayShootSound(__instance);
         }
     }
 
@@ -74,6 +89,89 @@ namespace SAIN.Patches.Hearing
                 object playerBridge = _PlayerBridge.GetValue(__instance);
                 Player player = _Player.Invoke(playerBridge, null) as Player;
                 SAINSoundTypeHandler.AISoundPlayer(soundName, player);
+            }
+        }
+    }
+
+    public class AimSoundPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(typeof(Player), "method_46");
+        }
+
+        [PatchPrefix]
+        public static void PatchPrefix(float volume, Player __instance)
+        {
+            if (SAINPlugin.BotController != null)
+            {
+                SAINPlugin.BotController.AISoundPlayed?.Invoke(SAINSoundType.Aim, __instance, 30f * volume);
+            }
+        }
+    }
+
+    public class LootingSoundPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(typeof(GClass2869), "vmethod_0");
+        }
+
+        [PatchPostfix]
+        public static void PatchPostfix()
+        {
+        }
+    }
+
+    public class SetInHandsGrenadePatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(typeof(Player), "SetInHands", 
+                new[] { typeof(GrenadeClass), typeof(Callback<IThrowableCallback>) });
+        }
+
+        [PatchPrefix]
+        public static void PatchPrefix(Player __instance)
+        {
+            if (SAINPlugin.BotController != null)
+            {
+                SAINPlugin.BotController.AISoundPlayed?.Invoke(SAINSoundType.GrenadeDraw, __instance, 30f);
+            }
+        }
+    }
+    public class SetInHandsFoodPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(typeof(Player), "SetInHands", 
+                new[] { typeof(FoodClass), typeof(float), typeof(int), typeof(Callback<IMedsController>) });
+        }
+
+        [PatchPrefix]
+        public static void PatchPrefix(Player __instance)
+        {
+            if (SAINPlugin.BotController != null)
+            {
+                SAINPlugin.BotController.AISoundPlayed?.Invoke(SAINSoundType.Food, __instance, 20f);
+            }
+        }
+    }
+
+    public class SetInHandsMedsPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return AccessTools.Method(typeof(Player), "SetInHands", 
+                new[] { typeof(MedsClass), typeof(EBodyPart), typeof(int), typeof(Callback<IMedsController>) });
+        }
+
+        [PatchPrefix]
+        public static void PatchPrefix(Player __instance)
+        {
+            if (SAINPlugin.BotController != null)
+            {
+                SAINPlugin.BotController.AISoundPlayed?.Invoke(SAINSoundType.Heal, __instance, 30f);
             }
         }
     }

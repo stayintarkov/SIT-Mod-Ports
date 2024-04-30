@@ -8,8 +8,9 @@ using static SAIN.Editor.SAINLayout;
 using UnityEngine;
 using static EFT.SpeedTree.TreeWind;
 using SAIN.Preset.GlobalSettings;
-using static GClass1854;
+//using static GClass1711;
 using SAIN.Attributes;
+using SAIN.Preset;
 
 namespace SAIN.Editor
 {
@@ -22,9 +23,6 @@ namespace SAIN.Editor
             {
                 case EEditorTab.Home:
                     Home(); break;
-
-                case EEditorTab.GlobalSettings:
-                    GlobalSettings(); break;
 
                 case EEditorTab.BotSettings:
                     BotSettings(); break;
@@ -42,20 +40,16 @@ namespace SAIN.Editor
 
         public static void Home()
         {
-            ModDetection.ModDetectionGUI();
-            Space(15f);
             PresetSelection.Menu();
-        }
+            Space(20f);
 
-        public static void GlobalSettings()
-        {
             BotSettingsEditor.ShowAllSettingsGUI(
-                SAINPlugin.LoadedPreset.GlobalSettings, 
+                SAINPlugin.LoadedPreset.GlobalSettings,
                 out bool newEdit,
-                "Global Settings", 
-                $"SAIN/Presets/{SAINPlugin.LoadedPreset.Info.Name}", 
-                35f, 
-                GlobalSettingsWereEdited, 
+                "Global Settings",
+                $"SAIN/Presets/{SAINPlugin.LoadedPreset.Info.Name}",
+                35f,
+                GlobalSettingsWereEdited,
                 out bool saved);
 
             if (newEdit)
@@ -64,7 +58,7 @@ namespace SAIN.Editor
             }
             if (saved)
             {
-                SAINPlugin.LoadedPreset.ExportGlobalSettings();
+                SAINPresetClass.ExportGlobalSettings(SAINPlugin.LoadedPreset.GlobalSettings, SAINPlugin.LoadedPreset.Info.Name);
             }
         }
 
@@ -72,9 +66,7 @@ namespace SAIN.Editor
 
         public static void BotSettings()
         {
-            //BeginArea(SAINEditor.OpenTabRect);
             BotSelectionClass.Menu();
-            //EndArea();
         }
 
         public static void Personality()
@@ -99,9 +91,8 @@ namespace SAIN.Editor
 
             Space(spacing);
 
-            ForceDecisionOpen = BuilderClass.ExpandableMenu("Force SAIN Bot Decisions", ForceDecisionOpen);
-
-            if (ForceDecisionOpen)
+            _forceDecisionMenuOpen = BuilderClass.ExpandableMenu("Force SAIN Bot Decisions", _forceDecisionMenuOpen);
+            if (_forceDecisionMenuOpen)
             {
                 Space(spacing);
 
@@ -154,9 +145,62 @@ namespace SAIN.Editor
                         EnumValues.GetEnum<SelfDecision>());
                 }
             }
+
+            _forceTalkMenuOpen = BuilderClass.ExpandableMenu("Force Bots to Say Phrase", _forceDecisionMenuOpen);
+            if (_forceTalkMenuOpen)
+            {
+                Space(5);
+                _forceTagStatusToggle = Toggle(_forceTagStatusToggle, "Force ETagStatus for Phrase");
+                if (_forceTagStatusToggle)
+                {
+                    ETagStatus[] statuses = EnumValues.GetEnum<ETagStatus>();
+                    for (int i = 0; i < statuses.Length; i++)
+                    {
+                        if (Toggle(_forcedTagStatus == statuses[i], statuses[i].ToString()))
+                        {
+                            if (_forcedTagStatus != statuses[i])
+                            {
+                                _forcedTagStatus = statuses[i];
+                            }
+                        }
+                    }
+                }
+                Space(5);
+                _withGroupDelay = Toggle(_withGroupDelay, "With Group Delay?");
+                Space(5);
+                Label("Say Phrase");
+                EPhraseTrigger[] triggers = EnumValues.GetEnum<EPhraseTrigger>();
+                for (int i = 0; i < triggers.Length; i++)
+                {
+                    if (Button(triggers[i].ToString()))
+                    {
+                        if (SAINPlugin.BotController?.Bots != null)
+                        {
+                            foreach (var bot in SAINPlugin.BotController.Bots.Values)
+                            {
+                                if (bot != null)
+                                {
+                                    if (_forceTagStatusToggle)
+                                    {
+                                        bot.Talk.Say(triggers[i], _forcedTagStatus, _withGroupDelay);
+                                    }
+                                    else
+                                    {
+                                        bot.Talk.Say(triggers[i], null, _withGroupDelay);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        private static bool ForceDecisionOpen;
+        private static bool _withGroupDelay;
+        private static bool _forceTagStatusToggle;
+        private static ETagStatus _forcedTagStatus;
+        private static bool _forceTalkMenuOpen;
+        private static bool _forceDecisionMenuOpen;
         private static bool ForceSoloOpen;
         private static bool ForceSquadOpen;
         private static bool ForceSelfOpen;

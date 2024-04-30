@@ -1,5 +1,9 @@
 ﻿using EFT;
 using UnityEngine.UIElements;
+using System;
+using System.Linq;
+using EFT.Interactive;
+using Comfort.Common;
 
 namespace SAIN.Layers
 {
@@ -63,6 +67,10 @@ namespace SAIN.Layers
 
         private bool ExtractFromTime()
         {
+            if (ModDetection.QuestingBotsLoaded)
+            {
+                return false;
+            }
             float percentageLeft = BotController.BotExtractManager.PercentageRemaining;
             if (percentageLeft <= SAIN.Info.PercentageBeforeExtract)
             {
@@ -104,9 +112,43 @@ namespace SAIN.Layers
             return false;
         }
 
+        // Looting Bots Integration
         private bool ExtractFromLoot()
         {
-            return false;
+            // If extract from loot is disabled, or no Looting Bots interop, not active
+            if (SAINPlugin.LoadedPreset.GlobalSettings.LootingBots.ExtractFromLoot == false  || !LootingBots.LootingBotsInterop.Init())
+            {
+                return false;
+            }
+
+            // No integration setup yet, set it up
+            if (SAINLootingBotsIntegration == null)
+            {
+                SAINLootingBotsIntegration = new SAINLootingBotsIntegration(BotOwner, SAIN);
+            }
+
+            SAINLootingBotsIntegration?.Update();
+            return FullOnLoot && HasActiveThreat() == false;
+        }
+
+        private bool FullOnLoot => SAINLootingBotsIntegration?.FullOnLoot == true;
+
+        private SAINLootingBotsIntegration SAINLootingBotsIntegration;
+
+        private bool HasActiveThreat()
+        {
+            if (SAIN.Enemy == null)
+            {
+                return false;
+            }
+            else if (SAIN.Enemy.TimeSinceSeen > 30f)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         private bool ExtractFromExternal()

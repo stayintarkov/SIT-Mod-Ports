@@ -1,4 +1,5 @@
-﻿using SAIN.Attributes;
+﻿using Newtonsoft.Json;
+using SAIN.Attributes;
 
 namespace SAIN.Preset.BotSettings.SAINSettings.Categories
 {
@@ -57,33 +58,40 @@ namespace SAIN.Preset.BotSettings.SAINSettings.Categories
         [Default(true)]
         public bool EnableExtracts = true;
 
-        [Name("Middle Finger Chance")]
-        [Description("Chance this bot will flick you off when spotted")]
-        [Default(0f)]
-        [MinMax(0f, 100f)]
-        [Advanced]
+        [Hidden]
+        [JsonIgnore]
         public float CHANCE_FUCK_YOU_ON_CONTACT_100 = 0f;
-    }
-
-    // Hidden Settings
-    public partial class SAINMindSettings
-    {
-        [Hidden]
-        public readonly bool SURGE_KIT_ONLY_SAFE_CONTAINER = false;
 
         [Hidden]
-        public readonly float SEC_TO_MORE_DIST_TO_RUN = 0f;
+        [JsonIgnore]
+        public float PART_PERCENT_TO_HEAL = 0.9f;
 
         [Hidden]
-        public readonly float DIST_TO_STOP_RUN_ENEMY = 0f;
+        [JsonIgnore]
+        public bool SURGE_KIT_ONLY_SAFE_CONTAINER = false;
 
         [Hidden]
-        public readonly bool NO_RUN_AWAY_FOR_SAFE = true;
+        [JsonIgnore]
+        public bool CAN_USE_MEDS = true;
 
         [Hidden]
-        public readonly bool CAN_USE_MEDS = true;
+        [JsonIgnore]
+        public bool CAN_USE_FOOD_DRINK = true;
 
         [Hidden]
-        public readonly bool CAN_USE_FOOD_DRINK = true;
+        [JsonIgnore]
+        public float MAX_AGGRO_BOT_DIST_UPPER_LIMIT = 500;
+
+        [Hidden]
+        [JsonIgnore]
+        public float MAX_AGGRO_BOT_DIST = 500;
+
+        [Hidden]
+        [JsonIgnore]
+        public float MAX_DIST_TO_PERSUE_AXEMAN = 300f;
+
+        [Hidden]
+        [JsonIgnore]
+        public bool AMBUSH_WHEN_UNDER_FIRE = false;
     }
 }

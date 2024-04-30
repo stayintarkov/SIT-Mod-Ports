@@ -1,6 +1,7 @@
 ﻿using EFT;
 using UnityEngine;
 using SAIN.Helpers;
+using System;
 
 namespace SAIN.SAINComponent.Classes.Mover
 {
@@ -17,7 +18,24 @@ namespace SAIN.SAINComponent.Classes.Mover
         public void Update()
         {
             FindObjectsInFront();
+
+            if (_targetPoseLevel == 1f && BotOwner.Mover.TargetPose != 1f)
+            {
+                _updatePoseTimer = Time.time + 0.25f;
+                BotOwner.Mover?.SetPose(_targetPoseLevel);
+                return;
+            }
+            if (_updatePoseTimer < Time.time)
+            {
+                _updatePoseTimer = Time.time + 0.25f;
+                if (SAIN.Mover.CurrentStamina > 0.25f)
+                {
+                    BotOwner.Mover?.SetPose(_targetPoseLevel);
+                }
+            }
         }
+
+        private float _updatePoseTimer;
 
         public void Dispose()
         {
@@ -30,17 +48,19 @@ namespace SAIN.SAINComponent.Classes.Mover
 
         public void SetTargetPose(float num)
         {
-            BotOwner.Mover?.SetPose(num);
+            _targetPoseLevel = num;
         }
 
         public bool SetTargetPose(float? num)
         {
             if (num != null)
             {
-                BotOwner.Mover?.SetPose(num.Value);
+                _targetPoseLevel = num.Value;
             }
             return num != null;
         }
+
+        private float _targetPoseLevel;
 
         public bool ObjectInFront => ObjectTargetPoseCover != null;
         public float? ObjectTargetPoseCover { get; private set; }
@@ -70,7 +90,7 @@ namespace SAIN.SAINComponent.Classes.Mover
             targetPose = 1f;
             if (SAIN.CurrentTargetPosition != null)
             {
-                SAINEnemyClass enemy = SAIN.Enemy;
+                SAINEnemy enemy = SAIN.Enemy;
                 if (enemy != null)
                 {
                     if (useCollider)

@@ -14,6 +14,7 @@ namespace SAIN.Layers.Combat.Solo
 
         public override void Start()
         {
+            NextCheckTimer = Time.time + 3f * Random.Range(0.5f, 1.5f);
             FindTarget();
         }
 
@@ -62,31 +63,60 @@ namespace SAIN.Layers.Combat.Solo
                 {
                     if (ReloadTimer < Time.time && SAIN.Decision.SelfActionDecisions.LowOnAmmo(0.5f))
                     {
-                        ReloadTimer = Time.time + 10f;
+                        ReloadTimer = Time.time + 3f * Random.Range(0.5f, 1.5f);
                         SAIN.SelfActions.TryReload();
                     }
                     else if (CheckMagTimer < Time.time && NextCheckTimer < Time.time)
                     {
-                        NextCheckTimer = Time.time + 3f;
-                        CheckMagTimer = Time.time + 240f * Random.Range(0.5f, 1.5f);
-                        SAIN.Player.HandsController.FirearmsAnimator.CheckAmmo();
+                        NextCheckTimer = Time.time + 3f * Random.Range(0.5f, 1.5f);
+                        if (EFTMath.RandomBool())
+                        {
+                            SAIN.Player.HandsController.FirearmsAnimator.CheckAmmo();
+                            CheckMagTimer = Time.time + 240f * Random.Range(0.5f, 1.5f);
+                        }
                     }
                     else if (CheckChamberTimer < Time.time && NextCheckTimer < Time.time)
                     {
-                        NextCheckTimer = Time.time + 3f;
-                        CheckChamberTimer = Time.time + 240f * Random.Range(0.5f, 1.5f);
-                        SAIN.Player.HandsController.FirearmsAnimator.CheckChamber();
+                        NextCheckTimer = Time.time + 3f * Random.Range(0.5f, 1.5f);
+                        if (EFTMath.RandomBool())
+                        {
+                            SAIN.Player.HandsController.FirearmsAnimator.CheckChamber();
+                            CheckChamberTimer = Time.time + 240f * Random.Range(0.5f, 1.5f);
+                        }
                     }
                 }
             }
         }
 
+        private bool HaveTalked = false;
+
         private void MoveToEnemy()
         {
-            if (SAIN.Enemy == null && (BotOwner.Position - TargetPosition.Value).sqrMagnitude < 2f)
+            if (SAIN.Enemy == null)
             {
-                SAIN.Decision.ResetDecisions();
-                return;
+                float targetDistSqr = (BotOwner.Position - TargetPosition.Value).sqrMagnitude;
+                if (targetDistSqr < 2f)
+                {
+                    SAIN.Decision.ResetDecisions();
+                    return;
+                }
+
+                // Scavs will speak out and be more vocal
+                if (!HaveTalked 
+                    && SAIN.Info.WildSpawnType == WildSpawnType.assault 
+                    && targetDistSqr < 30f * 30f)
+                {
+                    HaveTalked = true;
+                    if (EFTMath.RandomBool(40))
+                    {
+                        SAIN.Talk.Say(EPhraseTrigger.OnMutter, ETagStatus.Aware, true);
+                    }
+                }
+            }
+            if (SAIN.Enemy == null && (BotOwner.Position - TargetPosition.Value).sqrMagnitude < 30f * 30f)
+            {
+                //SAIN.Decision.ResetDecisions();
+                //return;
             }
             CheckShouldSprint();
             Search.Search(SprintEnabled);
@@ -97,7 +127,7 @@ namespace SAIN.Layers.Combat.Solo
 
         private void CheckShouldSprint()
         {
-            if (Search.CurrentState == ESearchMove.MoveToEndPeak)
+            if (Search.CurrentState == ESearchMove.MoveToEndPeak || Search.CurrentState == ESearchMove.Wait || Search.CurrentState == ESearchMove.MoveToDangerPoint || Search.CurrentState == ESearchMove.DirectMovePeek)
             {
                 SprintEnabled = false;
                 return;
@@ -129,7 +159,7 @@ namespace SAIN.Layers.Combat.Solo
             if (BotOwner.Memory.IsUnderFire)
             {
                 SAIN.Mover.Sprint(false);
-                SteerByPriority(true);
+                SteerByPriority(false);
                 return;
             }
             if (SprintEnabled)
@@ -148,26 +178,25 @@ namespace SAIN.Layers.Combat.Solo
             }
             if (SteerByPriority(false) == false)
             {
-                if (CanSeeDangerOrCorner(out Vector3 point) && SAIN.Enemy != null)
+                if (CanSeeDangerOrCorner(out Vector3 point) && SAIN.CurrentTargetPosition != null)
                 {
                     Vector3 direction = point - SAIN.Position;
-                    Vector3 enemyDirection = SAIN.Enemy.EnemyDirection;
-                    float dot = Vector3.Dot(direction, enemyDirection);
-                    if (dot > 0f)
+                    Vector3 targetDirection = SAIN.CurrentTargetPosition.Value - SAIN.Position;
+                    float dot = Vector3.Dot(direction, targetDirection);
+                    if (dot > 0.25f)
                     {
                         SAIN.Steering.LookToPoint(point);
+                    }
+                    else
+                    {
+                        SAIN.Steering.LookToPoint(SAIN.CurrentTargetPosition.Value);
                     }
                 }
                 else
                 {
-                    SAIN.Steering.LookToEnemyLastSeenClose();
+                    LookToMovingDirection();
                 }
             }
-        }
-
-        private void Steer2()
-        {
-
         }
 
         private bool CanSeeDangerOrCorner(out Vector3 point)
@@ -183,7 +212,7 @@ namespace SAIN.Layers.Combat.Solo
             if (CheckSeeTimer < Time.time)
             {
                 LookPoint = Vector3.zero;
-                CheckSeeTimer = Time.time + 1f * Random.Range(0.66f, 1.33f);
+                CheckSeeTimer = Time.time + 0.5f * Random.Range(0.66f, 1.33f);
                 var headPosition = SAIN.Transform.Head;
 
                 var canSeePoint = !Vector.Raycast(headPosition,

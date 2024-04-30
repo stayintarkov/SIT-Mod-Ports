@@ -22,10 +22,12 @@ namespace SAIN
         RushEnemy,
         MoveToEngage,
         Ambush,
+        ReturnFire,
 
         UnstuckSearch,
         UnstuckMoveToCover,
         UnstuckDogFight,
+        DebugNoDecision
     }
 
     public enum SelfDecision
@@ -96,11 +98,11 @@ namespace SAIN
 
     public enum CoverStatus
     {
-        None = 0,
-        InCover = 1,
+        InCover = 0,
+        CloseToCover = 1,
+        MidRangeToCover = 2,
         FarFromCover = 3,
-        CloseToCover = 4,
-        MidRangeToCover = 5,
+        None = 4,
     }
 
     public enum LeanSetting
@@ -127,6 +129,8 @@ namespace SAIN
         Coward,
         Rat,
         Normal,
+        SnappingTurtle,
+        Wreckless,
         Custom1,
         Custom2,
         Custom3,
@@ -155,7 +159,7 @@ namespace SAIN
         Surround,
         Retreat,
         Suppress,
-        BoundingAttack,
+        PushSuppressedEnemy,
         BoundingRetreat,
         Regroup,
         SpreadOut,
@@ -179,6 +183,7 @@ namespace SAIN
         GrenadeDraw,
         None,
         Heal,
+        Food,
     }
 
     public enum EnemyPathDistance
@@ -201,5 +206,24 @@ namespace SAIN
         onHover,
         focused,
         onFocused,
+    }
+
+    public enum ESoundCleanupReason
+    {
+        None = 0,
+        PlayerNull = 1,
+        IPlayerNull = 2,
+        TooFar = 3,
+        TooOld = 4,
+        SoundNull = 5,
+        Forced = 6,
+    }
+
+    public enum AILimitSetting
+    {
+        Close = 0,
+        Far = 1,
+        VeryFar = 2,
+        Narnia = 3,
     }
 }

@@ -1,6 +1,5 @@
 ﻿using EFT;
 using SAIN.Helpers;
-using SAIN.Helpers.SealedClass;
 using System;
 using UnityEngine;
 using UnityEngine.AI;
@@ -79,27 +78,9 @@ namespace SAIN.SAINComponent.Classes
         private List<Vector3> DebugVectorList;
         private List<GameObject> DebugGameObjectList;
 
-        public void DisposeDebug()
-        {
-            if (DebugVectorList != null)
-            {
-                DebugVectorList.Clear();
-                DebugVectorList = null;
-            }
-            if (DebugGameObjectList != null)
-            {
-                for (int i = 0; i < DebugGameObjectList.Count; i++)
-                {
-                    UnityEngine.Object.Destroy(DebugGameObjectList[i]);
-                }
-                DebugGameObjectList.Clear();
-                DebugGameObjectList = null;
-            }
-        }
-
         public void DrawDebug()
         {
-            if (SAINPlugin.DebugMode == false)
+            if (SAINPlugin.DebugMode == false || !SAINPlugin.EditorDefaults.DebugSearchGizmos)
             {
                 DisposeDebug();
                 return;
@@ -119,5 +100,24 @@ namespace SAIN.SAINComponent.Classes
                 DebugGameObjectList = DebugGizmos.DrawLinesBetweenPoints(0.1f, 0.05f, DebugVectorList.ToArray());
             }
         }
+
+        public void DisposeDebug()
+        {
+            if (DebugVectorList != null)
+            {
+                DebugVectorList.Clear();
+                DebugVectorList = null;
+            }
+            if (DebugGameObjectList != null)
+            {
+                for (int i = 0; i < DebugGameObjectList.Count; i++)
+                {
+                    UnityEngine.Object.Destroy(DebugGameObjectList[i]);
+                }
+                DebugGameObjectList.Clear();
+                DebugGameObjectList = null;
+            }
+        }
+
     }
 }

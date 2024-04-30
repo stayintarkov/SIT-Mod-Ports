@@ -10,7 +10,6 @@ using SAIN.SAINComponent;
 using SAIN.Helpers;
 using System.Collections;
 using HarmonyLib;
-using StayInTarkov;
 
 namespace SAIN.Components.BotController
 {
@@ -328,7 +327,7 @@ namespace SAIN.Components.BotController
         {
             TotalRaidTime = StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidChangesUtil.OriginalEscapeTimeSeconds;
 
-            //if (StayInTarkov.AkiSupport.Singleplayer.InRaid.RaidTimeUtil.HasRaidStarted())
+            //if (StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil.HasRaidStarted())
             if (Singleton<AbstractGame>.Instance.GameTimer.Started())
             {
                 TimeRemaining = StayInTarkov.AkiSupport.Singleplayer.Utils.InRaid.RaidTimeUtil.GetRemainingRaidSeconds();

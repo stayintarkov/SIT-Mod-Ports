@@ -37,12 +37,6 @@ namespace SAIN.SAINComponent.Classes.Info
 
         public Dictionary<string, SAINComponentClass> Members => SquadInfo?.Members;
 
-        public List<SoloDecision> SquadSoloDecisions => SquadInfo?.SquadSoloDecisions;
-
-        public List<SquadDecision> SquadDecisions => SquadInfo?.SquadDecisions;
-
-        public List<Vector3> SquadLocations => SquadInfo?.SquadLocations;
-
         public bool MemberIsFallingBack => SquadInfo?.MemberIsFallingBack == true;
 
         public void Update()

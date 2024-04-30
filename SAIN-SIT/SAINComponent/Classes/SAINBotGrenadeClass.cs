@@ -51,10 +51,6 @@ namespace SAIN.SAINComponent.Classes
 
         public Vector3? GrenadeDangerPoint { get; private set; }
 
-        public bool ShallThrowGrenade()
-        {
-            return false;
-        }
 
         public GrenadeThrowType GetThrowType(out GrenadeThrowDirection direction, out Vector3 ThrowAtPoint)
         {

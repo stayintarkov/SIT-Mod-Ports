@@ -4,6 +4,10 @@ namespace SAIN.Preset.GlobalSettings
 {
     public class CoverSettings
     {
+        [Default(true)]
+        [Advanced]
+        public bool ShiftCoverMustBeSafe = true;
+
         [Default(6f)]
         [MinMax(1f, 30f, 1f)]
         [Advanced]
@@ -44,10 +48,10 @@ namespace SAIN.Preset.GlobalSettings
         [Advanced]
         public float CoverMinEnemyDistance = 8f;
 
-        [Default(0.33f)]
+        [Default(0.25f)]
         [MinMax(0.01f, 1f, 100f)]
         [Advanced]
-        public float CoverUpdateFrequency = 0.33f;
+        public float CoverUpdateFrequency = 0.25f;
 
         [Default(false)]
         [Advanced]

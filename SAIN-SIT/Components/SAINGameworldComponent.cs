@@ -43,6 +43,31 @@ namespace SAIN.Components
             }
         }
 
+        public Player FindClosestPlayer(out float closestPlayerSqrMag, Vector3 targetPosition)
+        {
+            var players = GameWorld?.AllAlivePlayersList;
+
+            Player closestPlayer = null;
+            closestPlayerSqrMag = float.MaxValue;
+
+            if (players != null)
+            {
+                foreach (var player in players)
+                {
+                    if (player != null && player.AIData?.IsAI == false)
+                    {
+                        float sqrMag = (player.Position - targetPosition).sqrMagnitude;
+                        if (sqrMag < closestPlayerSqrMag)
+                        {
+                            closestPlayer = player;
+                            closestPlayerSqrMag = sqrMag;
+                        }
+                    }
+                }
+            }
+            return closestPlayer;
+        }
+
         private void findSpawnPointMarkers()
         {
             if ((SpawnPointMarkers != null) || (Camera.main == null))

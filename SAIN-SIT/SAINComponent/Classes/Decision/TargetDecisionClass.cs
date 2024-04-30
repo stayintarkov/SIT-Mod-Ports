@@ -60,11 +60,7 @@ namespace SAIN.SAINComponent.Classes.Decision
             //{
             //    Decision = SoloDecision.Investigate;
             //}
-            if (BotOwner.Memory.IsUnderFire)
-            {
-                Decision = SoloDecision.RunToCover;
-            }
-            else if (StartAmbush())
+            if (StartAmbush())
             {
 
             }
@@ -79,6 +75,10 @@ namespace SAIN.SAINComponent.Classes.Decision
             else if (SAIN.Decision.EnemyDecisions.StartHoldInCover())
             {
                 Decision = SoloDecision.HoldInCover;
+            }
+            if (BotOwner.Memory.IsUnderFire)
+            {
+                Decision = SoloDecision.RunToCover;
             }
             else
             {
@@ -115,6 +115,10 @@ namespace SAIN.SAINComponent.Classes.Decision
 
         public bool ShallNotSearch()
         {
+            if (!SAIN.Info.PersonalitySettings.WillSearchFromAudio)
+            {
+                return false;
+            }
             Vector3? target = SAIN.CurrentTargetPosition;
             if (target != null && !SAIN.Info.Profile.IsPMC && SAIN.Memory.BotZoneCollider != null)
             {

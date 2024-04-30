@@ -75,7 +75,7 @@ namespace SAIN.Helpers
             {
                 return result;
             }
-            Logger.LogError(caliber);
+            Logger.LogError($"Caliber [{caliber}] does not exist in Caliber Enum!");
             return ICaliber.Default;
         }
 
@@ -85,8 +85,18 @@ namespace SAIN.Helpers
             {
                 return result;
             }
-            Logger.LogError(weaponClass);
+            Logger.LogError($"Weapon Class [{weaponClass}] does not exist in IWeaponClass Enum!");
             return IWeaponClass.Default;
+        }
+
+        public static T TryParse<T>(string _string) where T : struct, Enum
+        {
+            if (Enum.TryParse(_string, out T result))
+            {
+                return result;
+            }
+            Logger.LogError($"[{_string}] does not exist in [{typeof(T)}] Enum!");
+            return default;
         }
 
         public static T[] GetEnum<T>()

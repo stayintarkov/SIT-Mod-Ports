@@ -160,7 +160,7 @@ namespace SAIN.Editor
             BeginHorizontal();
 
             bool result = false;
-            if (Button("Save and Export", toolTip, EUISoundType.InsuranceInsured, Height(height)))
+            if (Button("Save and Export", toolTip, EUISoundType.InsuranceInsured, Height(height), Width(500)))
             {
                 result = true;
             }
@@ -171,6 +171,10 @@ namespace SAIN.Editor
             {
                 Alert("Click Save to export changes, and send changes to bots if in-game", "YOU HAVE UNSAVED CHANGES", height, alertWidth, ColorNames.LightRed);
             }
+            else
+            {
+                Alert(null, null, height, alertWidth);
+            }
 
             EndHorizontal();
 
@@ -179,15 +183,40 @@ namespace SAIN.Editor
 
         public static void Alert(string toolTip, string text = null, float height = 25, float width = 25, ColorNames? colorName = null)
         {
+            if (toolTip.IsNullOrEmpty() && text.IsNullOrEmpty())
+            {
+                Box(string.Empty, Height(height));
+                return;
+            }
+
             GUIStyle style = GetStyle(Style.alert);
             if (colorName != null)
             {
                 style = new GUIStyle(style);
                 ApplyToStyle.BackgroundAllStates(TexturesClass.GetTexture(colorName.Value), style);
             }
-            text = text ?? "!";
+            text = text ?? "";
             var content = new GUIContent(text, toolTip);
             Box(content, style, Height(height), Width(width));
+        }
+
+        public static void Alert(string toolTip, string text = null, float height = 25, ColorNames? colorName = null)
+        {
+            if (toolTip.IsNullOrEmpty() && text.IsNullOrEmpty())
+            {
+                Box(string.Empty, Height(height));
+                return;
+            }
+
+            GUIStyle style = GetStyle(Style.alert);
+            if (colorName != null)
+            {
+                style = new GUIStyle(style);
+                ApplyToStyle.BackgroundAllStates(TexturesClass.GetTexture(colorName.Value), style);
+            }
+            text = text ?? string.Empty;
+            var content = new GUIContent(text, toolTip);
+            Box(content, style, Height(height));
         }
 
         public static void MinValueBox(object value, params GUILayoutOption[] options)

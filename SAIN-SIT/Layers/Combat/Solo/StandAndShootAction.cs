@@ -20,15 +20,17 @@ namespace SAIN.Layers.Combat.Solo
         {
             SAIN.Steering.SteerByPriority();
 
-            if (!Stopped && Time.time - StartTime > 1f || SAIN.Cover.CheckLimbsForCover())
+            if (SAIN.Cover.DuckInCover())
             {
-                Stopped = true;
                 BotOwner.StopMove();
+                SAIN.Mover.StopMove();
             }
 
             Shoot.Update();
 
-            if (SAIN.Cover.BotIsAtCoverPoint())
+            return;
+
+            if (SAIN.Cover.BotIsAtCoverInUse())
             {
                 return;
             }
@@ -39,13 +41,9 @@ namespace SAIN.Layers.Combat.Solo
             }
         }
 
-        private float StartTime = 0f;
-        private bool Stopped = false;
-
         public override void Start()
         {
             SAIN.Mover.Sprint(false);
-            StartTime = Time.time;
         }
 
         public override void Stop()

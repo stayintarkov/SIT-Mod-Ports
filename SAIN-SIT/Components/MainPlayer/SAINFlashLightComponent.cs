@@ -47,7 +47,7 @@ namespace SAIN.Components
                 {
                     _lightDetection.DetectAndInvestigateFlashlight(Player);
                 }
-                if (Player.IsYourPlayer)
+                else
                 {
                     bool visibleLight = (WhiteLight || Laser);
                     bool irLight = (IRLight || IRLaser);

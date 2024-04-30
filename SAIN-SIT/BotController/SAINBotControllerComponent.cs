@@ -7,17 +7,19 @@ using SAIN.Helpers;
 using SAIN.SAINComponent;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UIElements;
-using EFTSoundPlayer = GClass603;
+
+using BotEventHandler = GClass603;
 
 namespace SAIN.Components
 {
     public class SAINBotControllerComponent : MonoBehaviour
     {
-        public Action<SAINSoundType, Player, float> AISoundPlayed { get; private set; }
-        public Action<EPhraseTrigger, ETagStatus, Player> PlayerTalk { get; private set; }
+        public Action<SAINSoundType, Player, float> AISoundPlayed { get; set; }
+        public Action<EPhraseTrigger, ETagStatus, Player> PlayerTalk { get; set; }
 
         public Dictionary<string, SAINComponentClass> Bots => BotSpawnController.Bots;
         public GameWorld GameWorld => Singleton<GameWorld>.Instance;
@@ -33,10 +35,6 @@ namespace SAIN.Components
         public WeatherVisionClass WeatherVision { get; private set; } = new WeatherVisionClass();
         public BotSpawnController BotSpawnController { get; private set; } = new BotSpawnController();
         public BotSquads BotSquads { get; private set; } = new BotSquads();
-
-        public Vector3 MainPlayerPosition { get; private set; }
-        private bool ComponentAdded { get; set; }
-        private float UpdatePositionTimer { get; set; }
         
         private void Awake()
         {
@@ -50,8 +48,8 @@ namespace SAIN.Components
             BotExtractManager.Awake();
             BotSquads.Awake();
 
-            Singleton<EFTSoundPlayer>.Instance.OnGrenadeThrow += GrenadeThrown;
-            Singleton<EFTSoundPlayer>.Instance.OnGrenadeExplosive += GrenadeExplosion;
+            Singleton<BotEventHandler>.Instance.OnGrenadeThrow += GrenadeThrown;
+            Singleton<BotEventHandler>.Instance.OnGrenadeExplosive += GrenadeExplosion;
             AISoundPlayed += SoundPlayed;
             PlayerTalk += PlayerTalked;
         }
@@ -71,10 +69,10 @@ namespace SAIN.Components
             BotSquads.Update();
             BotSpawnController.Update();
             BotExtractManager.Update();
-            UpdateMainPlayer();
             TimeVision.Update();
             WeatherVision.Update();
             LineOfSightManager.Update();
+
             //CoverManager.Update();
             //PathManager.Update();
             //AddNavObstacles();
@@ -92,9 +90,13 @@ namespace SAIN.Components
                 SAINComponentClass sain = bot.Value;
                 if (sain != null && sain.BotOwner != null && bot.Key != player.ProfileId)
                 {
-                    if (phrase == EPhraseTrigger.OnFight && sain.BotOwner.EnemiesController.IsEnemy(player))
+                    if (sain.BotOwner.EnemiesController.IsEnemy(player))
                     {
                         sain.Talk.EnemyTalk.SetEnemyTalk(player);
+                    }
+                    else
+                    {
+                        sain.Talk.EnemyTalk.SetFriendlyTalked(player);
                     }
                 }
             }
@@ -192,14 +194,17 @@ namespace SAIN.Components
                 return;
             }
 
+            Singleton<BotEventHandler>.Instance?.PlaySound(player, player.Position, range, AISoundType.step);
+
             foreach (var bot in Bots.Values)
             {
                 if (player.ProfileId == bot.Player.ProfileId)
                 {
                     continue;
                 }
-                var Enemy = bot.Enemy;
-                if (Enemy?.EnemyIPlayer != null && Enemy.EnemyIPlayer.ProfileId == player.ProfileId)
+                var Enemy = bot?.EnemyController?.GetEnemy(player.ProfileId);
+
+                if (Enemy?.EnemyIPlayer != null)
                 {
                     if (Enemy.RealDistance <= range)
                     {
@@ -221,51 +226,6 @@ namespace SAIN.Components
                     }
                 }
             }
-        }
-
-        public SAINFlashLightComponent MainPlayerLight { get; private set; }
-
-        private void UpdateMainPlayer()
-        {
-            if (MainPlayer == null)
-            {
-                ComponentAdded = false;
-                return;
-            }
-
-            // AddColor Components to main player
-            if (!ComponentAdded)
-            {
-                MainPlayerLight = MainPlayer.GetOrAddComponent<SAINFlashLightComponent>();
-                ComponentAdded = true;
-            }
-
-            if (UpdatePositionTimer < Time.time)
-            {
-                UpdatePositionTimer = Time.time + 1f;
-                MainPlayerPosition = MainPlayer.Position;
-            }
-        }
-
-        public float MainPlayerSqrMagnitude(Vector3 position)
-        {
-            return (position - MainPlayerPosition).sqrMagnitude;
-        }
-
-        public float MainPlayerMagnitude(Vector3 position)
-        {
-            return (position - MainPlayerPosition).magnitude;
-        }
-
-        public bool IsMainPlayerLookAtMe(Vector3 botPos, float dotProductMin = 0.75f, bool distRestriction = true, float sqrMagLimit = 160000)
-        {
-            if (distRestriction && MainPlayerSqrMagnitude(botPos) > sqrMagLimit)
-            {
-                return false;
-            }
-            Vector3 botDir = botPos - MainPlayerPosition;
-            float DotProd = Vector3.Dot(MainPlayer.LookDirection.normalized, botDir.normalized);
-            return DotProd > dotProductMin;
         }
 
         private void GrenadeExplosion(Vector3 explosionPosition, string playerProfileID, bool isSmoke, float smokeRadius, float smokeLifeTime)
@@ -328,14 +288,12 @@ namespace SAIN.Components
             {
                 StopAllCoroutines();
 
-                Destroy(MainPlayerLight);
-
                 GameWorld.OnDispose -= Dispose;
 
                 AISoundPlayed -= SoundPlayed;
                 PlayerTalk -= PlayerTalked;
-                Singleton<EFTSoundPlayer>.Instance.OnGrenadeThrow -= GrenadeThrown;
-                Singleton<EFTSoundPlayer>.Instance.OnGrenadeExplosive -= GrenadeExplosion;
+                Singleton<BotEventHandler>.Instance.OnGrenadeThrow -= GrenadeThrown;
+                Singleton<BotEventHandler>.Instance.OnGrenadeExplosive -= GrenadeExplosion;
 
                 if (Bots.Count > 0)
                 {
@@ -350,9 +308,25 @@ namespace SAIN.Components
             catch { }
         }
 
-        public bool GetBot(string profileId, out SAINComponentClass bot)
+        public bool GetSAIN(string botName, out SAINComponentClass bot)
         {
-            return Bots.TryGetValue(profileId, out bot);
+            StringBuilder debugString = null;
+            bot = BotSpawnController.GetSAIN(botName, debugString);
+            return bot != null;
+        }
+
+        public bool GetSAIN(BotOwner botOwner, out SAINComponentClass bot)
+        {
+            StringBuilder debugString = null;
+            bot = BotSpawnController.GetSAIN(botOwner, debugString);
+            return bot != null;
+        }
+
+        public bool GetSAIN(Player player, out SAINComponentClass bot)
+        {
+            StringBuilder debugString = null;
+            bot = BotSpawnController.GetSAIN(player, debugString);
+            return bot != null;
         }
     }
 

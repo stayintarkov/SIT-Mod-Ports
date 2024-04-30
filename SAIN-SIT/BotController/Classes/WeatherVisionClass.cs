@@ -37,6 +37,7 @@ namespace SAIN.Components.BotController
                 return 1f;
             }
 
+
             IWeatherCurve weatherCurve = WeatherController.Instance.WeatherCurve;
 
             float fogmod = FogModifier(weatherCurve.Fog);
@@ -46,6 +47,12 @@ namespace SAIN.Components.BotController
             // Combines ModifiersClass
             float weathermodifier = 1f * fogmod * rainmod * cloudsmod;
             weathermodifier = Mathf.Clamp(weathermodifier, 0.2f, 1f);
+
+            if (WeatherEventController.Instance?.EventActive == true)
+            {
+                weathermodifier = Mathf.Clamp(weathermodifier, 0.35f, 1f);
+                Logger.LogWarning("Snow Active");
+            }
 
             return weathermodifier;
         }

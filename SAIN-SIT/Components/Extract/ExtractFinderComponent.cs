@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+using CameraClass = FPSCamera;
+
 namespace SAIN.Components.Extract
 {
     public class ExtractFinderComponent : MonoBehaviour
@@ -59,10 +61,12 @@ namespace SAIN.Components.Extract
 
         public void OnGUI()
         {
-            if (!SAINPlugin.DebugMode || !DebugGizmos.DrawGizmos)
+            if (!SAINPlugin.DebugMode || !SAINPlugin.EditorDefaults.DrawDebugLabels)
             {
                 return;
             }
+
+            DebugGizmos.OnGUI();
 
             GUIStyle guiStyle = new GUIStyle(GUI.skin.label);
             guiStyle.alignment = TextAnchor.MiddleLeft;
@@ -75,13 +79,13 @@ namespace SAIN.Components.Extract
                 for (int i = 0; i < pathEndpoints.Length; i++)
                 {
                     Vector3 worldPos = pathEndpoints[i] + new Vector3(0, 1, 0);
-                    DrawLabel(worldPos, "Path Endpoint " + (i + 1) + ": " + ex.Settings.Name, guiStyle);
+                    DebugGizmos.OnGUIDrawLabel(worldPos, "Path Endpoint " + (i + 1) + ": " + ex.Settings.Name, guiStyle);
                 }
 
                 if (extractPositionFinders[ex].ExtractPosition.HasValue)
                 {
                     Vector3 worldPos = extractPositionFinders[ex].ExtractPosition.Value + new Vector3(0, 1, 0);
-                    DrawLabel(worldPos, "Extract point: " + ex.Settings.Name, guiStyle);
+                    DebugGizmos.OnGUIDrawLabel(worldPos, "Extract point: " + ex.Settings.Name, guiStyle);
                 }
             }
         }
@@ -97,6 +101,10 @@ namespace SAIN.Components.Extract
             GUIContent content = new GUIContent(text);
 
             float screenScale = 1.0f;
+            if (CameraClass.Instance.SSAA.isActiveAndEnabled)
+            {
+                screenScale = (float)CameraClass.Instance.SSAA.GetOutputWidth() / (float)CameraClass.Instance.SSAA.GetInputWidth();
+            }
             Vector2 guiSize = guiStyle.CalcSize(content);
             float x = (screenPos.x * screenScale) - (guiSize.x / 2);
             float y = Screen.height - ((screenPos.y * screenScale) + guiSize.y);

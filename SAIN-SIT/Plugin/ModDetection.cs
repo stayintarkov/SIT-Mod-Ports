@@ -24,26 +24,32 @@ namespace SAIN
 
         public static bool LootingBotsLoaded { get; private set; }
         public static bool RealismLoaded { get; private set; }
+        public static bool QuestingBotsLoaded { get; private set; }
 
         public static void CheckPlugins()
         {
-            if (Chainloader.PluginInfos.ContainsKey(LootingBots))
+            if (Chainloader.PluginInfos.ContainsKey(QuestingBotsKey))
+            {
+                QuestingBotsLoaded = true;
+                Logger.LogInfo($"SAIN: Questing Bots Detected.");
+            }
+            if (Chainloader.PluginInfos.ContainsKey(LootingBotsKey))
             {
                 LootingBotsLoaded = true;
                 Logger.LogInfo($"SAIN: Looting Bots Detected.");
             }
-            if (Chainloader.PluginInfos.ContainsKey(Realism))
+            if (Chainloader.PluginInfos.ContainsKey(RealismModKey))
             {
                 RealismLoaded = true;
                 Logger.LogInfo($"SAIN: Realism Detected.");
 
-                // If Realism mod is loaded, we need to adjust how powerlevel is calculated to take into account armor class going up to 10 instead of 6
+                // If RealismModKey mod is loaded, we need to adjust how powerlevel is calculated to take into account armor class going up to 10 instead of 6
                 // 7 is the default
-                EFTCoreSettings.UpdateArmorClassCoef(4f);
+                EFTCoreSettings.UpdateArmorClassCoef(3.5f);
             }
             else
             {
-                EFTCoreSettings.UpdateArmorClassCoef(7f);
+                EFTCoreSettings.UpdateArmorClassCoef(6f);
             }
         }
 
@@ -53,6 +59,7 @@ namespace SAIN
 
             BeginHorizontal();
             IsDetected(LootingBotsLoaded, "Looting Bots");
+            IsDetected(QuestingBotsLoaded, "Questing Bots");
             IsDetected(RealismLoaded, "Realism Mod");
             EndHorizontal();
 

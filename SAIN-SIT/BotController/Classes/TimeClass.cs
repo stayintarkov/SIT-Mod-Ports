@@ -51,6 +51,12 @@ namespace SAIN.Components.BotController
                         float scalingA = 1f - nightSettings.NightTimeVisionModifier;
                         float scalingB = nightSettings.NightTimeVisionModifier;
 
+                        if (WeatherEventController.Instance?.EventActive == true)
+                        {
+                            scalingA = 1f - nightSettings.NightTimeVisionModifierSnow;
+                            scalingB = nightSettings.NightTimeVisionModifierSnow;
+                        }
+
                         // Dawn
                         if (time <= nightSettings.HourDawnEnd)
                         {

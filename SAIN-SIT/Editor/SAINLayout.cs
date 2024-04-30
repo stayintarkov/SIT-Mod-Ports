@@ -11,14 +11,24 @@ namespace SAIN.Editor
             GUILayout.Box(content, style, options);
         }
 
-        public static void Box(string text, string tooltip, params GUILayoutOption[] options)
-        {
-            Box(new GUIContent(text, tooltip), GetStyle(Style.box), options);
-        }
-
         public static void Box(string text, params GUILayoutOption[] options)
         {
-            Box(new GUIContent(text), GetStyle(Style.box), options);
+            GUILayout.Box(new GUIContent(text), GetStyle(Style.box), options);
+        }
+
+        public static void Box(string text, GUIStyle style, params GUILayoutOption[] options)
+        {
+            GUILayout.Box(new GUIContent(text), style, options);
+        }
+
+        public static void Box(string text, string tooltip, params GUILayoutOption[] options)
+        {
+            GUILayout.Box(new GUIContent(text, tooltip), GetStyle(Style.box), options);
+        }
+
+        public static void Box(string text, string tooltip, GUIStyle style, params GUILayoutOption[] options)
+        {
+            GUILayout.Box(new GUIContent(text, tooltip), style, options);
         }
 
         public static void BlankBox(string text, params GUILayoutOption[] options)
@@ -106,19 +116,34 @@ namespace SAIN.Editor
             return newvalue;
         }
 
-        public static bool Button(string text, EUISoundType? sound = null, params GUILayoutOption[] options)
+        public static bool Button(string text, params GUILayoutOption[] options)
+        {
+            return Button(new GUIContent(text), null, options);
+        }
+
+        public static bool Button(string text, EUISoundType? sound, params GUILayoutOption[] options)
         {
             return Button(new GUIContent(text), sound, options);
         }
 
-        public static bool Button(string text, string tooltip, EUISoundType? sound = null, params GUILayoutOption[] options)
+        public static bool Button(string text, string tooltip, EUISoundType? sound, params GUILayoutOption[] options)
         {
             return Button(new GUIContent(text, tooltip), sound, options);
         }
 
-        public static bool Button(GUIContent content, EUISoundType? sound = null, params GUILayoutOption[] options)
+        public static bool Button(string text, string tooltip, EUISoundType? sound, GUIStyle style, params GUILayoutOption[] options)
         {
-            if (GUILayout.Button(content, GetStyle(Style.button), options))
+            return Button(new GUIContent(text, tooltip), sound, options);
+        }
+
+        public static bool Button(GUIContent content, EUISoundType? sound, params GUILayoutOption[] options)
+        {
+            return Button(content, GetStyle(Style.button), sound, options);
+        }
+
+        public static bool Button(GUIContent content, GUIStyle style, EUISoundType? sound, params GUILayoutOption[] options)
+        {
+            if (GUILayout.Button(content, style, options))
             {
                 CompareValuePlaySound(true, false, sound);
                 return true;
@@ -132,6 +157,11 @@ namespace SAIN.Editor
         }
 
         public static bool Toggle(bool value, string text, string tooltip, EUISoundType? sound = null, params GUILayoutOption[] options)
+        {
+            return Toggle(value, new GUIContent(text, tooltip), sound, options);
+        }
+
+        public static bool Toggle(bool value, string text, string tooltip, GUIStyle style, EUISoundType? sound = null, params GUILayoutOption[] options)
         {
             return Toggle(value, new GUIContent(text, tooltip), sound, options);
         }

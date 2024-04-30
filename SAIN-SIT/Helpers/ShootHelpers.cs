@@ -22,15 +22,20 @@ namespace SAIN.Helpers
                 return 0.001f;
             }
 
+            if (component.ManualShootReason != SAINComponentClass.EShootReason.None && component.Info.WeaponInfo.IWeaponClass == IWeaponClass.machinegun)
+            {
+                return 0.75f;
+            }
+
             //float k = 0.08f; // How fast for the burst length to falloff with Distance
             //float scaledDistance = InverseScaleWithLogisticFunction(distance, k, 20f);
 
-            float scaledBurstLength = 1f - (Mathf.Clamp(distance, 0f, 50f) / 50f);
+            float scaledBurstLength = 1f - (Mathf.Clamp(distance, 0f, 30f) / 30f);
             scaledBurstLength /= component.Info.WeaponInfo.FinalModifier;
             scaledBurstLength *= component.Info.FileSettings.Shoot.BurstMulti;
             scaledBurstLength = Mathf.Clamp(scaledBurstLength, 0.001f, 1f);
 
-            if (distance > 50f)
+            if (distance > 30f)
             {
                 scaledBurstLength = 0.001f;
             }

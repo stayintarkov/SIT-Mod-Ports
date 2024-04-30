@@ -8,14 +8,6 @@ using System.Collections.Generic;
 
 namespace SAIN.Layers.Combat.Solo
 {
-    public enum MoveToCoverStates
-    {
-        MoveSlow,
-        MoveNormal,
-        Run,
-        Panic,
-    }
-
     internal class CombatSoloLayer : SAINLayer
     {
         public CombatSoloLayer(BotOwner bot, int priority) : base(bot, priority, Name)
@@ -23,10 +15,6 @@ namespace SAIN.Layers.Combat.Solo
         }
 
         public static readonly string Name = BuildLayerName<CombatSoloLayer>();
-
-        public void CalculateSearchPlan(SAINComponentClass sain)
-        {
-        }
 
         public override Action GetNextAction()
         {
@@ -48,14 +36,38 @@ namespace SAIN.Layers.Combat.Solo
                     return new Action(typeof(ShiftCoverAction), $"{Decision}");
 
                 case SoloDecision.RunToCover:
-                    return new Action(typeof(RunToCoverAction), $"{Decision}");
+                    if (SAIN.Cover.CoverPoints.Count > 0)
+                    {
+                        return new Action(typeof(RunToCoverAction), $"{Decision}");
+                    }
+                    else
+                    {
+                        NoCoverUseDogFight = true;
+                        return new Action(typeof(DogFightAction), $"{Decision} : No Cover Found Yet! Using Dogfight");
+                    }
 
                 case SoloDecision.Retreat:
-                    return new Action(typeof(RunToCoverAction), $"{Decision} + {SelfDecision}");
+                    if (SAIN.Cover.CoverPoints.Count > 0)
+                    {
+                        return new Action(typeof(RunToCoverAction), $"{Decision} + {SelfDecision}");
+                    }
+                    else
+                    {
+                        NoCoverUseDogFight = true;
+                        return new Action(typeof(DogFightAction), $"{Decision} : No Cover Found Yet! Using Dogfight");
+                    }
 
                 case SoloDecision.WalkToCover:
                 case SoloDecision.UnstuckMoveToCover:
-                    return new Action(typeof(WalkToCoverAction), $"{Decision}");
+                    if (SAIN.Cover.CoverPoints.Count > 0)
+                    {
+                        return new Action(typeof(WalkToCoverAction), $"{Decision}");
+                    }
+                    else
+                    {
+                        NoCoverUseDogFight = true;
+                        return new Action(typeof(DogFightAction), $"{Decision} : No Cover Found Yet! Using Dogfight");
+                    }
 
                 case SoloDecision.DogFight:
                 case SoloDecision.UnstuckDogFight:
@@ -65,7 +77,14 @@ namespace SAIN.Layers.Combat.Solo
                     return new Action(typeof(StandAndShootAction), $"{Decision}");
 
                 case SoloDecision.HoldInCover:
-                    return new Action(typeof(HoldinCoverAction), $"{Decision}");
+                    if (SelfDecision != SelfDecision.None)
+                    {
+                        return new Action(typeof(HoldinCoverAction), $"{Decision} + {SelfDecision}");
+                    }
+                    else
+                    {
+                        return new Action(typeof(HoldinCoverAction), $"{Decision}");
+                    }
 
                 case SoloDecision.Shoot:
                     return new Action(typeof(ShootAction), $"{Decision}");
@@ -78,14 +97,15 @@ namespace SAIN.Layers.Combat.Solo
                     return new Action(typeof(InvestigateAction), $"{Decision}");
 
                 default:
-                    return new Action(typeof(WalkToCoverAction), $"DEFAULT!");
+                    return new Action(typeof(StandAndShootAction), $"DEFAULT! {Decision}");
             }
         }
+
+        bool NoCoverUseDogFight;
 
         public override bool IsActive()
         {
             if (SAIN == null) return false;
-            //if (SAIN.SAINEnabled == false) return false;
 
             return CurrentDecision != SoloDecision.None;
         }
@@ -93,7 +113,12 @@ namespace SAIN.Layers.Combat.Solo
         public override bool IsCurrentActionEnding()
         {
             if (SAIN == null) return true;
-            //if (SAIN.SAINEnabled == false) return true;
+
+            if (NoCoverUseDogFight && SAIN.Cover.CoverPoints.Count > 0)
+            {
+                NoCoverUseDogFight = false;
+                return true;
+            }
 
             return CurrentDecision != LastActionDecision;
         }

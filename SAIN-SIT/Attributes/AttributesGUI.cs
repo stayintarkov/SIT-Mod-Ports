@@ -65,6 +65,11 @@ namespace SAIN.Attributes
             {
                 entryConfig = entryConfig ?? DefaultEntryConfig;
 
+                if (attributes.Advanced)
+                {
+
+                }
+
                 if (FloatBoolInt.Contains(attributes.ValueType))
                 {
                     value = EditFloatBoolInt(value, attributes, entryConfig, out wasEdited);
@@ -85,11 +90,6 @@ namespace SAIN.Attributes
                     {
                         ModifyLists.AddOrRemove(
                             value as List<WildSpawnType>, out wasEdited);
-                    }
-                    else if (value is List<BotDifficulty>)
-                    {
-                        ModifyLists.AddOrRemove(
-                            value as List<BotDifficulty>, out wasEdited);
                     }
                     else if (value is List<BotType>)
                     {
@@ -131,11 +131,6 @@ namespace SAIN.Attributes
                     ModifyLists.AddOrRemove(
                         value as List<WildSpawnType>, out wasEdited);
                 }
-                else if (value is List<BotDifficulty>)
-                {
-                    ModifyLists.AddOrRemove(
-                        value as List<BotDifficulty>, out wasEdited);
-                }
                 else if (value is List<BotType>)
                 {
                     ModifyLists.AddOrRemove(
@@ -167,7 +162,7 @@ namespace SAIN.Attributes
                 GUIStyle boxstyle = GetStyle(Style.box);
                 LabelStyle = new GUIStyle(GetStyle(Style.label))
                 {
-                    alignment = TextAnchor.MiddleCenter,
+                    alignment = TextAnchor.MiddleLeft,
                     margin = boxstyle.margin,
                     padding = boxstyle.padding
                 };
@@ -178,7 +173,18 @@ namespace SAIN.Attributes
         {
             if (beginHoriz)
             {
-                BeginHorizontal(100f);
+                if (attributes.Advanced)
+                {
+                    BeginHorizontal(25f);
+                    Box("Advanced",
+                        LabelStyle,
+                        Width(70f),
+                        Height(entryConfig.EntryHeight));
+                }
+                else
+                {
+                    BeginHorizontal(100f);
+                }
             }
 
             if (showLabel)
@@ -192,8 +198,6 @@ namespace SAIN.Attributes
                     Height(entryConfig.EntryHeight)
                     );
             }
-
-            Space(8);
 
             bool showResult = false;
             object originalValue = value;
@@ -214,16 +218,12 @@ namespace SAIN.Attributes
             }
             if (showResult && value != null)
             {
-                Space(8);
-
                 string dirtyString = TextField(value.ToString(), null, entryConfig.Result);
                 value = BuilderClass.CleanString(dirtyString, value);
                 if (attributes.ValueType != typeof(bool))
                 {
                     value = attributes.Clamp(value);
                 }
-
-                Space(5);
 
                 if (attributes.Default != null)
                 {
@@ -334,10 +334,30 @@ namespace SAIN.Attributes
             wasEdited = false;
             BeginVertical(5f);
 
+            var fields = obj.GetType().GetFields();
+            foreach (var field in fields)
+            {
+                var attributes = GetAttributeInfo(field);
+                if (SkipForSearch(attributes, search) || attributes.Advanced)
+                {
+                    continue;
+                }
+                object value = field.GetValue(obj);
+                object newValue = EditValue(value, attributes, out bool newEdit);
+                if (newEdit)
+                {
+                    if (SAINPlugin.DebugMode)
+                    {
+                        Logger.LogInfo($"{field.Name} was edited");
+                    }
+                    field.SetValue(obj, newValue);
+                    wasEdited = true;
+                }
+            }
             foreach (var field in obj.GetType().GetFields())
             {
                 var attributes = GetAttributeInfo(field);
-                if (SkipForSearch(attributes, search))
+                if (SkipForSearch(attributes, search) || !attributes.Advanced)
                 {
                     continue;
                 }
@@ -364,7 +384,26 @@ namespace SAIN.Attributes
             wasEdited = false;
             foreach (var fieldAtt in category.FieldAttributesList)
             {
-                if (SkipForSearch(fieldAtt, search))
+                if (SkipForSearch(fieldAtt, search) || fieldAtt.Advanced)
+                {
+                    continue;
+                }
+                object value = fieldAtt.GetValue(categoryObject);
+                object newValue = EditValue(value, fieldAtt, out bool newEdit);
+                if (newEdit)
+                {
+                    if (SAINPlugin.DebugMode)
+                    {
+                        Logger.LogInfo($"{fieldAtt.Name} was edited");
+                    }
+                    fieldAtt.SetValue(categoryObject, newValue);
+                    wasEdited = true;
+                }
+            }
+
+            foreach (var fieldAtt in category.FieldAttributesList)
+            {
+                if (SkipForSearch(fieldAtt, search) || !fieldAtt.Advanced)
                 {
                     continue;
                 }

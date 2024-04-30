@@ -21,56 +21,53 @@ namespace SAIN.Components.Helpers
             {
                 Logger = BepInEx.Logging.Logger.CreateLogSource("SAIN: Sound Manager");
             }
-            if (BotController == null || BotController.Bots.Count == 0)
+            if (BotController == null || BotController.Bots == null || BotController.Bots.Count == 0)
             {
                 return;
             }
 
             SAINSoundType soundType = SAINSoundType.None;
             var Item = player.HandsController.Item;
-            float soundDist = 0f;
+            float soundDist = 20f;
 
             if (Item != null)
             {
-                //DefaultLogger.LogInfo($"Item: {Item.GetType().SAINName} : Sound {sound}");
                 if (Item is GrenadeClass)
                 {
                     if (sound == "Pin")
                     {
-                        //DefaultLogger.LogWarning("Grenade Pin!");
                         soundType = SAINSoundType.GrenadePin;
-                        soundDist = 15f;
+                        soundDist = 25f;
                     }
                     if (sound == "Draw")
                     {
-                        //DefaultLogger.LogWarning("Grenade Draw!");
                         soundType = SAINSoundType.GrenadeDraw;
-                        soundDist = 15f;
+                        soundDist = 25f;
                     }
                 }
                 else if (Item is MedsClass)
                 {
+                    soundType = SAINSoundType.Heal;
                     if (sound == "CapRemove" || sound == "Inject")
                     {
-                        //DefaultLogger.LogWarning("Heal!");
-                        soundType = SAINSoundType.Heal;
-                        soundDist = 15f;
+                        soundDist = 20f;
+                    }
+                    else
+                    {
+                        soundDist = 20f;
                     }
                 }
                 else
                 {
+                    soundType = SAINSoundType.Reload;
                     if (sound == "MagOut")
                     {
-                        //DefaultLogger.LogWarning("WeaponFunction Reload!");
-                        soundType = SAINSoundType.Reload;
                         soundDist = 20f;
                     }
                 }
             }
-            if (soundType != SAINSoundType.None)
-            {
-                BotController.AISoundPlayed(soundType, player, soundDist);
-            }
+            //Logger.LogInfo($"soundType: {soundType} : Sound {sound}");
+            BotController?.AISoundPlayed?.Invoke(soundType, player, soundDist);
         }
     }
 }

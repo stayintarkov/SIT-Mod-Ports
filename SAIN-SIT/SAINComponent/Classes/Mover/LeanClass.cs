@@ -30,6 +30,10 @@ namespace SAIN.SAINComponent.Classes.Mover
                 ResetLean();
                 return;
             }
+            if (CurrentDecision == SoloDecision.HoldInCover)
+            {
+                return;
+            }
             if (LeanTimer < Time.time)
             {
                 FindLeanDirectionRayCast(enemy.EnemyPosition);

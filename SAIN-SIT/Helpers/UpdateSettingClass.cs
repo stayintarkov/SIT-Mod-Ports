@@ -1,6 +1,7 @@
 ﻿using EFT;
 using SAIN.Preset.BotSettings.SAINSettings;
 using SAIN.Preset.GlobalSettings;
+using System.Text;
 using UnityEngine;
 
 namespace SAIN.Helpers
@@ -41,52 +42,79 @@ namespace SAIN.Helpers
 
             float multiplier = ScatterMulti(sainSettings);
 
+            StringBuilder debugString = new StringBuilder();
+            if (SAINPlugin.DebugMode)
+            {
+                debugString.AppendLine($"Applied Multipliers for [{WildSpawnType}, {botDifficulty}]");
+            }
+
             eftSettings.Aiming.BASE_SHIEF = MultiplySetting(
                 defaultSettings.Aiming.BASE_SHIEF,
                 multiplier,
-                "BASE_SHIEF");
+                "BASE_SHIEF",
+                debugString);
+
             eftSettings.Aiming.BOTTOM_COEF = MultiplySetting(
                 defaultSettings.Aiming.BOTTOM_COEF,
                 multiplier,
-                "BOTTOM_COEF");
+                "BOTTOM_COEF",
+                debugString);
 
             multiplier = AimMulti(sainSettings);
 
             eftSettings.Aiming.XZ_COEF = MultiplySetting(
                 defaultSettings.Aiming.XZ_COEF,
                 multiplier,
-                "XZ_COEF");
+                "XZ_COEF",
+                debugString);
+
             eftSettings.Aiming.XZ_COEF_STATIONARY_BULLET = MultiplySetting(
                 defaultSettings.Aiming.XZ_COEF_STATIONARY_BULLET,
                 multiplier,
-                "XZ_COEF_STATIONARY_BULLET");
+                "XZ_COEF_STATIONARY_BULLET",
+                debugString);
+
             eftSettings.Aiming.XZ_COEF_STATIONARY_GRENADE = MultiplySetting(
                 defaultSettings.Aiming.XZ_COEF_STATIONARY_GRENADE,
                 multiplier,
-                "XZ_COEF_STATIONARY_GRENADE");
+                "XZ_COEF_STATIONARY_GRENADE",
+                debugString);
 
             eftSettings.Scattering.MinScatter = MultiplySetting(
                 defaultSettings.Scattering.MinScatter,
                 multiplier,
-                "MinScatter");
+                "MinScatter",
+                debugString);
+
             eftSettings.Scattering.MaxScatter = MultiplySetting(
                 defaultSettings.Scattering.MaxScatter,
                 multiplier,
-                "MaxScatter");
+                "MaxScatter",
+                debugString);
+
             eftSettings.Scattering.WorkingScatter = MultiplySetting(
                 defaultSettings.Scattering.WorkingScatter,
                 multiplier,
-                "WorkingScatter");
+                "WorkingScatter",
+                debugString);
 
             eftSettings.Core.VisibleDistance = MultiplySetting(
                 sainSettings.Core.VisibleDistance,
                 VisionDistanceMulti,
-                "VisibleDistance");
+                "VisibleDistance",
+                debugString);
 
             eftSettings.Core.GainSightCoef = MultiplySetting(
                 sainSettings.Core.GainSightCoef,
                 VisionSpeedMulti(sainSettings),
-                "GainSightCoef");
+                "GainSightCoef",
+                debugString);
+
+            if (SAINPlugin.DebugMode)
+            {
+                Logger.LogDebug(debugString);
+                //Logger.NotifyDebug(debugString, EFT.Communications.ENotificationDurationType.Long);
+            }
         }
 
         public static void ManualSettingsUpdate(WildSpawnType WildSpawnType, BotDifficulty botDifficulty, BotOwner BotOwner, SAINSettingsClass sainSettings)
@@ -102,21 +130,24 @@ namespace SAIN.Helpers
             }
         }
 
-        private static float MultiplySetting(float defaultValue, float multiplier, string name)
+        private static float MultiplySetting(float defaultValue, float multiplier, string name, StringBuilder debugString)
         {
             float result = Mathf.Round(defaultValue * multiplier * 100f) / 100f;
             if (SAINPlugin.DebugMode)
             {
-                Logger.LogInfo($"{name} Default {defaultValue} Multiplier: {multiplier} Result: {result}");
+                debugString.AppendLabeledValue($"Multiplied [{name}]", $"Default Value: [{defaultValue}] Multiplier: [{multiplier}] Result: [{result}]", Color.white, Color.white);
             }
             return result;
         }
 
-        public static float AimMulti(SAINSettingsClass SAINSettings) => Round(SAINSettings.Aiming.AccuracySpreadMulti * GlobalSettings.Aiming.AccuracySpreadMultiGlobal / GlobalSettings.General.GlobalDifficultyModifier);
+        public static float AimMulti(SAINSettingsClass SAINSettings) 
+            => Round(SAINSettings.Aiming.AccuracySpreadMulti * GlobalSettings.Aiming.AccuracySpreadMultiGlobal / GlobalSettings.General.GlobalDifficultyModifier);
 
-        public static float ScatterMulti(SAINSettingsClass SAINSettings) => Round(SAINSettings.Scattering.ScatterMultiplier * GlobalSettings.Shoot.GlobalScatterMultiplier / GlobalSettings.General.GlobalDifficultyModifier);
+        public static float ScatterMulti(SAINSettingsClass SAINSettings) 
+            => Round(SAINSettings.Scattering.ScatterMultiplier * GlobalSettings.Shoot.GlobalScatterMultiplier / GlobalSettings.General.GlobalDifficultyModifier);
 
-        public static float VisionSpeedMulti(SAINSettingsClass SAINSettings) => Round(SAINSettings.Look.VisionSpeedModifier * GlobalSettings.Look.GlobalVisionSpeedModifier / GlobalSettings.General.GlobalDifficultyModifier);
+        public static float VisionSpeedMulti(SAINSettingsClass SAINSettings) 
+            => Round(SAINSettings.Look.VisionSpeedModifier * GlobalSettings.Look.GlobalVisionSpeedModifier / GlobalSettings.General.GlobalDifficultyModifier);
 
         public static float VisionDistanceMulti => GlobalSettings.Look.GlobalVisionDistanceMultiplier;
 

@@ -1,14 +1,11 @@
-﻿using BepInEx.Logging;
-using EFT;
-using SAIN.Components;
-using SAIN.Helpers;
+﻿using EFT;
 using UnityEngine;
 
 namespace SAIN.SAINComponent.Classes
 {
     public class ShootClass : BaseNodeClass
     {
-        public ShootClass(BotOwner owner) 
+        public ShootClass(BotOwner owner)
             : base(owner)
         {
             SAIN = owner.GetComponent<SAINComponentClass>();
@@ -20,18 +17,52 @@ namespace SAIN.SAINComponent.Classes
 
         private readonly SAINComponentClass SAIN;
 
+        private float changeAimTimer;
+
         public override void Update()
         {
-            var enemy = SAIN.Enemy;
-            if (enemy != null && enemy.IsVisible && enemy.CanShoot)
+            if (SAIN.Player.IsSprintEnabled)
             {
-                Vector3? pointToShoot = GetPointToShoot();
+                return;
+            }
+
+            SAIN.AimDownSightsController.UpdateADSstatus();
+            AimAtEnemy();
+        }
+
+        private void AimAtEnemy()
+        {
+            if (!BotOwner.WeaponManager.HaveBullets)
+            {
+                SAIN.SelfActions.TryReload();
+                return;
+            }
+            var enemy = SAIN.Enemy;
+            if (enemy != null)
+            {
+                if (enemy.IsVisible)
+                {
+                    BotOwner.BotLight?.TurnOn(enemy.RealDistance < 30f);
+                }
+
+                Vector3? pointToShoot = null;
+                if (enemy.IsVisible && enemy.CanShoot)
+                {
+                    pointToShoot = GetPointToShoot();
+                }
+                else if (!enemy.IsVisible 
+                    && enemy.HeardRecently 
+                    && enemy.InLineOfSight)
+                {
+                    EnemyPlace lastKnown = enemy.KnownPlaces.LastKnownPlace;
+                    if (lastKnown != null 
+                        && lastKnown.HasSeen)
+                    {
+                        pointToShoot = lastKnown.Position + Vector3.up;
+                    }
+                }
                 if (pointToShoot != null)
                 {
-                    if (enemy.RealDistance < 30f)
-                    {
-                        BotOwner.BotLight?.TurnOn(true);
-                    }
                     Target = pointToShoot.Value;
                     if (BotOwner.AimingData.IsReady && !SAIN.NoBushESP.NoBushESPActive && FriendlyFire.ClearShot)
                     {
@@ -40,9 +71,11 @@ namespace SAIN.SAINComponent.Classes
                     }
                 }
             }
-            else
+            else if (SAIN.CurrentTargetPosition != null)
             {
-                BotOwner.BotLight?.TurnOff(false, false);
+                float lightOnVisDist = BotOwner.Settings.FileSettings.Look.LightOnVisionDistance;
+                float sqrMagnitude = (SAIN.Position - SAIN.CurrentTargetPosition.Value).sqrMagnitude;
+                BotOwner.BotLight?.TurnOn(sqrMagnitude < lightOnVisDist * lightOnVisDist);
             }
         }
 
@@ -56,7 +89,7 @@ namespace SAIN.SAINComponent.Classes
             if (enemy != null)
             {
                 Vector3 value;
-                if (enemy.Distance < 3f)
+                if (enemy.Distance < 10f)
                 {
                     value = enemy.GetCenterPart();
                 }
@@ -119,9 +152,19 @@ namespace SAIN.SAINComponent.Classes
             {
                 return;
             }
-            if (this.botOwner_0.ShootData.Shoot() && this.int_0 > this.botOwner_0.WeaponManager.Reload.BulletCount)
+            if (this.botOwner_0.RecoilData.RecoilOffset.sqrMagnitude > 3f)
             {
+                return;
+            }
+            if (this.botOwner_0.ShootData.Shoot())
+            {
+                if (this.int_0 > this.botOwner_0.WeaponManager.Reload.BulletCount)
+                {
+                    this.int_0 = this.botOwner_0.WeaponManager.Reload.BulletCount;
+                }
                 this.int_0 = this.botOwner_0.WeaponManager.Reload.BulletCount;
+
+                this.botOwner_0.Memory.GoalEnemy?.SetLastShootTime();
             }
         }
 

@@ -1,22 +1,101 @@
 ﻿using EFT;
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace SAIN.SAINComponent.Classes.Mover
 {
+    public class ObstacleAgent : MonoBehaviour
+    {
+        private float CarvingTime = 0.5f;
+        private float CarvingMoveThreshold = 0.1f;
+
+        private NavMeshAgent Agent;
+        private NavMeshObstacle Obstacle;
+
+        private float LastMoveTime;
+        private Vector3 LastPosition;
+
+        private void Awake()
+        {
+            Agent = GetComponent<NavMeshAgent>();
+            Obstacle = GetComponent<NavMeshObstacle>();
+
+            Obstacle.enabled = false;
+            Obstacle.carveOnlyStationary = false;
+            Obstacle.carving = true;
+
+            LastPosition = transform.position;
+        }
+
+        private void Update()
+        {
+            if (Vector3.Distance(LastPosition, transform.position) > CarvingMoveThreshold)
+            {
+                LastMoveTime = Time.time;
+                LastPosition = transform.position;
+            }
+            if (LastMoveTime + CarvingTime < Time.time)
+            {
+                Agent.enabled = false;
+                Obstacle.enabled = true;
+            }
+        }
+
+        public void SetDestination(Vector3 Position)
+        {
+            Obstacle.enabled = false;
+
+            LastMoveTime = Time.time;
+            LastPosition = transform.position;
+
+            StartCoroutine(MoveAgent(Position));
+        }
+
+        private IEnumerator MoveAgent(Vector3 Position)
+        {
+            yield return null;
+            Agent.enabled = true;
+            Agent.SetDestination(Position);
+        }
+    }
+
     public class SAINMoverClass : SAINBase, ISAINClass
     {
         public SAINMoverClass(SAINComponentClass sain) : base(sain)
         {
-            BlindFire = new BlindFireClass(sain);
+            BlindFire = new BlindFireController(sain);
             SideStep = new SideStepClass(sain);
             Lean = new LeanClass(sain);
             Prone = new ProneClass(sain);
             Pose = new PoseClass(sain);
+            SprintController = new SprintController(sain);
         }
+
+        private SprintController SprintController;
 
         public void Init()
         {
+            UpdateBodyNavObstacle(false);
+        }
+
+        public void UpdateBodyNavObstacle(bool value)
+        {
+            if (BotBodyObstacle == null)
+            {
+                //BotBodyObstacle = SAIN.GetOrAddComponent<NavMeshObstacle>();
+                if (BotBodyObstacle == null)
+                {
+                    //Logger.LogError($"Bot Body Navmesh obstacle is null for [{SAIN.BotOwner.name}]");
+                    return;
+                }
+                //BotBodyObstacle.radius = 0.25f;
+                //BotBodyObstacle.shape = NavMeshObstacleShape.Capsule;
+                //BotBodyObstacle.carveOnlyStationary = false;
+            }
+            //BotBodyObstacle.enabled = false;
+            //BotBodyObstacle.carving = value;
         }
 
         public void Update()
@@ -28,36 +107,125 @@ namespace SAIN.SAINComponent.Classes.Mover
             SideStep.Update();
             Prone.Update();
             BlindFire.Update();
+
+            if (Vector3.Distance(LastPosition, SAIN.Position) > CarvingMoveThreshold)
+            {
+                //LastMoveTime = Time.time;
+                //LastPosition = SAIN.Position;
+            }
+            if (LastMoveTime + CarvingTime < Time.time)
+            {
+                //SAIN.NavMeshAgent.enabled = false;
+                //BotBodyObstacle.enabled = true;
+            }
+            try
+            {
+                SprintController.Update();
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e);
+            }
         }
 
         public void Dispose()
         {
         }
 
-        public BlindFireClass BlindFire { get; private set; }
+        public BlindFireController BlindFire { get; private set; }
         public SideStepClass SideStep { get; private set; }
         public LeanClass Lean { get; private set; }
         public PoseClass Pose { get; private set; }
         public ProneClass Prone { get; private set; }
 
-        public bool GoToPoint(Vector3 point, float reachDist = -1f, bool crawl = false)
+        public NavMeshObstacle BotBodyObstacle { get; private set; }
+
+        public bool GoToPoint(Vector3 point, out bool calculating, float reachDist = -1f, bool crawl = false, bool slowAtEnd = true)
         {
+            if (GoToPointCoroutine != null && _coroutineRunning)
+            {
+                calculating = true;
+                return false;
+            }
+
+            if (GoToPointCoroutine != null)
+            {
+                SAIN.StopCoroutine(GoToPointCoroutine);
+                GoToPointCoroutine = null;
+            }
+
+            //BotBodyObstacle.enabled = false;
+
+            //LastMoveTime = Time.time;
+            //LastPosition = SAIN.Position;
             if (CanGoToPoint(point, out Vector3 pointToGo))
             {
                 if (reachDist < 0f)
                 {
                     reachDist = BotOwner.Settings.FileSettings.Move.REACH_DIST;
                 }
-                BotOwner.Mover?.GoToPoint(pointToGo, false, reachDist, false, false, false);
-                if (crawl)
+                CurrentPathStatus = BotOwner.Mover.GoToPoint(pointToGo, slowAtEnd, reachDist, false, false, true);
+                if (CurrentPathStatus == NavMeshPathStatus.PathComplete)
                 {
-                    Prone.SetProne(true);
+                    if (crawl)
+                    {
+                        Prone.SetProne(true);
+                    }
+                    BotOwner.DoorOpener?.Update();
+                    calculating = false;
+                    return true;
                 }
-                BotOwner.DoorOpener?.Update();
-                return true;
             }
-            return false;
+
+            CurrentPathStatus = NavMeshPathStatus.PathInvalid;
+
+            //GoToPointCoroutine = SAIN.StartCoroutine(TryGoToPoint(point, reachDist, crawl));
+            //calculating = _coroutineRunning;
+
+            calculating = false;
+            return CurrentPathStatus != NavMeshPathStatus.PathInvalid;
         }
+
+        private IEnumerator TryGoToPoint(Vector3 point, float reachDist = -1f, bool crawl = false)
+        {
+            _coroutineRunning = true;
+            yield return null;
+
+            //SAIN.NavMeshAgent.enabled = true;
+
+            if (CanGoToPoint(point, out Vector3 pointToGo))
+            {
+                if (reachDist < 0f)
+                {
+                    reachDist = BotOwner.Settings.FileSettings.Move.REACH_DIST;
+                }
+                CurrentPathStatus = BotOwner.Mover.GoToPoint(pointToGo, true, reachDist, false, false, true);
+                if (CurrentPathStatus == NavMeshPathStatus.PathComplete)
+                {
+                    if (crawl)
+                    {
+                        Prone.SetProne(true);
+                    }
+                    BotOwner.DoorOpener?.Update();
+                    _coroutineRunning = false;
+                    yield break;
+                }
+            }
+
+            CurrentPathStatus = NavMeshPathStatus.PathInvalid;
+            _coroutineRunning = false;
+            yield return null;
+        }
+
+        private float CarvingTime = 0.5f;
+        private float CarvingMoveThreshold = 0.1f;
+
+        private float LastMoveTime;
+        private Vector3 LastPosition;
+
+        private Coroutine GoToPointCoroutine;
+        private bool _coroutineRunning;
+        public NavMeshPathStatus CurrentPathStatus { get; private set; } = NavMeshPathStatus.PathInvalid;
 
         public bool CanGoToPoint(Vector3 point, out Vector3 pointToGo, bool mustHaveCompletePath = false, float navSampleRange = 5f)
         {
@@ -74,11 +242,6 @@ namespace SAIN.SAINComponent.Classes.Mover
                 }
                 if (NavMesh.CalculatePath(SAIN.Transform.Position, navHit.position, -1, CurrentPath) && CurrentPath.corners.Length > 1)
                 {
-                    if (SAIN.HasEnemy)
-                    {
-                        SAINBotSpaceAwareness.CheckPathSafety(CurrentPath, SAIN.Enemy.EnemyHeadPosition);
-                    }
-                    
                     if (mustHaveCompletePath && CurrentPath.status != NavMeshPathStatus.PathComplete)
                     {
                         return false;
@@ -89,6 +252,8 @@ namespace SAIN.SAINComponent.Classes.Mover
             }
             return false;
         }
+
+        public SAINMovementPlan MovementPlan { get; private set; }
 
         public bool GoToPointNew(Vector3 point, float reachDist = -1f, bool crawl = false, bool mustHaveCompletePath = false, float navSampleRange = 3f)
         {
@@ -167,11 +332,13 @@ namespace SAIN.SAINComponent.Classes.Mover
         private void SetStamina()
         {
             var stamina = Player.Physical.Stamina;
-            if (SAIN.LayersActive && stamina.NormalValue < 0.1f)
+            if (SAIN.CombatLayersActive && stamina.NormalValue < 0.1f)
             {
                 Player.Physical.Stamina.UpdateStamina(stamina.TotalCapacity / 8f);
             }
         }
+
+        public float CurrentStamina => Player.Physical.Stamina.NormalValue;
 
         public void SetTargetPose(float pose)
         {
@@ -190,6 +357,11 @@ namespace SAIN.SAINComponent.Classes.Mover
             {
                 Sprint(false);
             }
+            else if (Player.IsSprintEnabled)
+            {
+                Sprint(false);
+            }
+            UpdateBodyNavObstacle(true);
         }
 
         public void Sprint(bool value)
@@ -209,7 +381,7 @@ namespace SAIN.SAINComponent.Classes.Mover
         {
             if (JumpTimer < Time.time && CanJump)
             {
-                JumpTimer = Time.time + 1f;
+                JumpTimer = Time.time + 0.66f;
                 Player.MovementContext.TryJump();
             }
         }
@@ -234,6 +406,14 @@ namespace SAIN.SAINComponent.Classes.Mover
             if (Player.MovementContext.Tilt != value)
             {
                 Player.MovementContext.SetTilt(value);
+            }
+            if (value < 0)
+            {
+                Player.MovementContext.LeftStanceController.SetLeftStanceForce(true);
+            }
+            else
+            {
+                Player.MovementContext.LeftStanceController.SetLeftStanceForce(false);
             }
         }
 

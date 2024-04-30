@@ -1,12 +1,16 @@
-﻿namespace SAIN.SAINComponent.Classes.Decision
+﻿using System;
+using System.Collections.Generic;
+using static SAIN.SAINComponent.Classes.Decision.DecisionWrapper;
+
+namespace SAIN.SAINComponent.Classes.Decision
 {
     public class DecisionWrapper : SAINComponentAbstract, ISAINClass
     {
         public DecisionWrapper(SAINComponentClass sain) : base(sain)
         {
-            Main = new MainDecisionWrapper(sain);
-            Squad = new SquadDecisionWrapper(sain);
-            Self = new SelfDecisionWrapper(sain);
+            Main = new DecisionTypeWrapper<SoloDecision>(sain);
+            Squad = new DecisionTypeWrapper<SquadDecision>(sain);
+            Self = new DecisionTypeWrapper<SelfDecision>(sain);
         }
 
         public void Init()
@@ -21,74 +25,67 @@
         {
         }
 
-        public MainDecisionWrapper Main { get; private set; }
-        public SquadDecisionWrapper Squad { get; private set; }
-        public SelfDecisionWrapper Self { get; private set; }
+        public DecisionTypeWrapper<SoloDecision> Main { get; private set; }
+        public DecisionTypeWrapper<SquadDecision> Squad { get; private set; }
+        public DecisionTypeWrapper<SelfDecision> Self { get; private set; }
 
-        public class MainDecisionWrapper : SAINComponentAbstract, ISAINClass
+        public class DecisionTypeWrapper<T> where T : Enum
         {
-            public MainDecisionWrapper(SAINComponentClass sain) : base(sain)
+            public DecisionTypeWrapper(SAINComponentClass sain)
             {
+                SAIN = sain;
+                Type = typeof(T);
             }
 
-            public void Init()
+            private readonly SAINComponentClass SAIN;
+            private Type Type;
+
+            public T Current
             {
+                get
+                {
+                    if (Type == Solo)
+                    {
+                        return (T)(object)SAIN.Decision.CurrentSoloDecision;
+                    }
+                    else if (Type == Squad)
+                    {
+                        return (T)(object)SAIN.Decision.CurrentSquadDecision;
+                    }
+                    else if (Type == Self)
+                    {
+                        return (T)(object)SAIN.Decision.CurrentSelfDecision;
+                    }
+                    Logger.LogError($"Could not find Current Decision of Type {Type}");
+                    return default;
+                }
             }
 
-            public void Update()
+            public T Last
             {
+                get
+                {
+                    if (Type == Solo)
+                    {
+                        return (T)(object)SAIN.Decision.OldSoloDecision;
+                    }
+                    else if (Type == Squad)
+                    {
+                        return (T)(object)SAIN.Decision.OldSquadDecision;
+                    }
+                    else if (Type == Self)
+                    {
+                        return (T)(object)SAIN.Decision.OldSelfDecision;
+                    }
+                    Logger.LogError($"Could not find Last Decision of Type {Type}");
+                    return default;
+                }
             }
 
-            public void Dispose()
-            {
-            }
+            private static readonly Type Solo = typeof(SoloDecision);
+            private static readonly Type Squad = typeof(SquadDecision);
+            private static readonly Type Self = typeof(SelfDecision);
 
-            public SoloDecision Current => SAIN.Decision.CurrentSoloDecision;
-            public SoloDecision Last => SAIN.Decision.OldSoloDecision;
-        }
-
-        public class SquadDecisionWrapper : SAINComponentAbstract, ISAINClass
-        {
-            public SquadDecisionWrapper(SAINComponentClass sain) : base(sain)
-            {
-            }
-
-            public void Init()
-            {
-            }
-
-            public void Update()
-            {
-            }
-
-            public void Dispose()
-            {
-            }
-
-            public SquadDecision Current => SAIN.Decision.CurrentSquadDecision;
-            public SquadDecision Last => SAIN.Decision.OldSquadDecision;
-        }
-
-        public class SelfDecisionWrapper : SAINComponentAbstract, ISAINClass
-        {
-            public SelfDecisionWrapper(SAINComponentClass sain) : base(sain)
-            {
-            }
-
-            public void Init()
-            {
-            }
-
-            public void Update()
-            {
-            }
-
-            public void Dispose()
-            {
-            }
-
-            public SelfDecision Current => SAIN.Decision.CurrentSelfDecision;
-            public SelfDecision Last => SAIN.Decision.OldSelfDecision;
         }
     }
 }

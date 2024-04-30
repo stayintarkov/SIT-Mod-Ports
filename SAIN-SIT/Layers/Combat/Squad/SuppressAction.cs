@@ -16,6 +16,12 @@ namespace SAIN.Layers.Combat.Squad
         public override void Update()
         {
             var enemy = SAIN.Enemy;
+
+            bool needReload = !BotOwner.WeaponManager.HaveBullets || SAIN.Decision.SelfActionDecisions.LowOnAmmo();
+            if (!BotOwner.WeaponManager.HaveBullets || SAIN.Decision.SelfActionDecisions.LowOnAmmo())
+            {
+                SAIN.SelfActions.TryReload();
+            }
             if (enemy != null)
             {
                 if (enemy.IsVisible && enemy.CanShoot)
@@ -27,24 +33,56 @@ namespace SAIN.Layers.Combat.Squad
                 {
                     BotOwner.StopMove();
 
+                    bool hasMachineGun = SAIN.Info.WeaponInfo.IWeaponClass == IWeaponClass.machinegun;
+                    if (hasMachineGun 
+                        && BotOwner.GetPlayer?.IsInPronePose == false
+                        && SAIN.Mover.Prone.ShallProne(true))
+                    {
+                        SAIN.Mover.Prone.SetProne(true);
+                    }
+
                     SAIN.Steering.LookToPoint(pos.Value);
 
-                    if (WaitShootTimer < Time.time && BotOwner.WeaponManager.HaveBullets)
+                    if (!BotOwner.WeaponManager.HaveBullets)
                     {
-                        WaitShootTimer = Time.time + 0.5f * Random.Range(0.66f, 1.33f);
-                        SAIN.Shoot();
+                        SAIN.SelfActions.TryReload();
+                    }
+                    else if (
+                        WaitShootTimer < Time.time 
+                        && SAIN.Shoot(true, true, SAINComponentClass.EShootReason.SquadSuppressing))
+                    {
+                        enemy.EnemyIsSuppressed = true;
+                        float waitTime = hasMachineGun ? 0.1f : 0.5f;
+                        WaitShootTimer = Time.time + (waitTime * Random.Range(0.75f, 1.25f));
                     }
                 }
                 else
                 {
+                    SAIN.Shoot(false);
+                    if (needReload)
+                    {
+                        SAIN.SelfActions.TryReload();
+                    }
                     if (!BotOwner.ShootData.Shooting)
                     {
                         SAIN.Steering.SteerByPriority();
                     }
-                    BotOwner.MoveToEnemyData.TryMoveToEnemy(enemy.EnemyIPlayer.Position);
+                    if (_recalcPathTimer < Time.time)
+                    {
+                        if (SAIN.Mover.GoToPoint(enemy.EnemyPosition, out _))
+                        {
+                            _recalcPathTimer = Time.time + 4f;
+                        }
+                        else
+                        {
+                            _recalcPathTimer = Time.time + 1f;
+                        }
+                    }
                 }
             }
         }
+
+        private float _recalcPathTimer;
 
         private float WaitShootTimer;
 
