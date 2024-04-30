@@ -53,7 +53,6 @@ public static class Patcher
                 ci = sourceIL.Create(i.OpCode, targetType.Fields.FirstOrDefault(f => f.Name == i.Operand.ToString().Split(':')[2]));
             }
             if(ci != i){
-                File.AppendAllText("I:\\OPS.txt", ci.Operand.ToString() + "\r\n");
                 sourceIL.Replace(i, ci);
             }
         }
@@ -62,7 +61,6 @@ public static class Patcher
         sourceMethod.Body.Variables.Clear();
         foreach(VariableDefinition v in vars)
         {
-            File.AppendAllText("I:\\NOPS.txt", v.ToString() + ":" + v.VariableType.ToString() + "\r\n");
             var nv = new VariableDefinition(targetType.Module.ImportReference(v.VariableType));
             sourceMethod.Body.Variables.Add(nv);
         }
