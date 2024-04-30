@@ -111,4 +111,7 @@
     <None Include="VersionChecker\setbuild.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(OutDir)DrakiaXYZ-BigBrain.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
+  </PropertyGroup>
 </Project>
