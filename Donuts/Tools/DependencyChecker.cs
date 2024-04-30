@@ -1,8 +1,8 @@
+using System;
 using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using BepInEx.Logging;
-using System;
 using UnityEngine;
 
 namespace Donuts

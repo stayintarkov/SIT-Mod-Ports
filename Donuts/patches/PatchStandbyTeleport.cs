@@ -1,8 +1,8 @@
-﻿using Aki.Reflection.Patching;
+﻿using System;
+using System.Reflection;
+using StayInTarkov;
 using EFT;
 using HarmonyLib;
-using System;
-using System.Reflection;
 
 namespace Donuts
 {

@@ -1,10 +1,10 @@
-﻿using Aki.Reflection.Patching;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using StayInTarkov;
 using EFT;
 using EFT.AssetsManager;
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 
 namespace Donuts

@@ -1,11 +1,13 @@
-﻿using BepInEx.Logging;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using StayInTarkov;
+using BepInEx.Logging;
 using Comfort.Common;
 using EFT;
 using HarmonyLib;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
+
 //custom usings
 using BotCacheClass = Data1;
 using IProfileData = Data8;
@@ -99,8 +101,8 @@ namespace Donuts
             //init the main vars
             botSpawnerClass = Singleton<IBotGame>.Instance.BotsController.BotSpawner;
             botCreator = AccessTools.Field(typeof(BotSpawner), "_botCreator").GetValue(botSpawnerClass) as IBotCreator;
-            sptUsec = DonutComponent.SPTUsec;
-            sptBear = DonutComponent.SPTBear;
+            sptUsec = WildSpawnType.sptUsec;
+            sptBear = WildSpawnType.sptBear;
             replenishInterval = 60.0f;
             timeSinceLastReplenish = 0f;
             botsReplenishedCount = 0;
@@ -432,7 +434,6 @@ namespace Donuts
             {
                 var botData = new IProfileData(side, spawnType, difficulty, 0f, botSpawnParams);
                 var botGroup = await BotCacheClass.Create(botData, botCreator, maxCount, botSpawnerClass);
-
                 botList.Add(botGroup);
 
                 //add all profiles to orignalbotspawntypes list but change role to spawnType
@@ -526,4 +527,3 @@ namespace Donuts
         }
     }
 }
-
