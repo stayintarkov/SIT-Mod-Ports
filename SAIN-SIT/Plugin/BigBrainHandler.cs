@@ -7,6 +7,7 @@ using SAIN.Layers.Combat.Solo;
 using SAIN.Layers.Combat.Squad;
 using SAIN.Preset.GlobalSettings.Categories;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace SAIN
 {
@@ -66,13 +67,13 @@ namespace SAIN
             if (gameWorld != null)
             {
                 var players = gameWorld.AllAlivePlayersList;
-                foreach (var player in players)
+                Parallel.ForEach(players, (player) =>
                 {
                     if (player != null && player.AIData?.BotOwner != null)
                     {
                         UpdateLayersList(player.AIData.BotOwner);
                     }
-                }
+                });
             }
         }
 

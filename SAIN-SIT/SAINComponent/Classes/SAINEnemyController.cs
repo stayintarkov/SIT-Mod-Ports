@@ -5,6 +5,7 @@ using SAIN.Components;
 using SAIN.SAINComponent;
 using SAIN.SAINComponent.BaseClasses;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace SAIN.SAINComponent.Classes
@@ -21,7 +22,7 @@ namespace SAIN.SAINComponent.Classes
 
         private void UpdateEnemies()
         {
-            foreach (var keyPair in Enemies)
+            Parallel.ForEach(Enemies, (keyPair) =>
             {
                 string id = keyPair.Key;
                 var enemy = keyPair.Value;
@@ -42,9 +43,9 @@ namespace SAIN.SAINComponent.Classes
                 }
                 // Checks specific to bots
                 else if (enemy.EnemyPlayer.IsAI && (
-                    enemy.EnemyPlayer.AIData?.BotOwner == null ||
-                    enemy.EnemyPlayer.AIData.BotOwner.ProfileId == BotOwner.ProfileId ||
-                    enemy.EnemyPlayer.AIData.BotOwner.BotState != EBotState.Active))
+                             enemy.EnemyPlayer.AIData?.BotOwner == null ||
+                             enemy.EnemyPlayer.AIData.BotOwner.ProfileId == BotOwner.ProfileId ||
+                             enemy.EnemyPlayer.AIData.BotOwner.BotState != EBotState.Active))
                 {
                     EnemyIDsToRemove.Add(id);
                 }
@@ -52,12 +53,12 @@ namespace SAIN.SAINComponent.Classes
                 {
                     enemy.UpdateHearStatus();
                 }
-            }
+            });
 
-            foreach (string idToRemove in EnemyIDsToRemove)
+            Parallel.ForEach(EnemyIDsToRemove, (idToRemove) =>
             {
                 Enemies.Remove(idToRemove);
-            }
+            });
 
             EnemyIDsToRemove.Clear();
         }

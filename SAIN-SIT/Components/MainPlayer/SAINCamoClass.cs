@@ -1,4 +1,5 @@
-﻿using EFT.EnvironmentEffect;
+﻿using EFT;
+using EFT.EnvironmentEffect;
 using SAIN.Components.BotController;
 using SAIN.Components.MainPlayer;
 using SAIN.Editor;
@@ -37,7 +38,7 @@ namespace SAIN.Components
                     var envManger = EnvironmentManager.Instance;
                     if (envManger != null)
                     {
-                        EnvironmentType = envManger.GetEnvironmentByPos(MainPlayer.Position);
+                        EnvironmentType = envManger.GetEnvironmentByPos(((IPlayer)MainPlayer).Position);
                     }
                     FreqencyTimer = Time.time + 0.5f;
 
@@ -52,7 +53,7 @@ namespace SAIN.Components
                     {
                         if (BushColliders[i] != null)
                         {
-                            if ((BushColliders[i].transform.position - MainPlayer.Position).magnitude < 0.75f)
+                            if ((BushColliders[i].transform.position - ((IPlayer)MainPlayer).Position).magnitude < 0.75f)
                             {
                                 inBush = true;
                                 break;
@@ -65,7 +66,7 @@ namespace SAIN.Components
                     {
                         GrassColliders[i] = null;
                     }
-                    OnGrass = Physics.OverlapSphereNonAlloc(MainPlayer.Position, 0.5f, GrassColliders, GrassLayer) > 0;
+                    OnGrass = Physics.OverlapSphereNonAlloc(((IPlayer)MainPlayer).Position, 0.5f, GrassColliders, GrassLayer) > 0;
                 }
             }
         }
@@ -118,7 +119,7 @@ namespace SAIN.Components
                             guiRect.size = guiSize;
                             GUI.Box(guiRect, content, guiStyle);
                         }
-                        Color color = (bushPos - MainPlayer.Position).magnitude < 0.75f ? Color.blue : Color.green;
+                        Color color = (bushPos - ((IPlayer)MainPlayer).Position).magnitude < 0.75f ? Color.blue : Color.green;
                         DebugGizmos.Sphere(bushPos, bush.bounds.size.magnitude, color, true, 1f);
                     }
                 }

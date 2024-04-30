@@ -197,7 +197,7 @@ namespace SAIN.SAINComponent.Classes.Talk
         {
             if (LastEnemyTalk == null)
             {
-                if (Vector3.Distance(player.Position, BotOwner.Position) < ResponseDist)
+                if (Vector3.Distance(((IPlayer)player).Position, BotOwner.Position) < ResponseDist)
                 {
                     LastEnemyTalk = new EnemyTalkObject();
                 }

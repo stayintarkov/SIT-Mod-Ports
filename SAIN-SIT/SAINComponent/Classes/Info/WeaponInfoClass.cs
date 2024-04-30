@@ -118,7 +118,7 @@ namespace SAIN.SAINComponent.Classes.Info
 
             float RecoilModifier =
                 (
-                (weapon.RecoilTotal / weapon.RecoilBase)
+                (weapon.RecoilTotal / ((IWeapon)weapon).RecoilBase)
                 +
                 (weapon.CurrentAmmoTemplate.ammoRec / 200f)
                 )

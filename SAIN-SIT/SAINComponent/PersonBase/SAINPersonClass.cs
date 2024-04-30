@@ -26,7 +26,7 @@ namespace SAIN.SAINComponent.BaseClasses
         public Vector3 Position => Transform.Position;
         public SAINPersonTransformClass Transform { get; private set; }
         public Profile Profile { get; private set; }
-        public string ProfileId => Profile?.ProfileId;
+        public string ProfileId => ((IProfileDataContainer)Profile)?.ProfileId;
         public string Nickname => Profile?.Nickname;
         public string Name => Player?.name;
         public bool IsAI => BotOwner != null;

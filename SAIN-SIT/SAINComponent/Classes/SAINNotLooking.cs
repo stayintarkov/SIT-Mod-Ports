@@ -105,7 +105,7 @@ namespace SAIN.SAINComponent.Classes
             {
                 if (MainPlayer != null)
                 {
-                    return MainPlayer.Position;
+                    return ((IPlayer)MainPlayer).Position;
                 }
                 return Vector3.zero;
             }

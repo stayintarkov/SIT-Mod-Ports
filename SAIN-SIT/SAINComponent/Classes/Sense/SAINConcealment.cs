@@ -58,9 +58,9 @@ namespace SAIN.SAINComponent.Classes.Sense
                 return false;
             }
 
-            results.TargetPosition = target.Position;
-            results.ObserverPosition = observer.Position;
-            results.TargetDirection = target.Position - observer.Position;
+            results.TargetPosition = ((IPlayer)target).Position;
+            results.ObserverPosition = ((IPlayer)observer).Position;
+            results.TargetDirection = ((IPlayer)target).Position - ((IPlayer)observer).Position;
             results.TargetDirectionNormalized = results.TargetDirection.normalized;
             results.Distance = results.TargetDirection.magnitude;
 
@@ -144,8 +144,8 @@ namespace SAIN.SAINComponent.Classes.Sense
 
         private float FindHeightAngle(Player observer, Player target)
         {
-            Vector3 observerPos = observer.Position;
-            Vector3 targetPos = target.Position;
+            Vector3 observerPos = ((IPlayer)observer).Position;
+            Vector3 targetPos = ((IPlayer)target).Position;
 
             Vector3 targetDir = targetPos - observerPos;
             Vector3 targetDirStraight = targetDir;

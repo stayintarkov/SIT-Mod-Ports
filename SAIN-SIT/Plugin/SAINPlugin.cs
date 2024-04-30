@@ -13,6 +13,7 @@ using SAIN.SAINComponent.Classes.Mover;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using BepInEx.Logging;
 using UnityEngine;
 using static SAIN.AssemblyInfoClass;
 
@@ -27,7 +28,7 @@ namespace SAIN
         public static bool DebugMode => EditorDefaults.GlobalDebugMode;
         public static bool DrawDebugGizmos => EditorDefaults.DrawDebugGizmos;
         public static PresetEditorDefaults EditorDefaults => PresetHandler.EditorDefaults;
-
+        
         public static SoloDecision ForceSoloDecision = SoloDecision.None;
         public static SquadDecision ForceSquadDecision = SquadDecision.None;
         public static SelfDecision ForceSelfDecision = SelfDecision.None;
@@ -96,7 +97,13 @@ namespace SAIN
                 typeof(Patches.Shoot.EndRecoilPatch),
                 typeof(Patches.Shoot.FullAutoPatch),
                 typeof(Patches.Shoot.SemiAutoPatch),
-                typeof(Patches.Components.AddComponentPatch)
+                typeof(Patches.Components.AddComponentPatch),
+                //typeof(Patches.Generic.MultiThreadBotTick),
+                typeof(Patches.Generic.MultiThreadAITaskManTickM0),
+                typeof(Patches.Generic.MultiThreadAITaskManTickM1),
+                typeof(Patches.Generic.BotMover3Fix),
+                typeof(Patches.Generic.SuppressExceptionUpdateManual)
+                //typeof(Patches.Generic.MultiThreadAICoreConTick)
             };
 
             // Reflection go brrrrrrrrrrrrrr

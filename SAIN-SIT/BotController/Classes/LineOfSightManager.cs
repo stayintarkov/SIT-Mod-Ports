@@ -1,8 +1,10 @@
+using System.Collections.Concurrent;
 using BepInEx.Logging;
 using Comfort.Common;
 using EFT;
 using SAIN.Helpers;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
@@ -26,13 +28,15 @@ namespace SAIN.Components
                 Frames = 0;
                 if (Bots != null && Bots.Count > 0)
                 {
-                    foreach (var bot in Bots)
+                    int i = 0;
+                    Parallel.ForEach(Bots, (bot) =>
                     {
                         if (bot.Value != null)
                         {
-                            TempBotList.Add(bot.Value);
+                            TempBotList.TryAdd(i, bot.Value);
+                            i++;
                         }
-                    }
+                    });
 
                     GlobalRaycastJob();
 
@@ -65,9 +69,9 @@ namespace SAIN.Components
             );
 
             total = 0;
-            for (int i = 0; i < TempBotList.Count; i++)
+            Parallel.ForEach(TempBotList, (botkv) =>
             {
-                var bot = TempBotList[i];
+                var bot = botkv.Value;
                 Vector3 head = HeadPos(bot.BotOwner.GetPlayer);
 
                 for (int j = 0; j < Players.Count; j++)
@@ -86,7 +90,7 @@ namespace SAIN.Components
                     );
                     total++;
                 }
-            }
+            });
 
             JobHandle spherecastJob = SpherecastCommand.ScheduleBatch(
                 allSpherecastCommands,
@@ -97,8 +101,9 @@ namespace SAIN.Components
             spherecastJob.Complete();
             total = 0;
 
-            for (int i = 0; i < TempBotList.Count; i++)
+            Parallel.ForEach(TempBotList, (botkv) =>
             {
+                var i = botkv.Key;
                 var visPlayers = TempBotList[i].Memory.VisiblePlayers;
                 var idList = TempBotList[i].Memory.VisiblePlayerIds;
                 visPlayers.Clear();
@@ -114,9 +119,10 @@ namespace SAIN.Components
                             idList.Add(id);
                         }
                     }
+
                     total++;
                 }
-            }
+            });
 
             allSpherecastCommands.Dispose();
             allRaycastHits.Dispose();
@@ -126,7 +132,7 @@ namespace SAIN.Components
         private LayerMask SightLayers => LayerMaskClass.HighPolyWithTerrainMaskAI;
         private readonly int MinJobSize = 6;
         private List<Player> Players => EFTInfo.AlivePlayers;
-        private readonly List<SAINComponentClass> TempBotList = new List<SAINComponentClass>();
+        private readonly ConcurrentDictionary<int, SAINComponentClass> TempBotList = new ConcurrentDictionary<int, SAINComponentClass>();
         private int Frames = 0;
     }
 }

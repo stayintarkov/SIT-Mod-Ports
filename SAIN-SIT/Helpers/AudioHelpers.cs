@@ -66,7 +66,7 @@ namespace SAIN.Helpers
 
         private static float CalcVelocityFactor(Weapon weapon)
         {
-            return 2f - weapon.SpeedFactor;
+            return 2f - ((IWeapon)weapon).SpeedFactor;
         }
 
         private static float GetMuzzleLoudness(Mod[] mods)

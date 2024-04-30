@@ -128,7 +128,7 @@ namespace SAIN.Components
                         continue;
                     }
                     bool enableObstacle = true;
-                    Collider[] players = Physics.OverlapSphere(bot.Position, ObstacleRadius, LayerMaskClass.PlayerMask);
+                    Collider[] players = Physics.OverlapSphere(((IPlayer)bot).Position, ObstacleRadius, LayerMaskClass.PlayerMask);
                     foreach (var p in players)
                     {
                         if (p == null) continue;
@@ -243,7 +243,7 @@ namespace SAIN.Components
             if (UpdatePositionTimer < Time.time)
             {
                 UpdatePositionTimer = Time.time + 1f;
-                MainPlayerPosition = MainPlayer.Position;
+                MainPlayerPosition = ((IPlayer)MainPlayer).Position;
             }
         }
 
@@ -279,7 +279,7 @@ namespace SAIN.Components
             {
                 return;
             }
-            Vector3 position = player.Position;
+            Vector3 position = ((IPlayer)player).Position;
             if (isSmoke)
             {
                 HelpersGClass.PlaySound(player, explosionPosition, 50f, AISoundType.gun);
@@ -364,7 +364,7 @@ namespace SAIN.Components
             NavMeshObstacle = player.gameObject.AddComponent<NavMeshObstacle>();
             NavMeshObstacle.carving = false;
             NavMeshObstacle.enabled = false;
-            Position = player.Position;
+            Position = ((IPlayer)player).Position;
             TimeCreated = Time.time;
         }
 

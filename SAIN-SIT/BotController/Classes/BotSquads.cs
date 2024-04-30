@@ -20,7 +20,7 @@ namespace SAIN.BotController.Classes
         public void Update()
         {
             int count = 0;
-            foreach (var squad in Squads)
+            Parallel.ForEach(Squads, (squad) =>
             {
                 if (squad.Value.Members.Count > 0)
                 {
@@ -31,10 +31,10 @@ namespace SAIN.BotController.Classes
                         DebugTimer = Time.time + 60f;
 
                         string debugText = $"Squad [{count}]: " +
-                            $"ID: [{squad.Value.GetId()}] " +
-                            $"Count: [{squad.Value.Members.Count}] " +
-                            $"Power: [{squad.Value.SquadPowerLevel}] " +
-                            $"Members:";
+                                           $"ID: [{squad.Value.GetId()}] " +
+                                           $"Count: [{squad.Value.Members.Count}] " +
+                                           $"Power: [{squad.Value.SquadPowerLevel}] " +
+                                           $"Members:";
                         foreach (var member in squad.Value.MemberInfos)
                         {
                             debugText += $" [{member.Value.Nickname}, {member.Value.PowerLevel}]";
@@ -43,8 +43,9 @@ namespace SAIN.BotController.Classes
                         Logger.LogDebug(debugText);
                     }
                 }
+
                 count++;
-            }
+            });
         }
 
         private float DebugTimer = 0f;

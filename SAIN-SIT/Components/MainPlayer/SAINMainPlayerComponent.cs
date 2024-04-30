@@ -20,7 +20,7 @@ namespace SAIN.Components
             CamoClass.Start();
         }
 
-        private void Update()
+        private async void Update()
         {
             //CamoClass.Update();
             SAINPerson?.Update();
