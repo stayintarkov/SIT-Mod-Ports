@@ -144,7 +144,6 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>copy "$(OutDir)DrakiaXYZ-Waypoints.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
   </PropertyGroup>
 </Project>
