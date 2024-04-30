@@ -112,6 +112,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy "$(OutDir)DrakiaXYZ-BigBrain.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetDir)DrakiaXYZ-BigBrain.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
   </PropertyGroup>
 </Project>
