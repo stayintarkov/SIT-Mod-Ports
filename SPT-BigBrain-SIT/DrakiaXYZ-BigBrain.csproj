@@ -31,32 +31,32 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy "$(OutDir)DrakiaXYZ-BigBrain.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
+    <ManagedAssembliesPath>..\..\SIT-Mod-Ports\References\</ManagedAssembliesPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\References\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Aki.Build">
-      <HintPath>..\References\Aki.Build.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Aki.Common">
-      <HintPath>..\References\Aki.Common.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Aki.Common.dll</HintPath>
     </Reference>
     <Reference Include="Aki.Reflection">
-      <HintPath>..\References\Aki.Reflection.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Aki.Reflection.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\References\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\References\BepInEx.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="Comfort">
-      <HintPath>..\References\Comfort.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Comfort.dll</HintPath>
     </Reference>
     <Reference Include="Comfort.Unity">
-      <HintPath>..\References\Comfort.Unity.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\Comfort.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="StayInTarkov">
+      <HintPath>..\SIT-Mod-Ports\References\StayInTarkov.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -67,24 +67,24 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>..\References\UnityEngine.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
-      <HintPath>..\References\UnityEngine.AIModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.AIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\References\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.IMGUIModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.IMGUIModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>..\References\UnityEngine.PhysicsModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\References\UnityEngine.TextRenderingModule.dll</HintPath>
+      <HintPath>$(ManagedAssembliesPath)\UnityEngine.TextRenderingModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -111,4 +111,7 @@
     <None Include="VersionChecker\setbuild.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetDir)DrakiaXYZ-BigBrain.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
+  </PropertyGroup>
 </Project>
