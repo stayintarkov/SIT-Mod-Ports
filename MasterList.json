@@ -335,7 +335,9 @@
     "PluginFiles": [
       "DrakiaXYZ-TaskListFixes.dll"
     ],
-    "ConfigFiles": []
+    "ConfigFiles": [
+        "xyz.drakia.tasklistfixes.cfg"
+    ]
   },
   {
     "Name": "ConfigurationManager",
