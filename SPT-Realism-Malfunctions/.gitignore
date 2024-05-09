@@ -1,0 +1,11 @@
+
+*.vsidx
+*.vsidx
+*.editorconfig
+*.cache
+*.editorconfig
+*.cache
+obj
+bin
+libs
+.vs

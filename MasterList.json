@@ -324,6 +324,20 @@
     "ConfigFiles": []
   },
   {
+    "Name": "Inspectionless Malfs",
+    "Author": "Fontaine",
+    "SupportedVersion": "1.10.8882.41069",
+    "ModVersion": "1.3.0",
+    "PortVersion": "1.0.0",
+    "Description": "Makes it so you don't need to inspect/examine malfunctions before clearing them.\n\n",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/661-fontaine-s-inspectionless-malfs/",
+    "RequiresFiles": false,
+    "PluginFiles": [
+      "InspectionlessMalfs.dll"
+    ],
+    "ConfigFiles": []
+  },
+  {
     "Name": "ConfigurationManager",
     "Author": "BepInEx",
     "SupportedVersion": "1.10.8882.41069",
