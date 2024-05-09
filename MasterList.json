@@ -324,6 +324,20 @@
     "ConfigFiles": []
   },
   {
+    "Name": "Rai's Hidden Caches",
+    "Author": "RaiRaiTheRaichu",
+    "SupportedVersion": "1.10.8882.41069",
+    "ModVersion": "1.0.0",
+    "PortVersion": "1.0.0",
+    "Description": "Adds a flare-like effect to all of the hidden stashes on the map! Smoke, lighting, and audio will emit from all the random secret caches to help you find them! Effects can be customized and toggled.\n\n",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1770-rai-s-hidden-caches/",
+    "RequiresFiles": false,
+    "PluginFiles": [
+      "RaiRai.HiddenCaches.dll"
+    ],
+    "ConfigFiles": []
+  },
+  {
     "Name": "ConfigurationManager",
     "Author": "BepInEx",
     "SupportedVersion": "1.10.8882.41069",
