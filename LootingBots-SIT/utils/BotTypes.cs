@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 using EFT;
 
@@ -13,13 +12,14 @@ namespace LootingBots.Patch.Util
     {
         Scav = 1,
         Pmc = 2,
-        Raider = 4,
-        Cultist = 8,
-        Boss = 16,
-        Follower = 32,
-        Bloodhound = 64,
+        PlayerScav = 4,
+        Raider = 8,
+        Cultist = 16,
+        Boss = 32,
+        Follower = 64,
+        Bloodhound = 128,
 
-        All = Scav | Pmc | Raider | Cultist | Boss | Follower | Bloodhound
+        All = Scav | Pmc | PlayerScav | Raider | Cultist | Boss | Follower | Bloodhound
     }
 
     public static class BotTypeUtils
@@ -33,10 +33,10 @@ namespace LootingBots.Patch.Util
         {
             return botType.HasFlag(BotType.Pmc);
         }
-        
+
         public static bool HasPlayerScav(this BotType botType)
         {
-            return botType.HasFlag(BotType.Scav);
+            return botType.HasFlag(BotType.PlayerScav);
         }
 
         public static bool HasRaider(this BotType botType)
@@ -63,8 +63,9 @@ namespace LootingBots.Patch.Util
         {
             return botType.HasFlag(BotType.Bloodhound);
         }
-        
-        public static bool IsBotEnabled(this BotType enabledTypes, LootingBrain brain) {
+
+        public static bool IsBotEnabled(this BotType enabledTypes, LootingBrain brain)
+        {
             if (brain.IsPlayerScav)
             {
                 return enabledTypes.HasPlayerScav();
@@ -80,10 +81,10 @@ namespace LootingBots.Patch.Util
                 return enabledTypes.HasPmc();
             }
 
-            if (IsBoss(botType)) {
+            if (IsBoss(botType))
+            {
                 return enabledTypes.HasBoss();
             }
-
 
             switch (botType)
             {
@@ -135,8 +136,9 @@ namespace LootingBots.Patch.Util
             // Unchecked to get around cast of usec/bear WildSpawnType added in AkiBotsPrePatcher
             unchecked
             {
-                WildSpawnType bear = (WildSpawnType)42;
-                WildSpawnType usec = (WildSpawnType)41;
+                // SIT note: Prepatch is not used in SIT so values sourced from https://dev.sp-tarkov.com/SPT-AKI/Modules/commit/655ef5bb7bb8553c992c2ec99b629690b4836b0e
+                WildSpawnType bear = (WildSpawnType)47;
+                WildSpawnType usec = (WildSpawnType)48;
 
                 return wildSpawnType == bear || wildSpawnType == usec;
             }

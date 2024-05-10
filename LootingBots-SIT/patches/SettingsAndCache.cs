@@ -1,9 +1,13 @@
 using System.Reflection;
+
+using Aki.Reflection.Patching;
+
 using Comfort.Common;
-using StayInTarkov;
+
 using EFT;
 using EFT.InventoryLogic;
 using EFT.UI;
+
 using LootingBots.Patch.Components;
 using LootingBots.Patch.Util;
 
@@ -14,9 +18,11 @@ namespace LootingBots.Patch
         public void Enable()
         {
             new CleanCacheOnRaidEnd().Enable();
+            new ClearCacheOnDeath().Enable();
             new EnableWeaponSwitching().Enable();
             new InteractPatch().Enable();
             new InventoryClosePatch().Enable();
+            new IgnoreBTRIfMissing().Enable();
         }
     }
 
@@ -33,8 +39,108 @@ namespace LootingBots.Patch
         [PatchPrefix]
         private static void PatchPrefix()
         {
-            LootingBots.LootLog.LogDebug($"Resetting Loot Cache");
+            if (LootingBots.LootLog.DebugEnabled)
+                LootingBots.LootLog.LogDebug("Resetting Loot Cache");
+
             ActiveLootCache.Reset();
+        }
+    }
+
+    /** Patch to remove any active loot marked for the player when the inventory screen is closed */
+    public class InventoryClosePatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(InventoryScreen).GetMethod(
+                "Close",
+                BindingFlags.Public | BindingFlags.Instance
+            );
+        }
+
+        [PatchPrefix]
+        private static void PatchPrefix()
+        {
+            if (LootingBots.LootLog.DebugEnabled)
+                LootingBots.LootLog.LogDebug("Clearing any active player loot");
+
+            ActiveLootCache.PlayerLootId = "";
+        }
+    }
+
+    /** Patch to mark any lootable interacted with by the player as active loot. Any bot that is currently pathing to that lootable should have their looting brain reset and will ignore the lootable until the player stops looting */
+    public class InteractPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(Player).GetMethod(
+                "Interact",
+                BindingFlags.Public | BindingFlags.Instance
+            );
+        }
+
+        [PatchPrefix]
+        private static void PatchPrefix(IItemOwner loot, Callback callback, ref Player __instance)
+        {
+            // If the item we are looting is marked as active by a friendly bot, cleanup its looting brain to stop it from looting the same object
+            if (
+                ActiveLootCache.ActiveLoot.TryGetValue(loot.RootItem.Id, out BotOwner botOwner)
+                && !botOwner.BotsGroup.IsPlayerEnemy(__instance)
+            )
+            {
+                if (LootingBots.LootLog.DebugEnabled)
+                    LootingBots.LootLog.LogDebug("Cleanup on bot brain");
+
+                LootingBrain brain = botOwner.GetComponent<LootingBrain>();
+                brain?.DisableTransactions();
+            }
+
+            ActiveLootCache.PlayerLootId = loot.RootItem.Id;
+        }
+    }
+
+    
+    /** Patch to mark any lootable interacted with by the player as active loot. Any bot that is currently pathing to that lootable should have their looting brain reset and will ignore the lootable until the player stops looting */
+    public class ClearCacheOnDeath : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(BotOwner).GetMethod(
+                "Dispose",
+                BindingFlags.Public | BindingFlags.Instance
+            );
+        }
+
+        [PatchPrefix]
+        private static void PatchPrefix(ref BotOwner __instance)
+        {
+            if (LootingBots.LootLog.DebugEnabled)
+                LootingBots.LootLog.LogDebug("Cleanup on ActiveLootCache");
+    
+            ActiveLootCache.Cleanup(__instance);
+        }
+    }
+    
+    /** Patch to prevent bots from being wary of the BTR if it isn't present */
+    public class IgnoreBTRIfMissing : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(BotBewareBTR).GetMethod(
+                "UpdateByNode",
+                BindingFlags.Public | BindingFlags.Instance
+            );
+        }
+
+        [PatchPrefix]
+        private static bool PatchPrefix(ref BotBewareBTR __instance)
+        {
+            if (__instance.BTRVehicle_0 == null)
+            {
+                LootingBots.LootLog.LogDebug("No BTR detected, bots will not beware");
+                return false;
+            }
+
+            return true;
         }
     }
 
@@ -68,50 +174,6 @@ namespace LootingBots.Patch
                 __instance.FileSettings.Shoot.CHANCE_TO_CHANGE_WEAPON = 80;
                 __instance.FileSettings.Shoot.CHANCE_TO_CHANGE_WEAPON_WITH_HELMET = 40;
             }
-        }
-    }
-    
-    public class InventoryClosePatch : ModulePatch
-    {
-        protected override MethodBase GetTargetMethod()
-        {
-            return typeof(InventoryScreen).GetMethod(
-                "Close",
-                BindingFlags.Public | BindingFlags.Instance
-            );
-        }
-
-        [PatchPrefix]
-        private static void PatchPrefix()
-        {
-            LootingBots.LootLog.LogWarning($"Clearing any active player loot");
-            ActiveLootCache.PlayerLootId = "";
-        }
-    }
-
-    /** Patch to mark any lootable interacted with by the player as active loot. Any bot that is currently pathing to that lootable should have their looting brain reset and will ignore the lootable until the player stops looting */
-    public class InteractPatch : ModulePatch
-    {
-        protected override MethodBase GetTargetMethod()
-        {
-            return typeof(Player).GetMethod(
-                "Interact",
-                BindingFlags.Public | BindingFlags.Instance
-            );
-        }
-
-        [PatchPrefix]
-        private static void PatchPrefix(IItemOwner loot, Callback callback, ref Player __instance)
-        {
-            // If the item we are looting is marked as active by a bot, cleanup its looting brain to stop it from looting the same object
-            if (ActiveLootCache.ActiveLoot.TryGetValue(loot.RootItem.Id, out BotOwner botOwner) && !botOwner.BotsGroup.IsPlayerEnemy(__instance))
-            {
-                LootingBots.LootLog.LogError("Cleanup on bot brain");
-                LootingBrain brain = botOwner.GetComponent<LootingBrain>();
-                brain?.DisableTransactions();
-            }
-
-            ActiveLootCache.PlayerLootId = loot.RootItem.Id;
         }
     }
 }

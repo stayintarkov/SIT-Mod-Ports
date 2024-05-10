@@ -1,6 +1,7 @@
-using BepInEx.Bootstrap;
+﻿using BepInEx.Bootstrap;
 
 using EFT;
+using EFT.Interactive;
 
 using HarmonyLib;
 
@@ -18,6 +19,9 @@ namespace LootingBots
         private static Type _LootingBotsExternalType;
         private static MethodInfo _ForceBotToScanLootMethod;
         private static MethodInfo _PreventBotFromLootingMethod;
+        private static MethodInfo _CheckIfInventoryFullMethod;
+        private static MethodInfo _GetNetLootValueMethod;
+        private static MethodInfo _GetItemPriceMethod;
 
         /**
          * Return true if Looting Bots is loaded in the client
@@ -28,7 +32,9 @@ namespace LootingBots
             if (!_LootingBotsLoadedChecked)
             {
                 _LootingBotsLoadedChecked = true;
-                _IsLootingBotsLoaded = Chainloader.PluginInfos.ContainsKey("me.skwizzy.lootingbots");
+                _IsLootingBotsLoaded = Chainloader.PluginInfos.ContainsKey(
+                    "me.skwizzy.lootingbots"
+                );
             }
 
             return _IsLootingBotsLoaded;
@@ -39,20 +45,41 @@ namespace LootingBots
          */
         public static bool Init()
         {
-            if (!IsLootingBotsLoaded()) return false;
+            if (!IsLootingBotsLoaded())
+                return false;
 
             // Only check for the External class once
             if (!_LootingBotsInteropInited)
             {
                 _LootingBotsInteropInited = true;
 
-                _LootingBotsExternalType = Type.GetType("LootingBots.External, skwizzy.LootingBots");
+                _LootingBotsExternalType = Type.GetType(
+                    "LootingBots.External, skwizzy.LootingBots"
+                );
 
                 // Only try to get the methods if we have the type
                 if (_LootingBotsExternalType != null)
                 {
-                    _ForceBotToScanLootMethod = AccessTools.Method(_LootingBotsExternalType, "ForceBotToScanLoot");
-                    _PreventBotFromLootingMethod = AccessTools.Method(_LootingBotsExternalType, "PreventBotFromLooting");
+                    _ForceBotToScanLootMethod = AccessTools.Method(
+                        _LootingBotsExternalType,
+                        "ForceBotToScanLoot"
+                    );
+                    _PreventBotFromLootingMethod = AccessTools.Method(
+                        _LootingBotsExternalType,
+                        "PreventBotFromLooting"
+                    );
+                    _CheckIfInventoryFullMethod = AccessTools.Method(
+                        _LootingBotsExternalType,
+                        "CheckIfInventoryFull"
+                    );
+                    _GetNetLootValueMethod = AccessTools.Method(
+                        _LootingBotsExternalType,
+                        "GetNetLootValue"
+                    );
+                    _GetItemPriceMethod = AccessTools.Method(
+                        _LootingBotsExternalType,
+                        "GetItemPrice"
+                    );
                 }
             }
 
@@ -65,8 +92,10 @@ namespace LootingBots
          */
         public static bool TryForceBotToScanLoot(BotOwner botOwner)
         {
-            if (!Init()) return false;
-            if (_ForceBotToScanLootMethod == null) return false;
+            if (!Init())
+                return false;
+            if (_ForceBotToScanLootMethod == null)
+                return false;
 
             return (bool)_ForceBotToScanLootMethod.Invoke(null, new object[] { botOwner });
         }
@@ -76,10 +105,55 @@ namespace LootingBots
          */
         public static bool TryPreventBotFromLooting(BotOwner botOwner, float duration)
         {
-            if (!Init()) return false;
-            if (_PreventBotFromLootingMethod == null) return false;
+            if (!Init())
+                return false;
+            if (_PreventBotFromLootingMethod == null)
+                return false;
 
-            return (bool)_PreventBotFromLootingMethod.Invoke(null, new object[] { botOwner, duration });
+            return (bool)
+                _PreventBotFromLootingMethod.Invoke(null, new object[] { botOwner, duration });
+        }
+
+        /**
+         * Checks if a bot's inventory is full or not
+         */
+        public static bool CheckIfInventoryFull(BotOwner botOwner)
+        {
+            if (!Init())
+                return false;
+            if (_CheckIfInventoryFullMethod == null)
+                return false;
+
+            return (bool)
+                _CheckIfInventoryFullMethod.Invoke(null, new object[] { botOwner });
+        }
+
+        /**
+         * Gets the total value looted by a bot in this raid
+         */
+        public static float GetNetLootValue(BotOwner botOwner)
+        {
+            if (!Init())
+                return 0f;
+            if (_GetNetLootValueMethod == null)
+                return 0f;
+
+            return (float)
+                _GetNetLootValueMethod.Invoke(null, new object[] { botOwner });
+        }
+
+        /**
+         * Checks the price of a loot item using LB ItemAppraiser
+         */
+        public static float GetItemPrice(LootItem item)
+        {
+            if (!Init())
+                return 0f;
+            if (_GetItemPriceMethod == null)
+                return 0f;
+
+            return (float)
+                _GetItemPriceMethod.Invoke(null, new object[] { item });
         }
     }
 }

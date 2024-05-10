@@ -13,19 +13,19 @@ using LootingBots.Brain;
 using DrakiaXYZ.BigBrain.Brains;
 using System.Collections.Generic;
 
-using HandbookClass = Handbook;
-
 namespace LootingBots
 {
     [BepInPlugin(MOD_GUID, MOD_NAME, MOD_VERSION)]
+    [BepInDependency("xyz.drakia.bigbrain", "0.4.0")]
     [BepInProcess("EscapeFromTarkov.exe")]
     public class LootingBots : BaseUnityPlugin
     {
         private const string MOD_GUID = "me.skwizzy.lootingbots";
         private const string MOD_NAME = "LootingBots";
-        private const string MOD_VERSION = "1.2.1";
+        private const string MOD_VERSION = "1.3.2";
 
-        public const BotType SettingsDefaults = BotType.Scav | BotType.Pmc | BotType.Raider;
+        public const BotType SettingsDefaults =
+            BotType.Scav | BotType.Pmc | BotType.PlayerScav | BotType.Raider;
 
         // Loot Finder Settings
         public static ConfigEntry<BotType> CorpseLootingEnabled;
@@ -35,11 +35,15 @@ namespace LootingBots
 
         public static ConfigEntry<float> LootScanInterval;
         public static ConfigEntry<float> DetectItemDistance;
+        public static ConfigEntry<bool> DetectItemNeedsSight;
         public static ConfigEntry<float> DetectContainerDistance;
+        public static ConfigEntry<bool> DetectContainerNeedsSight;
         public static ConfigEntry<float> DetectCorpseDistance;
+        public static ConfigEntry<bool> DetectCorpseNeedsSight;
 
         public static ConfigEntry<bool> DebugLootNavigation;
         public static ConfigEntry<LogLevel> LootingLogLevels;
+        public static ConfigEntry<int> FilterLogsOnBot;
         public static Log LootLog;
 
         // Loot Settings
@@ -48,10 +52,12 @@ namespace LootingBots
         public static ConfigEntry<bool> UseExamineTime;
         public static ConfigEntry<bool> ValueFromMods;
         public static ConfigEntry<bool> CanStripAttachments;
+
         public static ConfigEntry<float> PMCMinLootThreshold;
         public static ConfigEntry<float> PMCMaxLootThreshold;
         public static ConfigEntry<float> ScavMinLootThreshold;
         public static ConfigEntry<float> ScavMaxLootThreshold;
+
         public static ConfigEntry<EquipmentType> PMCGearToEquip;
         public static ConfigEntry<EquipmentType> PMCGearToPickup;
         public static ConfigEntry<EquipmentType> ScavGearToEquip;
@@ -73,7 +79,16 @@ namespace LootingBots
                     new ConfigurationManagerAttributes { Order = 10 }
                 )
             );
-
+            DetectCorpseNeedsSight = Config.Bind(
+                "Loot Finder",
+                "Enable corpse line of sight check",
+                false,
+                new ConfigDescription(
+                    "When scanning for loot, corpses will be ignored if they are not visible by the bot",
+                    null,
+                    new ConfigurationManagerAttributes { Order = 9 }
+                )
+            );
             DetectCorpseDistance = Config.Bind(
                 "Loot Finder",
                 "Detect corpse distance",
@@ -84,6 +99,7 @@ namespace LootingBots
                     new ConfigurationManagerAttributes { Order = 8 }
                 )
             );
+
             ContainerLootingEnabled = Config.Bind(
                 "Loot Finder",
                 "Enable container looting",
@@ -94,6 +110,16 @@ namespace LootingBots
                     new ConfigurationManagerAttributes { Order = 7 }
                 )
             );
+            DetectContainerNeedsSight = Config.Bind(
+                "Loot Finder",
+                "Enable container line of sight check",
+                false,
+                new ConfigDescription(
+                    "When scanning for loot, containers will be ignored if they are not visible by the bot",
+                    null,
+                    new ConfigurationManagerAttributes { Order = 6 }
+                )
+            );
             DetectContainerDistance = Config.Bind(
                 "Loot Finder",
                 "Detect container distance",
@@ -101,9 +127,10 @@ namespace LootingBots
                 new ConfigDescription(
                     "Distance (in meters) a bot is able to detect a container",
                     null,
-                    new ConfigurationManagerAttributes { Order = 6 }
+                    new ConfigurationManagerAttributes { Order = 5 }
                 )
             );
+
             LooseItemLootingEnabled = Config.Bind(
                 "Loot Finder",
                 "Enable loose item looting",
@@ -111,7 +138,17 @@ namespace LootingBots
                 new ConfigDescription(
                     "Enables loose item looting for the selected bot types",
                     null,
-                    new ConfigurationManagerAttributes { Order = 5 }
+                    new ConfigurationManagerAttributes { Order = 4 }
+                )
+            );
+            DetectItemNeedsSight = Config.Bind(
+                "Loot Finder",
+                "Enable item line of sight check",
+                false,
+                new ConfigDescription(
+                    "When scanning for loot, loose items will be ignored if they are not visible by the bot",
+                    null,
+                    new ConfigurationManagerAttributes { Order = 3 }
                 )
             );
             DetectItemDistance = Config.Bind(
@@ -121,9 +158,10 @@ namespace LootingBots
                 new ConfigDescription(
                     "Distance (in meters) a bot is able to detect an item",
                     null,
-                    new ConfigurationManagerAttributes { Order = 4 }
+                    new ConfigurationManagerAttributes { Order = 2 }
                 )
             );
+
             LootingLogLevels = Config.Bind(
                 "Loot Finder",
                 "Debug: Log Levels",
@@ -134,6 +172,16 @@ namespace LootingBots
                     new ConfigurationManagerAttributes { Order = 0, IsAdvanced = true }
                 )
             );
+            FilterLogsOnBot = Config.Bind(
+                "Loot Finder",
+                "Debug: Filter logs on bot",
+                0,
+                new ConfigDescription(
+                    "Filters new log entries only showing logs for the number of the bot specified. A value of 0 denotes no filter",
+                    null,
+                    new ConfigurationManagerAttributes { Order = -1, IsAdvanced = true }
+                )
+            );
             DebugLootNavigation = Config.Bind(
                 "Loot Finder",
                 "Debug: Show navigation points",
@@ -141,7 +189,7 @@ namespace LootingBots
                 new ConfigDescription(
                     "Renders shperes where bots are trying to navigate when container looting. (Red): Container position. (Black): 'Optimized' container position. (Green): Calculated bot destination. (Blue): NavMesh corrected destination (where the bot will move).",
                     null,
-                    new ConfigurationManagerAttributes { Order = -1, IsAdvanced = true }
+                    new ConfigurationManagerAttributes { Order = -2, IsAdvanced = true }
                 )
             );
 
@@ -323,7 +371,6 @@ namespace LootingBots
 
             new SettingsAndCachePatch().Enable();
             new RemoveComponent().Enable();
-            //new GetItemClassFromInspect().Enable();
 
             BrainManager.RemoveLayer(
                 "Utility peace",
@@ -357,7 +404,6 @@ namespace LootingBots
                     "BossBully",
                     "BossBoar",
                     "BoarSniper",
-
                     "FollowerGluharScout",
                     "FollowerGluharProtect",
                     "FollowerGluharAssault",
@@ -396,7 +442,7 @@ namespace LootingBots
             // Initialize the itemAppraiser when the BE instance comes online
             if (
                 Singleton<ClientApplication<ISession>>.Instance != null
-                && Singleton<HandbookClass>.Instance != null
+                && Singleton<Handbook>.Instance != null
                 && shoultInitAppraiser
             )
             {
