@@ -2,13 +2,12 @@ using System;
 
 using EFT.InventoryLogic;
 
-
-using BodyArmorClass = GClass2648;
-using HeadArmorClass = GClass2647;
 using FaceCoveringClass = GClass2646;
+using ArmorPlateClass = ArmorPlate;
+using HeadArmorClass = GClass2647;
+using BodyArmorClass = GClass2648;
 using BackpackItemClass = GClass2695;
 using TacticalRigItemClass = ArmorClass1;
-
 
 namespace LootingBots.Patch.Util
 {
@@ -63,6 +62,7 @@ namespace LootingBots.Patch.Util
             return equipmentType.HasFlag(EquipmentType.Helmet);
         }
 
+        // GClasses based off GClass2558.FindSlotToPickUp
         public static bool IsItemEligible(this EquipmentType allowedGear, Item item)
         {
             if (IsArmorVest(item))
@@ -80,12 +80,17 @@ namespace LootingBots.Patch.Util
                 return allowedGear.HasBackpack();
             }
 
+            if (IsArmoredRig(item))
+            {
+                return allowedGear.HasArmoredRig();
+            }
+
             if (IsTacticalRig(item))
             {
-                return ((TacticalRigItemClass)item).IsArmorMod()
-                    ? allowedGear.HasArmoredRig()
-                    : allowedGear.HasTacticalRig();
+                return allowedGear.HasTacticalRig();
             }
+
+            if (item is FoodClass1) { }
 
             if (item is GrenadeClass)
             {
@@ -105,6 +110,11 @@ namespace LootingBots.Patch.Util
             return item is TacticalRigItemClass;
         }
 
+        public static bool IsArmoredRig(Item item)
+        {
+            return item is TacticalRigItemClass && item.IsArmorMod();
+        }
+
         public static bool IsBackpack(Item item)
         {
             return item is BackpackItemClass;
@@ -120,8 +130,17 @@ namespace LootingBots.Patch.Util
             return item is BodyArmorClass;
         }
 
-        public static bool IsFaceCovering(Item item) {
+        public static bool IsFaceCovering(Item item)
+        {
             return item is FaceCoveringClass;
+        }
+
+        public static bool IsArmorPlate(Item item, out ArmorPlateClass plate)
+        {
+            bool isArmorPlate = item is ArmorPlateClass;
+            plate = isArmorPlate ? (ArmorPlateClass)item : null;
+
+            return isArmorPlate;
         }
     }
 }

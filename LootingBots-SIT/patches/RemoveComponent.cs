@@ -1,5 +1,4 @@
-﻿//using Aki.Reflection.Patching;
-using StayInTarkov;
+﻿using Aki.Reflection.Patching;
 using EFT;
 using LootingBots.Patch.Components;
 using System.Reflection;

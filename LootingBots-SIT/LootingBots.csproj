@@ -58,22 +58,13 @@
     <Reference Include="BepInEx">
       <HintPath>..\References\BepInEx.dll</HintPath>
     </Reference>
-    <Reference Include="com.unity.multiplayer-hlapi.Runtime">
-      <HintPath>..\References\com.unity.multiplayer-hlapi.Runtime.dll</HintPath>
-    </Reference>
     <Reference Include="Comfort">
       <HintPath>..\References\Comfort.dll</HintPath>
-    </Reference>
-    <Reference Include="DissonanceVoip">
-      <HintPath>..\References\DissonanceVoip.dll</HintPath>
     </Reference>
     <Reference Include="ItemComponent.Types" HintPath="..\References\ItemComponent.Types.dll" Private="False" />
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\References\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="StayInTarkov">
-      <HintPath>..\References\StayInTarkov.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="UnityEngine">
@@ -84,6 +75,8 @@
     </Reference>
     <Reference Include="UnityEngine.PhysicsModule" HintPath="..\References\UnityEngine.PhysicsModule.dll" Private="False" />
     <Reference Include="UnityEngine.AIModule" HintPath="..\References\UnityEngine.AIModule.dll" Private="False" />
+    <Reference Include="DissonanceVoip" HintPath="..\References\DissonanceVoip.dll" Private="False" />
+    <Reference Include="DrakiaXYZ.BigBrain" HintPath="..\References\DrakiaXYZ-BigBrain.dll" Private="False" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="External.cs" />
@@ -96,18 +89,8 @@
     <Compile Include="components\*.cs" />
     <Compile Include="logics\*.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\SPT-BigBrain-SIT\DrakiaXYZ-BigBrain.csproj">
-      <Project>{c3c9ebdf-af8a-4e59-b18f-e76fae66001c}</Project>
-      <Name>DrakiaXYZ-BigBrain</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>copy "skwizzy.LootingBots.dll" "$(SolutionDir)!Plugins\" /y</PostBuildEvent>
-  </PropertyGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy &quot;$(OutDir)skwizzy.LootingBots.dll&quot; &quot;$(SolutionDir)!Plugins\&quot; /y" />
+  </Target>
 </Project>
