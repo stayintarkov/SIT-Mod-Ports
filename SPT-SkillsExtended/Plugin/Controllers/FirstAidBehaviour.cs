@@ -4,7 +4,6 @@ using HarmonyLib;
 using SkillsExtended.Helpers;
 using SkillsExtended.Models;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -16,6 +15,8 @@ namespace SkillsExtended.Controllers
         private Dictionary<string, MedKitValues> _originalMedKitValues = [];
 
         private SkillManager _skillManager => Utils.GetActiveSkillManager();
+
+        private int _lastAppliedLevel = -1;
 
         private MedicalSkillData _skillData => Plugin.SkillData.MedicalSkills;
 
@@ -38,7 +39,7 @@ namespace SkillsExtended.Controllers
 
         private void Update()
         {
-            if (Plugin.Items == null)
+            if (Plugin.Items == null || _lastAppliedLevel == _skillManager.FirstAid.Level)
             {
                 return;
             }
@@ -48,7 +49,7 @@ namespace SkillsExtended.Controllers
                 _firstAidBodypartCahce.Clear();
             }
 
-            StaticManager.Instance.StartCoroutine(FirstAidUpdate());
+            FirstAidUpdate();
         }
 
         public void ApplyFirstAidExp(EBodyPart bodypart)
@@ -151,11 +152,11 @@ namespace SkillsExtended.Controllers
             }
         }
 
-        private IEnumerator FirstAidUpdate()
+        public void FirstAidUpdate()
         {
             var items = Plugin.Items.Where(x => x is MedsClass);
 
-            if (items == null) { yield break; }
+            if (items == null) { return; }
 
             foreach (var item in items)
             {
@@ -183,7 +184,7 @@ namespace SkillsExtended.Controllers
                 }
             }
 
-            yield break;
+            _lastAppliedLevel = _skillManager.FirstAid.Level;
         }
     }
 }

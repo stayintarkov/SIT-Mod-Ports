@@ -3,7 +3,6 @@ using EFT;
 using EFT.InventoryLogic;
 using SkillsExtended.Helpers;
 using SkillsExtended.Models;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -12,7 +11,11 @@ namespace SkillsExtended.Controllers
 {
     public class UsecRifleBehaviour : MonoBehaviour
     {
+        public static bool isSubscribed = false;
+
         public Dictionary<string, int> weaponInstanceIds = [];
+
+        public IEnumerable<Item> usecWeapons = null;
 
         private SkillManager _skillManager => Utils.GetActiveSkillManager();
 
@@ -21,6 +24,8 @@ namespace SkillsExtended.Controllers
         private GameWorld _gameWorld => Singleton<GameWorld>.Instance;
 
         private int _usecARLevel => _session.Profile.Skills.UsecArsystems.Level;
+
+        private int _lastAppliedLevel = -1;
 
         private WeaponSkillData _usecSkillData => Plugin.SkillData.UsecRifleSkill;
 
@@ -35,21 +40,18 @@ namespace SkillsExtended.Controllers
         // Store an object containing the weapons original stats.
         private Dictionary<string, OrigWeaponValues> _originalWeaponValues = [];
 
-        private IEnumerable<Item> _usecWeapons => _session.Profile.Inventory.AllRealPlayerItems
-            .Where(x => _usecSkillData.Weapons.Contains(x.TemplateId));
-
-        public static bool isSubscribed = false;
-
         private void Update()
         {
             SetupSkillManager();
 
-            if (_skillManager == null) { return; }
+            if (_skillManager == null || usecWeapons == null) { return; }
+
+            if (_lastAppliedLevel == _usecARLevel) { return; }
 
             // Only run this behavior if we are USEC, or the player has completed the BEAR skill
             if (Plugin.Session?.Profile?.Side == EPlayerSide.Usec || _skillManager.BearAksystems.IsEliteLevel)
             {
-                StaticManager.Instance.StartCoroutine(UpdateWeapons(_usecWeapons, _ergoBonusUsec, _recoilBonusUsec, _usecARLevel));
+                UpdateWeapons();
             }
         }
 
@@ -92,9 +94,9 @@ namespace SkillsExtended.Controllers
             Plugin.Log.LogDebug("Invalid weapon for XP");
         }
 
-        private IEnumerator UpdateWeapons(IEnumerable<Item> items, float ergoBonus, float recoilReduction, int level)
+        private void UpdateWeapons()
         {
-            foreach (var item in items)
+            foreach (var item in usecWeapons)
             {
                 if (item is Weapon weap)
                 {
@@ -116,7 +118,7 @@ namespace SkillsExtended.Controllers
                     //Skip instances of the weapon that are already adjusted at this level.
                     if (weaponInstanceIds.ContainsKey(item.Id))
                     {
-                        if (weaponInstanceIds[item.Id] == level)
+                        if (weaponInstanceIds[item.Id] == _usecARLevel)
                         {
                             continue;
                         }
@@ -126,17 +128,17 @@ namespace SkillsExtended.Controllers
                         }
                     }
 
-                    weap.Template.Ergonomics = _originalWeaponValues[item.TemplateId].ergo * (1 + ergoBonus);
-                    weap.Template.RecoilForceUp = _originalWeaponValues[item.TemplateId].weaponUp * (1 - recoilReduction);
-                    weap.Template.RecoilForceBack = _originalWeaponValues[item.TemplateId].weaponBack * (1 - recoilReduction);
+                    weap.Template.Ergonomics = _originalWeaponValues[item.TemplateId].ergo * (1 + _ergoBonusUsec);
+                    weap.Template.RecoilForceUp = _originalWeaponValues[item.TemplateId].weaponUp * (1 - _recoilBonusUsec);
+                    weap.Template.RecoilForceBack = _originalWeaponValues[item.TemplateId].weaponBack * (1 - _recoilBonusUsec);
 
                     Plugin.Log.LogDebug($"New {weap.LocalizedName()} ergo: {weap.Template.Ergonomics}, up {weap.Template.RecoilForceUp}, back {weap.Template.RecoilForceBack}");
 
-                    weaponInstanceIds.Add(item.Id, level);
+                    weaponInstanceIds.Add(item.Id, _usecARLevel);
+
+                    _lastAppliedLevel = _usecARLevel;
                 }
             }
-
-            yield break;
         }
     }
 }

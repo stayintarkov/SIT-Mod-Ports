@@ -338,5 +338,21 @@
     "ConfigFiles": [
         "com.bepis.bepinex.configurationmanager.cfg"
     ]
+  },
+  {
+    "Name": "[BETA] Skills Extended",
+    "Author": "Dirtbikercj",
+    "SupportedVersion": "1.10.8882.41069",
+    "ModVersion": "0.5.5",
+    "PortVersion": "1.2.0",
+    "Description": "New Skills! Lockpick Included and more!",
+    "ModUrl": "https://hub.sp-tarkov.com/files/file/1722-beta-skills-extended/",
+    "RequiresFiles": true,
+    "PluginFiles": [
+      "SkillsExtended.dll"
+    ],
+    "ConfigFiles": [
+        "com.dirtbikercj.SkillsExtended.cfg"
+    ]
   }
 ]

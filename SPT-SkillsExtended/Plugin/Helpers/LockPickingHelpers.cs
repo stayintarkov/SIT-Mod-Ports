@@ -31,7 +31,7 @@ namespace SkillsExtended.Helpers
             {"RezervBase", Plugin.SkillData.LockPickingSkill.DoorPickLevels.Reserve},
             {"Shoreline", Plugin.SkillData.LockPickingSkill.DoorPickLevels.Shoreline},
             {"laboratory", Plugin.SkillData.LockPickingSkill.DoorPickLevels.Labs},
-            {"lighthouse", Plugin.SkillData.LockPickingSkill.DoorPickLevels.Lighthouse},
+            {"Lighthouse", Plugin.SkillData.LockPickingSkill.DoorPickLevels.Lighthouse},
             {"TarkovStreets", Plugin.SkillData.LockPickingSkill.DoorPickLevels.Streets},
             {"Sandbox", Plugin.SkillData.LockPickingSkill.DoorPickLevels.GroundZero},
         };

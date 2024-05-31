@@ -18,7 +18,7 @@ using UnityEngine;
 
 namespace SkillsExtended
 {
-    [BepInPlugin("com.dirtbikercj.SkillsExtended", "Skills Extended", "0.5.3")]
+    [BepInPlugin("com.dirtbikercj.SkillsExtended", "Skills Extended", "0.5.5")]
     public class Plugin : BaseUnityPlugin
     {
         public const int TarkovVersion = 29351;
@@ -81,15 +81,14 @@ namespace SkillsExtended
 
         private void Start()
         {
-            Keys = Utils.Get<KeysResponse>("skillsExtended/GetKeys");
-            SkillData = Utils.Get<SkillDataResponse>("skillsExtended/GetSkillsConfig");
+            Keys = Utils.Get<KeysResponse>("/skillsExtended/GetKeys");
+            SkillData = Utils.Get<SkillDataResponse>("/skillsExtended/GetSkillsConfig");
 
             // If realism is installed, load its config
             if (Chainloader.PluginInfos.ContainsKey("RealismMod"))
             {
                 var jsonString = RequestHandler.GetJson("/RealismMod/GetInfo");
-                var str = JsonConvert.DeserializeObject<string>(jsonString);
-                RealismConfig = JsonConvert.DeserializeObject<RealismConfig>(str);
+                RealismConfig = JsonConvert.DeserializeObject<RealismConfig>(jsonString);
                 Log.LogInfo("Realism mod detected");
             }
 
