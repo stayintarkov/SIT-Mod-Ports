@@ -1,4 +1,5 @@
 ﻿using Aki.Reflection.Patching;
+using Comfort.Common;
 using EFT;
 using EFT.Interactive;
 using SkillsExtended.Helpers;
@@ -14,7 +15,9 @@ namespace SkillsExtended.Patches
         [PatchPostfix]
         private static void Postfix(ref InteractionStates __result, GamePlayerOwner owner, WorldInteractiveObject worldInteractiveObject)
         {
-            if (WorldInteractionUtils.IsBotInteraction(owner))
+            if (WorldInteractionUtils.IsBotInteraction(owner)
+                || !Plugin.SkillData.LockPickingSkill.Enabled
+                || Singleton<GameWorld>.Instance.MainPlayer.Side == EPlayerSide.Savage)
             {
                 return;
             }
