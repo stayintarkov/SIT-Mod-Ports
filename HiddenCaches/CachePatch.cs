@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-
+using StayInTarkov.Coop.SITGameModes;
 
 namespace RaiRai.HiddenCaches
 {
@@ -12,7 +12,8 @@ namespace RaiRai.HiddenCaches
 
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(EFT.GameWorld).GetMethod("OnGameStarted", BindingFlags.Public | BindingFlags.Instance);
+            // return typeof(GameWorld).GetMethod("OnGameStarted", BindingFlags.Public | BindingFlags.Instance);
+            return typeof(CoopSITGame).GetMethod(nameof(CoopSITGame.CreateExfiltrationPointAndInitDeathHandler), BindingFlags.Public | BindingFlags.Instance);
         }
         
         [PatchPostfix]
